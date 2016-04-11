@@ -1,0 +1,113 @@
+body {	
+	margin: 0px;
+	padding: 0px;
+	font-family: helvetica,arial,sans-serif;
+	background-color: #ececec;
+}
+
+/* ****************
+	Landing page 
+**************** */
+#header {
+	background-color: #252525;
+	color: white;
+}
+
+#header-title {
+	font-size: 24px;	
+	padding: 2px 0px 0px 40px;
+}
+
+#header-title span {
+	background-color: #c52334;
+	padding: 0px 4px;
+	border-radius: 0px 8px 8px 8px;
+	font-weight: bold;
+}
+
+#header-status {
+	font-size: 18px;
+	background-color: #5a5a5a;
+	padding: 6px 0px 3px 40px;
+	
+}
+
+/* ****************
+	Code Display
+****************** */
+#result-tab {
+	background-color: #5a5a5a;
+	position: fixed;
+	width: 75%;
+	top: -2000px;
+	left: 13%;
+	-webkit-box-shadow: 14px 14px 56px -8px rgba(0,0,0,0.75);
+	-moz-box-shadow: 14px 14px 56px -8px rgba(0,0,0,0.75);
+	box-shadow: 14px 14px 56px -8px rgba(0,0,0,0.75);
+}
+
+#result-tab-header {
+	font-size: 20px;
+	padding: 4px 20px;
+	color: white;
+	border-bottom: 2px solid #c52334;
+}
+
+#result-tab-header span {
+	font-size: 9px;
+	float: right;
+	cursor: pointer;
+}
+
+#result-tab-data {
+	padding: 4px 30px;
+	background-color: #CCCCCC;
+	font-size: 10px;
+	font-family: monospace;
+	overflow-y: scroll; 
+	height: 300px;
+	white-space:pre;
+}
+
+/* ****************
+	Form 
+**************** */
+#briefing-form {
+	
+}
+.dl-1 {
+	display: inline-block;
+	width: 150px;	
+	font-size: 15px;
+	font-size: 12px;
+	color: gray;
+}
+
+.dl-2 {
+	display: inline-block;
+	width: 350px;
+}
+
+.dl-2 input {
+	width: 350px;
+	height: 20px;
+	padding: 3px 6px;
+	font-family: monospace;	
+}
+
+.dl-3 {
+	display: block;
+	width: 500px;
+
+}
+
+.dl-3 textarea {
+	width: 500px;
+	padding: 3px 6px;
+	font-family: monospace;
+}
+
+#briefing-form ul li {
+	padding: 3px 0px;
+	list-style-type: none;
+}
