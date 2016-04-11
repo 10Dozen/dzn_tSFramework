@@ -1,21 +1,12 @@
-/*
-	Settings
-*/
-
-tSF_note_displayName				= "tS Notes";
-tSF_note_enableNineliner			= true;
-tSF_note_enableArtilleryControl		= true;
-tSF_note_enableAdvancedMedicine		= true;
-tSF_note_enableReports				= true;
-tSF_note_enableALIVENote			= true;
-
-
-	
-// ********** Topics ****************
 #define NOTES		private["_topics"]; _topics = []; player createDiarySubject ["tSF_Notespage",tSF_note_displayName];
 #define TOPIC(Y, NAME) 	if (Y) then { _topics pushBack ["tSF_Notespage", [ NAME,
 #define END			]]; };
 #define ADD_TOPICS	for "_i" from (count _topics) to 0 step -1 do {player createDiaryRecord (_topics select _i);};
+
+
+// *********************************
+//	TOPICS
+// *********************************
 
 NOTES	
 
