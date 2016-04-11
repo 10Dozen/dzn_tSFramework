@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="us">
+	<head>
+		<meta charset="utf-8">
+		<title>tSF Briefing Helper</title>
+		
+		<link rel="stylesheet" href="src/css/bhelper.css">
+		<script src="src/js/jquery.min.js"></script>
+		<script src="src/js/bhelper.js"></script>
+	</head>
+	<body>
+	
+	
+		<div id="header">
+			<div id="header-title">
+				<span>tSF</span> Briefing Helper
+			</div>
+			<div id="header-status">
+				<button onClick="getCodeToDisplay()">Get code</button>
+				<button onClick="getCodeToFile()">Get file</button>
+				<button id="locale" locale="0" onClick="changeLocale()">EN</button>
+			</div>
+		</div>
+		
+		<div id="briefing-form">
+			<ul></ul>
+			<hr />
+		</div>
+		
+		<div id="result-tab">
+			<div id="result-tab-header">SQF Code <span onClick="closeCodeDisplay()">Close</span></div>
+			<div id="result-tab-data"></div>
+		</div>
+	</body>
+</html>
