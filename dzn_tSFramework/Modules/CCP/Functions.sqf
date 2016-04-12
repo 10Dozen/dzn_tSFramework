@@ -44,7 +44,7 @@ dzn_fnc_tsf_CCP_createCCP = {
 	
 		["dzn_tsf_CCP_Handler", "onEachFrame", {
 			if !(dzn_tsf_CCP_Handler_CheckStep) exitWith {};
-			spawn dzn_fnc_tsf_CCP_waitUntilStep;
+			[] spawn dzn_fnc_tsf_CCP_waitUntilStep;
 			
 			// Checks if player at CCP - then add 15second to timer. If he is not at CCP - nil the timer.
 			if (player in dzn_tsf_CCP_Location) then {
