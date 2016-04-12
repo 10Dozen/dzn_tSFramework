@@ -14,9 +14,29 @@ dzn_fnc_tsf_CCP_createCCP = {
 	_pos = if (typename _pos == "ARRAY") then { _pos } else { getPosATL _pos };
 	
 	// If server - create composition
+	if (isServer && !(_composition isEqualTo {})) then {
 		
-	// Create location
 	
-	// Add Event Handler to player
+	};
+	
+	
+	if (hasInterface) then {
+		// Create location
+		dzn_tsf_CCP_Location = createLocation ["Name", _pos, _radius, _radius];
+		
+		// Add Event Handler to player
+		dzn_tsf_CCP_TimeSpentAtCCP = 0;
+		dzn_tsf_CCP_Handler_CheckStep = false;
+		dzn_fnc_tsf_CCP_waitUntilStep = { dzn_tsf_CCP_Handler_CheckStep = false; sleep 15; dzn_tsf_CCP_Handler_CheckStep = true; };
+		["dzn_tsf_CCP_Handler", "onEachFrame", {
+			if !(dzn_tsf_CCP_Handler_CheckStep) exitWith {};
+			
+			
+			
+			// Pause
+			spawn dzn_fnc_tsf_CCP_waitUntilStep;
+		}] call BIS_fnc_addStackedEventHandler;
+	}
+	
 	
 };
