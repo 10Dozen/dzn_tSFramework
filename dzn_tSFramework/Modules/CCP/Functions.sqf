@@ -46,9 +46,9 @@ dzn_fnc_tsf_CCP_createCCP = {
 					dzn_tsf_CCP_TimeSpentAtCCP = dzn_tsf_CCP_TimeSpentAtCCP + 15;
 				};
 				
+				// Spent required time at CCP
 				if (dzn_tsf_CCP_TimeSpentAtCCP >= dzn_tsf_CCP_HealTime) then {
-					// ACE Full Heal
-					
+					[player,player] call ace_medical_fnc_treatmentAdvanced_fullHealLocal;
 					player allowDamage true;
 				};
 			} else {
