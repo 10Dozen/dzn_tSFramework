@@ -8,6 +8,15 @@ dzn_fnc_tsf_CCP_findMarker = {
 	_markerPos
 };
 
+dzn_fnc_tsf_CCP_checkIsDanger = {
+	// @Pos call dzn_fnc_tsf_CCP_checkIsDanger;
+	private _isDanger = false;
+	
+	// Check through enemies
+	
+	_isDanger
+};
+
 dzn_fnc_tsf_CCP_createCCP = {
 	// [timeToHeal, radius, preventDeath, Pos3d or Object, Composition]  spawn dzn_fnc_tsf_CCP_createCCP
 	params["_healTime","_radius","_preventDeath","_pos",["_composition", []]];
