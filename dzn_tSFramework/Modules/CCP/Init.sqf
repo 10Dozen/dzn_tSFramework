@@ -7,13 +7,15 @@ call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\CCP\DefaultCompo
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\CCP\Functions.sqf";
 
 [] spawn {
-	waitUntil { time > 1 };
+	waitUntil { time > 0 };
 	dzn_tsf_CCP_Position = call dzn_fnc_tsf_CCP_findMarker;
-	[
-		dzn_tsf_CCP_HealTime
-		, dzn_tsf_CCP_Radius
-		, dzn_tsf_CCP_PreventPlayerDeath
-		, dzn_tsf_CCP_Position
-		, dzn_tsf_CCP_DefaultComposition
-	]  spawn dzn_fnc_tsf_CCP_createCCP
+	if !(dzn_tsf_CCP_Position isEqualTo []) then {
+		[
+			dzn_tsf_CCP_HealTime
+			, dzn_tsf_CCP_Radius
+			, dzn_tsf_CCP_PreventPlayerDeath
+			, dzn_tsf_CCP_Position
+			, dzn_tsf_CCP_DefaultComposition
+		]  spawn dzn_fnc_tsf_CCP_createCCP
+	};
 };
