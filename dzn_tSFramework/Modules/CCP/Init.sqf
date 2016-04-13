@@ -14,7 +14,11 @@ if (hasInterface) then {
 	"CCP_showAlreadySet" addPublicVariableEventHandler {
 		if (CCP_showAlreadySet) then { [side player, "HQ"] commandChat dzn_tsf_CCP_STR_AlreadySet };
 		CCP_showAlreadySet = false;
-	};	
+	};
+	"CCP_showSuccessSet" addPublicVariableEventHandler {
+		if (CCP_showSuccessSet) then { [side player, "HQ"] commandChat dzn_tsc_CCP_STR_SuccessSet };
+		CCP_showSuccessSet = false;
+	};
 };
 
 if (isServer) then {
@@ -23,14 +27,17 @@ if (isServer) then {
 		CCP_Placed = false;
 		CCP_Marker = "";
 		
+		// Notifications
 		CCP_showAlreadySet = true;
 		CCP_showNotAllowedText = true;
-
+		CCP_showSuccessSet = true;
+		
 		CCP_AllowedLocation = [];
 		{
 			CCP_AllowedLocation pushBack ([_x, true] call dzn_fnc_convertTriggerToLocation);
 		} forEach (synchronizedObjects tsf_CCP);
 		
+		// Handle markers on briefing
 		["dzn_tsf_CCP_BriefingHelper", "onEachFrame", {
 			if (count CCP_MarkersLastChecked == count allMapMarkers) exitWith {};
 			private _markersToCheck = allMapMarkers - CCP_MarkersLastChecked;
@@ -48,7 +55,8 @@ if (isServer) then {
 						if ([getMarkerPos _x, CCP_AllowedLocation] call dzn_fnc_isInLocation) then {
 							CCP_Placed = true;
 							CCP_Marker = _x;
-							[side player, "HQ"] commandChat "CCP will be deployed at selected location";
+							[side player, "HQ"] commandChat dzn_tsc_CCP_STR_SuccessSet;
+							publicVariable "CCP_showSuccessSet";
 						} else {
 							[side player, "HQ"] commandChat dzn_tsf_CCP_STR_NotAllowedText;
 							publicVariable "CCP_showNotAllowedText";							
@@ -57,14 +65,16 @@ if (isServer) then {
 					};
 				};
 			} forEach _markersToCheck;
-			
 		}] call BIS_fnc_addStackedEventHandler;
+		
+		[] spawn { 
+			waitUntil { time > 1 };
+			["dzn_tsf_CCP_BriefingHelper", "onEachFrame"] call BIS_fnc_removeStackedEventHandler;
+		};
 	};
 };
 
 // [] spawn {
-	
-	
 	// waitUntil { time > 0 };
 	// dzn_tsf_CCP_Position = call dzn_fnc_tsf_CCP_findMarker;
 	// if !(dzn_tsf_CCP_Position isEqualTo []) then {
