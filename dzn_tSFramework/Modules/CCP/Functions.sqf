@@ -1,6 +1,6 @@
 dzn_fnc_tsf_CCP_findMarker = {
 	// call dzn_fnc_tsf_CCP_findMarker
-	private _markerPos = [];
+	private _markerPos = getPosASL tsf_CCP;
 	{
 		if (toLower(markerText _x) == "ccp") then { _markerPos = markerPos _x; };
 	} forEach allMapMarkers;
