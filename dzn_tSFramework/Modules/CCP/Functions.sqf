@@ -41,7 +41,13 @@ dzn_fnc_tsf_CCP_createCCP = {
 		// Add Event Handler to player
 		dzn_tsf_CCP_TimeSpentAtCCP = 0;
 		dzn_tsf_CCP_Handler_CheckStep = false;
-		dzn_fnc_tsf_CCP_waitUntilStep = { dzn_tsf_CCP_Handler_CheckStep = false; sleep 15; dzn_tsf_CCP_Handler_CheckStep = true; };
+		
+		dzn_fnc_tsf_CCP_waitUntilStep = {
+			waitUntil {player in dzn_tsf_CCP_Location}; 
+			dzn_tsf_CCP_Handler_CheckStep = false; 
+			sleep 15; 
+			dzn_tsf_CCP_Handler_CheckStep = true; 
+		};
 	
 		["dzn_tsf_CCP_Handler", "onEachFrame", {
 			if !(dzn_tsf_CCP_Handler_CheckStep) exitWith {};
