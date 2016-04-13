@@ -5,5 +5,6 @@ dzn_tsf_CCP_DefaultComposition	= "";	// Name of default composition; See 'Defaul
 
 // Texts
 dzn_tsf_CCP_STR_Hint		= "You are at Casualties Collection Point. Wait for %1 minutes to become healed.";
-dzn_tsf_CCP_STR_NotAllowedText	= "This area is not secured to set CCP there. Choose different location.";
+dzn_tsf_CCP_STR_NotAllowedText	= "This area is not secured to deploy CCP there. Choose different location.";
 dzn_tsf_CCP_STR_AlreadySet	= "CCP location was already set (remove previous one to change location).";
+dzn_tsc_CCP_STR_SuccessSet  = "CCP will be deployed at selected location";
