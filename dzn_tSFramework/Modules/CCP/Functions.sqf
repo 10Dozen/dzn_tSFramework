@@ -43,7 +43,6 @@ dzn_fnc_tsf_CCP_createCCP = {
 		dzn_tsf_CCP_Handler_CheckStep = false;
 		
 		dzn_fnc_tsf_CCP_waitUntilStep = {
-			waitUntil {player in dzn_tsf_CCP_Location}; 
 			dzn_tsf_CCP_Handler_CheckStep = false; 
 			sleep 15; 
 			dzn_tsf_CCP_Handler_CheckStep = true; 
@@ -73,6 +72,4 @@ dzn_fnc_tsf_CCP_createCCP = {
 			}
 		}] call BIS_fnc_addStackedEventHandler;
 	}
-	
-	
 };
