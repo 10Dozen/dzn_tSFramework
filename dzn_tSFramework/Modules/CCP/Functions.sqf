@@ -30,7 +30,11 @@ dzn_fnc_tsf_CCP_createCCP = {
 	
 	// If server - create composition
 	if (isServer && !(_composition isEqualTo {})) then {
+		// Get all vehicles in area
 		[_pos, _composition] spawn dzn_fnc_setComposition;
+		// Get all vehicles in area 
+		// AllVehicles - New vehicles = SpawnedOnes
+		// forEach SpawnedOnes -> lock vehicle
 	};
 	
 	
