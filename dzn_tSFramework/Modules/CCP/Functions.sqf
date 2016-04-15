@@ -22,15 +22,20 @@ dzn_fnc_tsf_CCP_checkIsPosAllowed = {
 dzn_fnc_tsf_CCP_createCCP = {
 	// [timeToHeal, radius, preventDeath, Pos3d or Object, Composition]  spawn dzn_fnc_tsf_CCP_createCCP
 	params["_healTime","_radius","_preventDeath","_pos",["_composition", []]];
-	_pos = if (typename _pos == "ARRAY") then { _pos } else { getPosATL _pos };
-	
+
+	private _dir = 0;
+	if !(typename _pos == "ARRAY") then { {
+		_dir = getDir _pos;
+		_pos = getPosATL _pos;
+	};
+
 	dzn_tsf_CCP_HealTime		= _healTime;
 	dzn_tsf_CCP_Radius		= _radius;
 	dzn_tsf_CCP_PreventPlayerDeath	= _preventDeath;
 	
 	// If server - create composition
 	if (isServer && !(_composition isEqualTo {})) then {
-		private _spawnedObjects = [_pos, _composition] spawn dzn_fnc_setComposition;
+		private _spawnedObjects = [[_pos, _dir], _composition] spawn dzn_fnc_setComposition;
 		{ _x lock true } forEach _spawnedObjects;
 	};
 	
