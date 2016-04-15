@@ -30,16 +30,9 @@ dzn_fnc_tsf_CCP_createCCP = {
 	
 	// If server - create composition
 	if (isServer && !(_composition isEqualTo {})) then {
-		private _locVehicles = _pos nearEntities [["Car", "Air", "Tank"], _radius];
-		[_pos, _composition] spawn dzn_fnc_setComposition;
-		
-		private _newLocVehicles = _pos nearEntities [["Car", "Air", "Tank"], _radius];
-		private _spawnedVehicles = _newLocVehicles - _locVehicles;
-		{
-			_x lock true;
-		} forEach _spawnedVehicles;
+		private _spawnedObjects = [_pos, _composition] spawn dzn_fnc_setComposition;
+		{ _x lock true } forEach _spawnedObjects;
 	};
-	
 	
 	if (hasInterface) then {
 		// Create location
