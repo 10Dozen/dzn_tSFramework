@@ -30,11 +30,14 @@ dzn_fnc_tsf_CCP_createCCP = {
 	
 	// If server - create composition
 	if (isServer && !(_composition isEqualTo {})) then {
-		// Get all vehicles in area
+		private _locVehicles = _pos nearEntities [["Car", "Air", "Tank"], _radius];
 		[_pos, _composition] spawn dzn_fnc_setComposition;
-		// Get all vehicles in area 
-		// AllVehicles - New vehicles = SpawnedOnes
-		// forEach SpawnedOnes -> lock vehicle
+		
+		private _newLocVehicles = _pos nearEntities [["Car", "Air", "Tank"], _radius];
+		private _spawnedVehicles = _newLocVehicles - _locVehicles;
+		{
+			_x lock true;
+		} forEach _spawnedVehicles;
 	};
 	
 	
