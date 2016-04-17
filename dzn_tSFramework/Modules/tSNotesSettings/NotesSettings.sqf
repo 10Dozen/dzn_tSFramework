@@ -1,6 +1,6 @@
 // ********** Topics ****************
-#define NOTES		private["_topics"]; _topics = []; player createDiarySubject ["tSF_Notespage",tSF_noteSettings_displayName];
-#define TOPIC(Y, NAME) 	if (Y) then { _topics pushBack ["tSF_Notespage", [ NAME,
+#define NOTES		private["_topics"]; _topics = []; player createDiarySubject ["tSF_NotesSettingsPage",tSF_noteSettings_displayName];
+#define TOPIC(Y, NAME) 	if (Y) then { _topics pushBack ["tSF_NotesSettingsPage", [ NAME,
 #define END			]]; };
 #define ADD_TOPICS	for "_i" from (count _topics) to 0 step -1 do {player createDiaryRecord (_topics select _i);};
 
