@@ -57,6 +57,10 @@ function changeLocale() {
 	changeTopicLocale();
 }
 
+function escapeQuotes(str) {
+	return ( str.replace(new RegExp('"','g'),'""') );
+};
+
 $( document ).ready(function() {
 	generateDefaultTopics();
 });
@@ -77,8 +81,8 @@ function getCode() {
 		var text = ( $($( ".topicData" )[i]).val() ).replace(/(\r\n|\n|\r)/g,"<br />");
 		
 		topics = topics
-			+ "\nTOPIC(\"" + $($( ".topicInput" )[i]).val() + "\")"
-			+ "\n\"" +  text + "\""
+			+ "\nTOPIC(\"" + escapeQuotes ( $($( ".topicInput" )[i]).val() ) + "\")"
+			+ "\n\"" +  escapeQuotes(text) + "\""
 			+ "\nEND\n";
 	}
 	
