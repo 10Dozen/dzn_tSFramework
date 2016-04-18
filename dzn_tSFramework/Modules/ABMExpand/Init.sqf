@@ -3,5 +3,9 @@
 // ********************
 
 if (hasInterface) then {
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ABMExpand\ABMExpandData.sqf";
+	[] spawn {
+		waitUntil { !isNil "ABM_trainedVeh" };
+		ABM_trainedVeh = ABM_trainedVeh
+			+ (call compile ("[" + preProcessFile "dzn_tSFramework\Modules\ABMExpand\ABMExpandData.sqf" + "]"));
+	};
 };
