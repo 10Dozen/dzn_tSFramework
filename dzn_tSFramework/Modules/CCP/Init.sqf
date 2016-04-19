@@ -43,34 +43,36 @@ if (isServer) then {
 		} forEach (synchronizedObjects tsf_CCP);
 		
 		// Handle markers on briefing
-		["dzn_tsf_CCP_BriefingHelper", "onEachFrame", {
-			if (count CCP_MarkersLastChecked == count allMapMarkers) exitWith {};
-			private _markersToCheck = allMapMarkers - CCP_MarkersLastChecked;
-			CCP_MarkersLastChecked = allMapMarkers;
-			
-			{
-				if (toLower(markerText _x) == "ccp") then {
-					if (CCP_Placed && markerText CCP_Marker != "") then {						
-						if (CCP_Marker != _x) then { 
-							[side player, "HQ"] commandChat dzn_tsf_CCP_STR_AlreadySet;
-							publicVariable "CCP_showAlreadySet";
-							deleteMarker _x;
-						};
-					} else {
-						if ([getMarkerPos _x, CCP_AllowedLocation] call dzn_fnc_isInLocation) then {
-							CCP_Placed = true;
-							CCP_Marker = _x;
-							[side player, "HQ"] commandChat dzn_tsc_CCP_STR_SuccessSet;
-							publicVariable "CCP_showSuccessSet";
+		if !(CCP_AllowedLocation isEqualTo []) then {
+			["dzn_tsf_CCP_BriefingHelper", "onEachFrame", {
+				if (count CCP_MarkersLastChecked == count allMapMarkers) exitWith {};
+				private _markersToCheck = allMapMarkers - CCP_MarkersLastChecked;
+				CCP_MarkersLastChecked = allMapMarkers;
+				
+				{
+					if (toLower(markerText _x) == "ccp") then {
+						if (CCP_Placed && markerText CCP_Marker != "") then {						
+							if (CCP_Marker != _x) then { 
+								[side player, "HQ"] commandChat dzn_tsf_CCP_STR_AlreadySet;
+								publicVariable "CCP_showAlreadySet";
+								deleteMarker _x;
+							};
 						} else {
-							[side player, "HQ"] commandChat dzn_tsf_CCP_STR_NotAllowedText;
-							publicVariable "CCP_showNotAllowedText";							
-							deleteMarker _x;
+							if ([getMarkerPos _x, CCP_AllowedLocation] call dzn_fnc_isInLocation) then {
+								CCP_Placed = true;
+								CCP_Marker = _x;
+								[side player, "HQ"] commandChat dzn_tsc_CCP_STR_SuccessSet;
+								publicVariable "CCP_showSuccessSet";
+							} else {
+								[side player, "HQ"] commandChat dzn_tsf_CCP_STR_NotAllowedText;
+								publicVariable "CCP_showNotAllowedText";							
+								deleteMarker _x;
+							};
 						};
 					};
-				};
-			} forEach _markersToCheck;
-		}] call BIS_fnc_addStackedEventHandler;
+				} forEach _markersToCheck;
+			}] call BIS_fnc_addStackedEventHandler;
+		};
 		
 		[] spawn { 
 			waitUntil { time > 1 };
