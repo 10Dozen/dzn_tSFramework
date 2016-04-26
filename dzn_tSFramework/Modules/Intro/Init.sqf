@@ -1,5 +1,6 @@
 
 if (hasInterface) then {
+	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Intro\Settings.sqf";
 	[] spawn {
 		waitUntil { time > tsf_intro_showTime };
 		[
