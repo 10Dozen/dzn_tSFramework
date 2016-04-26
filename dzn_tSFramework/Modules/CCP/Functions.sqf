@@ -93,6 +93,7 @@ dzn_fnc_tsf_CCP_createCCP = {
 				// Spent required time at CCP
 				if (dzn_tsf_CCP_TimeSpentAtCCP >= dzn_tsf_CCP_HealTime) then {
 					[player,player] call ace_medical_fnc_treatmentAdvanced_fullHealLocal;
+					player setDamage 0;
 					player allowDamage true;
 				};
 			} else {
