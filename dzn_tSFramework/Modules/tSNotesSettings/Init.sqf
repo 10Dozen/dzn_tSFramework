@@ -9,7 +9,7 @@ if (hasInterface) then {
 	
 	#define	ADD_NOTES	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSNotesSettings\NotesSettings.sqf"
 	
-	waitUntil { !isNull findDisplay 53 };
+	waitUntil { !isNull findDisplay 52 || getClientState == "BRIEFING SHOWN" || time > 0 };
 	ADD_NOTES;
 
 	// If not added accidentally, re-add
