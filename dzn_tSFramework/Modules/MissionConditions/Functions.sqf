@@ -1,6 +1,6 @@
 dzn_fnc_missionConditions_prepareConditions = {
 	if !(typename PlayersBaseTrigger == "STRING") then { 
-		BaseLoc = [baseTrg, false] call dzn_fnc_convertTriggerToLocation;
+		BaseLoc = [PlayersBaseTrigger, false] call dzn_fnc_convertTriggerToLocation;
 		fnc_CheckPlayersReturned = {
 			private _result = true;
 			{ 
