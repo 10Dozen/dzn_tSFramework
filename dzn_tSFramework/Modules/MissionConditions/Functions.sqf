@@ -13,7 +13,7 @@ dzn_fnc_missionConditions_prepareConditions = {
 		};
 	};
 		
-	for "_i" from 0 to 20 do {
+	for "_i" from 1 to 20 do {
 		if !(isNil (format ["MissionCondition%1", _i])) then {
 			(compile format ["MissionCondition%1", _i]) spawn {
 				private _ending = _this select 0;
