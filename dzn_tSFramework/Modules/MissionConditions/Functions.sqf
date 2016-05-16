@@ -39,7 +39,7 @@ dzn_fnc_missionConditions_prepareConditions = {
 };
 
 
-dzn_fnc_missionConditions_startClienListner = {
+dzn_fnc_missionConditions_startClienListener = {
 	waitUntil {sleep 1; !isNil "MissionFinished"};
 	[MissionFinished, true, 2] call BIS_fnc_endMission;
 };
