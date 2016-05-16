@@ -1,5 +1,5 @@
 // **************************
-// 	DZN TS FRAMEWORK v0.4
+// 	DZN TS FRAMEWORK v0.6
 //
 //	Initialized when:
 //	{ }
