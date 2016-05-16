@@ -6,9 +6,14 @@
 PlayersBaseTrigger = baseTrg;
 
 /*
+ * Default sleep interval between Mission Conditions checks (seconds)
+*/
+tSF_MissionCondition_DefaultCheckTimer = 15;
+
+/*
  * List of mission Ends and Conditions
- * In format MissionCondition%1 = [ %EndingClassname(String), %Condition(String) ];
+ * In format MissionCondition%1 = [ %EndingClassname(String), %Condition(String), %TimerInterval(Number,seconds) ];
 */ 
 
 MissionCondition1 = [ "WIN", "{ alive player }" ];
-MissionCondition2 = [ "LOSE", "{ !alive player }" ];
+MissionCondition2 = [ "LOSE", "{ !alive player }", 30 ];
