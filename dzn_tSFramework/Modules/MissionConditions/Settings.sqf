@@ -1,6 +1,7 @@
 /*
  * Name of trigger to represent players base;
  * if set, it's possible to use   fnc_CheckPlayersReturned   function to check if all player returned to base
+ * Set - "" to disable
 */
 PlayersBaseTrigger = baseTrg;
 
