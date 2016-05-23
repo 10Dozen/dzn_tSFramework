@@ -4,7 +4,7 @@ dzn_fnc_missionConditions_prepareConditions = {
 		fnc_CheckPlayersReturned = {
 			private _result = true;
 			{ 
-				if (alive _x && !(_x getVariable [“ACE_isUnconscious”, false])) then {
+				if (alive _x && !(_x getVariable ["ACE_isUnconscious", false])) then {
 					if !((getPosATL _x) in BaseLoc) exitWith { _result = false; };
 				};
 			} forEach (call BIS_fnc_listPlayers);
@@ -15,7 +15,7 @@ dzn_fnc_missionConditions_prepareConditions = {
 		
 	for "_i" from 1 to 20 do {
 		if !(isNil (format ["MissionCondition%1", _i])) then {
-			(compile format ["MissionCondition%1", _i]) spawn {
+			(call compile format ["MissionCondition%1", _i]) spawn {
 				private _ending = _this select 0;
 				private _condition = _this select 1;
 				private _sleepTime = if (isNil {_this select 2}) then {
