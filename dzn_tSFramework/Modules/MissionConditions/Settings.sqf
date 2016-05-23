@@ -15,5 +15,5 @@ tSF_MissionCondition_DefaultCheckTimer = 15;
  * In format MissionCondition%1 = [ %EndingClassname(String), %Condition(String), %TimerInterval(Number,seconds, optional) ];
 */ 
 
-MissionCondition1 = [ "WIN", "!isNil 'BETA'" ];
-MissionCondition2 = [ "FAIL", "!isNil 'CHARLIE'", 30 ];
+MissionCondition1 = [ "WIN", "alive player" ];
+MissionCondition2 = [ "FAIL", "!alive player'", 30 ];
