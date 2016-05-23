@@ -1,0 +1,32 @@
+// dzn Common Functions (remove if not using it)
+#include "dzn_commonFunctions\dzn_commonFunctions.hpp"
+#include "dzn_commonFunctions\ui\baseDialogs.hpp"
+#include "dzn_commonFunctions\ui\copyPasteDialog.hpp"
+#include "dzn_commonFunctions\ui\dynamicDialog.hpp"
+
+// Debriefings
+#include "dzn_tSFramework\Modules\MissionConditions\Endings.hpp"
+
+enableDebugConsole = 1;
+disabledAI = 1;
+respawnDelay = 9999999; 
+
+class Params
+{   
+    class par_daytime
+    {
+        title = "Время суток";
+        values[] = {15,22};
+        default = 15;
+        texts[] = {"День","Ночь"};
+    };  
+    class dzn_brv_enabled
+    {
+        title = "tS AAR Logging";
+        values[] = {0,1};
+        texts[] = {"Disabled","Enabled"};
+        default = 0;
+    };
+};
+
+

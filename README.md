@@ -1,5 +1,5 @@
 # dzn_tSFramework
-##### Version: 0.5
+##### Version: 0.6
 Tactical Shift Framework
 
 #### Content
@@ -14,6 +14,9 @@ Casualties Collection Point module allows to set CCP during the briefing. At CCP
 
 ##### Intro Text
 Shows formated intro text for each player.
+
+##### Mission Conditions
+Conditions that lead mission to Debriefing screen. CfgDebriefing classes helper.
 
 ##### Mission Defaults
 Some default mission pre-sets (like player score).
