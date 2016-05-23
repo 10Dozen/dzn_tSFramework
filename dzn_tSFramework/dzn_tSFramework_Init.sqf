@@ -13,12 +13,12 @@
 //  MODULES
 // **************************
 tSF_module_MissionDefaults = true;
-tSF_module_MissionConditions = false;
+tSF_module_MissionConditions = true;
 
 tSF_module_IntroText = true;
-tSF_module_Briefing = false;
-tSF_module_tSNotes = false;
-tSF_module_tSNotesSettings = false;
+tSF_module_Briefing = true;
+tSF_module_tSNotes = true;
+tSF_module_tSNotesSettings = true;
 
 tSF_module_ABMExpand = true;
 tSF_module_CCP = true;
