@@ -12,4 +12,4 @@ class CfgDebriefing
         subtitle = "Провал!";
         description = "Задача не была выполнена";
     };
-};`
+};
