@@ -1,8 +1,8 @@
 /*
  * Name of trigger to represent players base;
- * if set, it's possible to use :
+ * If set, it's possible to use :
  *    call fnc_CheckPlayersReturned    - function to check if all player returned to base
- *    BaseLoc                          - location created at PlayersBaseTrigger position
+ *    BaseLoc                          - location created at PlayersBaseTrigger position (can be used in (getPos _unit) in BaseLoc
  * Set - PlayersBaseTrigger = "" to disable
 */
 PlayersBaseTrigger = baseTrg;
@@ -17,5 +17,5 @@ tSF_MissionCondition_DefaultCheckTimer = 15;
  * In format MissionCondition%1 = [ %EndingClassname(String), %Condition(String), %TimerInterval(Number,seconds, optional) ];
 */ 
 
-MissionCondition1 = [ "WIN", "alive player" ];
+MissionCondition1 = [ "WIN", "false" ];
 MissionCondition2 = [ "FAIL", "!alive player'", 30 ];
