@@ -31,6 +31,9 @@ dzn_fnc_missionConditions_prepareConditions = {
 				
 				MissionFinished = _ending;
 				publicVariable "MissionFinished";
+				
+				sleep 20;
+				[MissionFinished, true, 2] call BIS_fnc_endMission;
 			};
 		};
 	};
