@@ -1,8 +1,11 @@
 # dzn_tSFramework
-##### Version: 0.6
+##### Version: 0.7
 Tactical Shift Framework
 
 #### Content
+##### 3DEN Tool
+Editor tool that allows to create scenarios quick and accurate.
+
 ##### ABM Expand
 RHS and CUP vehicles compatibility with Action Button Mod.
 
