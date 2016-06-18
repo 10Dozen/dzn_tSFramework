@@ -1,5 +1,5 @@
 # dzn_tSFramework
-##### Version: 0.7
+##### Version: 0.8
 Tactical Shift Framework
 
 #### Content
@@ -22,7 +22,7 @@ Shows formated intro text for each player.
 Conditions that lead mission to Debriefing screen. CfgDebriefing classes helper.
 
 ##### Mission Defaults
-Some default mission pre-sets (like player score).
+Some default mission pre-sets (like player score). Freeze time on mission start option.
 
 ##### tS Notes
 Game and TTP notes for each players

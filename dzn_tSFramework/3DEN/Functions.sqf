@@ -44,6 +44,8 @@ dzn_fnc_tsf_3DEN_ShowTool = {
 	private _optionList = [];
 	{ _optionList pushBack (_x select 0); } forEach _options;
 	
+	
+	call dzn_fnc_tsf_3DEN_ResetVariables;
 	private _toolResult = [
 		"tSF Tool"
 		, [["Select action", _optionList]]
@@ -163,8 +165,9 @@ dzn_fnc_tsf_3DEN_AddDynaiCore = {
 }; 
 
 dzn_fnc_tsf_3DEN_AddDynaiZone = {	
-	if (isNull dzn_tsf_3DEN_DynaiCore) then { call dzn_fnc_tsf_3DEN_AddDynaiCore; };
+	if (isNull dzn_tsf_3DEN_DynaiCore) then { call dzn_fnc_tsf_3DEN_AddDynaiCore; };	
 	
+	disableSerialization;
 	private _name = ["Add Dynai Zone", ["Zone name", []]] call dzn_fnc_ShowChooseDialog;
 	if (count _name == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
 	
@@ -317,6 +320,7 @@ dzn_fnc_tsf_3DEN_AddGearLogic = {
 		["tSF Tools - Gear: Kit logic - No units selected", 1, 15, true] call BIS_fnc_3DENNotification;
 	};
 	
+	disableSerialization;
 	private _result = [
 		"Set Kit logic"
 		,[
@@ -347,6 +351,7 @@ dzn_fnc_tsf_3DEN_AddGearLogic = {
 };
 
 dzn_fnc_tsf_3DEN_ConfigureScenario = {
+	disableSerialization;
 	private _result = [
 		"Scenario Settings"
 		,[
@@ -393,6 +398,58 @@ dzn_fnc_tsf_3DEN_ConfigureScenario = {
 	["tSF Tools - Scenario was configured", 0, 15, true] call BIS_fnc_3DENNotification;
 };
 
+
+
+
+dzn_fnc_tsf_3DEN_ResetVariables = {
+	{
+		call compile format [
+			"if (get3DENEntityID %1 == -1) then { %1 = objNull; };"
+			, _x
+		];
+	} forEach [
+		"dzn_tsf_3DEN_DynaiCore"
+		, "dzn_tsf_3DEN_Zeus"
+		, "dzn_tsf_3DEN_BaseTrg"
+		, "dzn_tsf_3DEN_CCP"
+		
+		, "dzn_tsf_3DEN_UnitsLayer"
+		, "dzn_tsf_3DEN_tSFLayer"
+		, "dzn_tsf_3DEN_GearLayer"
+		, "dzn_tsf_3DEN_DynaiLayer"
+	];
+	
+	{
+		private _entity = _x select 0;
+		
+		if !(isNil {_entity}) then {
+			// Search for DynAI_core
+			if (	
+				get3DENEntityID _entity > -1 
+				&& (_entity get3DENAttribute "name") select 0 == "dzn_dynai_core" 
+			) then {
+				dzn_tsf_3DEN_DynaiCore = _entity;
+			};
+			
+			// Search for BaseTrg
+			if ( 
+				get3DENEntityID _entity > -1 
+				&& (_entity get3DENAttribute "name") select 0 == "baseTrg" 
+			) then {
+				dzn_tsf_3DEN_BaseTrg = _entity;
+			};
+			
+			// Search for CCP
+			if ( 
+				get3DENEntityID _entity > -1 
+				&& (_entity get3DENAttribute "name") select 0 == "tsf_CCP" 
+			) then {
+				dzn_tsf_3DEN_CCP = _entity;
+			};
+		};
+	} forEach all3DENEntities;
+
+};
 
 /*
  *	Dialog Function
