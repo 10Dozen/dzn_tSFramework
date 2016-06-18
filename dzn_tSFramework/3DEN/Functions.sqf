@@ -1,8 +1,6 @@
 dzn_tsf_3DEN_onKeyPress = {
-	if (dzn_tsf_3DEN_keyIsDown) exitWith {};	
-
-	#define SET_KEYDOWN	dzn_tsf_3DEN_keyIsDown = true
-	#define SET_HANDLED	_handled = true
+	if (dzn_tsf_3DEN_keyIsDown) exitWith {};
+	
 	private _key = _this select 1; 
 	private _ctrl = _this select 3; 
 	private _handled = false;
