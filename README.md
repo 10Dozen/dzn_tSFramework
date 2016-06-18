@@ -4,7 +4,7 @@ Tactical Shift Framework
 
 #### Content
 ##### 3DEN Tool
-Editor tool that allows to create scenarios quick and accurate. Check [wiki](https://github.com/10Dozen/dzn_tSFramework/wiki/3DEN-Tools) for details.
+Editor tool that allows to create scenarios quick and accurate. Check [3DEN Tools Wiki](https://github.com/10Dozen/dzn_tSFramework/wiki/3DEN-Tools) for details.
 
 ##### ABM Expand
 RHS and CUP vehicles compatibility with Action Button Mod.
