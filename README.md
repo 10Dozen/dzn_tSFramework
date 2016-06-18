@@ -1,5 +1,5 @@
 # dzn_tSFramework
-##### Version: 0.7
+##### Version: 0.8
 Tactical Shift Framework
 
 #### Content
