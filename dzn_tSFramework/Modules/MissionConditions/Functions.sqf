@@ -24,6 +24,8 @@ dzn_fnc_missionConditions_prepareConditions = {
 					_this select 2
 				};
 			
+				tSF_Ends pushBack _ending;
+			
 				waitUntil {
 					sleep _sleepTime;
 					call compile _condition
@@ -45,3 +47,48 @@ dzn_fnc_missionConditions_startClienListener = {
 	waitUntil {sleep 1; !isNil "MissionFinished"};
 	[MissionFinished, true, 2] call BIS_fnc_endMission;
 };
+
+dzn_fnc_missionConditions_checkIsAdmin = {
+	(serverCommandAvailable "#logout")
+};
+
+dzn_fnc_missionConditions_addMissionEndsControls = {
+	waitUntil { time > 5 };
+	
+	// Mission Notes
+	private _topic = "<font color='#12C4FF' size='14'>Завершение миссии</font>"
+	{
+		_topic = format [
+			"%1<br /><font color='#A0DB65'><execute expression='""%2"" call dzn_fnc_missionConditions_callEndings;'>%2</execute></font>"
+			, _topic
+			, _x
+		];
+		
+	} forEach tSF_Ends;
+	player createDiarySubject ["tSF End Mission","tSF End Mission"];
+	player createDiaryRecord ["tSF End Mission", _topic];
+};
+
+dzn_fnc_missionConditions_callEndings = {
+	params["_ending"];
+	if !(call dzn_fnc_missionConditions_checkIsAdmin) exitWith { hint "You are not an admin!"; };
+	
+	private _Result = false;
+	if !(isNil "dzn_fnc_ShowBasicDialog") then {
+		_Result = [
+			[format ["Finish mission with ending ""%1?""", _ending]]
+			, ["End", [1, .37, .17, .5]]
+			, ["Cancel"]
+		] call dzn_fnc_ShowBasicDialog;
+	} else {
+		_Result = true;
+	};
+	
+	if !(_Result) exitWith {};
+	
+	MissionFinished = _ending;
+	publicVariable "MissionFinished";
+};
+
+// Shortcut for dzn_fnc_missionConditions_callEndings
+tSF_End = dzn_fnc_missionConditions_callEndings;
