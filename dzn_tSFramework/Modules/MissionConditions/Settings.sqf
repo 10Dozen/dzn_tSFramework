@@ -10,7 +10,12 @@ PlayersBaseTrigger = baseTrg;
 /*
  * Default sleep interval between Mission Conditions checks (seconds)
 */
-tSF_MissionCondition_DefaultCheckTimer = 15;
+tSF_MissionCondition_DefaultCheckTimer 			= 15;
+
+/*
+ *  Allows admin's ability to select and call mission end
+ */
+tSF_MissionCondition_EnableMissionEndsControl		= true;
 
 /*
  * List of mission Ends and Conditions (up to 20 conditions allowed)
