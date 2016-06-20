@@ -1,5 +1,5 @@
 # dzn_tSFramework
-##### Version: 0.8
+##### Version: 0.9
 Tactical Shift Framework
 
 #### Content
@@ -20,6 +20,7 @@ Shows formated intro text for each player.
 
 ##### Mission Conditions
 Conditions that lead mission to Debriefing screen. CfgDebriefing classes helper.
+<br />Admin-enabled ability to finish mission by one of the endings.
 
 ##### Mission Defaults
 Some default mission pre-sets (like player score). Freeze time on mission start option.
