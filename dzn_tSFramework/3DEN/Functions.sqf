@@ -420,27 +420,24 @@ dzn_fnc_tsf_3DEN_ResetVariables = {
 	{
 		private _entity = _x select 0;
 		
-		if !(isNil {_entity}) then {
+		if !(isNil {_entity} && get3DENEntityID _entity == -1) then {
 			// Search for DynAI_core
-			if (	
-				get3DENEntityID _entity > -1 
-				&& (_entity get3DENAttribute "name") select 0 == "dzn_dynai_core" 
+			if (
+				(_entity get3DENAttribute "name") select 0 == "dzn_dynai_core" 
 			) then {
 				dzn_tsf_3DEN_DynaiCore = _entity;
 			};
 			
 			// Search for BaseTrg
 			if ( 
-				get3DENEntityID _entity > -1 
-				&& (_entity get3DENAttribute "name") select 0 == "baseTrg" 
+				(_entity get3DENAttribute "name") select 0 == "baseTrg" 
 			) then {
 				dzn_tsf_3DEN_BaseTrg = _entity;
 			};
 			
 			// Search for CCP
 			if ( 
-				get3DENEntityID _entity > -1 
-				&& (_entity get3DENAttribute "name") select 0 == "tsf_CCP" 
+				(_entity get3DENAttribute "name") select 0 == "tsf_CCP" 
 			) then {
 				dzn_tsf_3DEN_CCP = _entity;
 			};
