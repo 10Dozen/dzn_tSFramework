@@ -6,7 +6,7 @@ if (hasInterface) then {
 	
 	if (tSF_MissionCondition_EnableMissionEndsControl) then {
 		[] spawn {
-			waitUntil { serverCommandAvailable "#logout" };
+			waitUntil { call dzn_fnc_missionConditions_checkIsAdmin };
 			call dzn_fnc_missionConditions_addMissionEndsControls;
 		};
 	};
