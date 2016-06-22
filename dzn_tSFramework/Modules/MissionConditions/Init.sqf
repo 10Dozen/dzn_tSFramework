@@ -7,7 +7,7 @@ if (hasInterface) then {
 	if (tSF_MissionCondition_EnableMissionEndsControl) then {
 		[] spawn {
 			waitUntil { call dzn_fnc_missionConditions_checkIsAdmin };
-			call dzn_fnc_missionConditions_addMissionEndsControls;
+			[] spawn dzn_fnc_missionConditions_addMissionEndsControls;
 		};
 	};
 };
