@@ -49,14 +49,14 @@ dzn_fnc_missionConditions_startClienListener = {
 };
 
 dzn_fnc_missionConditions_checkIsAdmin = {
-	(serverCommandAvailable "#logout")
+	(serverCommandAvailable "#logout") || !(isMultiplayer)
 };
 
 dzn_fnc_missionConditions_addMissionEndsControls = {
 	waitUntil { time > 5 };
 	
 	// Mission Notes
-	private _topic = "<font color='#12C4FF' size='14'>Завершение миссии</font>"
+	private _topic = "<font color='#12C4FF' size='14'>Завершение миссии</font>";
 	{
 		_topic = format [
 			"%1<br /><font color='#A0DB65'><execute expression='""%2"" call dzn_fnc_missionConditions_callEndings;'>%2</execute></font>"
@@ -76,7 +76,7 @@ dzn_fnc_missionConditions_callEndings = {
 	private _Result = false;
 	if !(isNil "dzn_fnc_ShowBasicDialog") then {
 		_Result = [
-			[format ["Finish mission with ending ""%1?""", _ending]]
+			[format ["Do you want to finish the mission with ending <t color='#A0DB65'>""%1""</t>?", _ending]]
 			, ["End", [1, .37, .17, .5]]
 			, ["Cancel"]
 		] call dzn_fnc_ShowBasicDialog;
@@ -90,5 +90,5 @@ dzn_fnc_missionConditions_callEndings = {
 	publicVariable "MissionFinished";
 };
 
-// Shortcut for dzn_fnc_missionConditions_callEndings
+// Shortcut for dzn_fnc_missionConditions_callEndings; should be Spawned
 tSF_End = dzn_fnc_missionConditions_callEndings;
