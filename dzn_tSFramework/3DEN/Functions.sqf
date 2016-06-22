@@ -420,7 +420,7 @@ dzn_fnc_tsf_3DEN_ResetVariables = {
 	{
 		private _entity = _x select 0;
 		
-		if !(isNil {_entity} && get3DENEntityID _entity == -1) then {
+		if (!(isNil {_entity}) && {get3DENEntityID _entity > -1}) then {
 			// Search for DynAI_core
 			if (
 				(_entity get3DENAttribute "name") select 0 == "dzn_dynai_core" 
