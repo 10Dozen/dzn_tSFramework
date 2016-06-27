@@ -125,7 +125,7 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 				[format ["1'%1 Командир отделения", dzn_tsf_3DEN_SquadLastNumber]	,"Sergeant"]
 				,["Наводчик-оператор"					,"Corporal"]
 				,["Механик-водитель"					,"Private"]
-				,["RED - Пулеметчик"					,"Private"]
+				,["Пулеметчик"					,"Private"]
 				,["Стрелок-Гранатометчик"				,"Private"]
 				,["Стрелок, помощник гранатометчика "	,"Private"]				
 				,["BLUE - Старший стрелок"				,"Corporal"]
