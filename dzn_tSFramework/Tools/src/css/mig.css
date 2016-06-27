@@ -1,0 +1,154 @@
+body {	
+	margin: 0px;
+	padding: 0px;
+	font-family: helvetica,arial,sans-serif;
+	background-color: #ececec;
+}
+
+/* ****************
+	Landing page 
+**************** */
+#header {
+	background-color: #252525;
+	color: white;
+}
+
+#header-title {
+	font-size: 24px;	
+	padding: 2px 0px 0px 40px;
+}
+
+#header-title span {
+	background-color: #c52334;
+	padding: 0px 4px;
+	border-radius: 0px 8px 8px 8px;
+	font-weight: bold;
+}
+
+#header-status {
+	font-size: 18px;
+	background-color: #5a5a5a;
+	padding: 6px 0px 3px 40px;
+	
+}
+
+
+/* ****************
+	Form 
+**************** */
+#items-form {
+	max-width: 512px;
+}
+
+.select-inline {
+	width: 100%;
+	display: inline-block;
+}
+
+.select-inline select {
+	min-width: 91%;
+	max-width: 91%;
+	height: 32px;
+	
+}
+
+.select-full-line {
+	width: 100%;
+	display: inline-block;
+}
+
+.select-full-line select {
+	min-width: 100%;
+	max-width: 100%;
+	height: 32px;
+	
+}
+
+.btn-roll {
+	display: inline-block;	
+	color: gray;
+	background-color: #bbb;		
+	padding: 3px 10px 8px 10px;
+}
+.btn-roll:hover {
+	background-color: #fff;
+	cursor:pointer;
+}
+
+
+
+
+
+
+.inputs-btn {
+	float: right;
+	width: 64px;
+	height: 24px;
+}
+
+.inputs-number {
+	color: gray;
+	background-color: #bbb;	
+	margin: 5px 0px 0px 0px;
+	padding: 5px 10px 8px 10px;
+	display: inline-block;
+}
+
+.inputs-remove {
+	float: right;
+	color: gray;
+	background-color: #bbb;	
+	margin-top: 5px;
+	padding: 5px 10px 5px 10px;
+	display: inline-block;
+}
+
+.inputs-remove:hover {
+	background-color: #fff;
+	cursor:pointer;
+}
+
+
+.input-desc {
+	width: 102%;
+}
+
+.dl-1 {
+	display: inline-block;
+	width: 150px;	
+	font-size: 15px;
+	font-size: 12px;
+	color: gray;
+}
+
+.dl-2 {
+	display: inline-block;
+	width: 100%;
+}
+
+.dl-2 input {
+	width: 100%;
+	height: 20px;
+	padding: 3px 6px;
+	font-family: monospace;	
+}
+
+.dl-3 {
+	display: block;
+	width: 500px;
+	
+	
+	font-size: 12px;
+	color: #333;
+}
+
+.dl-3 textarea {
+	width: 475px;
+	padding: 3px 6px;
+	font-family: monospace;
+}
+
+#items-form ul li {
+	padding: 3px 0px;
+	list-style-type: none;
+}

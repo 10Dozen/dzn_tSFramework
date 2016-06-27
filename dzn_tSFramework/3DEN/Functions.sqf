@@ -27,8 +27,7 @@ dzn_fnc_tsf_3DEN_ShowTool = {
 	
 	private _resolveOption = {};
 	private _options = [
-		["Units: Add NATO Squad"		, { "NATO" call dzn_fnc_tsf_3DEN_AddSquad }]
-		,["Units: Add RuAF Squad"		, { "RUAF" call dzn_fnc_tsf_3DEN_AddSquad }]
+		["Units: Add Playable Squad"		, { [] spawn dzn_fnc_tsf_3DEN_AddSquad }]	
 		,["DynAI: Add Zone"			, { [] spawn { call dzn_fnc_tsf_3DEN_AddDynaiZone } }]
 		,["DynAI: Add CQB Behavior"		, { call dzn_fnc_tsf_3DEN_AddCQBLogic }]
 		,["DynAI: Add Response Behavior"	, { call dzn_fnc_tsf_3DEN_AddGroupResponseLogic }]
@@ -71,38 +70,81 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 	 * @Typa call dzn_fnc_tsf_3DEN_AddSquad
 	 * Type = "NATO", "RUAF"
 	 */
-	collect3DENHistory {
+	
 	
 	dzn_tsf_3DEN_SquadLastNumber = dzn_tsf_3DEN_SquadLastNumber + 1;
 	private _squadSettings = [];
 	private _infantryClass = "";
 	
-	if (_this == "NATO") then {
-		_squadSettings = [
-			[format ["1'%1 Squad Leader", dzn_tsf_3DEN_SquadLastNumber],"Sergeant"]
-			,["RED - FTL"		,"Corporal"]
-			,["Automatic Rifleman"	,"Private"]
-			,["Grenadier"		,"Private"]
-			,["Rifleman"		,"Private"]
-			,["BLUE - FTL"		,"Corporal"]
-			,["Automatic Rifleman"	,"Private"]
-			,["Grenadier"		,"Private"]
-			,["Rifleman"		,"Private"]
-		];
-		_infantryClass = "B_Soldier_F";
-	} else {
-		_squadSettings = [
-			[format ["1'%1 Командир отделения", dzn_tsf_3DEN_SquadLastNumber]	,"Sergeant"]
-			,["Наводчик-оператор"					,"Corporal"]
-			,["Механик-водитель"					,"Private"]
-			,["RED - Старший стрелок"				,"Corporal"]
-			,["Стрелок (ГП) "						,"Private"]
-			,["Стрелок"							,"Private"]
-			,["BLUE - Пулеметчик"					,"Private"]
-			,["Стрелок-Гранатометчик"				,"Private"]
-			,["Стрелок, помощник гранатометчика "		,"Private"]
-		];
-		_infantryClass = "B_Soldier_F";
+	disableSerialization;
+	// Return [ 0, 1 ] or something like this
+	private _squadType = [
+		"Add Squad"
+		, [
+			["Side", ["BLUFOR","OPFOR","INDEPENDENT","CIVILIANS"]]
+			,["Doctrine", ["NATO 1-4-4", "UK 4-4", "Ru MSO 1-2-3-3", "Ru VV 4-3"]]
+		]
+	] call dzn_fnc_ShowChooseDialog;
+	if (count _squadType == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	
+	_infantryClass = switch (_squadType select 0) do {
+		case 0: { "B_Soldier_F" };
+		case 1: { "O_Soldier_F" };
+		case 2: { "I_soldier_F" };
+		case 3: { "C_man_1" };
+	};
+	_squadSettings = switch (_squadType select 1) do {
+		/* NATO 1-4-4 */ 	case 0: {
+			[
+				[format ["1'%1 Squad Leader", dzn_tsf_3DEN_SquadLastNumber],"Sergeant"]
+				,["RED - FTL"		,"Corporal"]
+				,["Automatic Rifleman"	,"Private"]
+				,["Grenadier"		,"Private"]
+				,["Rifleman"		,"Private"]
+				,["BLUE - FTL"		,"Corporal"]
+				,["Automatic Rifleman"	,"Private"]
+				,["Grenadier"		,"Private"]
+				,["Rifleman"		,"Private"]
+			]		
+		};
+		/* UK 4-4*/ 		case 1: {
+			[
+				[format ["1'%1 Section Leader", dzn_tsf_3DEN_SquadLastNumber],"Sergeant"]
+				,["Automatic Rifleman"	,"Private"]
+				,["Grenadier"			,"Private"]				
+				,["Rifleman"			,"Private"]				
+				,["BLUE - 2IC"			,"Corporal"]
+				,["Automatic Rifleman"	,"Private"]
+				,["Grenadier"			,"Private"]				
+				,["Rifleman"			,"Private"]
+			]	
+		
+		};
+		/* RuMSO 1-2-3-3 */	case 2: {
+			[
+				[format ["1'%1 Командир отделения", dzn_tsf_3DEN_SquadLastNumber]	,"Sergeant"]
+				,["Наводчик-оператор"					,"Corporal"]
+				,["Механик-водитель"					,"Private"]
+				,["RED - Пулеметчик"					,"Private"]
+				,["Стрелок-Гранатометчик"				,"Private"]
+				,["Стрелок, помощник гранатометчика "	,"Private"]				
+				,["BLUE - Старший стрелок"				,"Corporal"]
+				,["Стрелок (ГП) "						,"Private"]
+				,["Стрелок"						,"Private"]
+				
+			]
+		};
+		/* Ru VV 4-3 */ 	case 3: {
+			[
+				[format ["1'%1 Командир отделения", dzn_tsf_3DEN_SquadLastNumber]	,"Sergeant"]
+				,["Пулеметчик"							,"Private"]
+				,["Стрелок-Гранатометчик"				,"Private"]
+				,["Стрелок, помощник гранатометчика "	,"Private"]				
+				,["BLUE - Старший стрелок"				,"Corporal"]
+				,["Стрелок-пулеметчик"					,"Private"]
+				,["Снайпер"								,"Private"]
+			]
+		};
 	};
 	
 	private _squadRelativePoses = [
@@ -111,19 +153,21 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 		, [2,-5,0]	, [4,-5,0]	, [6,-5,0]	, [8,-5,0]
 	];
 	
+	collect3DENHistory {
+	
 	if (typename dzn_tsf_3DEN_UnitsLayer != "SCALAR") then {
 		dzn_tsf_3DEN_UnitsLayer = -1 add3DENLayer "Playable Units";
 	};
 	
 	private _basicPos = screenToWorld [0.5,0.5];
 	
-	private _unit = create3DENEntity ["Object", "B_Soldier_F",_basicPos];	
+	private _unit = create3DENEntity ["Object", _infantryClass, _basicPos];	
 	private _grp = group _unit;
 	
-	for "_i" from 0 to 8 do {	
+	for "_i" from 0 to (count(_squadSettings) - 1) do {	
 		private _unit = _grp create3DENEntity [
 			"Object"
-			, "B_Soldier_F"
+			, _infantryClass
 			, [
 				(_basicPos select 0) + ((_squadRelativePoses select _i) select 0)
 				, (_basicPos select 1) + ((_squadRelativePoses select _i) select 1)		
@@ -420,27 +464,24 @@ dzn_fnc_tsf_3DEN_ResetVariables = {
 	{
 		private _entity = _x select 0;
 		
-		if !(isNil {_entity}) then {
+		if (!(isNil {_entity}) && {get3DENEntityID _entity > -1}) then {
 			// Search for DynAI_core
-			if (	
-				get3DENEntityID _entity > -1 
-				&& (_entity get3DENAttribute "name") select 0 == "dzn_dynai_core" 
+			if (
+				(_entity get3DENAttribute "name") select 0 == "dzn_dynai_core" 
 			) then {
 				dzn_tsf_3DEN_DynaiCore = _entity;
 			};
 			
 			// Search for BaseTrg
 			if ( 
-				get3DENEntityID _entity > -1 
-				&& (_entity get3DENAttribute "name") select 0 == "baseTrg" 
+				(_entity get3DENAttribute "name") select 0 == "baseTrg" 
 			) then {
 				dzn_tsf_3DEN_BaseTrg = _entity;
 			};
 			
 			// Search for CCP
 			if ( 
-				get3DENEntityID _entity > -1 
-				&& (_entity get3DENAttribute "name") select 0 == "tsf_CCP" 
+				(_entity get3DENAttribute "name") select 0 == "tsf_CCP" 
 			) then {
 				dzn_tsf_3DEN_CCP = _entity;
 			};
