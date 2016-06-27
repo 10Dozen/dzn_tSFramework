@@ -27,7 +27,7 @@ dzn_fnc_tsf_3DEN_ShowTool = {
 	
 	private _resolveOption = {};
 	private _options = [
-		["Units: Add Playable Squad"		, {call dzn_fnc_tsf_3DEN_AddSquad }]	
+		["Units: Add Playable Squad"		, { [] spawn dzn_fnc_tsf_3DEN_AddSquad }]	
 		,["DynAI: Add Zone"			, { [] spawn { call dzn_fnc_tsf_3DEN_AddDynaiZone } }]
 		,["DynAI: Add CQB Behavior"		, { call dzn_fnc_tsf_3DEN_AddCQBLogic }]
 		,["DynAI: Add Response Behavior"	, { call dzn_fnc_tsf_3DEN_AddGroupResponseLogic }]
@@ -70,7 +70,7 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 	 * @Typa call dzn_fnc_tsf_3DEN_AddSquad
 	 * Type = "NATO", "RUAF"
 	 */
-	collect3DENHistory {
+	
 	
 	dzn_tsf_3DEN_SquadLastNumber = dzn_tsf_3DEN_SquadLastNumber + 1;
 	private _squadSettings = [];
@@ -153,6 +153,8 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 		, [2,-5,0]	, [4,-5,0]	, [6,-5,0]	, [8,-5,0]
 	];
 	
+	collect3DENHistory {
+	
 	if (typename dzn_tsf_3DEN_UnitsLayer != "SCALAR") then {
 		dzn_tsf_3DEN_UnitsLayer = -1 add3DENLayer "Playable Units";
 	};
@@ -162,7 +164,7 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 	private _unit = create3DENEntity ["Object", _infantryClass, _basicPos];	
 	private _grp = group _unit;
 	
-	for "_i" from 0 to 8 do {	
+	for "_i" from 0 to (count(_squadSettings) - 1) do {	
 		private _unit = _grp create3DENEntity [
 			"Object"
 			, _infantryClass
