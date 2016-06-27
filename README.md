@@ -30,3 +30,6 @@ Game and TTP notes for each players
 
 ##### tS Notes Settings
 Client-side settings like View Distance and CQB Line Markers
+
+##### tSF File Sweeper
+Batch script that clears all files that are not used by Arma 3 when mission is played (html-helpers, 3den tool). Run it before mission export.
