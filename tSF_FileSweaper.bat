@@ -1,11 +1,24 @@
 Echo "tSF Sweaper Engaged"
 
-@RD /S /Q %~dp0dzn_tSFramework\3DEN
-@RD /S /Q %~dp0dzn_tSFramework\Tools
-@RD /S /Q %~dp0dzn_tSFramework\Modules\Briefing\BriefingHelper
-@RD /S /Q %~dp0dzn_tSFramework\Modules\MissionConditions\EndingsHelper
-del  /q /f  %~dp0init3DEN.sqf
-@RD /S /Q %~dp0dzn_dynai\tools
+cd %~dp0
+del  /q /f  init3DEN.sqf
+
+cd dzn_tSFramework
+@RD /S /Q 3DEN
+@RD /S /Q Tools
+
+cd Modules\Briefing
+@RD /S /Q BriefingHelper
+
+cd ..
+cd MissionConditions
+@RD /S /Q EndingsHelper
+
+cd ..
+cd ..
+cd ..
+cd dzn_dynai
+@RD /S /Q tools
 
 Echo "tSF Sweaper Finished his work. Or non-arma files were removed. Have a nice day!"
 
