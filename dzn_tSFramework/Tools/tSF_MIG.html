@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="us">
+	<head>
+		<meta charset="utf-8">
+		<title>tSF M.I.G.</title>
+		
+		<link rel="stylesheet" href="src/css/mig.css">
+		<script src="src/js/jquery.min.js"></script>
+		<script src="src/js/mig.js"></script>
+	</head>
+	<body>
+		<div id="header">
+			<div id="header-title">
+				<span>tSF</span> M.I.G.
+			</div>
+			<div id="header-status">
+				<button class="btn-roll-all">ROLL</button>
+				<!--
+				<button class="btn-clear">Clear</button>
+				-->
+			</div>
+		</div>
+		
+		<div id="items-form">
+			<ul class="fnc-item">
+				<li>
+					<div class='dl-1'>Terrain</div>					
+					<div class='select-inline'>
+						<select class='select-terrain'></select>
+						<span class='btn-roll roll-terrain'>♺</span>
+					</div>
+				</li>
+				<li>
+					<div class='dl-1'>Allied Forces</div>
+					<div class='select-inline'>
+						<select class='select-allies'></select>
+						<span class='btn-roll roll-allies'>♺</span>
+					</div>
+				</li>
+				<li>
+					<div class='dl-1'>Hostile Forces</div>
+					<div class='select-inline'>
+						<select class='select-hostiles'></select>
+						<span class='btn-roll roll-hostiles'>♺</span>
+					</div>
+				</li>
+				<hr />
+				<li>
+					<div class='dl-1'>Objectives</div>
+					<!--
+					<button class='inputs-btn'>+</button>
+					-->
+				</li>
+				<div class='inputs-list'>					
+					<!-- Objective 1 -->
+						<li>
+							<span class='inputs-number'>1</span>
+							<span class='inputs-remove roll-obj'>♺</span>
+							<span class='inputs-remove clear-obj'>✘</span>
+							<div class='select-full-line'>
+								<select class='select-objectives select-obj-1'></select>
+							</div>							
+						</li>
+						
+						<!-- Objective 2 -->
+						<li>
+							<span class='inputs-number'>2</span>
+							<span class='inputs-remove roll-obj'>♺</span>
+							<span class='inputs-remove clear-obj'>✘</span>
+							<div class='select-full-line'>
+								<select class='select-objectives select-obj-2'></select>
+							</div>							
+						</li>
+						
+						<!-- Objective 3 -->
+						<li>
+							<span class='inputs-number'>3</span>
+							<span class='inputs-remove roll-obj'>♺</span>
+							<span class='inputs-remove clear-obj'>✘</span>
+							<div class='select-full-line'>
+								<select class='select-objectives select-obj-3'></select>
+							</div>							
+						</li>
+						
+						<!-- Objective 4 -->
+						<li>
+							<span class='inputs-number'>4</span>
+							<span class='inputs-remove roll-obj'>♺</span>
+							<span class='inputs-remove clear-obj'>✘</span>
+							<div class='select-full-line'>
+								<select class='select-objectives select-obj-4'></select>
+							</div>							
+						</li>						
+				</div>
+				<hr />
+				<div>
+					<div class='dl-1'>Summary:</div>
+					
+					<div class='dl-3 summary'>
+						Terrain: Altis
+						<br /> ALlies NATO
+						<br /> Hostile RUAF
+						<br />
+						<br /> Objectives:
+						<br /> 1. Patrol
+					</div>
+				</div>
+			</ul>			
+		</div>		
+	</body>
+</html>
