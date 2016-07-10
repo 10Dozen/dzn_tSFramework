@@ -15,7 +15,7 @@ if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 			hintSilent parseText  format [
 				"<t color='#FFE240' font='PuristaLight'>Начало через %1 сек</t>%2"
 				, tSF_MissionDefaults_DisableInputTimer - _i
-				, "<br /><t color='#AAAAAA' font='PuristaLight' size='0.8'>Управление отключено, не паникуй</t>"
+				, "<br /><t color='#AAAAAA' font='PuristaLight' size='0.8'>" + tSF_MissionDefaults_SubtitleText + "</t>"
 			];		
 			sleep 1;
 		};
