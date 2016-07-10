@@ -14,7 +14,5 @@ if (hasInterface) then {
 
 if (isServer) then {
 	tSF_Ends = [];
-	[] spawn dzn_fnc_missionConditions_prepareConditions;
-	
-	publicVariable "tSF_Ends";
+	[] spawn dzn_fnc_missionConditions_prepareConditions;	
 };
