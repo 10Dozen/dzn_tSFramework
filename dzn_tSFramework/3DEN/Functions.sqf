@@ -183,6 +183,7 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 	};
 	set3DENAttributes [
 		[[_grp], "behaviour", "Safe"]
+		,[[_grp], "speedMode", "Limited"]
 	];
 	
 	delete3DENEntities [(units _grp select 0)];
