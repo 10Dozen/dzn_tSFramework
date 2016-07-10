@@ -40,6 +40,8 @@ dzn_fnc_missionConditions_prepareConditions = {
 		};
 	};
 	
+	publicVariable "tSF_Ends";
+	
 	true
 };
 
@@ -53,7 +55,7 @@ dzn_fnc_missionConditions_checkIsAdmin = {
 };
 
 dzn_fnc_missionConditions_addMissionEndsControls = {
-	waitUntil { time > 5 };
+	waitUntil { time > 5 && !isNil {tSF_Ends} };
 	
 	// Mission Notes
 	private _topic = "<font color='#12C4FF' size='14'>Завершение миссии</font>";
