@@ -6,4 +6,3 @@ tSF_MissionDefaults_SubtitleText		= "Управление отключено, н
 
 tSF_MissionDefaults_PutEarplugsOn       = true;
 tSF_MissionDefaults_PutWeaponSafe       = true;
-tSF_MissionDefaults_ReplaceFlashbangs   = true;
