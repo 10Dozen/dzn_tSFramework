@@ -26,17 +26,16 @@ if (hasInterface) then {
 
 
 	if !(tSF_Intro_ShowCurrentTime) exitWith {};
-	sleep 10;
-
+	
 	private _GetFormattedTime = {
-		private _hrs = floor (dayitme);
-		private _min = floor((dayitme - _hrs) * 60);
-		private _sec = floor(_min % 10);
-
-		( format ["%1:%2:$3", _hrs, _min, _sec] )
+		private _hrs = floor (daytime);
+		private _min = str( floor ((daytime - _hrs) * 60));
+		if (count (_min) == 1) then {
+			_min = "0" + _min;
+		};
+		
+		( format ["%1:%2", str(_hrs), _min] )
 	};
-
-	for "_i" from 0 to 5 do {
-		[ call _GetFormattedTime ] spawn BIS_fnc_infoText;
-	};
+	
+	tSF_Intro_LineText1 = format ["%1 %2", call _GetFormattedTime, tSF_Intro_LineText1];
 };
