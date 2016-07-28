@@ -2,25 +2,40 @@
 if (hasInterface) then {
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\IntroText\Settings.sqf";
 	[] spawn {
-		waitUntil { time > tsf_intro_showTime };
+		waitUntil { time > tSF_Intro_ShowTime };
 		[
 			[
 				
 				[
-					tsf_intro_lineText1
-					, tsf_intro_lineStyle1
+					tSF_Intro_LineText1
+					, tSF_Intro_LineStyle1
 				]
 				,[
-					tsf_intro_lineText2
-					, tsf_intro_lineStyle2
+					tSF_Intro_LineText2
+					, tSF_Intro_LineStyle2
 				]
 				,[
-					tsf_intro_lineText3
-					, tsf_intro_lineStyle3
+					tSF_Intro_LineText3
+					, tSF_Intro_LineStyle3
 				]
 			]
-			, tsf_intro_textPosition select 0
-			, tsf_intro_textPosition select 1
+			, tSF_Intro_TextPosition select 0
+			, tSF_Intro_TextPosition select 1
 		] spawn BIS_fnc_typeText;
 	};
+
+
+	if !(tSF_Intro_ShowCurrentTime) exitWith {};
+	
+	private _GetFormattedTime = {
+		private _hrs = floor (daytime);
+		private _min = str( floor ((daytime - _hrs) * 60));
+		if (count (_min) == 1) then {
+			_min = "0" + _min;
+		};
+		
+		( format ["%1:%2", str(_hrs), _min] )
+	};
+	
+	tSF_Intro_LineText1 = format ["%1 %2", call _GetFormattedTime, tSF_Intro_LineText1];
 };

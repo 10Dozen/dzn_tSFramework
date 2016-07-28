@@ -6,9 +6,6 @@ Tactical Shift Framework
 ##### 3DEN Tool
 Editor tool that allows to create scenarios quick and accurate. Check [3DEN Tools Wiki](https://github.com/10Dozen/dzn_tSFramework/wiki/3DEN-Tools) for details.
 
-##### ABM Expand
-RHS and CUP vehicles compatibility with Action Button Mod.
-
 ##### Briefing
 Briefing helper tool to create briefings in standard way.
 
@@ -23,7 +20,10 @@ Conditions that lead mission to Debriefing screen. CfgDebriefing classes helper.
 <br />Admin-enabled ability to finish mission by one of the endings.
 
 ##### Mission Defaults
-Some default mission pre-sets (like player score). Freeze time on mission start option.
+Some default mission pre-sets (like player score).
+- Freeze time on mission start option.
+- Weapon Safe mode on start
+- Earplugs In on start
 
 ##### tS Notes
 Game and TTP notes for each players
@@ -36,3 +36,6 @@ Batch script that clears all files that are not used by Arma 3 when mission is p
 
 ##### tSF M.I.G.
 tSF Mission Idea Generator tool gives you amazing ability to generate random scenario idea that will kick your fantasy to create a new amazing missions. Find tSF M.I.G. at dzn_tSFramework/Tools folder!
+
+##### ABM Expand (removed)
+RHS and CUP vehicles compatibility with Action Button Mod.

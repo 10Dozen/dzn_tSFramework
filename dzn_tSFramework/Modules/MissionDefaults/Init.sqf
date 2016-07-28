@@ -23,4 +23,17 @@ if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 		disableUserInput false;
 		hintSilent parseText "<t color='#FFE240' font='PuristaLight'>Удачной Игры!</t>";		
 	};
+
+	[] spawn {
+		if !(tSF_MissionDefaults_PutEarplugsOn) exitWith {};
+		waitUntil {!isNull player};
+		player call ace_hearing_fnc_putInEarplugs;
+	};
+
+	[] spawn {
+		if !(tSF_MissionDefaults_PutWeaponSafe) exitWith {};
+		waitUntil {!isNull player && time > 1};
+		[ACE_player, currentWeapon ACE_player, currentMuzzle ACE_player] call ace_safemode_fnc_lockSafety
+	};
 };
+
