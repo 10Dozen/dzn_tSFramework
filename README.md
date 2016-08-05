@@ -37,5 +37,8 @@ Batch script that clears all files that are not used by Arma 3 when mission is p
 ##### tSF M.I.G.
 tSF Mission Idea Generator tool gives you amazing ability to generate random scenario idea that will kick your fantasy to create a new amazing missions. Find tSF M.I.G. at dzn_tSFramework/Tools folder!
 
+##### dzn BRV Scripts
+dzn BRV Scripts for AAR Viewer added to repo.
+
 ##### ABM Expand (removed)
 RHS and CUP vehicles compatibility with Action Button Mod.
