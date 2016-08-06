@@ -1,5 +1,5 @@
 // **************************
-// 	DZN TS FRAMEWORK v1.0
+// 	DZN TS FRAMEWORK v1.2
 //
 //	Initialized when:
 //	{ }
@@ -22,6 +22,8 @@ tSF_module_tSNotesSettings = true;
 
 tSF_module_CCP = true;
 
+tSF_module_tSAdminTools = true;
+
 
 // **************************
 //  INIT
@@ -35,3 +37,5 @@ if (tSF_module_tSNotes) then { [] execVM "dzn_tSFramework\Modules\tSNotes\Init.s
 if (tSF_module_tSNotesSettings) then { [] execVM "dzn_tSFramework\Modules\tSNotesSettings\Init.sqf"; };
 
 if (tSF_module_CCP) then { [] execVM "dzn_tSFramework\Modules\CCP\Init.sqf"; };
+
+if (tSF_module_tSAdminTools) then { [] execVM "dzn_tSFramework\Modules\tSAdminTools\Init.sqf"; };
