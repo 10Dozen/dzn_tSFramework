@@ -16,15 +16,14 @@ dzn_fnc_missionConditions_prepareConditions = {
 	for "_i" from 1 to 20 do {
 		if !(isNil (format ["MissionCondition%1", _i])) then {
 			(call compile format ["MissionCondition%1", _i]) spawn {
-				private _ending = _this select 0;
-				private _condition = _this select 1;
-				private _sleepTime = if (isNil {_this select 2}) then {
-					tSF_MissionCondition_DefaultCheckTimer
-				} else {
-					_this select 2
-				};
+				params[
+					"_ending"
+					,"_condition"
+					,["_desc", ""]
+					,["_sleepTime", tSF_MissionCondition_DefaultCheckTimer]
+				];
 			
-				tSF_Ends pushBack _ending;
+				tSF_Ends pushBack [_ending,_desc];
 			
 				waitUntil {
 					sleep _sleepTime;
@@ -49,6 +48,16 @@ dzn_fnc_missionConditions_startClienListener = {
 	waitUntil {sleep 1; !isNil "MissionFinished"};
 	[MissionFinished, true, 2] call BIS_fnc_endMission;
 };
+
+
+
+
+
+
+
+
+
+
 
 dzn_fnc_missionConditions_checkIsAdmin = {
 	(serverCommandAvailable "#logout") || !(isMultiplayer)
