@@ -1,5 +1,5 @@
 # dzn_tSFramework
-##### Version: 1.1
+##### Version: 1.2
 Tactical Shift Framework
 
 #### Content
@@ -17,7 +17,6 @@ Shows formated intro text for each player.
 
 ##### Mission Conditions
 Conditions that lead mission to Debriefing screen. CfgDebriefing classes helper.
-<br />Admin-enabled ability to finish mission by one of the endings.
 
 ##### Mission Defaults
 Some default mission pre-sets (like player score).
@@ -30,6 +29,11 @@ Game and TTP notes for each players
 
 ##### tS Notes Settings
 Client-side settings like View Distance and CQB Line Markers
+
+##### tS Admin Tools
+Admin-enabled ability to:
+<br/>- finish mission by one of the endings.
+<br/>- assign gear kit to remote players
 
 ##### tSF File Sweeper
 Batch script that clears all files that are not used by Arma 3 when mission is played (html-helpers, 3den tool). Run it before mission export.
