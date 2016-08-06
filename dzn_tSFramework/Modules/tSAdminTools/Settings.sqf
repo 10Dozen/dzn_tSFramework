@@ -1,4 +1,4 @@
-tSF_AdminTools_TopicName = "tSF Admin Tools";
+tSF_AdminTools_TopicName = "tS Admin Tools";
 
 // List of mission ending and ability to run selected endings
 tSF_AdminTool_EnableMissionEndings = true;
