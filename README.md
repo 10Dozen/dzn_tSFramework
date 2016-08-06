@@ -32,8 +32,8 @@ Client-side settings like View Distance and CQB Line Markers
 
 ##### tS Admin Tools
 Admin-enabled ability to:
-<br/>- finish mission by one of the endings.
-<br/>- assign gear kit to remote players
+- finish mission by one of the endings.
+- assign gear kit to remote players
 
 ##### tSF File Sweeper
 Batch script that clears all files that are not used by Arma 3 when mission is played (html-helpers, 3den tool). Run it before mission export.
