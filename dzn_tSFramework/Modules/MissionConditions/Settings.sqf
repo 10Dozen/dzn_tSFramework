@@ -13,11 +13,6 @@ PlayersBaseTrigger = baseTrg;
 tSF_MissionCondition_DefaultCheckTimer 			= 15;
 
 /*
- *  Allows admin's ability to select and call mission end
- */
-tSF_MissionCondition_EnableMissionEndsControl		= true;
-
-/*
  * List of mission Ends and Conditions (up to 20 conditions allowed)
  * In format MissionCondition%1 = [ 
  * 			%EndingClassname(String)
@@ -28,4 +23,4 @@ tSF_MissionCondition_EnableMissionEndsControl		= true;
 */ 
 
 MissionCondition1 = [ "WIN", "false", "All objectives done" ];
-MissionCondition2 = [ "FAIL", "!alive player'", "All dead", 30 ];
+MissionCondition2 = [ "FAIL", "false", "All dead", 30 ];
