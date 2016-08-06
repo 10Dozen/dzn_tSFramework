@@ -1,5 +1,5 @@
 dzn_fnc_adminTools_checkIsAdmin = {
-	(serverCommandAvailable "#logout") || !(isMultiplayer)
+	(serverCommandAvailable "#logout") || !(isMultiplayer) || isServer
 };
 
 dzn_fnc_adminTools_addTopic = {	
@@ -16,21 +16,21 @@ dzn_fnc_adminTools_addMissionEndsControls = {
 	// Mission Notes
 	private _topic = format [
 		"<font color='#12C4FF' size='14'>Завершение миссии</font>%1%2<br />----"
-		, "<br /><font color='#A0DB65'><execute expression='""end1"" call dzn_fnc_adminTools_callEndings;'>Generic WIN</execute></font>"
-		, "<br /><font color='#A0DB65'><execute expression='""loser"" call dzn_fnc_adminTools_callEndings;'>Generic LOSE</execute></font>"
+		, "<br /><font color='#A0DB65'><execute expression='""end1"" spawn dzn_fnc_adminTools_callEndings;'>Generic WIN</execute></font>"
+		, "<br /><font color='#A0DB65'><execute expression='""loser"" spawn dzn_fnc_adminTools_callEndings;'>Generic LOSE</execute></font>"
 	];
 		
 	{		
 		_topic = format [
-			"%1<br /><font color='#A0DB65'><execute expression='""%2"" call dzn_fnc_adminTools_callEndings;'>%2</execute></font>%3"
+			"%1<br /><font color='#A0DB65'><execute expression='""%2"" spawn dzn_fnc_adminTools_callEndings;'>%2</execute></font>%3"
 			, _topic
 			, _x select 0
-			, if (_x select 1 != "") then { " (" + _x select 1 + ")" } else { "" }
+			, if (_x select 1 != "") then { " (" + (_x select 1) + ")" } else { "" }
 		];
 		
 	} forEach tSF_Ends;
 
-	player createDiaryRecord [tSF_AdminTools_Topic, _topic];
+	player createDiaryRecord [tSF_AdminTools_Topic, ["Mission End", _topic]];
 };
 
 dzn_fnc_adminTools_callEndings = {
@@ -72,7 +72,7 @@ dzn_fnc_adminTools_addGATControls = {
 		"<font color='#12C4FF' size='14'>Gear Assignment Table Tool</font><br />%1"
 		, "<font color='#A0DB65'><execute expression='[] spawn dzn_fnc_adminTools_showGATTool;'>Open GAT Tool</execute></font>"
 	];
-	player createDiaryRecord [tSF_AdminTools_Topic, _topic];
+	player createDiaryRecord [tSF_AdminTools_Topic, ["GAT Tool",_topic]];
 };
 
 dzn_fnc_adminTools_showGATTool = {
@@ -97,23 +97,25 @@ dzn_fnc_adminTools_showGATTool = {
 
 	// Resolve results
 	private _player = _PlayerList select (_Result select 0);
-	private _kitname = if ( (_Result select 2) == "") then {
+	private _kitname = if ( typename (_Result select 2) != "STRING") then {
 		_GATList select (_Result select 1);
 	} else {
-		_Result select 2;
+		_Result select 2;		
 	};
 
-	if (isNil {_kitname}) exitWith {
-		hint format [
-			"There is no kit named '%1'"
+	if (isNil {call compile _kitname}) exitWith {
+		hint parseText format [
+			"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
+			<br />There is no kit named '%1'"
 			, _kitname
 		];
 	};
 
 	// Send assign kit command via network
 	[_player, _kitname] remoteExec ["dzn_fnc_gear_assignKit", _player];
-	hint format [
-		"GAT Tools: Kit '%1' was assigned to %2"
+	hint parseText format [
+		"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
+		<br /> Kit '%1' was assigned to %2"
 		, _kitname
 		, _PlayerNamesList select (_Result select 0)
 	];
