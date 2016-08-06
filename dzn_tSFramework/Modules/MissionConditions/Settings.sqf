@@ -19,8 +19,13 @@ tSF_MissionCondition_EnableMissionEndsControl		= true;
 
 /*
  * List of mission Ends and Conditions (up to 20 conditions allowed)
- * In format MissionCondition%1 = [ %EndingClassname(String), %Condition(String), %TimerInterval(Number,seconds, optional) ];
+ * In format MissionCondition%1 = [ 
+ * 			%EndingClassname(String)
+ *			, %Condition(String)
+ *			, %Note/Description(String)
+ *			, %TimerInterval(Number,seconds, optional) 
+ *		];
 */ 
 
-MissionCondition1 = [ "WIN", "false" ];
-MissionCondition2 = [ "FAIL", "!alive player'", 30 ];
+MissionCondition1 = [ "WIN", "false", "All objectives done" ];
+MissionCondition2 = [ "FAIL", "!alive player'", "All dead", 30 ];
