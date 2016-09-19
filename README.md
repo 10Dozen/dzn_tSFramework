@@ -1,5 +1,5 @@
 # dzn_tSFramework
-##### Version: 1.2
+##### Version: 1.3
 Tactical Shift Framework
 
 #### Content
@@ -9,11 +9,14 @@ Editor tool that allows to create scenarios quick and accurate. Check [3DEN Tool
 ##### Briefing
 Briefing helper tool to create briefings in standard way.
 
+##### Interactives framework
+Framework to apply custom code to specific objects or classes on client/server/both. Also allows to apply code for each new instance of objects of given class.
+
 ##### CCP
 Casualties Collection Point module allows to set CCP during the briefing. At CCP players may be healed after some time (ACE3). 
 
 ##### Intro Text
-Shows formated intro text for each player.
+Shows formatted intro text for each player.
 
 ##### Mission Conditions
 Conditions that lead mission to Debriefing screen. CfgDebriefing classes helper.
@@ -43,6 +46,3 @@ tSF Mission Idea Generator tool gives you amazing ability to generate random sce
 
 ##### dzn BRV Scripts
 dzn BRV Scripts for AAR Viewer added to repo.
-
-##### ABM Expand (removed)
-RHS and CUP vehicles compatibility with Action Button Mod.
