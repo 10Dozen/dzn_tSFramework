@@ -36,7 +36,7 @@ class Params
 	};	
 	class par_dynai_amountMultiplier
 	{
-		title = "     Amount Multiplier";
+		title = "     Group Amount Multiplier";
 		values[] = {1,2,3,4,5,6,7,8,9,10};
 		default = 4;
 		texts[] = {
@@ -51,6 +51,35 @@ class Params
 			,"Randomize (x1...1.5)"
 			,"Randomize (x1...2)"
 		};
+	};
+	class par_dynai_overrideSkill
+	{
+		title = "     Override Skill";
+		values[] = {0,1,2};
+		default = 0;
+		texts[] = {
+			"No"
+			, "General"
+			, "Complex"
+		}
+	};
+	class par_dynai_skillGeneral
+	{
+		title = "     Skill: General (%)";
+		values[] = {60,65,70,75,80,85,90,95,100};
+		default = 95;
+	};
+	class par_dynai_skillAccuracy
+	{
+		title = "     Skill (Complex): Accuracy (%)";
+		values[] = {40,45,50,55,60,65,70,75,80,85,90,95,100};
+		default = 80;
+	};
+	class par_dynai_skillAimSpeed
+	{
+		title = "     Skill (Complex): Aiming Speed (%)";
+		values[] = {40,45,50,55,60,65,70,75,80,85,90,95,100};
+		default = 90;
 	};
 };
 
