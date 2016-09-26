@@ -28,7 +28,7 @@ class Params
 		default = 0;
 	};
 	
-	class par_dynai_delimeter
+		class par_dynai_delimeter
 	{
 		title = "---- dzn DynAI Settings ---------"; 
 		values[] = {0};
@@ -61,25 +61,24 @@ class Params
 			"No"
 			, "General"
 			, "Complex"
-		}
+		};
 	};
 	class par_dynai_skillGeneral
 	{
-		title = "     Skill: General (%)";
+		title = "          Skill: General (%)";
 		values[] = {60,65,70,75,80,85,90,95,100};
 		default = 95;
 	};
 	class par_dynai_skillAccuracy
 	{
-		title = "     Skill (Complex): Accuracy (%)";
+		title = "          Skill (Complex): Accuracy (%)";
 		values[] = {40,45,50,55,60,65,70,75,80,85,90,95,100};
 		default = 80;
 	};
 	class par_dynai_skillAimSpeed
 	{
-		title = "     Skill (Complex): Aiming Speed (%)";
+		title = "          Skill (Complex): Aiming Speed (%)";
 		values[] = {40,45,50,55,60,65,70,75,80,85,90,95,100};
-		default = 90;
 	};
 };
 
