@@ -54,6 +54,31 @@ dzn_fnc_adminTools_callEndings = {
 	publicVariable "MissionFinished";
 };
 
+tSF_End = {
+	if !(call dzn_fnc_adminTools_checkIsAdmin) exitWith { hint "You are not an admin!"; };
+
+	[] spawn {
+		sleep 5;
+		private _ends = [];
+		{
+			private _endOption = format ["%1 (%2)", _x select 0, _x select 1];
+
+			_ends pushBack _endOption;
+		} forEach tSF_Ends;
+
+		private _Result = [];
+		_Result = [
+			"End Mission"
+     		,[
+   				["Ending", _ends]
+     		]
+		] call dzn_fnc_ShowChooseDialog;
+
+		if (count _Result == 0) exitWith {};
+		( (tSF_Ends select (_Result select 0)) select 0) spawn dzn_fnc_adminTools_callEndings;
+	};
+};
+
 /*
     GAT Tools
 */
