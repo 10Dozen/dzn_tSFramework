@@ -58,13 +58,12 @@ tSF_End = {
 	if !(call dzn_fnc_adminTools_checkIsAdmin) exitWith { hint "You are not an admin!"; };
 
 	[] spawn {
+		sleep 5;
 		private _ends = [];
-		private _mapEnds = [];
 		{
 			private _endOption = format ["%1 (%2)", _x select 0, _x select 1];
 
 			_ends pushBack _endOption;
-			_mapEnds pushBack [_endOption, _x select 0];
 		} forEach tSF_Ends;
 
 		private _Result = [];
@@ -76,7 +75,7 @@ tSF_End = {
 		] call dzn_fnc_ShowChooseDialog;
 
 		if (count _Result == 0) exitWith {};
-		([_mapEnds, (_Result select 0)] call dzn_fnc_getValueByKey) spawn dzn_fnc_adminTools_callEndings
+		( (tSF_Ends select (_Result select 0)) select 0) spawn dzn_fnc_adminTools_callEndings;
 	};
 };
 
