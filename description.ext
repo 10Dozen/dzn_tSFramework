@@ -9,10 +9,6 @@
 
 enableDebugConsole = 1;
 disabledAI = 1;
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/V1.4
 respawn = 3;
 respawnDelay = 9999999; 
 

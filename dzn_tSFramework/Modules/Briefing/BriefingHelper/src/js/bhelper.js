@@ -2,14 +2,14 @@ var locale = 0; // 0 - EN, 1 - RU
 var code = "";
 
 var defaultTopics = [
-	["I. Situation:", "I. Обстановка:"]
-	,["A. Enemy Forces:", "А. Враждебные силы:"]
-	,["B. Friendly Forces:", "Б. Дружественные силы:"]
-	,["II. Mission:", "II. Задание:"]
-	,["III. Execution:", "III. Выполнение:"]
-	,["IV. Service Support:", "IV. Поддержка:"]
-	,["V. Command & Signal:", "V. Сигналы:"]
-	,["VI. Mission notes:", "VI. Замечания:"]
+	["I. Situation:", "I. Обстановка:", ""]
+	,["A. Enemy Forces:", "А. Враждебные силы:", ""]
+	,["B. Friendly Forces:", "Б. Дружественные силы:", ""]
+	,["II. Mission:", "II. Задание:", "1. \n2. \n3. \n"]
+	,["III. Execution:", "III. Выполнение:", "По плану командира."]
+	,["IV. Service Support:", "IV. Поддержка:", ""]
+	,["V. Command & Signal:", "V. Сигналы:", "PL NET 50\n1'1 - SR 1\n1'2 - SR 2"]
+	,["VI. Mission notes:", "VI. Замечания:", "Powered by Tactical Shift Framework"]
 ];
 
 var textAreaSettings = {
@@ -27,7 +27,9 @@ function generateDefaultTopics() {
 			+ "<input class='topicInput' topicId='" + i + "' value='" + defaultTopics[i][locale] + "' placeholder='" + defaultTopics[i][locale] + "'></input>"
 			+ "</div></li>"
 			+ "<li><div class='dl-3'>"
-			+ "<textarea class='topicData' cols='" + textAreaSettings.cols + "' rows='" + textAreaSettings.rows + "'></textarea>"
+			+ "<textarea class='topicData' cols='" + textAreaSettings.cols
+			+ "' rows='" + textAreaSettings.rows + "'>"
+			+ defaultTopics[i][2] + "</textarea>"
 			+ "</div></li><hr />"	
 		);
 	};

@@ -2,6 +2,17 @@ var locale = 0; // 0 - EN, 1 - RU
 var EndingsMaxId = 0;
 var Endings = [];
 
+var endingTypes = [
+	["WIN", "WIN", "Миссия выполнена", "Восхитительный успех!"]
+	, ["FAIL", "FAIL", "Миссия провалена", "Восхитительный провал"]
+	, ["WIPED", "WIPED", "Миссия провалена", "Все погибли"]
+	, ["MVP Dead", "MVP_DEAD", "Миссия выполнена", "MVP уничтожен"]
+	, ["MVP Captured", "MVP_CAP", "Миссия выполнена", "MVP захвачен"]
+	, ["TGT Dead", "TGT_DEAD", "Миссия выполнена", "Цель уничтожена"]
+	, ["TGT Captured", "TGT_CAP", "Миссия выполнена", "Цель захвачена"]
+	, ["Intel Captured", "INTEL_CAP", "Миссия выполнена", "Разведданые захвачены"]
+];
+
 var code = "";
 
 var textAreaSettings = {
@@ -80,6 +91,20 @@ function getEndingById(id) {
 	return ending;
 }
 
+function escapeDuplicateNames(originalName, newName) {
+	var resultName = newName;
+
+	for (var i = 0; i < Endings.length; i++) {
+		if (Endings[i].name == newName) {
+			resultName = originalName;
+			break;
+		};
+	};
+
+	if (newName == "") { resultName = originalName; };
+	return resultName;
+}
+
 function checkDuplicateNames(name) {
 	var result = true;
 	for (var i = 0; i < Endings.length; i++) {
@@ -96,18 +121,19 @@ function checkDuplicateNames(name) {
 
 var Ending = function () {
 	this.id = EndingsMaxId;
-	this.name = "END" + EndingsMaxId;
-	this.title = "";
-	this.subtitle = "";
+	this.name = escapeDuplicateNames(getEndingType()[1] + EndingsMaxId, getEndingType()[1]);
+	/* getEndingType()[1] + EndingsMaxId;*/
+	this.title = getEndingType()[2];
+	this.subtitle = getEndingType()[3];
 	this.description = "";
 	this.$form = $(
 		"<ul class='ending-item' endingId='" + this.id + "'>"
 		+ "<div class='ending-remove' title='Delete ending'>✖</div>"
 		+ "<span><div class='ending-name' title='Ending class name (no spaces allowed)'>" + this.name + "</div></span>"
 		+ "<li><div class='dl-1'>Title</div><div class='dl-2'>"
-		+ "<input class='topicInput ending-title' placeholder='Mission Accomplished'></input></div></li>"
+		+ "<input class='topicInput ending-title' placeholder='Mission Accomplished' value='" + this.title + "'></input></div></li>"
 		+ "<li><div class='dl-1'>Subtitle</div><div class='dl-2'>"
-		+ "<input class='topicInput  ending-subtitle' placeholder='All mission objectives completed'></input></div></li>"
+		+ "<input class='topicInput  ending-subtitle' placeholder='All mission objectives completed' value='" + this.subtitle + "'></input></div></li>"
 		+ "<li><div class='dl-1'>Description</div><div class='dl-3'>"
 		+ "<textarea class='topicData ending-desc' cols='" + textAreaSettings.cols 
 			+ "' rows='" + textAreaSettings.rows + "'></textarea>"
@@ -150,9 +176,13 @@ var Ending = function () {
 			$( $inputName ).find('.ending-name-accept').on('click', function () {
 				var newName = $( this ).parent().find('input').val();				
 				var ending = getEndingById( $(this).parent().attr("endingId")  );
-				
+
+				ending.setEndingName(escapeDuplicateNames(ending.name, newName));
+				/*
 				if ( !checkDuplicateNames(newName) ) { newName = ending.name; }
-				ending.setEndingName(newName);			
+				ending.setEndingName(newName);
+				*/
+
 			});
 			$( $inputName ).find('.ending-name-decline').on('click', function () {
 				var ending = getEndingById( $(this).parent().attr("endingId")  );
@@ -204,3 +234,22 @@ function addEnding() {
 	var ending = new Ending();
 	console.log('Ending added');
 }
+
+function getEndingType() {
+	var name = $("#end-select").val();
+	var ending;
+	for (var i = 0; i < endingTypes.length; i++ ) {
+		if (name == endingTypes[i][0]) { ending = endingTypes[i]; };
+	};
+
+	return ending;
+};
+
+$( document ).ready(function() {
+	// populate select
+	for (var i = 0; i < endingTypes.length; i++ ) {
+		$("#end-select").append(
+			"<option>" + endingTypes[i][0] + "</option>"
+		)
+	};
+});
