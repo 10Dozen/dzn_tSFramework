@@ -26,7 +26,7 @@ class Params
 		title = "tS AAR Logging";
 		values[] = {0,1};
 		texts[] = {"Disabled","Enabled"};
-		default = 0;
+		default = 1;
 	};
 	
 		class par_dynai_delimeter
