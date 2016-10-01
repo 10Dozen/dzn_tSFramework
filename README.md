@@ -35,7 +35,7 @@ Client-side settings like View Distance and CQB Line Markers
 
 ##### tS Admin Tools
 Admin-enabled ability to:
-- finish mission by one of the endings.
+- finish mission by one of the endings (from Diary or via tSF_End function)
 - assign gear kit to remote players
 
 ##### tSF File Sweeper
