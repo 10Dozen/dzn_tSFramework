@@ -8,7 +8,7 @@ var defaultTopics = [
 	,["II. Mission:", "II. Задание:", "1. \n2. \n3. \n"]
 	,["III. Execution:", "III. Выполнение:", "По плану командира."]
 	,["IV. Service Support:", "IV. Поддержка:", ""]
-	,["V. Command & Signal:", "V. Сигналы:", "PL NET 50\n1'1 - SR 1\n1'2 - SR 2"]
+	,["V. Command & Signal:", "V. Сигналы:", "PL NET 50\n1'1 - SR CH 1\n1'2 - SR CH 2"]
 	,["VI. Mission notes:", "VI. Замечания:", "Powered by Tactical Shift Framework"]
 ];
 
