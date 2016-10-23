@@ -16,11 +16,25 @@ class Params
 {   
 	class par_daytime
 	{
-		title = "Время суток";
-		values[] = {15,22};
-		default = 15;
-		texts[] = {"День","Ночь"};
-	};  
+	    title = "Время суток";
+	    values[] = {0,1};
+	    default = 0;
+	    texts[] = {"День","Ночь"};
+	};
+	class par_weather
+	{
+	    title = "Погода";
+	    values[] = {0,1,2,3,4,5};       
+	    texts[] = {
+		"Случайно"
+		,"Ясно"
+		,"Облачно"
+		,"Пасмурно"
+		,"Дождь"
+		,"Гроза"
+	    };
+	    default = 0;
+	};
 	class dzn_brv_enabled
 	{
 		title = "tS AAR Logging";
