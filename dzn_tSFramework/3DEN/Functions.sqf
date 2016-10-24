@@ -36,6 +36,7 @@ dzn_fnc_tsf_3DEN_ShowTool = {
 		,["tSF: Add Zeus"				, { call dzn_fnc_tsf_3DEN_AddZeus }]
 		,["tSF: Add Base Trigger"		, { call dzn_fnc_tsf_3DEN_AddBaseTrg }]
 		,["tSF: Add CCP"				, { call dzn_fnc_tsf_3DEN_AddCCP }]	
+		,["tSF: Add Vehicle Crew"		, { [] spawn { call dzn_fnc_tsf_3DEN_AddEVCLogic } }]
 	];
 	
 	private _optionList = [];
@@ -63,6 +64,10 @@ dzn_fnc_tsf_3DEN_createDynaiLayer = {
 };
 dzn_fnc_tsf_3DEN_createGearLayer = {
 	if (typename dzn_tsf_3DEN_GearLayer != "SCALAR") then { dzn_tsf_3DEN_GearLayer = -1 add3DENLayer "dzn_Gear Layer"; };
+};
+
+dzn_fnc_tsf_3DEN_createEVCLayer = {
+	if (typename dzn_tsf_3DEN_EVCLayer != "SCALAR") then { dzn_tsf_3DEN_EVCLayer = -1 add3DENLayer "Crew Logic Layer"; };
 };
 
 dzn_fnc_tsf_3DEN_AddSquad = {
@@ -441,7 +446,38 @@ dzn_fnc_tsf_3DEN_ConfigureScenario = {
 	["tSF Tools - Scenario was configured", 0, 15, true] call BIS_fnc_3DENNotification;
 };
 
-
+dzn_fnc_tsf_3DEN_AddEVCLogic = {
+	private _units = dzn_tsf_3DEN_SelectedUnits;
+	if (_units isEqualTo []) exitWith {
+		["tSF Tools - Vehicle Crew: No units selected", 1, 15, true] call BIS_fnc_3DENNotification;
+	};
+	
+	disableSerialization;
+	private _result = [
+		"Set Crew Logic"
+		,[
+			["Crew Config Name", []]
+		]
+	] call dzn_fnc_ShowChooseDialog;
+	if (count _result == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	
+	private _configName = if (_result select 0 == "") then { "Crew Config Name" } else { _result select 0 };
+	
+	private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
+	_logic set3DENAttribute [
+		"Init"
+		, format [
+			"this setVariable ['tSF_EVC', '%1'];"
+			, _configName
+		]
+	];
+	
+	call dzn_fnc_tsf_3DEN_createEVCLayer;
+	_logic set3DENLayer dzn_tsf_3DEN_EVCLayer;
+	
+	add3DENConnection ["Sync", _units, _logic];	
+	["tSF Tools - Vehicle Crew: Crew logic was assigned", 0, 15, true] call BIS_fnc_3DENNotification;
+};
 
 
 dzn_fnc_tsf_3DEN_ResetVariables = {
@@ -460,6 +496,7 @@ dzn_fnc_tsf_3DEN_ResetVariables = {
 		, "dzn_tsf_3DEN_tSFLayer"
 		, "dzn_tsf_3DEN_GearLayer"
 		, "dzn_tsf_3DEN_DynaiLayer"
+		, "dzn_tsf_3DEN_EVCLayer"
 	];
 	
 	{

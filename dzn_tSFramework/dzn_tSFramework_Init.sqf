@@ -24,7 +24,9 @@ tSF_module_CCP = true;
 tSF_module_Interactives = true;
 
 tSF_module_tSAdminTools = true;
+
 tSF_module_JIPTeleport = true;
+tSF_module_EditorVehicleCrew = true;
 
 
 // **************************
@@ -44,3 +46,4 @@ if (tSF_module_Interactives) then { [] execVM "dzn_tSFramework\Modules\Interacti
 if (tSF_module_tSAdminTools) then { [] execVM "dzn_tSFramework\Modules\tSAdminTools\Init.sqf"; };
 
 if (tSF_module_JIPTeleport) then { [] execVM "dzn_tSFramework\Modules\JIPTeleport\Init.sqf"; };
+if (tSF_module_EditorVehicleCrew) then { [] execVM "dzn_tSFramework\Modules\EditorVehicleCrew\Init.sqf"; };

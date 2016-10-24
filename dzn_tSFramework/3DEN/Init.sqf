@@ -18,6 +18,7 @@ dzn_tsf_3DEN_UnitsLayer = objNull;
 dzn_tsf_3DEN_tSFLayer = objNull;
 dzn_tsf_3DEN_GearLayer = objNull;
 dzn_tsf_3DEN_DynaiLayer = objNull;
+dzn_tsf_3DEN_EVCLayer = objNull;
 
 (findDisplay 313) displayAddEventHandler ["KeyDown", "_handled = _this call dzn_tsf_3DEN_onKeyPress;"];
 ["tSF Tools Activated - Press 'Ctrl' + 'Space' to use", 0, 15, true] call BIS_fnc_3DENNotification;
