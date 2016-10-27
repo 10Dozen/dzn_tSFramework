@@ -5,7 +5,7 @@
  *    BaseLoc                          - location created at PlayersBaseTrigger position (can be used in (getPos _unit) in BaseLoc
  * Set - PlayersBaseTrigger = "" to disable
 */
-PlayersBaseTrigger = baseTrg;
+PlayersBaseTrigger = if (!isNil "baseTrg") then { baseTrg } else { "" };
 
 /*
  * Default sleep interval between Mission Conditions checks (seconds)

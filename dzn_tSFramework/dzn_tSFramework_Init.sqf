@@ -1,5 +1,5 @@
 // **************************
-// 	DZN TS FRAMEWORK v1.4
+// 	DZN TS FRAMEWORK v1.5
 //
 //	Initialized when:
 //	{ }
@@ -13,6 +13,7 @@
 //  MODULES
 // **************************
 tSF_module_MissionDefaults = true;
+tSF_module_JIPTeleport = true;
 tSF_module_MissionConditions = true;
 
 tSF_module_IntroText = true;
@@ -22,17 +23,16 @@ tSF_module_tSNotesSettings = true;
 
 tSF_module_CCP = true;
 tSF_module_Interactives = true;
+tSF_module_EditorVehicleCrew = true;
+tSF_module_EditorUnitBehavior = true;
 
 tSF_module_tSAdminTools = true;
-
-tSF_module_JIPTeleport = true;
-tSF_module_EditorVehicleCrew = true;
-
 
 // **************************
 //  INIT
 // **************************
 if (tSF_module_MissionDefaults) then { [] execVM "dzn_tSFramework\Modules\MissionDefaults\Init.sqf"; };
+if (tSF_module_JIPTeleport) then { [] execVM "dzn_tSFramework\Modules\JIPTeleport\Init.sqf"; };
 if (tSF_module_MissionConditions) then { [] execVM "dzn_tSFramework\Modules\MissionConditions\Init.sqf"; };
 
 if (tSF_module_IntroText) then { [] execVM "dzn_tSFramework\Modules\IntroText\Init.sqf"; };
@@ -42,8 +42,7 @@ if (tSF_module_tSNotesSettings) then { [] execVM "dzn_tSFramework\Modules\tSNote
 
 if (tSF_module_CCP) then { [] execVM "dzn_tSFramework\Modules\CCP\Init.sqf"; };
 if (tSF_module_Interactives) then { [] execVM "dzn_tSFramework\Modules\Interactives\Init.sqf"; };
+if (tSF_module_EditorVehicleCrew) then { [] execVM "dzn_tSFramework\Modules\EditorVehicleCrew\Init.sqf"; };
+if (tSF_module_EditorUnitBehavior) then { [] execVM "dzn_tSFramework\Modules\EditorUnitBehavior\Init.sqf"; };
 
 if (tSF_module_tSAdminTools) then { [] execVM "dzn_tSFramework\Modules\tSAdminTools\Init.sqf"; };
-
-if (tSF_module_JIPTeleport) then { [] execVM "dzn_tSFramework\Modules\JIPTeleport\Init.sqf"; };
-if (tSF_module_EditorVehicleCrew) then { [] execVM "dzn_tSFramework\Modules\EditorVehicleCrew\Init.sqf"; };
