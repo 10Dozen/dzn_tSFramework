@@ -4,7 +4,7 @@ call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\MissionDefaults\
 // INITIALIZATION
 // ********************
 enableSaving [false,false];
-player addRating 1000000;
+if (tSF_MissionDefaults_AddPlayerRating) then { player addRating 1000000; };
 
 if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 	[] spawn {

@@ -1,5 +1,5 @@
 # dzn_tSFramework
-##### Version: 1.4
+##### Version: 1.5
 Tactical Shift Framework
 
 #### Content
@@ -31,7 +31,7 @@ Some default mission pre-sets (like player score).
 Game and TTP notes for each players
 
 ##### tS Notes Settings
-Client-side settings like View Distance and CQB Line Markers
+Client-side settings like View Distance
 
 ##### tS Admin Tools
 Admin-enabled ability to:
