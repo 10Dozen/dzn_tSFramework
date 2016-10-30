@@ -25,9 +25,8 @@ if (isServer) then {
 		
 		if (_applyVehicleHold) then {
 			waitUntil { !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized && !isNil "dzn_fnc_dynai_addUnitBehavior"} };	
+			[_v, "vehicle hold" ] call dzn_fnc_dynai_addUnitBehavior;
 		};
-		
-		[_v, "vehicle hold" ] call dzn_fnc_dynai_addUnitBehavior;
 	};
 	
 	tSF_fnc_EVC_processEVCLogics = {
