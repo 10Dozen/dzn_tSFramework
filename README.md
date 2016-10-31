@@ -26,6 +26,7 @@ Some default mission pre-sets (like player score).
 - Freeze time on mission start option.
 - Weapon Safe mode on start
 - Earplugs In on start
+- Player rating
 
 ##### tS Notes
 Game and TTP notes for each players
@@ -37,6 +38,15 @@ Client-side settings like View Distance
 Admin-enabled ability to:
 - finish mission by one of the endings (from Diary or via tSF_End function)
 - assign gear kit to remote players
+
+##### Editor Unit Behavior
+Make editor placed unit to 'Surrender' on player's approach.
+
+##### Editor Vehicle Crew
+Add crew to editor placed vehicle according set up crew config.
+
+##### JIP Teleport
+Allows JIP players to teleport to their's squad leader.
 
 ##### tSF File Sweeper
 Batch script that clears all files that are not used by Arma 3 when mission is played (html-helpers, 3den tool). Run it before mission export.
