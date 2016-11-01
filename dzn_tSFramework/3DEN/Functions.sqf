@@ -495,7 +495,7 @@ dzn_fnc_tsf_3DEN_Add_EUBSurrender_Logic = {
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute ["Init", "this setVariable ['tSF_EUB', 'Surrender'];"];	
 		
-		call dzn_fnc_tsf_3DEN_createEUBLayer;
+		call dzn_fnc_tsf_3DEN_createMiscLayer;
 		_logic set3DENLayer dzn_tsf_3DEN_EUBLayer;		
 		add3DENConnection ["Sync", _units, _logic];
 		
@@ -533,7 +533,7 @@ dzn_fnc_tsf_3DEN_AddEVCLogic = {
 			]
 		];
 		
-		call dzn_fnc_tsf_3DEN_createEVCLayer;
+		call dzn_fnc_tsf_3DEN_createMiscLayer;
 		_logic set3DENLayer dzn_tsf_3DEN_EVCLayer;
 		
 		add3DENConnection ["Sync", _units, _logic];	
@@ -561,7 +561,9 @@ dzn_fnc_tsf_3DEN_AddERSLogic = {
 	dzn_tsf_3DEN_Parameter = _result;
 	
 	collect3DENHistory {
+		private _units = dzn_tsf_3DEN_SelectedUnits;
 		private _result = dzn_tsf_3DEN_Parameter;
+		
 		private _configName = "";
 		if (typename (_result select 1) == "STRING") then {
 			_configName = _result select 1;	
@@ -577,68 +579,17 @@ dzn_fnc_tsf_3DEN_AddERSLogic = {
 		_logic set3DENAttribute [
 			"Init"
 			, format [
-				"this setVariable ['%1', '%2'];"
-				, _type
-				, _kit
-			]
-		];
-		
-		call dzn_fnc_tsf_3DEN_createGearLayer;
-		_logic set3DENLayer dzn_tsf_3DEN_GearLayer;
-		
-		add3DENConnection ["Sync", _units, _logic];	
-		(format ["tSF Tools - Gear: ""%1"" Kit logic was assigned", _kit]) call dzn_fnc_tsf_3DEN_ShowNotif;
-	};
-	
-	
-	
-	
-	
-	private _type = if (_result select 0 == 0) then { "dzn_gear" } else { "dzn_gear_cargo" };
-	private _kit = if (typename (_result select 1) == "STRING") then { _result select 1 } else { "KitName" };
-	
-	
-	private _configName = "";
-	
-	
-	if (_result == 3) then {
-		private _resultCustom = [
-			"Set LR Radio Logic"
-			,[
-				["Radio Config Name", ["BLUFOR","OPFOR","INDEP","Custom..."]]
-			]
-		] call dzn_fnc_ShowChooseDialog;
-	
-	} else {
-		switch (_result) do {
-			case 0: { _configName = "BLUFOR" };
-			case 1: { _configName = "OPFOR" };
-			case 2: { _configName = "INDEP" };
-		};
-	};
-	
-	dzn_tsf_3DEN_Parameter = if (typename (_result select 0) == "STRING") then {_result select 0} else {"Default Config"};
-	
-	collect3DENHistory {
-		private _configName = dzn_tsf_3DEN_Parameter;
-
-		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
-		_logic set3DENAttribute [
-			"Init"
-			, format [
-				"this setVariable ['tSF_EVC', '%1'];"
+				"this setVariable ['tSF_ERS_Config', '%1'];"
 				, _configName
 			]
 		];
 		
-		call dzn_fnc_tsf_3DEN_createEVCLayer;
-		_logic set3DENLayer dzn_tsf_3DEN_EVCLayer;
+		call dzn_fnc_tsf_3DEN_createMiscLayer;
+		_logic set3DENLayer dzn_tsf_3DEN_MiscLayer;
 		
 		add3DENConnection ["Sync", _units, _logic];	
-		(format ["tSF Tools - Vehicle Crew: ""%1"" config was assigned", _configName]) call dzn_fnc_tsf_3DEN_ShowNotif;
+		(format ["tSF Tools - Vehicle Radio: ""%1"" config logic was assigned", _configName]) call dzn_fnc_tsf_3DEN_ShowNotif;
 	};
-
-
 };
 
 
@@ -648,6 +599,14 @@ dzn_fnc_tsf_3DEN_AddERSLogic = {
  *	LAYERS & UTILITIES
  *
  */
+ dzn_fnc_tsf_3DEN_ShowNotif = {
+	[_this, 0, 15, true] call BIS_fnc_3DENNotification;
+};
+
+dzn_fnc_tsf_3DEN_ShowWarn = {
+	[_this, 1, 15, true] call BIS_fnc_3DENNotification;
+};
+
 
 dzn_fnc_tsf_3DEN_createTSFLayer = {
 	if (typename dzn_tsf_3DEN_tSFLayer != "SCALAR") then { dzn_tsf_3DEN_tSFLayer = -1 add3DENLayer "tSF Layer"; };
@@ -659,19 +618,8 @@ dzn_fnc_tsf_3DEN_createGearLayer = {
 	if (typename dzn_tsf_3DEN_GearLayer != "SCALAR") then { dzn_tsf_3DEN_GearLayer = -1 add3DENLayer "dzn_Gear Layer"; };
 };
 
-dzn_fnc_tsf_3DEN_createEVCLayer = {
-	if (typename dzn_tsf_3DEN_EVCLayer != "SCALAR") then { dzn_tsf_3DEN_EVCLayer = -1 add3DENLayer "Crew Logic Layer"; };
-};
-dzn_fnc_tsf_3DEN_createEUBLayer = {
-	if (typename dzn_tsf_3DEN_EUBLayer != "SCALAR") then { dzn_tsf_3DEN_EUBLayer = -1 add3DENLayer "Unit Behavior Layer"; };
-};
-
-dzn_fnc_tsf_3DEN_ShowNotif = {
-	[_this, 0, 15, true] call BIS_fnc_3DENNotification;
-};
-
-dzn_fnc_tsf_3DEN_ShowWarn = {
-	[_this, 1, 15, true] call BIS_fnc_3DENNotification;
+dzn_fnc_tsf_3DEN_createMiscLayer = {
+	if (typename dzn_tsf_3DEN_MiscLayer != "SCALAR") then { dzn_tsf_3DEN_MiscLayer = -1 add3DENLayer "3DEN Tools Layer"; };
 };
 
 
@@ -691,8 +639,7 @@ dzn_fnc_tsf_3DEN_ResetVariables = {
 		, "dzn_tsf_3DEN_tSFLayer"
 		, "dzn_tsf_3DEN_GearLayer"
 		, "dzn_tsf_3DEN_DynaiLayer"
-		, "dzn_tsf_3DEN_EVCLayer"
-		, "dzn_tsf_3DEN_EUBLayer"
+		, "dzn_tsf_3DEN_MiscLayer"
 	];
 	
 	{
