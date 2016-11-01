@@ -1,5 +1,5 @@
-dzn_tsf_3DEN_onKeyPress = {
-	if (dzn_tsf_3DEN_keyIsDown) exitWith {};
+dzn_tSF_3DEN_onKeyPress = {
+	if (dzn_tSF_3DEN_keyIsDown) exitWith {};
 	
 	private _key = _this select 1; 
 	private _ctrl = _this select 3; 
@@ -8,37 +8,37 @@ dzn_tsf_3DEN_onKeyPress = {
 	switch _key do {
 		// Space
 		case 57: {
-			dzn_tsf_3DEN_keyIsDown = true;			
-			if (_ctrl) then { [] spawn dzn_fnc_tsf_3DEN_ShowTool; };
+			dzn_tSF_3DEN_keyIsDown = true;			
+			if (_ctrl) then { [] spawn dzn_fnc_tSF_3DEN_ShowTool; };
 			_handled = true;
 		};
 	};
 	
-	[] spawn { sleep 1; dzn_tsf_3DEN_keyIsDown = false; };
+	[] spawn { sleep 1; dzn_tSF_3DEN_keyIsDown = false; };
 	_handled
 };
 
 
-dzn_fnc_tsf_3DEN_ShowTool = {
-	if (dzn_tsf_3DEN_toolDisplayed) exitWith {};
-	dzn_tsf_3DEN_toolDisplayed = true;
+dzn_fnc_tSF_3DEN_ShowTool = {
+	if (dzn_tSF_3DEN_toolDisplayed) exitWith {};
+	dzn_tSF_3DEN_toolDisplayed = true;
 	
-	dzn_tsf_3DEN_SelectedUnits = get3DENSelected "object";
+	dzn_tSF_3DEN_SelectedUnits = get3DENSelected "object";
 	
 	private _resolveOption = {};
 	private _options = [
-		["Add Playable Squad"			, { [] spawn dzn_fnc_tsf_3DEN_AddSquad }]	
-		,["[DynAI] Add Zone"			, { [] spawn { call dzn_fnc_tsf_3DEN_AddDynaiZone } }]		
-		,["[Gear] Add Kit Logic"		, { [] spawn { call dzn_fnc_tsf_3DEN_AddGearLogic } }]
+		["Add Playable Squad"			, { [] spawn dzn_fnc_tSF_3DEN_AddSquad }]	
+		,["[DynAI] Add Zone"			, { [] spawn { call dzn_fnc_tSF_3DEN_AddDynaiZone } }]		
+		,["[Gear] Add Kit Logic"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddGearLogic } }]
 		
-		,["[Unit] Add Unit Behavior"		, { [] spawn { call dzn_fnc_tsf_3DEN_ResolveUnitBehavior } }]	
-		,["[Vehicle] Add Vehicle Crew"		, { [] spawn { call dzn_fnc_tsf_3DEN_AddEVCLogic } }]
-		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn { call dzn_fnc_tsf_3DEN_AddERSLogic } }]
+		,["[Unit] Add Unit Behavior"		, { [] spawn { call dzn_fnc_tSF_3DEN_ResolveUnitBehavior } }]	
+		,["[Vehicle] Add Vehicle Crew"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddEVCLogic } }]
+		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddERSLogic } }]
 		
-		,["[tSF] Configure Scenario"		, { [] spawn { call dzn_fnc_tsf_3DEN_ConfigureScenario } }]
-		,["[tSF] Add Zeus"			, { call dzn_fnc_tsf_3DEN_AddZeus }]
-		,["[tSF] Add Base Trigger"		, { call dzn_fnc_tsf_3DEN_AddBaseTrg }]
-		,["[tSF] Add CCP"				, { call dzn_fnc_tsf_3DEN_AddCCP }]	
+		,["[tSF] Configure Scenario"		, { [] spawn { call dzn_fnc_tSF_3DEN_ConfigureScenario } }]
+		,["[tSF] Add Zeus"			, { call dzn_fnc_tSF_3DEN_AddZeus }]
+		,["[tSF] Add Base Trigger"		, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
+		,["[tSF] Add CCP"				, { call dzn_fnc_tSF_3DEN_AddCCP }]	
 		
 	];
 	
@@ -46,16 +46,16 @@ dzn_fnc_tsf_3DEN_ShowTool = {
 	{ _optionList pushBack (_x select 0); } forEach _options;
 	
 	
-	call dzn_fnc_tsf_3DEN_ResetVariables;
+	call dzn_fnc_tSF_3DEN_ResetVariables;
 	private _toolResult = [
 		"tSF Tool"
 		, [["Select action", _optionList]]
 	] call dzn_fnc_ShowChooseDialog;
 	Result = _toolResult;
-	if (count _toolResult == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	if (count _toolResult == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
 	call ((_options select (_toolResult select 0)) select 1);	
-	dzn_tsf_3DEN_toolDisplayed = false;
+	dzn_tSF_3DEN_toolDisplayed = false;
 };
 
 
@@ -67,14 +67,14 @@ dzn_fnc_tsf_3DEN_ShowTool = {
  *
  */
 
-dzn_fnc_tsf_3DEN_AddSquad = {
+dzn_fnc_tSF_3DEN_AddSquad = {
 	/*
-	 * @Typa call dzn_fnc_tsf_3DEN_AddSquad
+	 * @Typa call dzn_fnc_tSF_3DEN_AddSquad
 	 * Type = "NATO", "RUAF"
 	 */
 	
 	
-	dzn_tsf_3DEN_SquadLastNumber = dzn_tsf_3DEN_SquadLastNumber + 1;
+	dzn_tSF_3DEN_SquadLastNumber = dzn_tSF_3DEN_SquadLastNumber + 1;
 	private _squadSettings = [];
 	private _infantryClass = "";
 	
@@ -87,7 +87,7 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 			,["Doctrine", ["NATO 1-4-4", "UK 4-4", "Ru MSO 1-2-3-3", "Ru VV 4-3"]]
 		]
 	] call dzn_fnc_ShowChooseDialog;
-	if (count _squadType == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	if (count _squadType == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
 	_infantryClass = switch (_squadType select 0) do {
 		case 0: { "B_Soldier_F" };
@@ -98,7 +98,7 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 	_squadSettings = switch (_squadType select 1) do {
 		/* NATO 1-4-4 */ 	case 0: {
 			[
-				[format ["1'%1 Squad Leader", dzn_tsf_3DEN_SquadLastNumber],"Sergeant"]
+				[format ["1'%1 Squad Leader", dzn_tSF_3DEN_SquadLastNumber],"Sergeant"]
 				,["RED - FTL"		,"Corporal"]
 				,["Automatic Rifleman"	,"Private"]
 				,["Grenadier"		,"Private"]
@@ -111,7 +111,7 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 		};
 		/* UK 4-4*/ 		case 1: {
 			[
-				[format ["1'%1 Section Leader", dzn_tsf_3DEN_SquadLastNumber],"Sergeant"]
+				[format ["1'%1 Section Leader", dzn_tSF_3DEN_SquadLastNumber],"Sergeant"]
 				,["Automatic Rifleman"	,"Private"]
 				,["Grenadier"			,"Private"]				
 				,["Rifleman"			,"Private"]				
@@ -124,7 +124,7 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 		};
 		/* RuMSO 1-2-3-3 */	case 2: {
 			[
-				[format ["1'%1 Командир отделения", dzn_tsf_3DEN_SquadLastNumber]	,"Sergeant"]
+				[format ["1'%1 Командир отделения", dzn_tSF_3DEN_SquadLastNumber]	,"Sergeant"]
 				,["Наводчик-оператор"					,"Corporal"]
 				,["Механик-водитель"					,"Private"]
 				,["Пулеметчик"					,"Private"]
@@ -138,7 +138,7 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 		};
 		/* Ru VV 4-3 */ 	case 3: {
 			[
-				[format ["1'%1 Командир отделения", dzn_tsf_3DEN_SquadLastNumber]	,"Sergeant"]
+				[format ["1'%1 Командир отделения", dzn_tSF_3DEN_SquadLastNumber]	,"Sergeant"]
 				,["Пулеметчик"							,"Private"]
 				,["Стрелок-Гранатометчик"				,"Private"]
 				,["Стрелок, помощник гранатометчика"	,"Private"]				
@@ -156,8 +156,8 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 	];
 	
 	collect3DENHistory {	
-		if (typename dzn_tsf_3DEN_UnitsLayer != "SCALAR") then {
-			dzn_tsf_3DEN_UnitsLayer = -1 add3DENLayer "Playable Units";
+		if (typename dzn_tSF_3DEN_UnitsLayer != "SCALAR") then {
+			dzn_tSF_3DEN_UnitsLayer = -1 add3DENLayer "Playable Units";
 		};
 		
 		private _basicPos = screenToWorld [0.5,0.5];		
@@ -189,37 +189,37 @@ dzn_fnc_tsf_3DEN_AddSquad = {
 		delete3DENEntities [(units _grp select 0)];
 		
 		{
-			_x set3DENLayer dzn_tsf_3DEN_UnitsLayer;
+			_x set3DENLayer dzn_tSF_3DEN_UnitsLayer;
 		} forEach (units _grp);
 		
-		"tSF Tools - New Squad was Added" call dzn_fnc_tsf_3DEN_ShowNotif;
+		"tSF Tools - New Squad was Added" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
 
-dzn_fnc_tsf_3DEN_AddDynaiCore = {
+dzn_fnc_tSF_3DEN_AddDynaiCore = {
 	collect3DENHistory {
-		dzn_tsf_3DEN_DynaiCore = create3DENEntity ["Logic","Logic",screenToWorld [0.5,0.5]];
-		dzn_tsf_3DEN_DynaiCore set3DENAttribute ["Name", "dzn_dynai_core"];
+		dzn_tSF_3DEN_DynaiCore = create3DENEntity ["Logic","Logic",screenToWorld [0.5,0.5]];
+		dzn_tSF_3DEN_DynaiCore set3DENAttribute ["Name", "dzn_dynai_core"];
 		
-		call dzn_fnc_tsf_3DEN_createDynaiLayer;
-		dzn_tsf_3DEN_DynaiCore set3DENLayer dzn_tsf_3DEN_DynaiLayer;
+		call dzn_fnc_tSF_3DEN_createDynaiLayer;
+		dzn_tSF_3DEN_DynaiCore set3DENLayer dzn_tSF_3DEN_DynaiLayer;
 		
-		"tSF Tools - DynAI Core was created" call dzn_fnc_tsf_3DEN_ShowNotif;
+		"tSF Tools - DynAI Core was created" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 }; 
 
-dzn_fnc_tsf_3DEN_AddDynaiZone = {	
-	if (isNull dzn_tsf_3DEN_DynaiCore) then { call dzn_fnc_tsf_3DEN_AddDynaiCore; };	
+dzn_fnc_tSF_3DEN_AddDynaiZone = {	
+	if (isNull dzn_tSF_3DEN_DynaiCore) then { call dzn_fnc_tSF_3DEN_AddDynaiCore; };	
 	
 	disableSerialization;
 	private _name = ["Add Dynai Zone", ["Zone name", []]] call dzn_fnc_ShowChooseDialog;
-	if (count _name == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	if (count _name == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
-	dzn_tsf_3DEN_Parameter = _name;
+	dzn_tSF_3DEN_Parameter = _name;
 	
 	collect3DENHistory {
-		private _name = dzn_tsf_3DEN_Parameter;
+		private _name = dzn_tSF_3DEN_Parameter;
 		
 		private _pos = screenToWorld [0.5,0.5];
 		private _dynaiZone = create3DENEntity ["Logic","Logic", _pos];
@@ -230,93 +230,93 @@ dzn_fnc_tsf_3DEN_AddDynaiZone = {
 		];
 		
 		if (_name select 0 == "") then { 
-			dzn_tsf_3DEN_DynaiZoneId = dzn_tsf_3DEN_DynaiZoneId + 1;
-			_name = format ["Zone%1", dzn_tsf_3DEN_DynaiZoneId];		
+			dzn_tSF_3DEN_DynaiZoneId = dzn_tSF_3DEN_DynaiZoneId + 1;
+			_name = format ["Zone%1", dzn_tSF_3DEN_DynaiZoneId];		
 		} else { 
 			_name = _name select 0;
 		};	
 		
 		_dynaiZone set3DENAttribute ["Name", _name];	
 		
-		call dzn_fnc_tsf_3DEN_createDynaiLayer;
-		_dynaiZone set3DENLayer dzn_tsf_3DEN_DynaiLayer;
-		_dynaiArea set3DENLayer dzn_tsf_3DEN_DynaiLayer;
+		call dzn_fnc_tSF_3DEN_createDynaiLayer;
+		_dynaiZone set3DENLayer dzn_tSF_3DEN_DynaiLayer;
+		_dynaiArea set3DENLayer dzn_tSF_3DEN_DynaiLayer;
 		
-		add3DENConnection ["Sync", [_dynaiZone], dzn_tsf_3DEN_DynaiCore];
+		add3DENConnection ["Sync", [_dynaiZone], dzn_tSF_3DEN_DynaiCore];
 		add3DENConnection ["Sync", [_dynaiZone], _dynaiArea];
 		
 		do3DENAction "ToggleMap";
 		
-		(format ["tSF Tools - ""%1"" DynAI Zone was created", _name]) call dzn_fnc_tsf_3DEN_ShowNotif;	
+		(format ["tSF Tools - ""%1"" DynAI Zone was created", _name]) call dzn_fnc_tSF_3DEN_ShowNotif;	
 	};
 };
 
-dzn_fnc_tsf_3DEN_AddZeus = {
+dzn_fnc_tSF_3DEN_AddZeus = {
 	collect3DENHistory {
-		if !(isNull dzn_tsf_3DEN_Zeus) exitWith {
-			"tSF Tools - Zeus Module already exists" call dzn_fnc_tsf_3DEN_ShowWarn;
+		if !(isNull dzn_tSF_3DEN_Zeus) exitWith {
+			"tSF Tools - Zeus Module already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
 		
-		dzn_tsf_3DEN_Zeus = create3DENEntity ["Logic","ModuleCurator_F",screenToWorld [0.5,0.5]];
-		dzn_tsf_3DEN_Zeus set3DENAttribute [
+		dzn_tSF_3DEN_Zeus = create3DENEntity ["Logic","ModuleCurator_F",screenToWorld [0.5,0.5]];
+		dzn_tSF_3DEN_Zeus set3DENAttribute [
 			"Init"
 			, "this setVariable ['addons',3,true];this setVariable ['owner','#adminLogged',true];"
 		];
 		
-		call dzn_fnc_tsf_3DEN_createTSFLayer;
-		dzn_tsf_3DEN_Zeus set3DENLayer dzn_tsf_3DEN_tSFLayer;
+		call dzn_fnc_tSF_3DEN_createTSFLayer;
+		dzn_tSF_3DEN_Zeus set3DENLayer dzn_tSF_3DEN_tSFLayer;
 		
-		"tSF Tools - Zeus Module was created" call dzn_fnc_tsf_3DEN_ShowNotif;	
+		"tSF Tools - Zeus Module was created" call dzn_fnc_tSF_3DEN_ShowNotif;	
 	};
 };
 
-dzn_fnc_tsf_3DEN_AddBaseTrg = {
+dzn_fnc_tSF_3DEN_AddBaseTrg = {
 	collect3DENHistory {	
-		if !(isNull dzn_tsf_3DEN_BaseTrg) exitWith {
-			"tSF Tools - BaseTrg already exists" call dzn_fnc_tsf_3DEN_ShowWarn;
+		if !(isNull dzn_tSF_3DEN_BaseTrg) exitWith {
+			"tSF Tools - BaseTrg already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
 		
-		dzn_tsf_3DEN_BaseTrg = create3DENEntity ["Trigger","EmptyDetectorAreaR250", screenToWorld [0.5,0.5]];
-		dzn_tsf_3DEN_BaseTrg set3DENAttribute ["Name", "baseTrg"];
+		dzn_tSF_3DEN_BaseTrg = create3DENEntity ["Trigger","EmptyDetectorAreaR250", screenToWorld [0.5,0.5]];
+		dzn_tSF_3DEN_BaseTrg set3DENAttribute ["Name", "baseTrg"];
 
-		call dzn_fnc_tsf_3DEN_createTSFLayer;
-		dzn_tsf_3DEN_BaseTrg set3DENLayer dzn_tsf_3DEN_tSFLayer;
+		call dzn_fnc_tSF_3DEN_createTSFLayer;
+		dzn_tSF_3DEN_BaseTrg set3DENLayer dzn_tSF_3DEN_tSFLayer;
 		
 		do3DENAction "ToggleMap";
-		"tSF Tools - BaseTrg was created" call dzn_fnc_tsf_3DEN_ShowNotif;
+		"tSF Tools - BaseTrg was created" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
-dzn_fnc_tsf_3DEN_AddCCP = {
+dzn_fnc_tSF_3DEN_AddCCP = {
 	collect3DENHistory {	
-		if !(isNull dzn_tsf_3DEN_CCP) exitWith { 
-			"tSF Tools - CCP already exists" call dzn_fnc_tsf_3DEN_ShowWarn;
+		if !(isNull dzn_tSF_3DEN_CCP) exitWith { 
+			"tSF Tools - CCP already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
 		
 		private _pos = screenToWorld [0.5,0.5];
-		dzn_tsf_3DEN_CCP = create3DENEntity ["Logic","Logic", _pos];
+		dzn_tSF_3DEN_CCP = create3DENEntity ["Logic","Logic", _pos];
 		private _ccpZone = create3DENEntity [
 			"Trigger"
 			,"EmptyDetectorAreaR250"
 			, [ (_pos select 0) + 50, _pos select 1, 0 ]
 		];
 		
-		dzn_tsf_3DEN_CCP set3DENAttribute ["Name", "tsf_CCP"];
+		dzn_tSF_3DEN_CCP set3DENAttribute ["Name", "tsf_CCP"];
 		
-		call dzn_fnc_tsf_3DEN_createTSFLayer;
-		dzn_tsf_3DEN_CCP set3DENLayer dzn_tsf_3DEN_tSFLayer;
-		_ccpZone set3DENLayer dzn_tsf_3DEN_tSFLayer;
+		call dzn_fnc_tSF_3DEN_createTSFLayer;
+		dzn_tSF_3DEN_CCP set3DENLayer dzn_tSF_3DEN_tSFLayer;
+		_ccpZone set3DENLayer dzn_tSF_3DEN_tSFLayer;
 		
-		add3DENConnection ["Sync", [dzn_tsf_3DEN_CCP],_ccpZone];
+		add3DENConnection ["Sync", [dzn_tSF_3DEN_CCP],_ccpZone];
 		do3DENAction "ToggleMap";
-		"tSF Tools - CCP was created" call dzn_fnc_tsf_3DEN_ShowNotif;
+		"tSF Tools - CCP was created" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
-dzn_fnc_tsf_3DEN_AddGearLogic = {
-	private _units = dzn_tsf_3DEN_SelectedUnits;
+dzn_fnc_tSF_3DEN_AddGearLogic = {
+	private _units = dzn_tSF_3DEN_SelectedUnits;
 	if (_units isEqualTo []) exitWith {
-		"tSF Tools - Gear: Kit logic - No units selected" call dzn_fnc_tsf_3DEN_ShowWarn;
+		"tSF Tools - Gear: Kit logic - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
 	
 	disableSerialization;
@@ -327,12 +327,12 @@ dzn_fnc_tsf_3DEN_AddGearLogic = {
 			, ["Kit name",[]]
 		]
 	] call dzn_fnc_ShowChooseDialog;
-	if (count _result == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
-	dzn_tsf_3DEN_Parameter = _result;
+	dzn_tSF_3DEN_Parameter = _result;
 	
 	collect3DENHistory {
-		private _result = dzn_tsf_3DEN_Parameter;
+		private _result = dzn_tSF_3DEN_Parameter;
 		private _type = if (_result select 0 == 0) then { "dzn_gear" } else { "dzn_gear_cargo" };
 		private _kit = if (typename (_result select 1) == "STRING") then { _result select 1 } else { "KitName" };
 		
@@ -346,15 +346,15 @@ dzn_fnc_tsf_3DEN_AddGearLogic = {
 			]
 		];
 		
-		call dzn_fnc_tsf_3DEN_createGearLayer;
-		_logic set3DENLayer dzn_tsf_3DEN_GearLayer;
+		call dzn_fnc_tSF_3DEN_createGearLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_GearLayer;
 		
 		add3DENConnection ["Sync", _units, _logic];	
-		(format ["tSF Tools - Gear: ""%1"" Kit logic was assigned", _kit]) call dzn_fnc_tsf_3DEN_ShowNotif;
+		(format ["tSF Tools - Gear: ""%1"" Kit logic was assigned", _kit]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
-dzn_fnc_tsf_3DEN_ConfigureScenario = {
+dzn_fnc_tSF_3DEN_ConfigureScenario = {
 	disableSerialization;
 	private _result = [
 		"Scenario Settings"
@@ -367,12 +367,12 @@ dzn_fnc_tsf_3DEN_ConfigureScenario = {
 			, ["Max Players", []]
 		]
 	] call dzn_fnc_ShowChooseDialog;
-	if (count _result == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
-	dzn_tsf_3DEN_Parameter = _result;
+	dzn_tSF_3DEN_Parameter = _result;
 	
 	collect3DENHistory {
-		private _result = dzn_tsf_3DEN_Parameter;
+		private _result = dzn_tSF_3DEN_Parameter;
 		
 		private _overview  = if (typename (_result select 1) == "SCALAR") then { "" } else { _result select 1 };
 		private _summary = if (typename (_result select 2) == "SCALAR") then { "" } else { _result select 2 };
@@ -405,15 +405,15 @@ dzn_fnc_tsf_3DEN_ConfigureScenario = {
 		_respawnMrk set3DENAttribute ["text", "Rename me to 'respawn_west'"];
 		do3DENAction "ToggleMap";
 		
-		"tSF Tools - Scenario was configured" call dzn_fnc_tsf_3DEN_ShowNotif;
+		"tSF Tools - Scenario was configured" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
 
-dzn_fnc_tsf_3DEN_ResolveUnitBehavior = {
-	private _units = dzn_tsf_3DEN_SelectedUnits;
+dzn_fnc_tSF_3DEN_ResolveUnitBehavior = {
+	private _units = dzn_tSF_3DEN_SelectedUnits;
 	if (_units isEqualTo []) exitWith {
-		"tSF Tools - Unit Behavior: No units selected" call dzn_fnc_tsf_3DEN_ShowWarn;
+		"tSF Tools - Unit Behavior: No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
 	
 	disableSerialization;
@@ -431,82 +431,82 @@ dzn_fnc_tsf_3DEN_ResolveUnitBehavior = {
 		]
 	] call dzn_fnc_ShowChooseDialog;
 	
-	if (count _result == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
 	switch (_result select 0) do {
 		case 0: {
 			/* DYNAI CQB */
-			call dzn_fnc_tsf_3DEN_AddCQBLogic;
+			call dzn_fnc_tSF_3DEN_AddCQBLogic;
 		};
 		case 1: {
 			/* DYNAI CQB */
-			 call dzn_fnc_tsf_3DEN_AddGroupResponseLogic;
+			 call dzn_fnc_tSF_3DEN_AddGroupResponseLogic;
 		};
 		case 2: {
 			/* EUB Surrender*/
-			call dzn_fnc_tsf_3DEN_Add_EUBSurrender_Logic;
+			call dzn_fnc_tSF_3DEN_Add_EUBSurrender_Logic;
 		};
 	};
 };
 
-dzn_fnc_tsf_3DEN_AddCQBLogic = {
+dzn_fnc_tSF_3DEN_AddCQBLogic = {
 	collect3DENHistory {
-		private _units = dzn_tsf_3DEN_SelectedUnits;
+		private _units = dzn_tSF_3DEN_SelectedUnits;
 		if (_units isEqualTo []) exitWith {
-			"tSF Tools - DynAI: CQB - No units selected" call dzn_fnc_tsf_3DEN_ShowWarn;
+			"tSF Tools - DynAI: CQB - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
 		
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute ["Init", "this setVariable ['dzn_dynai_setBehavior', 'indoor'];"];	
 		
-		call dzn_fnc_tsf_3DEN_createDynaiLayer;
-		_logic set3DENLayer dzn_tsf_3DEN_DynaiLayer;
+		call dzn_fnc_tSF_3DEN_createDynaiLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_DynaiLayer;
 		add3DENConnection ["Sync", _units, _logic];
 		
-		"tSF Tools - DynAI: CQB behaviour was assigned" call dzn_fnc_tsf_3DEN_ShowNotif;
+		"tSF Tools - DynAI: CQB behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
-dzn_fnc_tsf_3DEN_AddGroupResponseLogic = {
+dzn_fnc_tSF_3DEN_AddGroupResponseLogic = {
 	collect3DENHistory {		
-		private _units = dzn_tsf_3DEN_SelectedUnits;
+		private _units = dzn_tSF_3DEN_SelectedUnits;
 		if (_units isEqualTo []) exitWith {
-			"tSF Tools - DynAI: Response - No units selected" call dzn_fnc_tsf_3DEN_ShowWarn;
+			"tSF Tools - DynAI: Response - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
 		
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute ["Init", "this setVariable ['dzn_dynai_canSupport', true];"];	
 		
-		call dzn_fnc_tsf_3DEN_createDynaiLayer;
-		_logic set3DENLayer dzn_tsf_3DEN_DynaiLayer;		
+		call dzn_fnc_tSF_3DEN_createDynaiLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_DynaiLayer;		
 		add3DENConnection ["Sync", _units, _logic];
 		
-		"tSF Tools - DynAI: Response behaviour was assigned" call dzn_fnc_tsf_3DEN_ShowNotif;
+		"tSF Tools - DynAI: Response behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
-dzn_fnc_tsf_3DEN_Add_EUBSurrender_Logic = {
+dzn_fnc_tSF_3DEN_Add_EUBSurrender_Logic = {
 	collect3DENHistory {	
-		private _units = dzn_tsf_3DEN_SelectedUnits;
+		private _units = dzn_tSF_3DEN_SelectedUnits;
 		if (_units isEqualTo []) exitWith {
-			"tSF Tools - Unit Behavior: Surrender - No units selected" call dzn_fnc_tsf_3DEN_ShowWarn;
+			"tSF Tools - Unit Behavior: Surrender - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
 		
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute ["Init", "this setVariable ['tSF_EUB', 'Surrender'];"];	
 		
-		call dzn_fnc_tsf_3DEN_createMiscLayer;
-		_logic set3DENLayer dzn_tsf_3DEN_EUBLayer;		
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_EUBLayer;		
 		add3DENConnection ["Sync", _units, _logic];
 		
-		"tSF Tools - Unit Behavior: Surrender behaviour was assigned" call dzn_fnc_tsf_3DEN_ShowNotif;
+		"tSF Tools - Unit Behavior: Surrender behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
-dzn_fnc_tsf_3DEN_AddEVCLogic = {
-	private _units = dzn_tsf_3DEN_SelectedUnits;
+dzn_fnc_tSF_3DEN_AddEVCLogic = {
+	private _units = dzn_tSF_3DEN_SelectedUnits;
 	if (_units isEqualTo []) exitWith {
-		"tSF Tools - Vehicle Crew: No units selected" call dzn_fnc_tsf_3DEN_ShowWarn;
+		"tSF Tools - Vehicle Crew: No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
 	
 	disableSerialization;
@@ -517,12 +517,12 @@ dzn_fnc_tsf_3DEN_AddEVCLogic = {
 		]
 	] call dzn_fnc_ShowChooseDialog;
 	
-	if (count _result == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
-	dzn_tsf_3DEN_Parameter = if (typename (_result select 0) == "STRING") then {_result select 0} else {"Default Config"};
+	dzn_tSF_3DEN_Parameter = if (typename (_result select 0) == "STRING") then {_result select 0} else {"Default Config"};
 	
 	collect3DENHistory {
-		private _configName = dzn_tsf_3DEN_Parameter;
+		private _configName = dzn_tSF_3DEN_Parameter;
 
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute [
@@ -533,18 +533,18 @@ dzn_fnc_tsf_3DEN_AddEVCLogic = {
 			]
 		];
 		
-		call dzn_fnc_tsf_3DEN_createMiscLayer;
-		_logic set3DENLayer dzn_tsf_3DEN_EVCLayer;
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_EVCLayer;
 		
 		add3DENConnection ["Sync", _units, _logic];	
-		(format ["tSF Tools - Vehicle Crew: ""%1"" config was assigned", _configName]) call dzn_fnc_tsf_3DEN_ShowNotif;
+		(format ["tSF Tools - Vehicle Crew: ""%1"" config was assigned", _configName]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
-dzn_fnc_tsf_3DEN_AddERSLogic = {
-	private _units = dzn_tsf_3DEN_SelectedUnits;
+dzn_fnc_tSF_3DEN_AddERSLogic = {
+	private _units = dzn_tSF_3DEN_SelectedUnits;
 	if (_units isEqualTo []) exitWith {
-		"tSF Tools - Vehicle Radio: No units selected" call dzn_fnc_tsf_3DEN_ShowWarn;
+		"tSF Tools - Vehicle Radio: No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
 	
 	disableSerialization;
@@ -556,13 +556,13 @@ dzn_fnc_tsf_3DEN_AddERSLogic = {
 		]
 	] call dzn_fnc_ShowChooseDialog;
 	
-	if (count _result == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
-	dzn_tsf_3DEN_Parameter = _result;
+	dzn_tSF_3DEN_Parameter = _result;
 	
 	collect3DENHistory {
-		private _units = dzn_tsf_3DEN_SelectedUnits;
-		private _result = dzn_tsf_3DEN_Parameter;
+		private _units = dzn_tSF_3DEN_SelectedUnits;
+		private _result = dzn_tSF_3DEN_Parameter;
 		
 		private _configName = "";
 		if (typename (_result select 1) == "STRING") then {
@@ -584,11 +584,11 @@ dzn_fnc_tsf_3DEN_AddERSLogic = {
 			]
 		];
 		
-		call dzn_fnc_tsf_3DEN_createMiscLayer;
-		_logic set3DENLayer dzn_tsf_3DEN_MiscLayer;
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;
 		
 		add3DENConnection ["Sync", _units, _logic];	
-		(format ["tSF Tools - Vehicle Radio: ""%1"" config logic was assigned", _configName]) call dzn_fnc_tsf_3DEN_ShowNotif;
+		(format ["tSF Tools - Vehicle Radio: ""%1"" config logic was assigned", _configName]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
@@ -599,47 +599,47 @@ dzn_fnc_tsf_3DEN_AddERSLogic = {
  *	LAYERS & UTILITIES
  *
  */
- dzn_fnc_tsf_3DEN_ShowNotif = {
+ dzn_fnc_tSF_3DEN_ShowNotif = {
 	[_this, 0, 15, true] call BIS_fnc_3DENNotification;
 };
 
-dzn_fnc_tsf_3DEN_ShowWarn = {
+dzn_fnc_tSF_3DEN_ShowWarn = {
 	[_this, 1, 15, true] call BIS_fnc_3DENNotification;
 };
 
 
-dzn_fnc_tsf_3DEN_createTSFLayer = {
-	if (typename dzn_tsf_3DEN_tSFLayer != "SCALAR") then { dzn_tsf_3DEN_tSFLayer = -1 add3DENLayer "tSF Layer"; };
+dzn_fnc_tSF_3DEN_createTSFLayer = {
+	if (typename dzn_tSF_3DEN_tSFLayer != "SCALAR") then { dzn_tSF_3DEN_tSFLayer = -1 add3DENLayer "tSF Layer"; };
 };
-dzn_fnc_tsf_3DEN_createDynaiLayer = {
-	if (typename dzn_tsf_3DEN_DynaiLayer != "SCALAR") then { dzn_tsf_3DEN_DynaiLayer = -1 add3DENLayer "DynAI Layer"; };
+dzn_fnc_tSF_3DEN_createDynaiLayer = {
+	if (typename dzn_tSF_3DEN_DynaiLayer != "SCALAR") then { dzn_tSF_3DEN_DynaiLayer = -1 add3DENLayer "DynAI Layer"; };
 };
-dzn_fnc_tsf_3DEN_createGearLayer = {
-	if (typename dzn_tsf_3DEN_GearLayer != "SCALAR") then { dzn_tsf_3DEN_GearLayer = -1 add3DENLayer "dzn_Gear Layer"; };
-};
-
-dzn_fnc_tsf_3DEN_createMiscLayer = {
-	if (typename dzn_tsf_3DEN_MiscLayer != "SCALAR") then { dzn_tsf_3DEN_MiscLayer = -1 add3DENLayer "3DEN Tools Layer"; };
+dzn_fnc_tSF_3DEN_createGearLayer = {
+	if (typename dzn_tSF_3DEN_GearLayer != "SCALAR") then { dzn_tSF_3DEN_GearLayer = -1 add3DENLayer "dzn_Gear Layer"; };
 };
 
+dzn_fnc_tSF_3DEN_createMiscLayer = {
+	if (typename dzn_tSF_3DEN_MiscLayer != "SCALAR") then { dzn_tSF_3DEN_MiscLayer = -1 add3DENLayer "3DEN Tools Layer"; };
+};
 
-dzn_fnc_tsf_3DEN_ResetVariables = {
+
+dzn_fnc_tSF_3DEN_ResetVariables = {
 	{
 		call compile format [
 			"if (get3DENEntityID %1 == -1) then { %1 = objNull; };"
 			, _x
 		];
 	} forEach [
-		"dzn_tsf_3DEN_DynaiCore"
-		, "dzn_tsf_3DEN_Zeus"
-		, "dzn_tsf_3DEN_BaseTrg"
-		, "dzn_tsf_3DEN_CCP"
+		"dzn_tSF_3DEN_DynaiCore"
+		, "dzn_tSF_3DEN_Zeus"
+		, "dzn_tSF_3DEN_BaseTrg"
+		, "dzn_tSF_3DEN_CCP"
 		
-		, "dzn_tsf_3DEN_UnitsLayer"
-		, "dzn_tsf_3DEN_tSFLayer"
-		, "dzn_tsf_3DEN_GearLayer"
-		, "dzn_tsf_3DEN_DynaiLayer"
-		, "dzn_tsf_3DEN_MiscLayer"
+		, "dzn_tSF_3DEN_UnitsLayer"
+		, "dzn_tSF_3DEN_tSFLayer"
+		, "dzn_tSF_3DEN_GearLayer"
+		, "dzn_tSF_3DEN_DynaiLayer"
+		, "dzn_tSF_3DEN_MiscLayer"
 	];
 	
 	{
@@ -650,21 +650,21 @@ dzn_fnc_tsf_3DEN_ResetVariables = {
 			if (
 				(_entity get3DENAttribute "name") select 0 == "dzn_dynai_core" 
 			) then {
-				dzn_tsf_3DEN_DynaiCore = _entity;
+				dzn_tSF_3DEN_DynaiCore = _entity;
 			};
 			
 			// Search for BaseTrg
 			if ( 
 				(_entity get3DENAttribute "name") select 0 == "baseTrg" 
 			) then {
-				dzn_tsf_3DEN_BaseTrg = _entity;
+				dzn_tSF_3DEN_BaseTrg = _entity;
 			};
 			
 			// Search for CCP
 			if ( 
 				(_entity get3DENAttribute "name") select 0 == "tsf_CCP" 
 			) then {
-				dzn_tsf_3DEN_CCP = _entity;
+				dzn_tSF_3DEN_CCP = _entity;
 			};
 		};
 	} forEach all3DENEntities;
