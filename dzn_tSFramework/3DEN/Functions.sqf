@@ -32,7 +32,8 @@ dzn_fnc_tsf_3DEN_ShowTool = {
 		,["[Gear] Add Kit Logic"		, { [] spawn { call dzn_fnc_tsf_3DEN_AddGearLogic } }]
 		
 		,["[Unit] Add Unit Behavior"		, { [] spawn { call dzn_fnc_tsf_3DEN_ResolveUnitBehavior } }]	
-		,["[Vehicle] Add Vehicle Crew"	, { [] spawn { call dzn_fnc_tsf_3DEN_AddEVCLogic } }]		
+		,["[Vehicle] Add Vehicle Crew"		, { [] spawn { call dzn_fnc_tsf_3DEN_AddEVCLogic } }]
+		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn { call dzn_fnc_tsf_3DEN_AddERSLogic } }]
 		
 		,["[tSF] Configure Scenario"		, { [] spawn { call dzn_fnc_tsf_3DEN_ConfigureScenario } }]
 		,["[tSF] Add Zeus"			, { call dzn_fnc_tsf_3DEN_AddZeus }]
@@ -540,7 +541,105 @@ dzn_fnc_tsf_3DEN_AddEVCLogic = {
 	};
 };
 
+dzn_fnc_tsf_3DEN_AddERSLogic = {
+	private _units = dzn_tsf_3DEN_SelectedUnits;
+	if (_units isEqualTo []) exitWith {
+		"tSF Tools - Vehicle Radio: No units selected" call dzn_fnc_tsf_3DEN_ShowWarn;
+	};
+	
+	disableSerialization;
+	private _result = [
+		"Set LR Radio Logic"
+		,[
+			["Radio Config Name", ["BLUFOR","OPFOR","INDEP"]]
+			,["Radio Custom Config", []]
+		]
+	] call dzn_fnc_ShowChooseDialog;
+	
+	if (count _result == 0) exitWith { dzn_tsf_3DEN_toolDisplayed = false };
+	
+	dzn_tsf_3DEN_Parameter = _result;
+	
+	collect3DENHistory {
+		private _result = dzn_tsf_3DEN_Parameter;
+		private _configName = "";
+		if (typename (_result select 1) == "STRING") then {
+			_configName = _result select 1;	
+		} else {
+			switch (_result select 0) do {
+				case 0: { _configName = "BLUFOR" };
+				case 1: { _configName = "OPFOR" };
+				case 2: { _configName = "INDEP" };
+			};
+		};
+		
+		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
+		_logic set3DENAttribute [
+			"Init"
+			, format [
+				"this setVariable ['%1', '%2'];"
+				, _type
+				, _kit
+			]
+		];
+		
+		call dzn_fnc_tsf_3DEN_createGearLayer;
+		_logic set3DENLayer dzn_tsf_3DEN_GearLayer;
+		
+		add3DENConnection ["Sync", _units, _logic];	
+		(format ["tSF Tools - Gear: ""%1"" Kit logic was assigned", _kit]) call dzn_fnc_tsf_3DEN_ShowNotif;
+	};
+	
+	
+	
+	
+	
+	private _type = if (_result select 0 == 0) then { "dzn_gear" } else { "dzn_gear_cargo" };
+	private _kit = if (typename (_result select 1) == "STRING") then { _result select 1 } else { "KitName" };
+	
+	
+	private _configName = "";
+	
+	
+	if (_result == 3) then {
+		private _resultCustom = [
+			"Set LR Radio Logic"
+			,[
+				["Radio Config Name", ["BLUFOR","OPFOR","INDEP","Custom..."]]
+			]
+		] call dzn_fnc_ShowChooseDialog;
+	
+	} else {
+		switch (_result) do {
+			case 0: { _configName = "BLUFOR" };
+			case 1: { _configName = "OPFOR" };
+			case 2: { _configName = "INDEP" };
+		};
+	};
+	
+	dzn_tsf_3DEN_Parameter = if (typename (_result select 0) == "STRING") then {_result select 0} else {"Default Config"};
+	
+	collect3DENHistory {
+		private _configName = dzn_tsf_3DEN_Parameter;
 
+		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
+		_logic set3DENAttribute [
+			"Init"
+			, format [
+				"this setVariable ['tSF_EVC', '%1'];"
+				, _configName
+			]
+		];
+		
+		call dzn_fnc_tsf_3DEN_createEVCLayer;
+		_logic set3DENLayer dzn_tsf_3DEN_EVCLayer;
+		
+		add3DENConnection ["Sync", _units, _logic];	
+		(format ["tSF Tools - Vehicle Crew: ""%1"" config was assigned", _configName]) call dzn_fnc_tsf_3DEN_ShowNotif;
+	};
+
+
+};
 
 
 
