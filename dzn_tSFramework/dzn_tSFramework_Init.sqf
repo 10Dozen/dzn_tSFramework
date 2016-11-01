@@ -1,5 +1,5 @@
 // **************************
-// 	DZN TS FRAMEWORK v1.5
+// 	DZN TS FRAMEWORK v1.6
 //
 //	Initialized when:
 //	{ }
@@ -25,6 +25,7 @@ tSF_module_CCP = true;
 tSF_module_Interactives = true;
 tSF_module_EditorVehicleCrew = true;
 tSF_module_EditorUnitBehavior = true;
+tSF_module_EditorRadioSettings = true;
 
 tSF_module_tSAdminTools = true;
 
@@ -44,5 +45,6 @@ if (tSF_module_CCP) then { [] execVM "dzn_tSFramework\Modules\CCP\Init.sqf"; };
 if (tSF_module_Interactives) then { [] execVM "dzn_tSFramework\Modules\Interactives\Init.sqf"; };
 if (tSF_module_EditorVehicleCrew) then { [] execVM "dzn_tSFramework\Modules\EditorVehicleCrew\Init.sqf"; };
 if (tSF_module_EditorUnitBehavior) then { [] execVM "dzn_tSFramework\Modules\EditorUnitBehavior\Init.sqf"; };
+if (tSF_module_EditorRadioSettings) then { [] execVM "dzn_tSFramework\Modules\EditorRadioSettings\Init.sqf"; };
 
 if (tSF_module_tSAdminTools) then { [] execVM "dzn_tSFramework\Modules\tSAdminTools\Init.sqf"; };
