@@ -363,10 +363,11 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 			, ["Overview",[]]			
 			, ["Summary", []]
 			, ["Author",[]]
-			, ["Loading Screen text", []]
+			, ["Picture",[]]			
 			, ["Max Players", []]
 		]
 	] call dzn_fnc_ShowChooseDialog;
+	//  ["Loading Screen text", []]
 	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
 	dzn_tSF_3DEN_Parameter = _result;
@@ -377,22 +378,26 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 		private _overview  = if (typename (_result select 1) == "SCALAR") then { "" } else { _result select 1 };
 		private _summary = if (typename (_result select 2) == "SCALAR") then { "" } else { _result select 2 };
 		private _author = if (typename (_result select 3) == "SCALAR") then { "Tactical Shift" } else { _result select 3 };
-		private _loadingScreen = if (typename (_result select 4) == "SCALAR") then { "" } else { _result select 4 };
+		private _picture = if (typename (_result select 4) == "SCALAR") then { "" } else { _result select 4 };
 		private _maxPlayers = if (typename (_result select 5) == "SCALAR") then { "1" } else { _result select 5 };
 		private _title = if (typename (_result select 0) == "SCALAR") then { format ["CO%1 Scenario Name", _maxPlayers] } else { _result select 0 };
 		
 		set3DENMissionAttributes [
 			["Scenario","IntelBriefingName", _title]
-			, ["Scenario","OverviewText", _overview]		
-			, ["Scenario","Author", _author]
+			, ["Scenario","OverviewText", _overview]	
+			, ["Scenario","OnLoadMission", _overview]			
+			, ["Scenario","OverviewPicture", _picture]
+			, ["Scenario","LoadScreen", _picture]
+			, ["Scenario","OverviewPictureLocked", _picture]
+			, ["Scenario","Author", _author]			
 			, ["Scenario","Saving", false]
 			, ["Scenario","EnableDebugConsole", 1]
-			, ["Scenario", "OnLoadMission", _loadingScreen]
+			, ["Scenario","SaveBinarized", false]			
 			
-			, ["Multiplayer","MaxPlayers", parseNumber(_maxPlayers)]
-			, ["Multiplayer","IntelOverviewText", _summary]		
-			, ["Multiplayer","GameType","Coop"]
 			, ["Multiplayer","MinPlayers", 1]
+			, ["Multiplayer","MaxPlayers", parseNumber(_maxPlayers)]
+			, ["Multiplayer","GameType","Coop"]
+			, ["Multiplayer","IntelOverviewText", _summary]	
 			, ["Multiplayer","DisabledAI", true]
 			, ["Multiplayer","respawn",3]
 			, ["Multiplayer","RespawnDialog", false]
@@ -496,7 +501,7 @@ dzn_fnc_tSF_3DEN_Add_EUBSurrender_Logic = {
 		_logic set3DENAttribute ["Init", "this setVariable ['tSF_EUB', 'Surrender'];"];	
 		
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
-		_logic set3DENLayer dzn_tSF_3DEN_EUBLayer;		
+		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;		
 		add3DENConnection ["Sync", _units, _logic];
 		
 		"tSF Tools - Unit Behavior: Surrender behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
@@ -534,7 +539,7 @@ dzn_fnc_tSF_3DEN_AddEVCLogic = {
 		];
 		
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
-		_logic set3DENLayer dzn_tSF_3DEN_EVCLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;
 		
 		add3DENConnection ["Sync", _units, _logic];	
 		(format ["tSF Tools - Vehicle Crew: ""%1"" config was assigned", _configName]) call dzn_fnc_tSF_3DEN_ShowNotif;
