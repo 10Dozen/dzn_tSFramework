@@ -1,5 +1,11 @@
 tSF_ERS_initTimeout	=	5;
 
+/*
+ *	On TRUE -- overrides Isolated parameters of vehicle by config
+ *	On FALSE -- if vehicle class already has TFAR LR radio (and actual isolated settings) -- it will not be overriden
+ */
+tSF_ERS_OverrideIsolatedConfigValue = false;
+
 
 /*
  *	LR Radio Settings for Vehicles
@@ -20,6 +26,7 @@ tSF_ERS_OPFOR_LRIsolated		= 0.5;
 tSF_ERS_INDEP_LRRadioType		= "TFAR_anprc155";
 tSF_ERS_INDEP_LRRange			= 30000; // meters
 tSF_ERS_INDEP_LRIsolated		= 0.5;
+ 
  
  /*
  *	Radio Configs
