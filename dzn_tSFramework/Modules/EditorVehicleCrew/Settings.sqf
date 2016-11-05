@@ -12,7 +12,10 @@ tSF_EVC_initTimeout	=	20;
  *				, @Side	- e.g. west, east, resistance, civilian
  *				, @Skill	- e.g. simple skill (number from 0 to 1)
  *				, @Kit	- e.g. dzn_gear kit ("" if not used) *				
- *				, @DynaiBehaviour 	- if TRUE -- assign dzn_Dynai Vehicle Hold behavior
+ *				, @VehicleHoldBehaviour 	- (optional) one of the options:
+						"hold"		- vehicle will provide overwatch around itself
+						, "frontal"		- vehicle will provide overwatch in frontal -45/+45 sector
+						, "full frontal"	- vehicle will provide overwatch in frontal -90/+90 sector
  *			]
  *		]
  *
@@ -26,8 +29,7 @@ tSF_EVC_CrewConfig = [
 			"driver"
 			, west			
 			, 0.7
-			, ""
-			, false
+			, "kit_nato_r"
 		] 
 	]
 	, [ 
@@ -36,8 +38,8 @@ tSF_EVC_CrewConfig = [
 			["driver","gunner"]
 			, east			
 			, 0.6
-			, "kit_ins_crew"
-			, false
+			, ""
+			, "frontal"
 		] 
 	]
 ];

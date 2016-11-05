@@ -74,7 +74,9 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 	 */
 	
 	
-	dzn_tSF_3DEN_SquadLastNumber = dzn_tSF_3DEN_SquadLastNumber + 1;
+	
+	
+	private _squadNo = dzn_tSF_3DEN_SquadLastNumber + 1;
 	private _squadSettings = [];
 	private _infantryClass = "";
 	
@@ -84,7 +86,20 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		"Add Squad"
 		, [
 			["Side", ["BLUFOR","OPFOR","INDEPENDENT","CIVILIANS"]]
-			,["Doctrine", ["NATO 1-4-4", "UK 4-4", "Ru MSO 1-2-3-3", "Ru VV 4-3"]]
+			,["Doctrine", [
+				"NATO 1-4-4"
+				, "UK 4-4"
+				, "Ru MSO 1-2-3-3"
+				, "Ru VV 4-3"				
+				, "Platoon Squad"
+				, "Командный отряд"
+				, "NATO Weapon Squad"
+				, "Crew Squad"
+				, "Экипаж"
+				, "Airborne Squad"
+				, "Пилоты"
+				, ""
+			]]
 		]
 	] call dzn_fnc_ShowChooseDialog;
 	if (count _squadType == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
@@ -98,53 +113,104 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 	_squadSettings = switch (_squadType select 1) do {
 		/* NATO 1-4-4 */ 	case 0: {
 			[
-				[format ["1'%1 Squad Leader", dzn_tSF_3DEN_SquadLastNumber],"Sergeant"]
-				,["RED - FTL"		,"Corporal"]
-				,["Automatic Rifleman"	,"Private"]
-				,["Grenadier"		,"Private"]
-				,["Rifleman"		,"Private"]
-				,["BLUE - FTL"		,"Corporal"]
-				,["Automatic Rifleman"	,"Private"]
-				,["Grenadier"		,"Private"]
-				,["Rifleman"		,"Private"]
+				[format ["1'%1 Squad Leader", _squadNo],"Sergeant"]
+				,["RED - FTL"			,"Corporal"]
+				,["Automatic Rifleman"		,"Private"]
+				,["Grenadier"			,"Private"]
+				,["Rifleman"			,"Private"]
+				,["BLUE - FTL"			,"Corporal"]
+				,["Automatic Rifleman"		,"Private"]
+				,["Grenadier"			,"Private"]
+				,["Rifleman"			,"Private"]
 			]		
 		};
 		/* UK 4-4*/ 		case 1: {
 			[
-				[format ["1'%1 Section Leader", dzn_tSF_3DEN_SquadLastNumber],"Sergeant"]
-				,["Automatic Rifleman"	,"Private"]
-				,["Grenadier"			,"Private"]				
-				,["Rifleman"			,"Private"]				
+				[format ["1'%1 Section Leader", _squadNo],"Sergeant"]
+				,["Automatic Rifleman"		,"Private"]
+				,["Grenadier"			,"Private"]
+				,["Rifleman"			,"Private"]	
 				,["BLUE - 2IC"			,"Corporal"]
-				,["Automatic Rifleman"	,"Private"]
-				,["Grenadier"			,"Private"]				
+				,["Automatic Rifleman"		,"Private"]
+				,["Grenadier"			,"Private"]
 				,["Rifleman"			,"Private"]
-			]	
-		
+			]
 		};
 		/* RuMSO 1-2-3-3 */	case 2: {
 			[
-				[format ["1'%1 Командир отделения", dzn_tSF_3DEN_SquadLastNumber]	,"Sergeant"]
-				,["Наводчик-оператор"					,"Corporal"]
-				,["Механик-водитель"					,"Private"]
+				[format ["1'%1 Командир отделения", _squadNo]	,"Sergeant"]
+				,["Наводчик-оператор"				,"Corporal"]
+				,["Механик-водитель"				,"Private"]
 				,["Пулеметчик"					,"Private"]
-				,["Стрелок-Гранатометчик"				,"Private"]
-				,["Стрелок, помощник гранатометчика"	,"Private"]				
-				,["BLUE - Старший стрелок"				,"Corporal"]
+				,["Стрелок-Гранатометчик"			,"Private"]
+				,["Стрелок, помощник гранатометчика"	,"Private"]
+				,["BLUE - Старший стрелок"			,"Corporal"]
 				,["Стрелок"						,"Private"]
 				,["Стрелок"						,"Private"]
-				
 			]
 		};
 		/* Ru VV 4-3 */ 	case 3: {
 			[
-				[format ["1'%1 Командир отделения", dzn_tSF_3DEN_SquadLastNumber]	,"Sergeant"]
-				,["Пулеметчик"							,"Private"]
-				,["Стрелок-Гранатометчик"				,"Private"]
-				,["Стрелок, помощник гранатометчика"	,"Private"]				
-				,["BLUE - Старший стрелок"				,"Corporal"]
+				[format ["1'%1 Командир отделения", _squadNo]	,"Sergeant"]
+				,["Пулеметчик"					,"Private"]
+				,["Стрелок-Гранатометчик"			,"Private"]
+				,["Стрелок, помощник гранатометчика"	,"Private"]
+				,["BLUE - Старший стрелок"			,"Corporal"]
 				,["Стрелок (ГП)"					,"Private"]
 				,["Снайпер"						,"Private"]
+			]
+		};
+		/* "Platoon Squad" */ case 4: {
+			[
+				["1'6 Platoon Leader"				,"Lieutenant"]
+				,["Automatic Rifleman"				,"Private"]
+				,["Grenadier"					,"Private"]
+				,["Rifleman"					,"Private"]	
+			]
+		};
+		/* "Командный отряд" */ case 5: {
+			[
+				["1'6 Командир взвода"				,"Lieutenant"]
+				,["Стрелок (ГП)"					,"Private"]
+				,["Стрелок"						,"Private"]
+				,["Снайпер"						,"Private"]	
+			]
+		};		
+		/* "NATO 1-2-2-2 Weapon Squad" */ case 6: {
+			[
+				["1'4 Squad Leader"				,"Sergeant"]
+				,["Machinegunner"					,"Private"]
+				,["Asst. Machinegunner"				,"Private"]
+				,["Machinegunner"					,"Private"]
+				,["Asst. Machinegunner"				,"Private"]
+				,["Missile Specialist"				,"Private"]
+				,["Missile Specialist"				,"Private"]
+			]
+		};		
+		/* "Crew Squad" */ case 7: {
+			[
+				["Crew Commander"					,"Corporal"]
+				,["Crew Gunner"					,"Private"]
+				,["Crew Driver"					,"Private"]
+			]		
+		};
+		/* "Экипаж" */ case 8: {
+			[
+				["Командир экипажа"				,"Corporal"]
+				,["Наводчик-оператор"				,"Private"]
+				,["Механик-водитель"				,"Private"]
+			]		
+		};
+		/* "Airborne Squad" */ case 9: {
+			[
+				["Pilot"						,"Lieutenant"]
+				,["Gunner"						,"Sergeant"]
+			]		
+		};
+		/* "Пилоты" */ case 10: {
+			[
+				["Пилот"						,"Lieutenant"]
+				,["Наводчик-оператор"				,"Sergeant"]
 			]
 		};
 	};
@@ -155,7 +221,11 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		, [2,-5,0]	, [4,-5,0]	, [6,-5,0]	, [8,-5,0]
 	];
 	
-	collect3DENHistory {	
+	collect3DENHistory {		
+		if ((_squadType select 1) in [0,1,2,3]) then {
+			dzn_tSF_3DEN_SquadLastNumber = if (dzn_tSF_3DEN_SquadLastNumber + 1 == 6) then { 7 } else { dzn_tSF_3DEN_SquadLastNumber + 1 };
+		};
+		
 		if (typename dzn_tSF_3DEN_UnitsLayer != "SCALAR") then {
 			dzn_tSF_3DEN_UnitsLayer = -1 add3DENLayer "Playable Units";
 		};
@@ -430,7 +500,10 @@ dzn_fnc_tSF_3DEN_ResolveUnitBehavior = {
 				, [
 					"DynAI CQB"
 					,"DynAI Response"
-					,"tSF Surrender"			
+					,"tSF Surrender"
+					,"DynAI Vehicle Hold (All Aspects)"
+					,"DynAI Vehicle Hold (45 frontal)"
+					,"DynAI Vehicle Hold (90 frontal)"
 				]
 			]
 		]
@@ -445,12 +518,21 @@ dzn_fnc_tSF_3DEN_ResolveUnitBehavior = {
 		};
 		case 1: {
 			/* DYNAI CQB */
-			 call dzn_fnc_tSF_3DEN_AddGroupResponseLogic;
+			call dzn_fnc_tSF_3DEN_AddGroupResponseLogic;
 		};
 		case 2: {
 			/* EUB Surrender*/
 			call dzn_fnc_tSF_3DEN_Add_EUBSurrender_Logic;
 		};
+		case 3: {
+			"vehicle hold" call dzn_fnc_tSF_3DEN_AddVehicleHoldLogic;
+		};
+		case 4: {
+			"vehicle 45 hold" call dzn_fnc_tSF_3DEN_AddVehicleHoldLogic;
+		};
+		case 5: {
+			"vehicle 90 hold" call dzn_fnc_tSF_3DEN_AddVehicleHoldLogic;
+		};		
 	};
 };
 
@@ -469,6 +551,31 @@ dzn_fnc_tSF_3DEN_AddCQBLogic = {
 		add3DENConnection ["Sync", _units, _logic];
 		
 		"tSF Tools - DynAI: CQB behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
+	};
+};
+
+dzn_fnc_tSF_3DEN_AddVehicleHoldLogic = {
+	dzn_tSF_3DEN_Parameter = _this;
+	collect3DENHistory {
+		private _units = dzn_tSF_3DEN_SelectedUnits;
+		if (_units isEqualTo []) exitWith {
+			"tSF Tools - DynAI: Vehicle Hold - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
+		};
+		
+		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
+		_logic set3DENAttribute [
+			"Init"
+			, format [
+				"this setVariable ['dzn_dynai_setBehavior', '%1'];"
+				, dzn_tSF_3DEN_Parameter
+			]
+		];	
+		
+		call dzn_fnc_tSF_3DEN_createDynaiLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_DynaiLayer;
+		add3DENConnection ["Sync", _units, _logic];
+		
+		"tSF Tools - DynAI: Vehicle Hold behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
@@ -604,7 +711,7 @@ dzn_fnc_tSF_3DEN_AddERSLogic = {
  *	LAYERS & UTILITIES
  *
  */
- dzn_fnc_tSF_3DEN_ShowNotif = {
+dzn_fnc_tSF_3DEN_ShowNotif = {
 	[_this, 0, 15, true] call BIS_fnc_3DENNotification;
 };
 
