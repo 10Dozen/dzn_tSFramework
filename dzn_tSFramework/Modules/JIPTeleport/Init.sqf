@@ -40,7 +40,7 @@ if (hasInterface && call dzn_tSF_JIPTeleport_isJIP) exitWith {
 	];
 	
 	private _initPos = getPosATL player;
-	private _initTime = time;
+	private _initTime = 0;
 	
 	if (tSF_JIPTeleport_ShowMessage) then {
 		systemChat tSF_JIPTeleport_Message;	
