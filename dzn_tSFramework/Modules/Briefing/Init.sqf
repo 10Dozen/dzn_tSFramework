@@ -36,7 +36,7 @@ if (tSF_Briefing_ShowRoster) then {
 		
 		if (didJIP) then {
 			tSF_Briefing_UpdateRoster = true;
-			publicVariable "tSF_Briefing_UpdateRoster"
+			publicVariable "tSF_Briefing_UpdateRoster";
 		};
 		
 		"tSF_Briefing_UpdateRoster" addPublicVariableEventHandler {
