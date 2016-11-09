@@ -4,6 +4,7 @@
 
 waitUntil { !isNull findDisplay 52 || getClientState == "BRIEFING SHOWN" || time > 0 };
 [] execVM "dzn_tSFramework\Modules\Briefing\tSF_Briefing.sqf";
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Briefing\Settings.sqf";
 
 if (tSF_Briefing_ShowRoster) then {
 	dzn_fnc_getBriefingRoster = {
@@ -15,7 +16,7 @@ if (tSF_Briefing_ShowRoster) then {
 				_groups pushBack _grp; [groupId _grp, leader _grp, count(units _grp) - 1];
 				
 				_roster = format [
-					"%1<br /> %2 - %3 $4 (+%5 чел.)"
+					"%1<br /><font color='#12C4FF'>%2</font> - <font color='#9E9E9E'>%3</font> %4 <font color='#9E9E9E'>(+%5 чел.)</font>"
 					, _roster
 					, groupId _grp
 					, roleDescription (leader _grp)

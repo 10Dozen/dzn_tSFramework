@@ -85,7 +85,8 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 	private _squadType = [
 		"Add Squad"
 		, [
-			["Side", ["BLUFOR","OPFOR","INDEPENDENT","CIVILIANS"]]
+			["Callsign", []]
+			,["Side", ["BLUFOR","OPFOR","INDEPENDENT","CIVILIANS"]]
 			,["Doctrine", [
 				"NATO 1-4-4"
 				, "UK 4-4"
@@ -103,14 +104,15 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		]
 	] call dzn_fnc_ShowChooseDialog;
 	if (count _squadType == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
+	_squadName = if (typename (_squadType select 0) == "STRING") then { _squadType select 0 } else { "" };
 	
-	_infantryClass = switch (_squadType select 0) do {
+	_infantryClass = switch (_squadType select 1) do {
 		case 0: { "B_Soldier_F" };
 		case 1: { "O_Soldier_F" };
 		case 2: { "I_soldier_F" };
 		case 3: { "C_man_1" };
 	};
-	_squadSettings = switch (_squadType select 1) do {
+	_squadSettings = switch (_squadType select 2) do {
 		/* NATO 1-4-4 */ 	case 0: {
 			[
 				[format ["1'%1 Squad Leader", _squadNo],"Sergeant"]
@@ -222,7 +224,7 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 	];
 	
 	collect3DENHistory {		
-		if ((_squadType select 1) in [0,1,2,3]) then {
+		if ((_squadType select 2) in [0,1,2,3]) then {
 			dzn_tSF_3DEN_SquadLastNumber = if (dzn_tSF_3DEN_SquadLastNumber + 1 == 6) then { 7 } else { dzn_tSF_3DEN_SquadLastNumber + 1 };
 		};
 		
@@ -255,6 +257,11 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 			[[_grp], "behaviour", "Safe"]
 			,[[_grp], "speedMode", "Limited"]
 		];
+		
+		if (_squadName != "") then {
+			_grp set3DENAttribute ["groupID",_squadName ];
+		};
+		
 		
 		delete3DENEntities [(units _grp select 0)];
 		
