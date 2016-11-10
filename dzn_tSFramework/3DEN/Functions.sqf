@@ -439,8 +439,8 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 			["Title", []]
 			, ["Overview",[]]			
 			, ["Summary", []]
-			, ["Author",[]]
-			, ["Picture",[]]			
+			, ["Author (def: TS)",[]]
+			, ["Picture (def: overview.jpg)",[]]			
 			, ["Max Players", []]
 		]
 	] call dzn_fnc_ShowChooseDialog;
@@ -455,7 +455,7 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 		private _overview  = if (typename (_result select 1) == "SCALAR") then { "" } else { _result select 1 };
 		private _summary = if (typename (_result select 2) == "SCALAR") then { "" } else { _result select 2 };
 		private _author = if (typename (_result select 3) == "SCALAR") then { "Tactical Shift" } else { _result select 3 };
-		private _picture = if (typename (_result select 4) == "SCALAR") then { "" } else { _result select 4 };
+		private _picture = if (typename (_result select 4) == "SCALAR") then { "overview.jpg" } else { _result select 4 };
 		private _maxPlayers = if (typename (_result select 5) == "SCALAR") then { "1" } else { _result select 5 };
 		private _title = if (typename (_result select 0) == "SCALAR") then { format ["CO%1 Scenario Name", _maxPlayers] } else { _result select 0 };
 		
