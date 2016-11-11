@@ -9,7 +9,7 @@ class CfgDebriefing
     class WIPED
     {
         title = "Задание провалено";
-        subtitle = "Провал!";
-        description = "Задача не была выполнена";
+        subtitle = "Все погибли!";
+        description = "Такие дела...";
     };
 };
