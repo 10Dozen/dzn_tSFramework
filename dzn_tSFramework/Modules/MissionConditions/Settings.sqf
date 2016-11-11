@@ -20,7 +20,21 @@ tSF_MissionCondition_DefaultCheckTimer 			= 15;
  *			, %Note/Description(String)
  *			, %TimerInterval(Number,seconds, optional) 
  *		];
-*/ 
+ *
+ *	MVP/Объект доставлен в зону: 						
+ *			TGT inArea TRG_NAME
+ *	MVP/Объект жив:										
+ *			alive TGT
+ *	MVP/Объект уничтожен:
+ *			!alive TGT
+ *	Все игроки добрались до зоны (триггер baseTrg):
+ *			{call fnc_CheckPlayersReturned}
+ *	Хоть один игрок добрался до зоны: 
+ *			{ {_x inArea TGT_NAME} count (call BIS_fnc_listPlayers) > 0}
+ *	Все игроки умерли:
+ *			{ {alive _x} count (call BIS_fnc_listPlayers) < 1}
+ *
+ */ 
 
 MissionCondition1 = [ "WIN", "false", "All objectives done" ];
 MissionCondition2 = [ "WIPED", "{alive _x} count (call BIS_fnc_listPlayers) < 1", "All dead", 30 ];
