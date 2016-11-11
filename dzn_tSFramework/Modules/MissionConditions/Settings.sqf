@@ -23,4 +23,4 @@ tSF_MissionCondition_DefaultCheckTimer 			= 15;
 */ 
 
 MissionCondition1 = [ "WIN", "false", "All objectives done" ];
-MissionCondition2 = [ "FAIL", "false", "All dead", 30 ];
+MissionCondition2 = [ "WIPED", "{alive _x} count (call BIS_fnc_listPlayers) < 1", "All dead", 30 ];
