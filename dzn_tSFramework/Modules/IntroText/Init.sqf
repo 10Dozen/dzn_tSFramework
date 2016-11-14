@@ -7,7 +7,7 @@ if (hasInterface) then {
 			[
 				
 				[
-					tSF_Intro_LineText1
+					format[tSF_Intro_LineText1, MissionDate select 2, MissionDate select 1, MissionDate select 0]
 					, tSF_Intro_LineStyle1
 				]
 				,[
