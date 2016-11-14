@@ -1,8 +1,3 @@
-if ("par_daytime" call BIS_fnc_getParamValue == 0) then {
-    setDate [2008,4,9,10 + round(random 4), 00]; 
-} else {
-    setDate [2008,4,9, 21 + round(random 8), 00];
-};
 
 // dzn Gear
   // set true to engage Edit mode
