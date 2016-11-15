@@ -8,27 +8,23 @@ getVariable "tSF_Support"
 
 */
 
-if (isServer) then {
-	tSF_fnc_Support_processLogics = {
-		{
-			private _logic = _x;
-			
-			if !(isNil {_logic getVariable "tSF_Support"}) then {				
-				tSF_Support_Vehicles pushBack [
-					(synchronizedObjects _logic) select 0
-					, _logic getVariable "tSF_Support"
-				];
-			};
-			
-			if !(isNil {_logic getVariable "tSF_Support_ReturnPoint"}) then {
-				tSF_Support_ReturnPoint = _logic;
-			};			
-		} forEach (entities "Logic");
-		
+if (hasInterface) then {
+	[] spawn {
+		waitUntil { !isNil "tSF_Support_Vehicles" && { !(tSF_Support_Vehicles isEqualTo []) } };
+		{ _x call tSF_fnc_Support_processVehicleClient } forEach tSF_Support_Vehicles;
 	};
+};
 
+
+if (isServer) then {
 	waitUntil { time > tSF_Support_initTimeout };
+	
 	tSF_Support_Vehicles = [];
 	tSF_Support_ReturnPoint = objNull;
+	
 	call tSF_fnc_Support_processLogics;
+	{ _x call tSF_fnc_Support_processVehicleServer } forEach tSF_Support_Vehicles;
+	
+	publicVariable "tSF_Support_Vehicles";
+	publicVariable "tSF_Support_ReturnPoint";
 };

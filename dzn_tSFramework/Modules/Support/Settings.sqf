@@ -20,3 +20,10 @@ tSF_Support_AllowTeleport	= false;
 
 tSF_Support_ReturnToBase	= true;
 tSF_Support_CallIn		= true;
+
+/*
+ *	AI Pilot 
+ */
+ 
+tSF_Support_PilotClass 		= "B_helipilot_F";
+tSF_Support_PilotKit		= "kit_support_pilot";
