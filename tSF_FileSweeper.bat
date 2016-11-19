@@ -11,11 +11,13 @@ cd %main%
 echo #####################################################################
 echo #                                                                   #
 echo #    tSF File Sweeper                                               #      
-echo #    Remove all non-arma files from your missions                   #
+echo #    Remove all non-arma files from your mission                    #
+echo #    (e.g. html-helpers) and unused tSFramework files               #
+echo #    (according to dzn_tSFramework_Init.sqf settings)               #
 echo #                                                                   #
 echo #####################################################################
 
-set /p exitout="Do you want to remove unused filed? [y]es [n]o   "
+set /p exitout="Do you want to remove unused files? [y]es [n]o   "
 if %exitout%==n exit
 
 echo "####### tSF File Sweeper Engaged #######" > tSF_FS_log.txt
