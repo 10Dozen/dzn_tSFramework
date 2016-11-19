@@ -65,6 +65,8 @@ echo #####################################################################
 
 del /q /f  tSFS_temp.txt
 del /q /f  tSFS_temp2.txt
+
+echo Done! >> tSF_FS_log.txt
 ( del /q /f "%~f0" >nul 2>&1 & exit /b 0  )
 
 pause
