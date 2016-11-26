@@ -14,18 +14,19 @@ dzn_fnc_interactives_executeEach = {
 	params ["_reference", "_code","_persistant"];
 
 	private _objects = [];
-	if (typename (_reference select 0) == "STRING") then {
-		{
+	
+	{
+		if (typename _x == "STRING") then {
 			_objects = _objects + entities _x;
-		} forEach _reference;
-	} else {
-		_objects = _reference;
-	};
-
+		} else {
+			_objects pushBack _x;
+		};	
+	} forEach _reference;
+	
 	{
 		if !(_x getVariable ["dzn_Interactives_Assigned", false]) then {
 			_x spawn _code;
-            _x setVariable ["dzn_Interactives_Assigned", true, false];
+			_x setVariable ["dzn_Interactives_Assigned", true, false];
 		};
 	} forEach _objects;
 
