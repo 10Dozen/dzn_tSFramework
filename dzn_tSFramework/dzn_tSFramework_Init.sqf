@@ -23,11 +23,15 @@ tSF_module_tSNotesSettings = true;
 
 tSF_module_CCP = true;
 tSF_module_Interactives = true;
+tSF_module_InteractivesACE = true;
+tSF_module_Support = true;
+
 tSF_module_EditorVehicleCrew = true;
 tSF_module_EditorUnitBehavior = true;
 tSF_module_EditorRadioSettings = true;
 
 tSF_module_tSAdminTools = true;
+
 
 // **************************
 //  INIT
@@ -43,6 +47,9 @@ if (tSF_module_tSNotesSettings) then { [] execVM "dzn_tSFramework\Modules\tSNote
 
 if (tSF_module_CCP) then { [] execVM "dzn_tSFramework\Modules\CCP\Init.sqf"; };
 if (tSF_module_Interactives) then { [] execVM "dzn_tSFramework\Modules\Interactives\Init.sqf"; };
+if (tSF_module_InteractivesACE) then { [] execVM "dzn_tSFramework\Modules\InteractivesACE\Init.sqf"; };
+if (tSF_module_Support) then { [] execVM "dzn_tSFramework\Modules\Support\Init.sqf"; };
+
 if (tSF_module_EditorVehicleCrew) then { [] execVM "dzn_tSFramework\Modules\EditorVehicleCrew\Init.sqf"; };
 if (tSF_module_EditorUnitBehavior) then { [] execVM "dzn_tSFramework\Modules\EditorUnitBehavior\Init.sqf"; };
 if (tSF_module_EditorRadioSettings) then { [] execVM "dzn_tSFramework\Modules\EditorRadioSettings\Init.sqf"; };

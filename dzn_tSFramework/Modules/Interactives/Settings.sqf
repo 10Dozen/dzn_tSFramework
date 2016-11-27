@@ -11,14 +11,18 @@
 		To manually apply code, use
 			[@ReferenceList, @Code] call dzn_fnc_interactives_executeEach
 */
+#define	INTRACTIVES_TABLE		dzn_interactives_objectsAndClasses = [
+#define	INTRACTIVES_TABLE_END	];
 
-dzn_interactives_objectsAndClasses = [
+INTRACTIVES_TABLE
+
 	[
 		["Land_ToiletBox_F"]
 		, {
-			hint "This is toilet box";
+			_this addAction ["Check it", {hint "This is toilet box"}];
 		}
 		, "client"
 		, false
 	]
-];
+	
+INTRACTIVES_TABLE_END
