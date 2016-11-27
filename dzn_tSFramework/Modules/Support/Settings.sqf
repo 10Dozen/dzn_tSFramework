@@ -1,7 +1,5 @@
 tSF_Support_initTimeout	=	5;
 
-tSF_Support_RTB_CheckTimeout	=	5;
-
 /*
  *	List of Authorized users:
  *		"Admin"		- game admin
@@ -20,9 +18,23 @@ tSF_Support_AllowTeleport	= false;
  *	Available actions
  */
 
-tSF_Support_ReturnToBase	= true;
-tSF_Support_CallIn		= false;
-tSF_Support_Teleport		= true;
+tSF_Support_ReturnToBase		= true;
+tSF_Support_RTB_CheckTimeout		= 3;
+
+tSF_Support_CallIn			= true;
+tSF_Support_CallIn_MinDistance	= 300;
+tSF_Support_CallIn_CheckTimeout	= 5;
+
+tSF_Support_Teleport			= true;
+
+/*
+ *	Vehicle availabness options
+ */
+ 
+tSF_Support_DamageLimit			= 0.75;
+tSF_Support_FuelLimit			= 0.15;
+tSF_Support_AllowBaseRefuel		= false;
+
 
 /*
  *	AI Pilot 

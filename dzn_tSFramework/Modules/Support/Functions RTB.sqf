@@ -7,7 +7,7 @@ tSF_fnc_Support_RTB_Available = {
 	
 	!(_veh getVariable ["tSF_Support_doRTB", false])
 	&& !(_veh getVariable ["tSF_Support_InProgress", false]) 
-	&& {_veh distance2d (_veh getVariable "tSF_Support_RTBPoint") > 100}
+	&& {_veh distance2d (_veh getVariable "tSF_Support_RTBPoint") > 200}
 };
 
 
@@ -17,22 +17,21 @@ tSF_fnc_Support_RTB_Action = {
 	_veh = _this call tSF_fnc_Support_getByCallsign;
 	openMap [true, false];
 	
-	hint parseText format [
-		"<t color='#EDB81A' size='1.5' align='center' font='PuristaBold'>%1</t>
-		<br/><t font='PuristaBold'>Returning to base</t>
-		<br/><br/>Select egress waypoint!"
-		, _veh getVariable "tSF_Support_Callsign"
-	];
+	[
+		_veh
+		, "Returning to base"
+		, "Select EGRESS waypoint!"
+	] call tSF_fnc_Support_showHint;
 	
-	["tSF_Support_clickForRTB", "onMapSingleClick", {			
+	["tSF_Support_clickForRTB", "onMapSingleClick", {
+		openMap [false, false];
 		[_this, _pos, true] call tSF_fnc_Support_RTB_Call;
 		
-		hint parseText format [
-			"<t color='#EDB81A' size='1.5' align='center' font='PuristaBold'>%1</t>
-			<br/><t font='PuristaBold'>Returning to base</t>
-			<br/><br/>Leaving AO!"
-			, _this getVariable "tSF_Support_Callsign"
-		];
+		[
+			_this
+			, "Returning to base"
+			, "Leaving AO!"
+		] call tSF_fnc_Support_showHint;
 		systemChat format ["This is %1, Returning to base!", _this getVariable "tSF_Support_Callsign"];
 		
 		["tSF_Support_clickForRTB", "onMapSingleClick"] call BIS_fnc_removeStackedEventHandler;
@@ -43,11 +42,16 @@ tSF_fnc_Support_RTB_Call = {
 	// _vehicle, _pos
 	params ["_veh", "_pos","_deploy"];
 	
+	systemChat "RTB: RTB_Call start";
+	
+	_veh engineOn true;
 	_veh setVariable ["tSF_Support_doRTB", true, true];
 	_veh setVariable ["tSF_Support_InProgress", false, true];
 	_veh setVariable ["tSF_Support_EgressPoint", _pos, true];
 	_veh setVariable ["tSF_Support_ClearOut", _deploy, true];
 	_veh setVariable ["tSF_Support_Side", side player, true];
+	
+	systemChat "RTB: RTB_Call end";
 };
  
 
@@ -65,13 +69,19 @@ tSF_fnc_Support_RTB_Handle = {
 		if !(tSF_fnc_Support_RTB_CanCheck) exitWith {};
 		[] spawn tSF_fnc_Support_RTB_waitAndCheck;
 		
+		systemChat "RTB: RTB_Handler - Check";
+		
 		{
 			private _veh = _x select 0;
+			
+			systemChat format["RTB: RTB_Handler - Check %1", _veh];
+			
 			
 			if (_veh getVariable ["tSF_Support_doRTB", false]) then {
 				_veh setVariable ["tSF_Support_doRTB", false, true];
 				_veh setVariable ["tSF_Support_InProgress", true, true];
 				
+				systemChat "RTB: RTB_Handler - Spawn RTB_Do";
 				_veh spawn tSF_fnc_Support_RTB_Do;			
 			};			
 		} forEach tSF_Support_Vehicles;
@@ -79,9 +89,12 @@ tSF_fnc_Support_RTB_Handle = {
 };
 
 tSF_fnc_Support_RTB_Do = {
+
+	systemChat "RTB: RTB_Do - Start";
 	private _veh = _this;	
 	_veh engineOn true;
 	
+	systemChat "RTB: RTB_Do - Create pilot";
 	private _pilot = (units ([
 		_veh
 		, _veh getVariable "tSF_Support_Side"
@@ -90,7 +103,11 @@ tSF_fnc_Support_RTB_Do = {
 		, 0
 	] call dzn_fnc_createVehicleCrew)) select 0;
 	
+	systemChat "RTB: RTB_Do - Pilot created";
+	
 	_veh lock true;
+	
+	systemChat "RTB: RTB_Do - Pilot do move";
 	_pilot doMove (_veh getVariable "tSF_Support_EgressPoint");
 	
 	_pilot disableAI "TARGET";
@@ -100,6 +117,8 @@ tSF_fnc_Support_RTB_Do = {
 	_pilot disableAI "COVER";
 	_pilot disableAI "AUTOCOMBAT";	
 	
+	
+	systemChat "RTB: RTB_Do - Spawn Pilot move";
 	[
 		_pilot
 		, _veh
@@ -117,8 +136,9 @@ tSF_fnc_Support_RTB_Do = {
 			sleep 5;
 			_pilot doMove (_veh getVariable "tSF_Support_RTBPoint");
 			_pilot distance2d (_veh getVariable "tSF_Support_RTBPoint") < 400
-		};
+		};		
 		
+		_veh land "LAND";			
 		moveOut _pilot;
 		private _grp = group _pilot;
 		

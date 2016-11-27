@@ -33,11 +33,11 @@ ACE_INTRACTIVES_TABLE
 		, { true }
 	]
 	,[
-		[Shahid, Shahid_1, "RHS_CH_47F"]
-		, "IACE Action for Shahid"
-		, "iace_action_for_shahid"
+		["RHS_CH_47F"]
+		, "IACE Action for CH47"
+		, "iace_action_for_CH47"
 		, ""
-		, { hint 'IACE Action for Shahid is done' }
+		, { hint 'IACE Action for CH47 is done' }
 		, { true}	
 	]
 

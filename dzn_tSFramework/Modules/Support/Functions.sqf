@@ -2,6 +2,7 @@
 /*
  *	General
  */	
+ 
 tSF_fnc_Support_isAuthorizedUser = {
 	// Player call tSF_fnc_Support_isAuthorizedUser
 	private _unit = _this;	
@@ -47,6 +48,45 @@ tSF_fnc_Support_getByCallsign = {
 	
 	_result
 };
+
+tSF_fnc_Support_checkVehicle = {
+	params["_veh",["_type", "all"]];
+	
+	/*
+		"all"			- check both damage and fuel
+		"fuel"		- check fuel capacity
+	*/
+	if !(alive _veh) exitWith { false };	
+	_result = true;	
+	
+	if ("all" == toLower(_type)) then {
+		_result = (canMove _veh) && ((damage _veh) <= tSF_Support_DamageLimit);
+	};	
+	_result = _result && ((fuel _veh) >= tSF_Support_FuelLimit);	
+	
+	_result
+};
+
+tSF_fnc_Support_showHint = {
+	params["_veh","_title","_subtitle"];
+	
+	private _callsign = _veh getVariable "tSF_Support_Callsign";
+	private _type = (typeof _veh) call tSF_fnc_Support_getVehicleDisplayName;
+	
+	hint parseText format [
+		"<t color='#EDB81A' size='1.5' align='center' font='PuristaBold'>%1</t>
+		<br/><t color='#EDB81A' font='PuristaBold'>%2</t>
+		<br/><t font='PuristaBold'>%3</t>
+		<br/><br/>%4"
+		, _callsign
+		, _type
+		, _title
+		, _subtitle
+	];
+
+};
+
+
 
 /*
  * Process vehicles
@@ -97,9 +137,11 @@ tSF_fnc_Support_processVehicleServer = {
 	_veh setVariable ["tSF_Support_Callsign", _name];
 	_name = if (_name == "") then {(typeOf _veh) call tSF_fnc_Support_getVehicleDisplayName} else {format ["%1 (%2)", _name, typeOf _veh]};
 	_veh setVariable ["tSF_Support_Name", _name];
-	_veh setVariable ["tSF_Support_RTBPoint", tSF_Support_ReturnPoints call dzn_fnc_selectAndRemove, true];
+	_veh setVariable ["tSF_Support_RTBPoint", tSF_Support_ReturnPoints call dzn_fnc_selectAndRemove, true];	
 	
-	
+	_veh allowDamage false;
+	_veh setPosATL (_veh getVariable "tSF_Support_RTBPoint");
+	_veh allowDamage true;
 };
 
 
@@ -110,19 +152,40 @@ tSF_fnc_Support_processVehicleServer = {
 tSF_fnc_Support_ShowMenu = {
 	params["_callsign"];
 	
-	tSF_Support_SupporterMenu = [[_callsign,false]];
 	private _veh = _callsign call tSF_fnc_Support_getByCallsign;
+	if !(_veh call tSF_fnc_Support_checkVehicle) exitWith {	
+		[_veh, "IS NOT AVAILABLE", ""] call tSF_fnc_Support_showHint;
+	};	
 	
+	tSF_Support_SupporterMenu = [[format ["%1 (%2)", _callsign, (typeof _veh) call tSF_fnc_Support_getVehicleDisplayName],false]];	
 	if (
 		!(isNil "tSF_fnc_Support_RTB_Available") 
 		&& {_veh call tSF_fnc_Support_RTB_Available}
 	) then {
 		tSF_Support_SupporterMenu pushBack [
 			"Return To Base"
-			,[2]
+			,[(count tSF_Support_SupporterMenu) + 1]
 			,""
 			,-5
 			,[["expression", format ["'%1' call tSF_fnc_Support_RTB_Action",_callsign]]]
+			,"1"
+			,"1"
+		];	
+	};
+	
+	if (
+		!(isNil "tSF_fnc_Support_CallIn_Available") 
+		&& {
+			_veh call tSF_fnc_Support_CallIn_Available
+			&& !(player getVariable ["tS_Support_CalledIn", false])
+		}
+	) then {
+		tSF_Support_SupporterMenu pushBack [
+			"Call in"
+			,[(count tSF_Support_SupporterMenu) + 1]
+			,""
+			,-5
+			,[["expression", format ["'%1' call tSF_fnc_Support_CallIn_Action",_callsign]]]
 			,"1"
 			,"1"
 		];	

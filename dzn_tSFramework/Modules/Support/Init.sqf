@@ -1,6 +1,7 @@
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Settings.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions RTB.sqf";
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions CallIn.sqf";
 
 if (hasInterface) then {
 	[] spawn {
@@ -23,7 +24,7 @@ if (hasInterface) then {
 				
 				tSF_Support_ACEActions pushBack [
 					"SELF"
-					, _callsign
+					, format ["%1 (%2)", _callsign,  (typeof _veh) call tSF_fnc_Support_getVehicleDisplayName]
 					, format ["tsf_radio_support_%1", _forEachIndex]
 					, "tsf_radio_support"
 					, compile format ["'%1' call tSF_fnc_Support_ShowMenu;", _callsign]
@@ -59,6 +60,11 @@ if (isServer) then {
 	if (tSF_Support_ReturnToBase) then {
 		call tSF_fnc_Support_RTB_Handle;
 	};
+	
+	if (tSF_Support_CallIn) then {
+		call tSF_fnc_Support_CallIn_Handle;
+	};
+	
 	publicVariable "tSF_Support_Vehicles";
 	publicVariable "tSF_Support_ReturnPoints";
 	publicVariable "tSF_Support_ReturnPointsList";
