@@ -35,6 +35,9 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[Vehicle] Add Vehicle Crew"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddEVCLogic } }]
 		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddERSLogic } }]
 		
+		,["[Support] Assign as Supporter"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddAsSupporter } }]
+		,["[Support] Add as Return point"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddERSLogic } }]		
+		
 		,["[tSF] Configure Scenario"		, { [] spawn { call dzn_fnc_tSF_3DEN_ConfigureScenario } }]
 		,["[tSF] Add Zeus"			, { call dzn_fnc_tSF_3DEN_AddZeus }]
 		,["[tSF] Add Base Trigger"		, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
@@ -711,6 +714,45 @@ dzn_fnc_tSF_3DEN_AddERSLogic = {
 	};
 };
 
+dzn_fnc_tSF_3DEN_AddAsSupporter = {
+	private _units = dzn_tSF_3DEN_SelectedUnits;
+	if (_units isEqualTo []) exitWith {
+		"tSF Tools - Support: No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
+	};
+	
+	disableSerialization;
+	private _result = [
+		"Add Unit as Support"
+		,[
+			["Callsign", []]
+		]
+	] call dzn_fnc_ShowChooseDialog;
+	
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
+	
+	dzn_tSF_3DEN_Parameter = _result;
+	
+	collect3DENHistory {
+		private _units = dzn_tSF_3DEN_SelectedUnits;
+		private _result = dzn_tSF_3DEN_Parameter;		
+		private _callsign = _result select 1;
+		
+		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
+		_logic set3DENAttribute [
+			"Init"
+			, format [
+				"this setVariable ['tSF_Support', '%1'];"
+				, _callsign
+			]
+		];
+		
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;
+		
+		add3DENConnection ["Sync", _units, _logic];	
+		(format ["tSF Tools - Vehicle Radio: ""%1"" config logic was assigned", _configName]) call dzn_fnc_tSF_3DEN_ShowNotif;
+	};
+};
 
 
 
