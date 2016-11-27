@@ -42,16 +42,12 @@ tSF_fnc_Support_RTB_Call = {
 	// _vehicle, _pos
 	params ["_veh", "_pos","_deploy"];
 	
-	systemChat "RTB: RTB_Call start";
-	
 	_veh engineOn true;
 	_veh setVariable ["tSF_Support_doRTB", true, true];
 	_veh setVariable ["tSF_Support_InProgress", false, true];
 	_veh setVariable ["tSF_Support_EgressPoint", _pos, true];
 	_veh setVariable ["tSF_Support_ClearOut", _deploy, true];
 	_veh setVariable ["tSF_Support_Side", side player, true];
-	
-	systemChat "RTB: RTB_Call end";
 };
  
 
@@ -69,19 +65,13 @@ tSF_fnc_Support_RTB_Handle = {
 		if !(tSF_fnc_Support_RTB_CanCheck) exitWith {};
 		[] spawn tSF_fnc_Support_RTB_waitAndCheck;
 		
-		systemChat "RTB: RTB_Handler - Check";
-		
 		{
-			private _veh = _x select 0;
-			
-			systemChat format["RTB: RTB_Handler - Check %1", _veh];
-			
+			private _veh = _x select 0;			
 			
 			if (_veh getVariable ["tSF_Support_doRTB", false]) then {
 				_veh setVariable ["tSF_Support_doRTB", false, true];
 				_veh setVariable ["tSF_Support_InProgress", true, true];
 				
-				systemChat "RTB: RTB_Handler - Spawn RTB_Do";
 				_veh spawn tSF_fnc_Support_RTB_Do;			
 			};			
 		} forEach tSF_Support_Vehicles;
@@ -89,12 +79,9 @@ tSF_fnc_Support_RTB_Handle = {
 };
 
 tSF_fnc_Support_RTB_Do = {
-
-	systemChat "RTB: RTB_Do - Start";
 	private _veh = _this;	
 	_veh engineOn true;
 	
-	systemChat "RTB: RTB_Do - Create pilot";
 	private _pilot = (units ([
 		_veh
 		, _veh getVariable "tSF_Support_Side"
@@ -103,11 +90,8 @@ tSF_fnc_Support_RTB_Do = {
 		, 0
 	] call dzn_fnc_createVehicleCrew)) select 0;
 	
-	systemChat "RTB: RTB_Do - Pilot created";
-	
 	_veh lock true;
 	
-	systemChat "RTB: RTB_Do - Pilot do move";
 	_pilot doMove (_veh getVariable "tSF_Support_EgressPoint");
 	
 	_pilot disableAI "TARGET";
@@ -115,10 +99,8 @@ tSF_fnc_Support_RTB_Do = {
 	_pilot disableAI "SUPPRESSION";
 	_pilot disableAI "AIMINGERROR";
 	_pilot disableAI "COVER";
-	_pilot disableAI "AUTOCOMBAT";	
+	_pilot disableAI "AUTOCOMBAT";
 	
-	
-	systemChat "RTB: RTB_Do - Spawn Pilot move";
 	[
 		_pilot
 		, _veh
