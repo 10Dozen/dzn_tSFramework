@@ -50,7 +50,9 @@ call :removeFolder tSF_module_Briefing Briefing
 call :removeFolder tSF_module_tSNotes tSNotes
 call :removeFolder tSF_module_tSNotesSettings tSNotesSettings
 call :removeFolder tSF_module_CCP CCP
+call :removeFolder tSF_module_Support Support
 call :removeFolder tSF_module_Interactives Interactives
+call :removeFolder tSF_module_InteractivesACE InteractivesACE
 call :removeFolder tSF_module_EditorVehicleCrew EditorVehicleCrew
 call :removeFolder tSF_module_EditorUnitBehavior EditorUnitBehavior
 call :removeFolder tSF_module_EditorRadioSettings EditorRadioSettings
