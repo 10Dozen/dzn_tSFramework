@@ -21,6 +21,7 @@ tSF_MissionCondition_DefaultCheckTimer 			= 15;
  *			, @TimerInterval(Number,seconds, optional) 
  *		];
  *
+ *	Примеры условий:
  *	MVP/Объект доставлен в зону: 						
  *			TGT inArea TRG_NAME
  *	MVP/Объект жив:										
