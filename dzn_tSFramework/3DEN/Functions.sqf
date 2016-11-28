@@ -755,6 +755,65 @@ dzn_fnc_tSF_3DEN_AddAsSupporter = {
 };
 
 
+dzn_fnc_tSF_3DEN_AddSupportReturnPointCore = {
+	collect3DENHistory {
+		dzn_tSF_3DEN_SupportReturnPointCore = create3DENEntity ["Logic","Logic",screenToWorld [0.4,0.4]];
+		
+		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute ["name", "tSF_Support_ReturnPointCore"	];
+		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute [
+			"Init"
+			, "this setVariable ['tSF_Support_ReturnPoint', 'true'];"
+		];
+		
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		dzn_tSF_3DEN_SupportReturnPointCore set3DENLayer dzn_tSF_3DEN_DynaiLayer;
+	};
+}; 
+
+
+dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
+	disableSerialization;
+	
+	if (isNull dzn_tSF_3DEN_SupportReturnPointCore) then {
+		call dzn_fnc_tSF_3DEN_AddSupportReturnPointCore;
+	};
+	
+	private _result = [
+		"Add Support Return point"
+		,[
+			["Type", 
+				[
+					"Helipad (Invisible)"
+					, "Helipad"
+					, "Helipad (Square)"
+					, "Helipad (Civil)"
+				]
+			]
+		]
+	] call dzn_fnc_ShowChooseDialog;
+	
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };	
+	dzn_tSF_3DEN_Parameter = _result;
+		
+	collect3DENHistory {
+		private _result = dzn_tSF_3DEN_Parameter;
+		
+		private _objectClass = [
+			"class1"
+			, "class1"
+			, "class1"
+			, "class1"
+		] select _result;
+		
+		private _point = create3DENEntity ["Object",_objectClass, screenToWorld [0.5,0.5]];
+	
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		_point set3DENLayer dzn_tSF_3DEN_MiscLayer;
+		
+		add3DENConnection ["Sync", _point, dzn_tSF_3DEN_SupportReturnPointCore];	
+		"tSF Tools - Support: Return point was added" call dzn_fnc_tSF_3DEN_ShowNotif;
+	};
+}
 
 /*
  *	LAYERS & UTILITIES
@@ -826,6 +885,13 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 				(_entity get3DENAttribute "name") select 0 == "tsf_CCP" 
 			) then {
 				dzn_tSF_3DEN_CCP = _entity;
+			};
+			
+			// Search for Support Return Point Core
+			if ( 
+				(_entity get3DENAttribute "name") select 0 == "tSF_Support_ReturnPointCore" 
+			) then {
+				dzn_tSF_3DEN_SupportReturnPointCore = _entity;
 			};
 		};
 	} forEach all3DENEntities;
