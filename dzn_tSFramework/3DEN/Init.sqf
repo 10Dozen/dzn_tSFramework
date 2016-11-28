@@ -10,6 +10,7 @@ dzn_tSF_3DEN_Parameter = [];
 
 dzn_tSF_3DEN_SquadLastNumber = 0;
 dzn_tSF_3DEN_DynaiCore = objNull;
+dzn_tSF_3DEN_SupportReturnPointCore = objNull;
 dzn_tSF_3DEN_DynaiZoneId = 0;
 dzn_tSF_3DEN_Zeus = objNull;
 dzn_tSF_3DEN_BaseTrg = objNull;
