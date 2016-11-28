@@ -35,7 +35,10 @@ tSF_MissionCondition_DefaultCheckTimer 			= 15;
  *	Все игроки умерли:
  *			{ {alive _x} count (call BIS_fnc_listPlayers) < 1}
  *
- */ 
+ */
+
+// If you're Lim~, then you may need this. Uncomment to use.
+// if (isNil "ts_tasks") then { ts_tasks = 0 };
 
 MissionCondition1 = [ "WIN", "false", "All objectives done" ];
 MissionCondition2 = [ "WIPED", "{alive _x} count (call BIS_fnc_listPlayers) < 1", "All dead", 30 ];
