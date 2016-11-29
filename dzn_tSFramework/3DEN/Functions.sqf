@@ -35,13 +35,14 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[Vehicle] Add Vehicle Crew"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddEVCLogic } }]
 		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddERSLogic } }]
 		
-		,["[Support] Assign as Supporter"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddAsSupporter } }]
-		,["[Support] Add as Return point"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddERSLogic } }]		
+		,["[Support] Assign Vehicle as Supporter"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddAsSupporter } }]
+		,["[Support] Add Return point"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddSupportReturnPoint } }]		
 		
 		,["[tSF] Configure Scenario"		, { [] spawn { call dzn_fnc_tSF_3DEN_ConfigureScenario } }]
 		,["[tSF] Add Zeus"			, { call dzn_fnc_tSF_3DEN_AddZeus }]
 		,["[tSF] Add Base Trigger"		, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
 		,["[tSF] Add CCP"				, { call dzn_fnc_tSF_3DEN_AddCCP }]	
+		,[" "						, { }]	
 		
 	];
 	
@@ -735,7 +736,7 @@ dzn_fnc_tSF_3DEN_AddAsSupporter = {
 	collect3DENHistory {
 		private _units = dzn_tSF_3DEN_SelectedUnits;
 		private _result = dzn_tSF_3DEN_Parameter;		
-		private _callsign = _result select 1;
+		private _callsign = _result select 0;
 		
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute [
@@ -757,16 +758,16 @@ dzn_fnc_tSF_3DEN_AddAsSupporter = {
 
 dzn_fnc_tSF_3DEN_AddSupportReturnPointCore = {
 	collect3DENHistory {
-		dzn_tSF_3DEN_SupportReturnPointCore = create3DENEntity ["Logic","Logic",screenToWorld [0.4,0.4]];
+		dzn_tSF_3DEN_SupportReturnPointCore = create3DENEntity ["Logic","Logic",screenToWorld [0.25,0.5]];
 		
-		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute ["name", "tSF_Support_ReturnPointCore"	];
+		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute ["name", "tSF_Support_ReturnPointCore"];
 		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute [
 			"Init"
 			, "this setVariable ['tSF_Support_ReturnPoint', 'true'];"
 		];
 		
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
-		dzn_tSF_3DEN_SupportReturnPointCore set3DENLayer dzn_tSF_3DEN_DynaiLayer;
+		dzn_tSF_3DEN_SupportReturnPointCore set3DENLayer dzn_tSF_3DEN_MiscLayer;
 	};
 }; 
 
@@ -797,23 +798,23 @@ dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
 		
 	collect3DENHistory {
 		private _result = dzn_tSF_3DEN_Parameter;
-		
+
 		private _objectClass = [
-			"class1"
-			, "class1"
-			, "class1"
-			, "class1"
-		] select _result;
+			"Land_HelipadEmpty_F"
+			, "Land_HelipadCircle_F"
+			, "Land_HelipadSquare_F"
+			, "Land_HelipadCivil_F"
+		] select (_result select 0);
 		
 		private _point = create3DENEntity ["Object",_objectClass, screenToWorld [0.5,0.5]];
 	
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
 		_point set3DENLayer dzn_tSF_3DEN_MiscLayer;
 		
-		add3DENConnection ["Sync", _point, dzn_tSF_3DEN_SupportReturnPointCore];	
+		add3DENConnection ["Sync", [_point], dzn_tSF_3DEN_SupportReturnPointCore];	
 		"tSF Tools - Support: Return point was added" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
-}
+};
 
 /*
  *	LAYERS & UTILITIES
@@ -844,6 +845,15 @@ dzn_fnc_tSF_3DEN_createMiscLayer = {
 
 
 dzn_fnc_tSF_3DEN_ResetVariables = {
+	/*
+		get3DENEntityID dzn_tSF_3DEN_SupportReturnPointCore
+		
+		{
+			B=0;
+			A = all3DENEntities select B select 0;
+			C = A get3DENAttribute "name"
+		} forEach all3DENEntities;
+	*/
 	{
 		call compile format [
 			"if (get3DENEntityID %1 == -1) then { %1 = objNull; };"
@@ -854,6 +864,7 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 		, "dzn_tSF_3DEN_Zeus"
 		, "dzn_tSF_3DEN_BaseTrg"
 		, "dzn_tSF_3DEN_CCP"
+		, "dzn_tSF_3DEN_SupportReturnPointCore"
 		
 		, "dzn_tSF_3DEN_UnitsLayer"
 		, "dzn_tSF_3DEN_tSFLayer"
@@ -862,11 +873,10 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 		, "dzn_tSF_3DEN_MiscLayer"
 	];
 	
-	{
-		private _entity = _x select 0;
-		
-		if (!(isNil {_entity}) && {get3DENEntityID _entity > -1}) then {
-			// Search for DynAI_core
+	{	
+		{
+			private _entity = _x;
+			
 			if (
 				(_entity get3DENAttribute "name") select 0 == "dzn_dynai_core" 
 			) then {
@@ -892,8 +902,8 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 				(_entity get3DENAttribute "name") select 0 == "tSF_Support_ReturnPointCore" 
 			) then {
 				dzn_tSF_3DEN_SupportReturnPointCore = _entity;
-			};
-		};
+			};		
+		} forEach (_x);
 	} forEach all3DENEntities;
 };
 
@@ -974,6 +984,7 @@ dzn_fnc_ShowChooseDialog = {
 		// Create the label
 		_labelControl = _dialog ctrlCreate ["RscText", BASE_IDC + _controlCount];
 		_labelControl ctrlSetPosition [LABEL_COLUMN_X, _yCoord, TITLE_WIDTH, TITLE_HEIGHT];
+		_labelControl ctrlSetFont "PuristaBold";
 		_labelControl ctrlCommit 0;
 		_labelControl ctrlSetText _titleText;
 		_yCoord = _yCoord + TOTAL_ROW_HEIGHT;
@@ -1066,6 +1077,7 @@ dzn_fnc_ShowChooseDialog = {
 		_choiceLabel = _dialog ctrlCreate ["RscText", BASE_IDC + _controlCount];
 		_choiceLabel ctrlSetPosition [LABEL_COLUMN_X, _yCoord, LABEL_WIDTH, LABEL_HEIGHT];
 		_choiceLabel ctrlSetText _choiceName;
+		_choiceLabel ctrlSetFont "PuristaLight";
 		_choiceLabel ctrlCommit 0;
 		_controlCount = _controlCount + 1;
 		
@@ -1081,6 +1093,7 @@ dzn_fnc_ShowChooseDialog = {
 			
 			_choiceEdit ctrlSetPosition cmbProps;
 			_choiceEdit ctrlSetBackgroundColor [0, 0, 0, 1];
+			_choiceEdit ctrlSetFont "PuristaLight";
 			// _choiceEdit ctrlSetText _choices;
 			_choiceEdit ctrlCommit 0;
 			_choiceEdit ctrlSetEventHandler ["KeyUp", "missionNamespace setVariable [format['dzn_ChooseDialog_ReturnValue_%1'," + str (_forEachIndex) + "], ctrlText (_this select 0)];"];
@@ -1090,6 +1103,7 @@ dzn_fnc_ShowChooseDialog = {
 			// Create the combo box for this entry and populate it.		
 			_choiceCombo = _dialog ctrlCreate ["RscCombo", _comboBoxIdc];
 			_choiceCombo ctrlSetPosition [COMBO_COLUMN_X, _yCoord, COMBO_WIDTH, COMBO_HEIGHT];
+			_choiceCombo ctrlSetFont "PuristaLight";
 			_choiceCombo ctrlCommit 0;
 			{
 				_choiceCombo lbAdd _x;
