@@ -1,5 +1,6 @@
 tSF_EVC_initTimeout	=	20;
 
+
 /*
  *	Sync editor placed vehicles with GameLogics and add var with config name: this setVariable ["tSF_EVC", "Ins DSHK Gunner"]
  *	For all synched vehicles -- crew will be spawned.
@@ -22,7 +23,12 @@ tSF_EVC_initTimeout	=	20;
  *	For example:
  *	[ "Ins DSHK Gunner", [ ["gunner"], EAST, "kit_ins_random", 0.7 ] ]
  */
-tSF_EVC_CrewConfig = [	
+#define	CREW_CONFIG_TABLE		tSF_EVC_CrewConfig = [
+#define	CREW_CONFIG_TABLE_END		];
+ 
+ 
+CREW_CONFIG_TABLE
+
 	[ 
 		"NATO MRAP Crew"
 		, [ 
@@ -42,5 +48,6 @@ tSF_EVC_CrewConfig = [
 			, "frontal"
 		] 
 	]
-];
+
+CREW_CONFIG_TABLE_END
 
