@@ -7,7 +7,7 @@ tSF_Support_initTimeout	=	5;
  *		"Any"			- any player
  *
  */
-tSF_Support_AuthorizedUsers	= ["Admin","Support Officer"];
+tSF_Support_AuthorizedUsers	= ["Admin","Platoon Sergeant","Зам. командира взвода","Support Officer"];
 
 /*
  *	Allow authorized units to teleport from tSF_Support_ReturnPoint to their Squad

@@ -25,10 +25,12 @@ tSF_EVC_initTimeout	=	20;
  */
 #define	CREW_CONFIG_TABLE		tSF_EVC_CrewConfig = [
 #define	CREW_CONFIG_TABLE_END		];
- 
+
+tSF_EVC_OPFOR_CrewSkill		= 0.75;
+tSF_EVC_OPFOR_CrewKit		= "";
+tSF_EVC_OPFOR_HoldType		= "full frontal";
  
 CREW_CONFIG_TABLE
-
 	[ 
 		"NATO MRAP Crew"
 		, [ 
@@ -49,5 +51,16 @@ CREW_CONFIG_TABLE
 		] 
 	]
 
+	/*
+		Default presets
+	*/
+	,["OPFOR VC, GNR, DRV"	,[["commander","driver","gunner"], east, tSF_EVC_OPFOR_CrewSkill, tSF_EVC_OPFOR_CrewKit, tSF_EVC_OPFOR_HoldType]]
+	,["OPFOR VC, DRV"		,[["commander","driver"], east, tSF_EVC_OPFOR_CrewSkill, tSF_EVC_OPFOR_CrewKit, tSF_EVC_OPFOR_HoldType]]
+	,["OPFOR GNR, DRV"	,[["gunner","driver"], east, tSF_EVC_OPFOR_CrewSkill, tSF_EVC_OPFOR_CrewKit, tSF_EVC_OPFOR_HoldType]]
+	,["OPFOR VC, GNR"		,[["commander","gunner"], east, tSF_EVC_OPFOR_CrewSkill, tSF_EVC_OPFOR_CrewKit, tSF_EVC_OPFOR_HoldType]]
+	,["OPFOR VC"		,[["commander"], east, tSF_EVC_OPFOR_CrewSkill, tSF_EVC_OPFOR_CrewKit, tSF_EVC_OPFOR_HoldType]]
+	,["OPFOR GNR"		,[["gunner"], east, tSF_EVC_OPFOR_CrewSkill, tSF_EVC_OPFOR_CrewKit, tSF_EVC_OPFOR_HoldType]]
+	,["OPFOR DRV"		,[["driver"], east, tSF_EVC_OPFOR_CrewSkill, tSF_EVC_OPFOR_CrewKit, tSF_EVC_OPFOR_HoldType]]
+	
 CREW_CONFIG_TABLE_END
 
