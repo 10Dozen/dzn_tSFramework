@@ -1,5 +1,5 @@
-dzn_fnc_tsf_CCP_drawAllowedAreaMarkers = {
-	// @Markers = call dzn_fnc_tsf_CCP_drawAllowedAreaMarkers
+tSF_fnc_CCP_drawAllowedAreaMarkers = {
+	// @Markers = call tSF_fnc_CCP_drawAllowedAreaMarkers
 	private _markers = [];
 	{
 		private _trgArea = triggerArea _x;
@@ -19,14 +19,12 @@ dzn_fnc_tsf_CCP_drawAllowedAreaMarkers = {
 	_markers
 };
 
-dzn_fnc_tsf_CCP_removeAllowedAreaMarkers = {
+tSF_fnc_CCP_removeAllowedAreaMarkers = {
 	// @Markers call dzn_fnc_tsf_CCP_removeAllowedAreaMarkers
-	{
-		deleteMarker _x;
-	} forEach _this;
+	{deleteMarker _x;} forEach _this;
 };
 
-dzn_fnc_tsf_CCP_findMarker = {
+tSF_fnc_CCP_findMarker = {
 	// call dzn_fnc_tsf_CCP_findMarker
 	private _markerPos = getPosASL tsf_CCP;
 	{
@@ -37,69 +35,168 @@ dzn_fnc_tsf_CCP_findMarker = {
 };
 
 
-dzn_fnc_tsf_CCP_createCCP = {
-	// [timeToHeal, radius, preventDeath, Pos3d or Object, Composition]  spawn dzn_fnc_tsf_CCP_createCCP
-	params["_healTime","_radius","_preventDeath","_pos","_composition"];
+tSF_fnc_CCP_createCCP_Server = {	
+	params["_pos","_composition"];
 
 	private _dir = 0;
 	if !(typename _pos == "ARRAY") then {
 		_dir = getDir _pos;
 		_pos = getPosATL _pos;
 	};
-
-	dzn_tsf_CCP_HealTime		= _healTime;
-	dzn_tsf_CCP_Radius		= _radius;
-	dzn_tsf_CCP_PreventPlayerDeath	= _preventDeath;
 	
-	// If server - create composition
-	if (isServer && !(_composition isEqualTo [])) then {		
-		private _spawnedObjects = [[_pos, _dir], _composition] call dzn_fnc_setComposition;
-		{ _x lock true } forEach _spawnedObjects;
+	tSF_CCP_Objects = [[_pos, _dir], _composition] call dzn_fnc_setComposition;
+	{ 
+		_x lock true;			
+	} forEach tSF_CCP_Objects;
+	
+	private _stretcherPositions = [];
+	{
+		private _o = (tSF_CCP_Objects select 0);
+		private _pos = _o modelToWorld (_x select 0);
+		_pos set [2,0];
+		
+		private _dir = (getDir _o) + (_x select 1);
+		
+		_stretcherPositions pushBack [_forEachIndex, [_pos, _dir]];
+	} forEach [
+		[[4, -3, 0], 90]
+		,[[4, -1, 0], 90]
+		,[[4, 1, 0], 90]
+		,[[4, 3, 0], 90]
+		,[[-4, -3, 0], -90]
+		,[[-4, -1, 0], -90]
+		,[[-4, 1, 0], -90]
+		,[[-4, 3, 0], -90]		
+	];
+	
+	(tSF_CCP_Objects select 0) setVariable ["tSF_CCP_StretcherPositions",_stretcherPositions,true];
+	(tSF_CCP_Objects select 0) setVariable ["tSF_CCP_UsedStretcherPositions",[],true];
+	publicVariable "tSF_CCP_Objects";
+};
+
+tSF_fnc_CCP_createCCP_Client = {
+	waitUntil { !isNil "tSF_CCP_Position" };	
+	["mrk_auto_ccp", tSF_CCP_Position, "mil_flag", "ColorKhaki", "CCP", true] call dzn_fnc_createMarkerIcon;	
+
+	waitUntil {!isNil "tSF_CCP_Objects"};
+	{ 
+		[ 
+			_x
+			, "<t color='#9bbc2f' size='1.2'>Get Medical Care</t>"
+			, {[] spawn tSF_fnc_CCP_doMedicateAction;	}
+			, 5
+			, "!(player getVariable ['tSF_CCP_isHealing',false])"
+			, 6
+		] call dzn_fnc_addAction;		
+	} forEach tSF_CCP_Objects;		
+};
+
+tSF_fnc_CCP_doMedicateAction = {
+	private _ccp = tSF_CCP_Objects select 0;
+	private _usedPoses = _ccp getVariable "tSF_CCP_UsedStretcherPositions";
+	private _allPoses = _ccp getVariable "tSF_CCP_StretcherPositions";
+	
+	if (count _allPoses == count _usedPoses) exitWith { hint "Medical Care is not available right now!" };
+	private _notUsed = [_allPoses, { !((_x select 0) in _usedPoses) }] call BIS_fnc_conditionalSelect;
+	private _playerPos = _notUsed select 0;
+	
+	_ccp setVariable [
+		"tSF_CCP_UsedStretcherPositions"
+		, _usedPoses + [_playerPos select 0]
+		, true
+	];
+	
+	private _pos = _playerPos select 1 select 0;
+	private _dir = _playerPos select 1 select 1;
+	
+	player setVariable ["tSF_CCP_isHealing",true];
+	
+	0 cutText ["", "WHITE OUT", 0.5];
+	sleep 1;	
+	
+	private _stretcher = "cwa_Stretcher" createVehicle _pos;
+	_stretcher setPosATL _pos;
+	_stretcher setDir _dir;
+	
+	player attachTo [_stretcher,[0,0,0.05]];	
+	(selectRandom [
+		"Acts_InjuredAngryRifle01"
+		,"Acts_InjuredCoughRifle02"
+		,"Acts_InjuredLookingRifle01"
+		,"Acts_InjuredLookingRifle02"
+		,"Acts_InjuredLookingRifle03"
+		,"Acts_InjuredLookingRifle04"
+		,"Acts_InjuredLookingRifle05"
+		
+		,"Acts_InjuredLyingRifle01"
+		,"Acts_InjuredLyingRifle02"
+		
+		,"Acts_LyingWounded_loop"		
+		,"Acts_LyingWounded_loop1"
+		,"Acts_LyingWounded_loop2"
+		,"Acts_LyingWounded_loop3"
+	]) spawn tSF_CCP_LoopAnimation;
+	[] spawn tSF_CCP_HandleProgressBar;
+	
+	0 cutText ["", "WHITE IN", 1];
+	
+	sleep tSF_CCP_TimeToHeal;
+	
+	[player,player] call ace_medical_fnc_treatmentAdvanced_fullHealLocal;
+	player setDamage 0;
+	
+	sleep tSF_CCP_TimeToHold;
+	
+	player setVariable ["tSF_CCP_isHealing",false];
+	
+	0 cutText ["", "WHITE OUT", 0.1];
+	sleep 2;
+	detach player;
+	deleteVehicle _stretcher;	
+	0 cutText ["", "WHITE IN", 1];
+	
+	_ccp setVariable [
+		"tSF_CCP_UsedStretcherPositions"
+		, (_ccp getVariable "tSF_CCP_UsedStretcherPositions") - [_playerPos select 0]
+		, true
+	];	
+};
+
+
+tSF_CCP_LoopAnimation = {
+	private _animation = _this;
+	
+	while {player getVariable 'tSF_CCP_isHealing'} do {
+		if (animationState player != _animation ) then {
+			player switchMove _animation ;
+			player playMoveNow _animation;
+		};
+	};
+
+	player switchMove "" ;
+};
+
+tSF_CCP_HandleProgressBar = {
+	CCP_bar_progress = 0;
+	CCP_bar_max = tSF_CCP_TimeToHeal + tSF_CCP_TimeToHold;
+	CCP_bar_step = 1/CCP_bar_max;
+	
+	with uiNamespace do { 
+		CCP_bar = findDisplay 46 ctrlCreate ["RscProgress", -1];  
+		CCP_bar ctrlSetPosition [0,.8,1,0.05];
+		
+		CCP_bar progressSetPosition 0.0;  
+		CCP_bar ctrlCommit 0;
 	};
 	
-	if (hasInterface) then {
-		if ((getPosASL tsf_CCP) isEqualTo _pos) then {
-			["mrk_auto_ccp", _pos, "mil_flag", "ColorKhaki", "CCP", true] call dzn_fnc_createMarkerIcon;		
-		};
-		
-		// Create location
-		dzn_tsf_CCP_Location = createLocation ["Name", _pos, _radius, _radius];
-		
-		// Add Event Handler to player
-		dzn_tsf_CCP_TimeSpentAtCCP = 0;
-		dzn_tsf_CCP_Handler_CheckStep = true;
-		
-		dzn_fnc_tsf_CCP_waitUntilStep = {
-			dzn_tsf_CCP_Handler_CheckStep = false; 
-			sleep 15; 
-			dzn_tsf_CCP_Handler_CheckStep = true; 
-		};
+	["<t align='center'>Medical Aid</t>", [16,22.5, 16, 0.033], [0,0,0,0],  "!(player getVariable 'tSF_CCP_isHealing')"] call dzn_fnc_ShowMessage;
 	
-		["dzn_tsf_CCP_Handler", "onEachFrame", {
-			if !(dzn_tsf_CCP_Handler_CheckStep) exitWith {};
-			[] spawn dzn_fnc_tsf_CCP_waitUntilStep;
-			
-			// Checks if player at CCP - then add 15second to timer. If he is not at CCP - nil the timer.
-			if ((getPosATL player) in dzn_tsf_CCP_Location) then {
-				if (isNil "dzn_tsf_CCP_TimeSpentAtCCP") then {
-					dzn_tsf_CCP_TimeSpentAtCCP = 15;
-					if (dzn_tsf_CCP_PreventPlayerDeath) then { player allowDamage false; };
-					hint format [dzn_tsf_CCP_STR_Hint, round(dzn_tsf_CCP_HealTime/60)];
-				} else {
-					dzn_tsf_CCP_TimeSpentAtCCP = dzn_tsf_CCP_TimeSpentAtCCP + 15;
-					if (dzn_tsf_CCP_PreventPlayerDeath) then { player allowDamage false; };
-				};
-				
-				// Spent required time at CCP
-				if (dzn_tsf_CCP_TimeSpentAtCCP >= dzn_tsf_CCP_HealTime) then {
-					[player,player] call ace_medical_fnc_treatmentAdvanced_fullHealLocal;
-					player setDamage 0;
-					player allowDamage true;
-				};
-			} else {
-				dzn_tsf_CCP_TimeSpentAtCCP = nil;
-				player allowDamage true;
-			}
-		}] call BIS_fnc_addStackedEventHandler;
-	}
+	for "_i" from 0 to CCP_bar_max do {
+		(uiNamespace getVariable "CCP_bar") progressSetPosition CCP_bar_progress;
+		(uiNamespace getVariable "CCP_bar") ctrlCommit 0;
+		sleep 1;
+		CCP_bar_progress = CCP_bar_progress + CCP_bar_step;	
+	};
+	
+	ctrlDelete (uiNamespace getVariable "CCP_bar");
 };
