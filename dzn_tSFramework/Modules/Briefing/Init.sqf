@@ -1,3 +1,9 @@
+/*
+ * Module Properties Schema
+ */ 
+tSF_Briefing_Schema = ["Briefing",[["tSF_Briefing_ShowRoster", "Show Roster", "bool"], ["tSF_Briefing_RosterTimeout", "Timeout before roster displayed", "time"], ["tSF_Briefing_UpdateRosterOnJIP", "Update roster on JIP", "bool"]]];
+
+
 // ********************
 // INITIALIZATION
 // ********************
