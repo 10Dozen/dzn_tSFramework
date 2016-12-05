@@ -11,7 +11,7 @@ if (tSF_Briefing_ShowRoster) then {
 		private _roster = "";	
 		private _groups = [];
 		{
-			private _grp = group player;
+			private _grp = group _x;
 			if !(_grp in _groups) then {
 				_groups pushBack _grp; [groupId _grp, leader _grp, count(units _grp) - 1];
 				
