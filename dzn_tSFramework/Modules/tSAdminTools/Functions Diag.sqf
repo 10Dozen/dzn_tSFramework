@@ -1,9 +1,9 @@
 /*
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf"; 
+[] execVM "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf"; 
 call tSF_Diag_AddDiagTopic; 
-call tSF_Diag_TSF_CollectData;
+call tSF_Diag_TSF_CollectTotalData;
 call tSF_Diag_TSF_CollectModulesData;
-
+call tSF_Diag_Gear_CollectData;
 */
 
 #define		HEAD	""
@@ -13,7 +13,12 @@ tSF_Diag_AddDiagTopic = {
 	tSF_Diag_Subject = "tSF_Diagpage";
 	if !(player diarySubjectExists tSF_Diag_Subject) then {
 		player createDiarySubject [tSF_Diag_Subject, "tSF DIAGNOSTICS"];
-	};	
+	};
+	
+	call tSF_Diag_Gear_CollectKitData;
+	call tSF_Diag_Gear_CollectTotalData;
+	call tSF_Diag_TSF_CollectModulesData;
+	call tSF_Diag_TSF_CollectTotalData;	
 };
 
 tSF_Diag_TSF_CollectTotalData = {	
@@ -78,7 +83,7 @@ tSF_Diag_TSF_CollectModulesData = {
 		private _vars = _x select 1;
 		
 		_topic = format [
-			"%1<br /><font size='16'>%2</font>"
+			"%1<br /><font size='16' color='#b7f931'>%2</font>"
 			, _topic
 			, _x select 0
 		];
@@ -89,17 +94,19 @@ tSF_Diag_TSF_CollectModulesData = {
 			private _vartype = _x select 2;
 			
 			_topic = format [
-				"%1<br />  %2 -- %3"
+				"%1<br />  %2 -- <font color='#5b9aff'>%3</font>"
 				, _topic
 				, _desc
 				, switch (_vartype) do {
-					case "bool": { if (_var) then { "<font color='#b7f931'>Yes</font>" } else { "<font color='#f95631'>No</font>" } };
+					case "bool": { if (_var) then { "Yes" } else { "No" } };
 					case "string": { _var };
 					case "time": { str(_var) + " seconds" };
 					case "array": { str(_var) };
 				}
 			];
-		} forEach _vars;	
+		} forEach _vars;
+		
+		_topic = format ["%1<br />",_topic];
 	} forEach _modules;
 	
 	player createDiaryRecord ["tSF_Diagpage", ["tSF - Modules", _topic]];
@@ -116,64 +123,78 @@ tSF_Diag_Dynai_CollectData = {
 	
 };
 
-tSF_Diag_Gear_CollectData = {
-	/*
-		Gear:
-			Kits (GAT):
-
-			[OK]	Platoon Leader  		- "kit_sec_pl" 
-			[NO]	1'1 Squad Leader		- "kit_sec_sl"
-			[OK]	RED - FTL"		  		- "kit_sec_ftl" 
-			[OK]	BLUE - FTL  			- "kit_sec_ftl" (color coding of names)
-
-			Kits content
-
-			kit_sec_pl
-				Has IFAK -- Yes
-				Has MapTools -- Yes
-				Has Nite/Binocular -- No
-	*/
-	
+tSF_Diag_Gear_CollectTotalData = {
 	/*
 	 *	Kits vs GAT
 	 */	
 	private _gatTopic = "<font size='14' color='#b7f931'>Gear Assignment Table</font><br />";
+	
+	private _allKits = [];
+	private _allKitsColors = [];
+	
+	private _fnc_generateKitColor = {
+		private _color = "#";
+		for "_i" from 1 to 6 do {_color = format ["%1%2",_color, selectRandom [4,5,6,7,8,9,"A","B","C","D","E","F"]];};
+		_color
+	};
+	
 	{
 		private _role = _x select 0;
 		private _kit = _x select 1;
 		private _exist = !(isNil (compile _kit));
+		private _kitColor = "";
+		
+		if (_kit in _allKits) then {
+			_kitColor = _allKitsColors select (_allKits find _kit);
+		} else {
+			_kitColor = call _fnc_generateKitColor;
+			while { _kitColor in _allKitsColors } do {_kitColor = call _fnc_generateKitColor;};
+			
+			_allKits pushBack _kit;
+			_allKitsColors pushBack _kitColor;
+		};
 		
 		_gatTopic = format [
-			"%1<br /><font size='12'>[%2]</font> %3 (%4)"
+			"%1<br /><font size='12'>[%2]</font> %3 | <font color='%5'>%4</font>"
 			, _gatTopic
 			, if (_exist) then { "<font color='#b7f931'>OK</font>"} else {"<font color='#f95631'>NO</font>"}
 			, _role
 			, _kit
-		];
+			, _kitColor
+		];		
 	} forEach dzn_gear_gat_table;
 	
+	player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Totals", _gatTopic]];
+};
+
+tSF_Diag_Gear_CollectKitData = {
 	/*
 	 *	Kit content
 	 */
 
-	_gatTopic = format ["%1<br />Kits<br />", _gatTopic];
+	private _kitTopic = "<font size='16' color='#b7f931'>Kits</font><br />";
 	private _fnc_CheckForItem = {	
-		params ["_arr","_val"]
+		params ["_arr","_val"];
 		private _result = false;
-		{
-			if (typename _x == "ARRAY") then { if (_val in _x) exitWith { _result = true }; };	
-		} forEach _arr;
+		{if (typename _x == "ARRAY") then { if (_val in _x) exitWith { _result = true }; };} forEach _arr;
 
 		_result
 	};
 	
+	private _kits = [];	
+	
 	{
+		if !( (_x select 1) in _kits ) then {
+		
+		_kits pushBack (_x select 1);
+		
 		private _role = _x select 0;		
 		private _exist = !(isNil (compile (_x select 1)));
 		
 		if (_exist) then {
-			private _kit = call compile (_x select 1);
-			private _kitArray = ((_kit select 5) + (_kit select 6) + (_kit select 7);
+			private _kitname = _x select 1;
+			private _kit = call compile _kitname;
+			private _kitArray = ((_kit select 5 select 1) + (_kit select 6  select 1) + (_kit select 7  select 1));
 
 
 			private _hasMaptools = [_kitArray, "ACE_MapTools"] call _fnc_CheckForItem;
@@ -186,17 +207,18 @@ tSF_Diag_Gear_CollectData = {
 				);
 			private _hasBinocular = [_kitArray, "Binocular"] call _fnc_CheckForItem || [_kitArray, "ACE_Vector"] call _fnc_CheckForItem;
 		
-			_gatTopic = format [
-				"%1<br />Has Maptools -- %2<br />Has Binocular/Vector -- %3<br />Has IFAK -- %4"
-				, _gatTopic
-				, _hasMaptools
-				, _hasBinocular
-				, _hasIfak
+			_kitTopic = format [
+				"%1<br /><font color='#b7f931'>%2</font><br />   Has Maptools -- <font color='#5b9aff'>%3</font><br />   Has Binocular/Vector -- <font color='#5b9aff'>%4</font><br />   Has IFAK -- <font color='#5b9aff'>%5</font>"
+				, _kitTopic
+				, _x select 1
+				, if (_hasMaptools) then { "Yes" } else { "No" }
+				, if (_hasBinocular) then { "Yes" } else { "No" }
+				, if (_hasIfak) then { "Yes" } else { "No" }
 			];
+		};
+		
 		};		
 	} forEach dzn_gear_gat_table;
 	
-	player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Totals", _gatTopic]];
+	player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Kits", _kitTopic]];
 };
-
-

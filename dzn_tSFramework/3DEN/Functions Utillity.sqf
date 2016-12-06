@@ -422,13 +422,17 @@ dzn_fnc_3DEN_ShowChooseDialog = {
 
 	// Create the Ok and Cancel buttons
 	_okButton = _dialog ctrlCreate ["RscButtonMenuOK", BASE_IDC + _controlCount];
-	_okButton ctrlSetPosition [OK_BUTTON_X, _yCoord, OK_BUTTON_WIDTH, OK_BUTTON_HEIGHT];
+	_okButton ctrlSetStructuredText parseText "<t align='center' color='#475613'>OK</t>";
+	_okButton ctrlSetBackgroundColor [0.67,0.81,0.22, 1];
+	_okButton ctrlSetPosition [OK_BUTTON_X, _yCoord, OK_BUTTON_WIDTH, 0.75*OK_BUTTON_HEIGHT];
 	_okButton ctrlCommit 0;
 	_okButton ctrlSetEventHandler ["ButtonClick", "missionNamespace setVariable ['dzn_ChooseDialog_Result', 1]; closeDialog 1;"];
 	_controlCount = _controlCount + 1;
 
 	_cancelButton = _dialog ctrlCreate ["RscButtonMenuCancel", BASE_IDC + _controlCount];
-	_cancelButton ctrlSetPosition [CANCEL_BUTTON_X, _yCoord, CANCEL_BUTTON_WIDTH, CANCEL_BUTTON_HEIGHT];
+	_cancelButton ctrlSetPosition [CANCEL_BUTTON_X, _yCoord, CANCEL_BUTTON_WIDTH, 0.75*CANCEL_BUTTON_HEIGHT];
+	_cancelButton ctrlSetStructuredText parseText "<t align='center' color='#4c1b12'>CANCEL</t>";
+	_cancelButton ctrlSetBackgroundColor [0.54,0.19,0.13, 1];
 	_cancelButton ctrlSetEventHandler ["ButtonClick", "missionNamespace setVariable ['dzn_ChooseDialog_Result', -1]; closeDialog 2;"];
 	_cancelButton ctrlCommit 0;
 	_controlCount = _controlCount + 1;
