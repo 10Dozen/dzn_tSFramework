@@ -45,3 +45,33 @@ tSF_ERS_INDEP_LRIsolated		= 0.5;
 	
 	,["MyCustomConfig", [west, "TFAR_anarc210", 50000, 0.8]]
  ];
+
+
+
+
+/*
+ * *********************************
+ * Description of the module
+ * *********************************
+ */
+tSF_ERS_Schema = [
+	/* Module name */	"Editor Radio Settings"
+	,[
+		/* Module Settings */
+		[
+			/* Setting */		"tSF_ERS_initTimeout"
+			/* Description */	, "Timeout before initialization"
+			/* Type */			, "time"
+		]
+		, [
+			/* Setting */		"tSF_ERS_OverrideIsolatedConfigValue"
+			/* Description */	, "Override vehicle isolation level"
+			/* Type */			, "bool"
+		]
+		, [
+			/* Setting */		"tSF_ERS_LRRadioConfig"
+			/* Description */	, "Configs"
+			/* Type */			, "list"
+		]
+	]
+];
