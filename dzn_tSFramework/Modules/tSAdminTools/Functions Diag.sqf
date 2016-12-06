@@ -61,6 +61,17 @@ tSF_Diag_TSF_CollectTotalData = {
 };
 
 tSF_Diag_TSF_CollectModulesData = {
+	private _modules = [];
+	{
+		if !(isNil _x) then {
+			_modules pushBack (call compile _x);		
+		};
+	} forEach [
+		"tSF_Briefing_Schema"
+		,"tSF_CCP_Schema"
+		,"tSF_ERS_Schema"
+	];
+
 	private _topic = "";
 	{
 		private _module = _x select 0;
@@ -82,31 +93,14 @@ tSF_Diag_TSF_CollectModulesData = {
 				, _topic
 				, _desc
 				, switch (_vartype) do {
-					case "bool": { if (_var) then { "Yes" } else { "No" } };
+					case "bool": { if (_var) then { "<font color='#b7f931'>Yes</font>" } else { "<font color='#f95631'>No</font>" } };
 					case "string": { _var };
 					case "time": { str(_var) + " seconds" };
+					case "array": { str(_var) };
 				}
 			];
 		} forEach _vars;	
-	} forEach [
-		tSF_Briefing_Schema
-		/*[
-			"Briefing"
-			,[
-				["tSF_Briefing_ShowRoster", "Show Roster", "bool"]
-				, ["tSF_Briefing_RosterTimeout", "Timeout before roster displayed", "time"]
-				, ["tSF_Briefing_UpdateRosterOnJIP", "Update roster on JIP", "bool"]
-			]
-		]*/
-		, [
-			"CCP"
-			,[
-				["tSF_CCP_Composition", "Composition on site", "string"]
-				, ["tSF_CCP_TimeToHeal", "Time to heal", "time"]
-				, ["tSF_CCP_TimeToHold", "Time to stay at CCP", "time"]
-			]
-		]
-	];
+	} forEach _modules;
 	
 	player createDiaryRecord ["tSF_Diagpage", ["tSF - Modules", _topic]];
 };
