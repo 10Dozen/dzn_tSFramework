@@ -156,11 +156,13 @@ tSF_Diag_Gear_CollectData = {
 	 *	Kit content
 	 */
 
+	_gatTopic = format ["%1<br />Kits<br />", _gatTopic];
 	private _fnc_CheckForItem = {	
+		params ["_arr","_val"]
 		private _result = false;
 		{
-			if (typename _x == "ARRAY") then { if (_this in _x) exitWith { _result = true }; };	
-		} forEach ((_kit select 5) + (_kit select 6) + (_kit select 7));
+			if (typename _x == "ARRAY") then { if (_val in _x) exitWith { _result = true }; };	
+		} forEach _arr;
 
 		_result
 	};
@@ -170,25 +172,28 @@ tSF_Diag_Gear_CollectData = {
 		private _exist = !(isNil (compile (_x select 1)));
 		
 		if (_exist) then {
-
-
-
-			private _hasMaptools = "ACE_MapTools" call _fnc_CheckForItem;
-			private _hasIfak = ("ACE_tourniquet" call _fnc_CheckForItem) 
-				&& (
-					"ACE_fieldDressing" call _fnc_CheckForItem 
-					|| "ACE_packingBandage" call _fnc_CheckForItem 
-					|| "ACE_elasticBandage" call _fnc_CheckForItem 
-					|| "ACE_quikclot" call _fnc_CheckForItem 
-				);
-			private _hasBinocular = "Binocular" call _fnc_CheckForItem || "ACE_Vector" call _fnc_CheckForItem;
-		
 			private _kit = call compile (_x select 1);
-			private _hasMaptools = false;
-			private _hasIfak = false;
-			private _hasBinocular = false;
-		};
+			private _kitArray = ((_kit select 5) + (_kit select 6) + (_kit select 7);
+
+
+			private _hasMaptools = [_kitArray, "ACE_MapTools"] call _fnc_CheckForItem;
+			private _hasIfak = ([_kitArray, "ACE_tourniquet"] call _fnc_CheckForItem) 
+				&& (
+					[_kitArray, "ACE_fieldDressing"] call _fnc_CheckForItem 
+					|| [_kitArray, "ACE_packingBandage"] call _fnc_CheckForItem 
+					|| [_kitArray, "ACE_elasticBandage"] call _fnc_CheckForItem 
+					|| [_kitArray, "ACE_quikclot"] call _fnc_CheckForItem 
+				);
+			private _hasBinocular = [_kitArray, "Binocular"] call _fnc_CheckForItem || [_kitArray, "ACE_Vector"] call _fnc_CheckForItem;
 		
+			_gatTopic = format [
+				"%1<br />Has Maptools -- %2<br />Has Binocular/Vector -- %3<br />Has IFAK -- %4"
+				, _gatTopic
+				, _hasMaptools
+				, _hasBinocular
+				, _hasIfak
+			];
+		};		
 	} forEach dzn_gear_gat_table;
 	
 	player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Totals", _gatTopic]];
