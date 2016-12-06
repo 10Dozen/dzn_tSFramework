@@ -119,11 +119,56 @@ tSF_Diag_Dynai_CollectData = {
 tSF_Diag_Gear_CollectData = {
 	/*
 		Gear:
-			GAT vs Kits
-			
-			GAT vs Kits vs Roles
+			Kits (GAT):
+
+			[OK]	Platoon Leader  		- "kit_sec_pl" 
+			[NO]	1'1 Squad Leader		- "kit_sec_sl"
+			[OK]	RED - FTL"		  		- "kit_sec_ftl" 
+			[OK]	BLUE - FTL  			- "kit_sec_ftl" (color coding of names)
+
+			Kits content
+
+			kit_sec_pl
+				Has IFAK -- Yes
+				Has MapTools -- Yes
+				Has Nite/Binocular -- No
 	*/
 	
+	/*
+	 *	Kits vs GAT
+	 */	
+	private _gatTopic = "<font "size='14' color='#b7f931'>Gear Assignment Table</font><br />";
+	{
+		private _role = _x select 0;
+		private _kit = _x select 1;
+		private _exist = !(isNil (compile _kit));
+		
+		_gatTopic = format [
+			"%1<br /><font size='12'>[%2]</font> %3 (%4)"
+			, _gatTopic
+			, if (_exist) then { "<font color='#b7f931'>OK</font>"} else {"<font color='#f95631'>NO</font>"}
+			, _role
+			, _kit
+		];
+	} forEach dzn_gear_gat_table;
+	
+	/*
+	 *	Kit content
+	 */
+	{
+		private _role = _x select 0;		
+		private _exist = !(isNil (compile (_x select 1)));
+		
+		if (_exist) then {
+			private _kit = call compile (_x select 1);
+			private _hasMaptools = false;
+			private _hasIfak = false;
+			private _hasBinocular = false;
+		};
+		
+	} forEach dzn_gear_gat_table;
+	
+	player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Totals", _gatTopic]];
 };
 
 
