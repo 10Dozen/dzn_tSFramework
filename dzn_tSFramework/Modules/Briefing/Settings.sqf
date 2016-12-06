@@ -7,7 +7,7 @@ tSF_Briefing_UpdateRosterOnJIP 	=	false;
 
 /*
  * *********************************
- *		Description of the module
+ * Description of the module
  * *********************************
  */
 tSF_Briefing_Schema = [
