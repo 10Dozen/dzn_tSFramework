@@ -137,7 +137,7 @@ tSF_Diag_Gear_CollectData = {
 	/*
 	 *	Kits vs GAT
 	 */	
-	private _gatTopic = "<font "size='14' color='#b7f931'>Gear Assignment Table</font><br />";
+	private _gatTopic = "<font size='14' color='#b7f931'>Gear Assignment Table</font><br />";
 	{
 		private _role = _x select 0;
 		private _kit = _x select 1;
