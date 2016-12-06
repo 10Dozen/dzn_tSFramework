@@ -155,11 +155,34 @@ tSF_Diag_Gear_CollectData = {
 	/*
 	 *	Kit content
 	 */
+
+	private _fnc_CheckForItem = {	
+		private _result = false;
+		{
+			if (typename _x == "ARRAY") then { if (_this in _x) exitWith { _result = true }; };	
+		} forEach ((_kit select 5) + (_kit select 6) + (_kit select 7));
+
+		_result
+	};
+	
 	{
 		private _role = _x select 0;		
 		private _exist = !(isNil (compile (_x select 1)));
 		
 		if (_exist) then {
+
+
+
+			private _hasMaptools = "ACE_MapTools" call _fnc_CheckForItem;
+			private _hasIfak = ("ACE_tourniquet" call _fnc_CheckForItem) 
+				&& (
+					"ACE_fieldDressing" call _fnc_CheckForItem 
+					|| "ACE_packingBandage" call _fnc_CheckForItem 
+					|| "ACE_elasticBandage" call _fnc_CheckForItem 
+					|| "ACE_quikclot" call _fnc_CheckForItem 
+				);
+			private _hasBinocular = "Binocular" call _fnc_CheckForItem || "ACE_Vector" call _fnc_CheckForItem;
+		
 			private _kit = call compile (_x select 1);
 			private _hasMaptools = false;
 			private _hasIfak = false;
