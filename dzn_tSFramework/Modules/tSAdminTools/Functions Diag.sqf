@@ -75,6 +75,10 @@ tSF_Diag_TSF_CollectModulesData = {
 		"tSF_Briefing_Schema"
 		,"tSF_CCP_Schema"
 		,"tSF_ERS_Schema"
+		,"tSF_JIPTeleport_Schema"
+		,"tSF_Intro_Schema"
+		,"tSF_EUB_Schema"
+		,"tSF_MissionDefaults_Schema"
 	];
 
 	private _topic = "";
@@ -101,6 +105,7 @@ tSF_Diag_TSF_CollectModulesData = {
 					case "bool": { if (_var) then { "Yes" } else { "No" } };
 					case "string": { _var };
 					case "time": { str(_var) + " seconds" };
+					case "distance": { str(_var) + " meters" };
 					case "array": { str(_var) };
 				}
 			];
