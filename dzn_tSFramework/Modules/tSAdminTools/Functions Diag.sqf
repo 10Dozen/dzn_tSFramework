@@ -120,6 +120,20 @@ tSF_Diag_Dynai_CollectData = {
 		Dynai:
 			Config Zone vs Real zones
 	*/
+	waitUntil { !isNil "dzn_dynai_zoneProperties" };
+	private _zones =  synchronizedObjects dzn_dynai_core;
+	{
+		private _zonename = _x select 0;
+		if (call compile _zonename in _zones) then {
+			// OK
+		} else {
+			// CONFIG EXIST, ZONE IS NOT EXIST
+		};
+	} forEach dzn_dynai_zoneProperties;
+	
+	// dzn_dynai_zoneProperties 
+	// synchronizedObjects dzn_dynai_core
+	
 	
 };
 
