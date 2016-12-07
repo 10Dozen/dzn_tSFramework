@@ -23,8 +23,8 @@ tSF_EUB_surrender_PlayerDistance				= 10;	// meters
  * Description of the module
  * *********************************
  */
-tSF_Briefing_Schema = [
-	/* Module name */	"Briefing"
+tSF_EUB_Schema = [
+	/* Module name */	"Editor Unit Behavior"
 	,[
 		/* Module Settings */
 		[
