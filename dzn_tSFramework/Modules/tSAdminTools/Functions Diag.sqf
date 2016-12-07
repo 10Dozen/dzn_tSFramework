@@ -1,5 +1,5 @@
 /*
-[] execVM "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf"; 
+[] execVM "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf"; call tSF_Diag_Dynai_CollectData
 call tSF_Diag_AddDiagTopic; 
 call tSF_Diag_TSF_CollectTotalData;
 call tSF_Diag_TSF_CollectModulesData;
@@ -19,6 +19,7 @@ tSF_Diag_AddDiagTopic = {
 	call tSF_Diag_Gear_CollectTotalData;
 	call tSF_Diag_TSF_CollectModulesData;
 	call tSF_Diag_TSF_CollectTotalData;	
+	call tSF_Diag_Dynai_CollectData;
 };
 
 tSF_Diag_TSF_CollectTotalData = {	
@@ -117,17 +118,22 @@ tSF_Diag_TSF_CollectModulesData = {
 	player createDiaryRecord ["tSF_Diagpage", ["tSF - Modules", _topic]];
 };
 
-
-
-
 tSF_Diag_Dynai_CollectData = {
 	/*
 		Dynai:
 			Config Zone vs Real zones
+			
+			[OK]        Zone1		0
+			[NO CONFIG] Zone2		1
+			[NO ZONE]   Zone3		2
 	*/
 	private _dynaiTopic = "<font size='14' color='#b7f931'>Zones</font><br /";
+	
 	waitUntil { !isNil "dzn_dynai_zoneProperties" };
-	private _zones =  synchronizedObjects dzn_dynai_core;
+	
+	private _zonesItems = [];
+	
+	private _zones = synchronizedObjects dzn_dynai_core;
 	private _usedZones = [];
 	{
 		private _zonename = _x select 0;
@@ -135,17 +141,29 @@ tSF_Diag_Dynai_CollectData = {
 		
 		if (!isNil (compile _zonename) && { (call compile _zonename) in _zones }) then { 
 			_usedZones pushBack (call compile _zonename);
+			_zonesItems pushBack [_zonename, 0];
 		} else {
-			// CONFIG EXIST, ZONE IS NOT EXIST
+			_zonesItems pushBack [_zonename, 2];
 		};		
 	} forEach dzn_dynai_zoneProperties;
 	
 	private _unusedZones = _zones - _usedZones;
 	if !(_unusedZones isEqualTo []) then {		
-		{
-			// There are unused zones
-		} forEach _unusedZones;
+		{ _zonesItems pushBack [str(_x), 1]; } forEach _unusedZones;
 	};
+	
+	{
+		_dynaiTopic = format [
+			"%1<br />%2 %3"
+			, _dynaiTopic
+			, switch (_x select 1) do {
+				case 0: { "<font size='12'>[<font color='#b7f931'>OK</font>]</font>                " };
+				case 1: { "<font size='12'>[<font color='#f95631'>NO CONFIG</font>]</font>   " };
+				case 2: { "<font size='12'>[<font color='#f95631'>NO ZONE</font>]</font>      " };
+			}
+			, _x select 0
+		];
+	} forEach _zonesItems;
 	
 	player createDiaryRecord ["tSF_Diagpage", ["dzn Dynai - Totals", _dynaiTopic]];
 };
@@ -235,12 +253,13 @@ tSF_Diag_Gear_CollectKitData = {
 			private _hasBinocular = [_kitArray, "Binocular"] call _fnc_CheckForItem || [_kitArray, "ACE_Vector"] call _fnc_CheckForItem;
 		
 			_kitTopic = format [
-				"%1<br /><font color='#b7f931'>%2</font><br />   Has Maptools -- <font color='#5b9aff'>%3</font><br />   Has Binocular/Vector -- <font color='#5b9aff'>%4</font><br />   Has IFAK -- <font color='#5b9aff'>%5</font>"
+				"%1<br /><font color='#b7f931'>%2</font><br />   Has IFAK -- %3<br />   Has Maptools -- <font color='#5b9aff'>%4</font><br />   Has Binocular/Vector -- <font color='#5b9aff'>%5</font>"
 				, _kitTopic
 				, _x select 1
+				, if (_hasIfak) then { "<font color='#b7f931'>Yes</font>" } else { "<font color='#f95631'>No</font>" }
 				, if (_hasMaptools) then { "Yes" } else { "No" }
 				, if (_hasBinocular) then { "Yes" } else { "No" }
-				, if (_hasIfak) then { "Yes" } else { "No" }
+				
 			];
 		};
 		
