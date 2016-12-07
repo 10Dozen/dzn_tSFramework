@@ -125,21 +125,29 @@ tSF_Diag_Dynai_CollectData = {
 		Dynai:
 			Config Zone vs Real zones
 	*/
+	private _dynaiTopic = "<font size='14' color='#b7f931'>Zones</font><br /";
 	waitUntil { !isNil "dzn_dynai_zoneProperties" };
 	private _zones =  synchronizedObjects dzn_dynai_core;
+	private _usedZones = [];
 	{
 		private _zonename = _x select 0;
-		if (call compile _zonename in _zones) then {
-			// OK
+		private _zone = objNull;
+		
+		if (!isNil (compile _zonename) && { (call compile _zonename) in _zones }) then { 
+			_usedZones pushBack (call compile _zonename);
 		} else {
 			// CONFIG EXIST, ZONE IS NOT EXIST
-		};
+		};		
 	} forEach dzn_dynai_zoneProperties;
 	
-	// dzn_dynai_zoneProperties 
-	// synchronizedObjects dzn_dynai_core
+	private _unusedZones = _zones - _usedZones;
+	if !(_unusedZones isEqualTo []) then {		
+		{
+			// There are unused zones
+		} forEach _unusedZones;
+	};
 	
-	
+	player createDiaryRecord ["tSF_Diagpage", ["dzn Dynai - Totals", _dynaiTopic]];
 };
 
 tSF_Diag_Gear_CollectTotalData = {
