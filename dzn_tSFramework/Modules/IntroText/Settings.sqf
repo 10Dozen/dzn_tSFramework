@@ -33,14 +33,12 @@ tSF_Intro_Schema = [
 			/* Description */	, "Delay before Intro is shown"
 			/* Type */			, "time"
 		]
-		, 
-		[
+		, [
 			/* Setting */		"tSF_Intro_ShowCurrentTime"
 			/* Description */	, "Show Current time in intro text"
 			/* Type */			, "bool"
 		]
-		, 
-		[
+		, [
 			/* Setting */		"tSF_Intro_LineText1"
 			/* Description */	, "1st line"
 			/* Type */			, "string"
