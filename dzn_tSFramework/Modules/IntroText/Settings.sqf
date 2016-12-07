@@ -25,7 +25,7 @@ tSF_Intro_TextPosition	= [0.2, 0.7];
  * *********************************
  */
 tSF_Intro_Schema = [
-	/* Module name */	"Editor Unit Behavior"
+	/* Module name */	"Intro Text"
 	,[
 		/* Module Settings */
 		[
