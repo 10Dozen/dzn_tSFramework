@@ -33,7 +33,7 @@ tSF_Support_Teleport			= true;
  
 tSF_Support_DamageLimit			= 0.75;
 tSF_Support_FuelLimit			= 0.15;
-tSF_Support_AllowBaseRefuel		= false;
+// tSF_Support_AllowBaseRefuel		= false;
 
 
 /*
