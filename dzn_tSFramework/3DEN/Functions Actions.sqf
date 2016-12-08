@@ -206,7 +206,7 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 
 dzn_fnc_tSF_3DEN_AddDynaiCore = {
 	collect3DENHistory {
-		dzn_tSF_3DEN_DynaiCore = create3DENEntity ["Logic","Logic",screenToWorld [0.4,0.4]];
+		dzn_tSF_3DEN_DynaiCore = create3DENEntity ["Logic","Logic",screenToWorld [0.3,0.5]];
 		dzn_tSF_3DEN_DynaiCore set3DENAttribute ["Name", "dzn_dynai_core"];
 		
 		call dzn_fnc_tSF_3DEN_createDynaiLayer;
@@ -388,6 +388,10 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 		private _picture = if (typename (_result select 4) == "SCALAR") then { "overview.jpg" } else { _result select 4 };
 		private _maxPlayers = if (typename (_result select 5) == "SCALAR") then { "1" } else { _result select 5 };
 		private _title = if (typename (_result select 0) == "SCALAR") then { format ["CO%1 Scenario Name", _maxPlayers] } else { _result select 0 };
+		
+		tSF_3DEN_SummaryText = _summary;
+		call dzn_fnc_tSF_3DEN_AddScenarioLogic;
+		call dzn_fnc_tSF_3DEN_CoverMap;
 		
 		set3DENMissionAttributes [
 			["Scenario","IntelBriefingName", _title]
@@ -771,4 +775,40 @@ dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
 		add3DENConnection ["Sync", [_point], dzn_tSF_3DEN_SupportReturnPointCore];	
 		"tSF Tools - Support: Return point was added" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
+};
+
+
+dzn_fnc_tSF_3DEN_AddScenarioLogic = {
+	if !(isNull dzn_tSF_3DEN_ScnearioLogic) exitWith {
+		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
+			"Init"
+			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
+		];	
+	};
+	
+	collect3DENHistory {
+		dzn_tSF_3DEN_ScnearioLogic = create3DENEntity ["Logic","Logic",screenToWorld [0.3,0.5]];
+		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute ["Name", "tSF_Scenario_Logic"];
+		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
+			"Init"
+			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
+		];
+		
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		dzn_tSF_3DEN_ScnearioLogic set3DENLayer dzn_tSF_3DEN_MiscLayer;
+	};
+}; 
+
+dzn_fnc_tSF_3DEN_CoverMap = {
+	if !(isNull dzn_tSF_3DEN_CoverMap) exitWith {};
+	
+	collect3DENHistory {
+		dzn_tSF_3DEN_CoverMap = create3DENEntity ["Logic","ModuleCoverMap_F",screenToWorld [0.7,0.5]];
+		dzn_tSF_3DEN_CoverMap set3DENAttribute ["Name", "tSF_CoverMap"];
+		dzn_tSF_3DEN_CoverMap set3DENAttribute ["size2", [2000,2000]];
+		
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		dzn_tSF_3DEN_CoverMap set3DENLayer dzn_tSF_3DEN_MiscLayer;
+	};
+
 };

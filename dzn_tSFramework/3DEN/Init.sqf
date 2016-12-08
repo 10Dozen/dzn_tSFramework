@@ -16,6 +16,8 @@ dzn_tSF_3DEN_DynaiZoneId = 0;
 dzn_tSF_3DEN_Zeus = objNull;
 dzn_tSF_3DEN_BaseTrg = objNull;
 dzn_tSF_3DEN_CCP = objNull;
+dzn_tSF_3DEN_ScnearioLogic = objNull;
+dzn_tSF_3DEN_CoverMap = objNull;
 
 dzn_tSF_3DEN_UnitsLayer = objNull;
 dzn_tSF_3DEN_tSFLayer = objNull;

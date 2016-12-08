@@ -113,6 +113,8 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 		, "dzn_tSF_3DEN_BaseTrg"
 		, "dzn_tSF_3DEN_CCP"
 		, "dzn_tSF_3DEN_SupportReturnPointCore"
+		, "dzn_tSF_3DEN_ScnearioLogic"
+		, "dzn_tSF_3DEN_CoverMap"
 		
 		, "dzn_tSF_3DEN_UnitsLayer"
 		, "dzn_tSF_3DEN_tSFLayer"
@@ -133,7 +135,10 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 				["dzn_tSF_3DEN_DynaiCore"			, "dzn_dynai_core" ]
 				,["dzn_tSF_3DEN_BaseTrg"			, "baseTrg" ]
 				,["dzn_tSF_3DEN_CCP"				, "tsf_CCP" ]
-				,["dzn_tSF_3DEN_SupportReturnPointCore"	, "tSF_Support_ReturnPointCore" ]				
+				,["dzn_tSF_3DEN_SupportReturnPointCore"	, "tSF_Support_ReturnPointCore" ]	
+				,["dzn_tSF_3DEN_ScnearioLogic"		, "tSF_Scenario_Logic" ]
+				,["dzn_tSF_3DEN_CoverMap"			, "tSF_CoverMap" ]
+				
 				,["dzn_tSF_3DEN_tSFLayer"			, "tSF Layer" ]
 				,["dzn_tSF_3DEN_DynaiLayer"			, "DynAI Layer" ]
 				,["dzn_tSF_3DEN_GearLayer"			, "dzn_Gear Layer" ]
