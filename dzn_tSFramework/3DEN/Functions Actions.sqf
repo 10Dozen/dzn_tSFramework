@@ -682,7 +682,7 @@ dzn_fnc_tSF_3DEN_AddAsSupporter = {
 	
 	disableSerialization;
 	private _result = [
-		"Add Unit as Support"
+		"Assign Vehicle as Support"
 		,[
 			["Callsign", []]
 		]
@@ -712,7 +712,7 @@ dzn_fnc_tSF_3DEN_AddAsSupporter = {
 		_logic set3DENLayer dzn_tSF_3DEN_SupporterLayer;
 		
 		add3DENConnection ["Sync", [_unit], _logic];	
-		(format ["tSF Tools - Vehicle Radio: ""%1"" config logic was assigned", _configName]) call dzn_fnc_tSF_3DEN_ShowNotif;
+		(format ["tSF Tools - Support: ""%1"" config logic was assigned", _callsign]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 

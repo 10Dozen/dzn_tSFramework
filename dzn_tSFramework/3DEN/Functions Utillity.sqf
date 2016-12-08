@@ -34,7 +34,7 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[Vehicle] Add Vehicle Crew"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddEVCLogic } }]
 		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddERSLogic } }]
 		
-		,["[Support] Assign Vehicle as Supporter"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddAsSupporter } }]
+		,["[Support] Assign Vehicle as Support"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddAsSupporter } }]
 		,["[Support] Add Return point"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddSupportReturnPoint } }]		
 		
 		,["[tSF] Configure Scenario"		, { [] spawn { call dzn_fnc_tSF_3DEN_ConfigureScenario } }]
