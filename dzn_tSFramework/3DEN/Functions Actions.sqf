@@ -10,7 +10,7 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 	 * Type = "NATO", "RUAF"
 	 */
 	
-	private _squadNo = dzn_tSF_3DEN_SquadLastNumber + 1;
+	private _squadNo = format["1'%1", dzn_tSF_3DEN_SquadLastNumber + 1];
 	private _squadSettings = [];
 	private _infantryClass = "";
 	
@@ -38,7 +38,12 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		]
 	] call dzn_fnc_3DEN_ShowChooseDialog;
 	if (count _squadType == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
-	_squadName = if (typename (_squadType select 0) == "STRING") then { _squadType select 0 } else { "" };
+
+	#define	SQNAME			(_squadType select 0)
+	#define	IF_SQNAME(X)		if (typename SQNAME == "STRING") then { SQNAME } else { X }
+	#define	ALT_EMPTY_SQNAME			if (typename SQNAME == "STRING") then { SQNAME + " " } else { "" }
+	
+	private _squadName = if (typename (_squadType select 0) == "STRING") then { _squadType select 0 } else { "" };
 	
 	_infantryClass = switch (_squadType select 1) do {
 		case 0: { "B_Soldier_F" };
@@ -49,7 +54,10 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 	_squadSettings = switch (_squadType select 2) do {
 		/* NATO 1-4-4 */ 	case 0: {
 			[
-				[format ["1'%1 Squad Leader", _squadNo],"Sergeant"]
+				[
+					format["%1 Squad Leader", IF_SQNAME(_squadNo)]
+					,"Sergeant"
+				]
 				,["RED - FTL"			,"Corporal"]
 				,["Automatic Rifleman"		,"Private"]
 				,["Grenadier"			,"Private"]
@@ -62,7 +70,10 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		};
 		/* UK 4-4*/ 		case 1: {
 			[
-				[format ["1'%1 Section Leader", _squadNo],"Sergeant"]
+				[
+					format ["%1 Section Leader", IF_SQNAME(_squadNo)]
+					,"Sergeant"
+				]
 				,["Automatic Rifleman"		,"Private"]
 				,["Grenadier"			,"Private"]
 				,["Rifleman"			,"Private"]	
@@ -74,7 +85,10 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		};
 		/* RuMSO 1-2-3-3 */	case 2: {
 			[
-				[format ["1'%1 Командир отделения", _squadNo]	,"Sergeant"]
+				[
+					format ["%1 Командир отделения", IF_SQNAME(_squadNo)]
+					,"Sergeant"
+				]
 				,["Наводчик-оператор"				,"Corporal"]
 				,["Механик-водитель"				,"Private"]
 				,["Пулеметчик"					,"Private"]
@@ -87,7 +101,10 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		};
 		/* Ru VV 4-3 */ 	case 3: {
 			[
-				[format ["1'%1 Командир отделения", _squadNo]	,"Sergeant"]
+				[
+					format ["%1 Командир отделения", IF_SQNAME(_squadNo)]
+					,"Sergeant"
+				]
 				,["Пулеметчик"					,"Private"]
 				,["Стрелок-Гранатометчик"			,"Private"]
 				,["Стрелок, помощник гранатометчика"	,"Private"]
@@ -98,7 +115,10 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		};
 		/* "Platoon Squad" */ case 4: {
 			[
-				["1'6 Platoon Leader"				,"Lieutenant"]
+				[
+					format["%1 Platoon Leader", IF_SQNAME("1'6")]
+					,"Lieutenant"
+				]
 				,["Platoon Sergeant"				,"Sergeant"]
 				,["JTAC"						,"Corporal"]
 				,["FO"						,"Corporal"]	
@@ -106,7 +126,10 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		};
 		/* "Командный отряд" */ case 5: {
 			[
-				["1'6 Командир взвода"				,"Lieutenant"]
+				[
+					format["%1 Командир взвода", IF_SQNAME("1'6")]
+					,"Lieutenant"
+				]
 				,["Зам. командира взвода"			,"Sergeant"]
 				,["ПАН"						,"Corporal"]
 				,["КАО"						,"Corporal"]	
@@ -114,7 +137,10 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		};		
 		/* "NATO 1-2-2-2 Weapon Squad" */ case 6: {
 			[
-				["1'4 Squad Leader"				,"Sergeant"]
+				[
+					format["%1 Squad Leader", IF_SQNAME("1'4")]
+					,"Sergeant"
+				]
 				,["Machinegunner"					,"Private"]
 				,["Asst. Machinegunner"				,"Private"]
 				,["Machinegunner"					,"Private"]
@@ -125,27 +151,39 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		};		
 		/* "Crew Squad" */ case 7: {
 			[
-				["Crew Commander"					,"Corporal"]
+				[
+					format["%1Crew Commander", ALT_EMPTY_SQNAME]
+					,"Corporal"
+				]
 				,["Crew Gunner"					,"Private"]
 				,["Crew Driver"					,"Private"]
 			]		
 		};
 		/* "Экипаж" */ case 8: {
 			[
-				["Командир экипажа"				,"Corporal"]
+				[
+					format["%1Командир экипажа", ALT_EMPTY_SQNAME]
+					,"Corporal"
+				]
 				,["Наводчик-оператор"				,"Private"]
 				,["Механик-водитель"				,"Private"]
 			]		
 		};
 		/* "Airborne Squad" */ case 9: {
 			[
-				["Pilot"						,"Lieutenant"]
+				[
+					format["%1Pilot", ALT_EMPTY_SQNAME]
+					,"Lieutenant"
+				]
 				,["Gunner"						,"Sergeant"]
 			]		
 		};
 		/* "Пилоты" */ case 10: {
 			[
-				["Пилот"						,"Lieutenant"]
+				[
+					format["%1Пилот", ALT_EMPTY_SQNAME]
+					,"Lieutenant"
+				]
 				,["Наводчик-оператор"				,"Sergeant"]
 			]
 		};
@@ -179,7 +217,7 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 			
 			set3DENAttributes [
 				[[_unit], "description", (_squadSettings select _i) select 0]
-				,[[_unit], "rank", (_squadSettings select _i) select 1]			
+				,[[_unit], "rank",(_squadSettings select _i) select 1]
 				,[[_unit], "ControlMP", true]
 			];	
 		};
@@ -189,7 +227,7 @@ dzn_fnc_tSF_3DEN_AddSquad = {
 		];
 		
 		if (_squadName != "") then {
-			_grp set3DENAttribute ["groupID",_squadName ];
+			_grp set3DENAttribute ["groupID", _squadName];
 		};
 				
 		delete3DENEntities [(units _grp select 0)];
@@ -261,10 +299,12 @@ dzn_fnc_tSF_3DEN_AddDynaiZone = {
 dzn_fnc_tSF_3DEN_AddZeus = {
 	collect3DENHistory {
 		if !(isNull dzn_tSF_3DEN_Zeus) exitWith {
-			"tSF Tools - Zeus Module already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
+			// "tSF Tools - Zeus Module already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
 		
-		dzn_tSF_3DEN_Zeus = create3DENEntity ["Logic","ModuleCurator_F",screenToWorld [0.5,0.5]];
+		dzn_tSF_3DEN_Zeus = create3DENEntity ["Logic","ModuleCurator_F",screenToWorld [0.3,0.3]];
+		dzn_tSF_3DEN_Zeus set3DENAttribute ["Name", "tSF_Zeus"];		
+		
 		dzn_tSF_3DEN_Zeus set3DENAttribute [
 			"Init"
 			, "this setVariable ['addons',3,true];this setVariable ['owner','#adminLogged',true];"
@@ -308,7 +348,7 @@ dzn_fnc_tSF_3DEN_AddCCP = {
 			, [ (_pos select 0) + 50, _pos select 1, 0 ]
 		];
 		
-		dzn_tSF_3DEN_CCP set3DENAttribute ["Name", "tsf_CCP"];
+		dzn_tSF_3DEN_CCP set3DENAttribute ["Name", "tSF_CCP"];
 		
 		call dzn_fnc_tSF_3DEN_createTSFLayer;
 		dzn_tSF_3DEN_CCP set3DENLayer dzn_tSF_3DEN_tSFLayer;
@@ -363,30 +403,38 @@ dzn_fnc_tSF_3DEN_AddGearLogic = {
 
 dzn_fnc_tSF_3DEN_ConfigureScenario = {
 	disableSerialization;
+	
+	private _form = [
+		["Title", []]			
+		, ["Summary", []]
+		, ["Author (def: TS)",[]]
+		, ["Picture (def: overview.jpg)",[]]			
+		, ["Max Players", []]
+	];
+	
+	if !(isNull dzn_tSF_3DEN_ScnearioLogic) then {
+		(_form select 0) set [1, "Scenario" get3DENMissionAttribute "IntelBriefingName"];
+		(_form select 1) set [1, "Multiplayer" get3DENMissionAttribute "IntelOverviewText"];
+		(_form select 2) set [1, "Scenario" get3DENMissionAttribute "Author"];
+		(_form select 3) set [1, "Scenario" get3DENMissionAttribute "OverviewPicture"];
+		(_form select 4) set [1, str("Multiplayer" get3DENMissionAttribute "MaxPlayers")];
+	};
+	
 	private _result = [
 		"Scenario Settings"
-		,[
-			["Title", []]
-			, ["Overview",[]]			
-			, ["Summary", []]
-			, ["Author (def: TS)",[]]
-			, ["Picture (def: overview.jpg)",[]]			
-			, ["Max Players", []]
-		]
+		, _form
 	] call dzn_fnc_3DEN_ShowChooseDialog;
-	//  ["Loading Screen text", []]
 	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
 	dzn_tSF_3DEN_Parameter = _result;
 	
 	collect3DENHistory {
 		private _result = dzn_tSF_3DEN_Parameter;
-		
-		private _overview  = if (typename (_result select 1) == "SCALAR") then { "" } else { _result select 1 };
-		private _summary = if (typename (_result select 2) == "SCALAR") then { "" } else { _result select 2 };
-		private _author = if (typename (_result select 3) == "SCALAR") then { "Tactical Shift" } else { _result select 3 };
-		private _picture = if (typename (_result select 4) == "SCALAR") then { "overview.jpg" } else { _result select 4 };
-		private _maxPlayers = if (typename (_result select 5) == "SCALAR") then { "1" } else { _result select 5 };
+	
+		private _summary = if (typename (_result select 1) == "SCALAR") then { "" } else { _result select 1 };
+		private _author = if (typename (_result select 2) == "SCALAR") then { "Tactical Shift" } else { _result select 2 };
+		private _picture = if (typename (_result select 3) == "SCALAR") then { "overview.jpg" } else { _result select 3 };
+		private _maxPlayers = if (typename (_result select 4) == "SCALAR") then { "1" } else { _result select 4 };
 		private _title = if (typename (_result select 0) == "SCALAR") then { format ["CO%1 Scenario Name", _maxPlayers] } else { _result select 0 };
 		
 		tSF_3DEN_SummaryText = _summary;
@@ -395,8 +443,8 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 		
 		set3DENMissionAttributes [
 			["Scenario","IntelBriefingName", _title]
-			, ["Scenario","OverviewText", _overview]	
-			, ["Scenario","OnLoadMission", _overview]			
+			, ["Scenario","OverviewText", _summary]	
+			, ["Scenario","OnLoadMission", _summary]			
 			, ["Scenario","OverviewPicture", _picture]
 			, ["Scenario","LoadScreen", _picture]
 			, ["Scenario","OverviewPictureLocked", _picture]
@@ -423,6 +471,8 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 		
 		"tSF Tools - Scenario was configured" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
+	
+	call dzn_fnc_tSF_3DEN_AddZeus;
 };
 
 

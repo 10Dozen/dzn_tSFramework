@@ -38,7 +38,9 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[Support] Add Return point"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddSupportReturnPoint } }]		
 		
 		,["[tSF] Configure Scenario"		, { [] spawn { call dzn_fnc_tSF_3DEN_ConfigureScenario } }]
-		,["[tSF] Add Zeus"			, { call dzn_fnc_tSF_3DEN_AddZeus }]
+	/*	
+		,["[tSF] Add Zeus"			, { call dzn_fnc_tSF_3DEN_AddZeus }]	
+	*/
 		,["[tSF] Add Base Trigger"		, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
 		,["[tSF] Add CCP"				, { call dzn_fnc_tSF_3DEN_AddCCP }]	
 		,[" "						, { }]	
@@ -47,8 +49,7 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 	
 	private _optionList = [];
 	{ _optionList pushBack (_x select 0); } forEach _options;
-	
-	
+
 	call dzn_fnc_tSF_3DEN_ResetVariables;
 	private _toolResult = [
 		"tSF Tool"
@@ -96,15 +97,6 @@ dzn_fnc_tSF_3DEN_createSupporterLayer = {
 };
 
 dzn_fnc_tSF_3DEN_ResetVariables = {
-	/*
-		get3DENEntityID dzn_tSF_3DEN_SupportReturnPointCore
-		
-		{
-			B=0;
-			A = all3DENEntities select B select 0;
-			C = A get3DENAttribute "name"
-		} forEach all3DENEntities;
-	*/
 	{
 		call compile format ["if (get3DENEntityID %1 == -1) then { %1 = objNull; };" , _x];	
 	} forEach [
@@ -134,7 +126,8 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 			} forEach [
 				["dzn_tSF_3DEN_DynaiCore"			, "dzn_dynai_core" ]
 				,["dzn_tSF_3DEN_BaseTrg"			, "baseTrg" ]
-				,["dzn_tSF_3DEN_CCP"				, "tsf_CCP" ]
+				,["dzn_tSF_3DEN_Zeus"				, "tSF_Zeus" ]
+				,["dzn_tSF_3DEN_CCP"				, "tSF_CCP" ]
 				,["dzn_tSF_3DEN_SupportReturnPointCore"	, "tSF_Support_ReturnPointCore" ]	
 				,["dzn_tSF_3DEN_ScnearioLogic"		, "tSF_Scenario_Logic" ]
 				,["dzn_tSF_3DEN_CoverMap"			, "tSF_CoverMap" ]
@@ -151,6 +144,9 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 };
 
 
+
+#define	L_BRK		(toString [13,10])
+
 dzn_fnc_tSF_3DEN_GetDynaiZoneNames = {
 	private _dynaiZones = [
 		get3DENLayerEntities dzn_tSF_3DEN_DynaiLayer
@@ -161,18 +157,21 @@ dzn_fnc_tSF_3DEN_GetDynaiZoneNames = {
 		}
 	] call BIS_fnc_conditionalSelect;
 	
-	private _names = "Dynai zones:
-
-";
+	private _names = "Dynai zones:" + L_BRK;
 	{
-		_names = format["%1%2%3", _names, if (_forEachIndex > 0) then { ", " } else { "" }, (_x get3DENAttribute "name") select 0];
+		_names = format["%1%2%3", _names, L_BRK, (_x get3DENAttribute "name") select 0];
 	} forEach _dynaiZones;
 	
 	[parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Dynai zone names were copied!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
 	copyToClipboard _names;
 };
 
+
+
 dzn_fnc_tSF_3DEN_GetUnitNames = {
+/*
+http://www.online-decoder.com/ru
+*/
 	private _playableUnits = [
 		get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer
 		, {
@@ -187,26 +186,38 @@ dzn_fnc_tSF_3DEN_GetUnitNames = {
 		}	
 	] call BIS_fnc_conditionalSelect;
 	
-	private _names = "Groups:
-
-";
+	private _names = "Decode cyrillic chars with http://www.online-decoder.com/ru" + L_BRK + L_BRK + "Groups:" + L_BRK + L_BRK;
 	{
-		_names = format["%1%2%3", _names, if (_forEachIndex > 0) then { "
-" } else { "" }, groupId _x];
+		_names = format["%1%2%3", _names, if (_forEachIndex > 0) then { L_BRK } else { "" }, groupId _x];
 	} forEach _playableUnits;
 	
-	private _names = _names + "
-	
-Supporters:
-
-";
+	private _names = _names + L_BRK + L_BRK + "Supporters:"  + L_BRK + L_BRK;;
 	{
-		_names = format["%1%2%3", _names, if (_forEachIndex > 0) then { "
-" } else { "" }, (_x get3DENAttribute "description") select 0];
+		_names = format["%1%2%3", _names, if (_forEachIndex > 0) then { L_BRK } else { "" }, (_x get3DENAttribute "description") select 0];
 	} forEach _supporters;
 	
 	[parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Unit names were copied!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
 	copyToClipboard _names;
+};
+
+dzn_fnc_tSF_3DEN_GetGAT = {
+	private _playableUnits = [get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer, {groupId _x != ""}] call BIS_fnc_conditionalSelect;
+	
+	private _gat = "Decode cyrillic chars with http://www.online-decoder.com/ru" + L_BRK + L_BRK;
+	{
+		private _units = units _x;
+		{
+			_gat = format[
+				"%1%2A ""%3""                TO ""kit_name"" KIT"
+				, _gat
+				, L_BRK
+				, (_x get3DENAttribute "description") select 0
+			];
+		} forEach _units;
+	} forEach _playableUnits;
+
+	[parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>GAT was copied!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+	copyToClipboard _gat;
 };
 
 
@@ -384,8 +395,8 @@ dzn_fnc_3DEN_ShowChooseDialog = {
 		_controlCount = _controlCount + 1;
 		
 		_comboBoxIdc = BASE_IDC + _controlCount;
-		if (count _choices == 0) then 
-		{
+		
+		if ( (typename _choices == "ARRAY" && {count _choices == 0}) || (typename _choices == "STRING")) then {
 			// no choice given. Create a textbox instead.
 			_defaultChoice = -1;
 			
@@ -395,13 +406,15 @@ dzn_fnc_3DEN_ShowChooseDialog = {
 			
 			_choiceEdit ctrlSetPosition cmbProps;
 			_choiceEdit ctrlSetBackgroundColor [0, 0, 0, 1];
+			
 			_choiceEdit ctrlSetFont "PuristaLight";
-			// _choiceEdit ctrlSetText _choices;
+			if (typename _choices == "STRING") then {
+				_choiceEdit ctrlSetText _choices;
+			};
 			_choiceEdit ctrlCommit 0;
 			_choiceEdit ctrlSetEventHandler ["KeyUp", "missionNamespace setVariable [format['dzn_ChooseDialog_ReturnValue_%1'," + str (_forEachIndex) + "], ctrlText (_this select 0)];"];
 			_choiceEdit ctrlCommit 0;
-		}
-		else {
+		} else {
 			// Create the combo box for this entry and populate it.		
 			_choiceCombo = _dialog ctrlCreate ["RscCombo", _comboBoxIdc];
 			_choiceCombo ctrlSetPosition [COMBO_COLUMN_X, _yCoord, COMBO_WIDTH, COMBO_HEIGHT];
@@ -444,18 +457,25 @@ dzn_fnc_3DEN_ShowChooseDialog = {
 	
 	
 	// Here some function to obtain dynai zone names
-	_dynaiButton = _dialog ctrlCreate ["RscButtonMenuOK", BASE_IDC + _controlCount];
-	_dynaiButton ctrlSetStructuredText parseText "<t size='0.75' color='#999999'>[Dynai] Copy zones names</t>";
-	_dynaiButton ctrlSetPosition [OK_BUTTON_X - 0.7, _yCoord + 0.1, 2.5*OK_BUTTON_WIDTH, (1 * GUI_GRID_H)];
-	_dynaiButton ctrlCommit 0;	
-	_dynaiButton  ctrlSetEventHandler ["ButtonClick", "[] spawn dzn_fnc_tSF_3DEN_GetDynaiZoneNames;"];
+	if (_titleText == "tSF Tool") then {
+		_dynaiButton = _dialog ctrlCreate ["RscButtonMenuOK", BASE_IDC + _controlCount];
+		_dynaiButton ctrlSetStructuredText parseText "<t align='center' size='0.75' color='#999999'>Copy Dynai zones</t>";
+		_dynaiButton ctrlSetPosition [OK_BUTTON_X - 0.713, _yCoord + 0.1, 1.75*OK_BUTTON_WIDTH, (1 * GUI_GRID_H)];
+		_dynaiButton ctrlCommit 0;	
+		_dynaiButton  ctrlSetEventHandler ["ButtonClick", "[] spawn dzn_fnc_tSF_3DEN_GetDynaiZoneNames;"];
 
-	_unitsButton = _dialog ctrlCreate ["RscButtonMenuOK", BASE_IDC + _controlCount];
-	_unitsButton ctrlSetStructuredText parseText "<t size='0.75' color='#999999'>Copy Callsigns</t>";
-	_unitsButton ctrlSetPosition [OK_BUTTON_X - 0.4, _yCoord + 0.1, 2.5*OK_BUTTON_WIDTH, (1 * GUI_GRID_H)];
-	_unitsButton ctrlCommit 0;	
-	_unitsButton  ctrlSetEventHandler ["ButtonClick", "[] spawn dzn_fnc_tSF_3DEN_GetUnitNames;"];	
-	
+		_unitsButton = _dialog ctrlCreate ["RscButtonMenuOK", BASE_IDC + _controlCount];
+		_unitsButton ctrlSetStructuredText parseText "<t align='center' size='0.75' color='#999999'>Copy Callsigns</t>";
+		_unitsButton ctrlSetPosition [OK_BUTTON_X - 0.53, _yCoord + 0.1, 1.75*OK_BUTTON_WIDTH, (1 * GUI_GRID_H)];
+		_unitsButton ctrlCommit 0;	
+		_unitsButton  ctrlSetEventHandler ["ButtonClick", "[] spawn dzn_fnc_tSF_3DEN_GetUnitNames;"];	
+		
+		_gatButton = _dialog ctrlCreate ["RscButtonMenuOK", BASE_IDC + _controlCount];
+		_gatButton ctrlSetStructuredText parseText "<t align='center' size='0.75' color='#999999'>Generate GAT</t>";
+		_gatButton ctrlSetPosition [OK_BUTTON_X - 0.35, _yCoord + 0.1, 1.75*OK_BUTTON_WIDTH, (1 * GUI_GRID_H)];
+		_gatButton ctrlCommit 0;	
+		_gatButton  ctrlSetEventHandler ["ButtonClick", "[] spawn dzn_fnc_tSF_3DEN_GetGAT;"];
+	};	
 	_controlCount = _controlCount + 1;
 
 	// Resize the background to fit all the controls we've created.
