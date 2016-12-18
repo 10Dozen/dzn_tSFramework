@@ -106,7 +106,11 @@ dzn_fnc_adminTools_showGATTool = {
 	{ _PlayerNamesList pushBack (name _x);	} forEach _PlayerList;
 
 	private _GATList = [];
-	{ _GATList pushBack (_x select 1);	} forEach dzn_gear_gat_table;
+	{ 
+		if !((_x select 1) in _GATList) then {
+			_GATList pushBack (_x select 1);
+		}
+	} forEach dzn_gear_gat_table;
 
 	private _Result = [];
 	_Result = [
