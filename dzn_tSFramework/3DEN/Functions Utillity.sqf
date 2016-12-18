@@ -172,19 +172,27 @@ dzn_fnc_tSF_3DEN_GetUnitNames = {
 /*
 http://www.online-decoder.com/ru
 */
-	private _playableUnits = [
-		get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer
-		, {
-			groupId _x != ""
-		}
-	] call BIS_fnc_conditionalSelect;
 	
-	private _supporters = [
-		get3DENLayerEntities dzn_tSF_3DEN_SupporterLayer
-		, {
-			(_x get3DENAttribute "description") select 0 != ""
-		}	
-	] call BIS_fnc_conditionalSelect;
+	private _playableUnits = [];
+	private _supporters = [];
+	
+	if !(isNil "dzn_tSF_3DEN_UnitsLayer" || {typename dzn_tSF_3DEN_UnitsLayer == "OBJECT"}) then { 
+		_playableUnits = [
+			get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer
+			, {
+				groupId _x != ""
+			}
+		] call BIS_fnc_conditionalSelect;
+	};
+	
+	if !(isNil "dzn_tSF_3DEN_SupporterLayer" || {typename dzn_tSF_3DEN_SupporterLayer == "OBJECT"}) then { 
+		_supporters = [
+			get3DENLayerEntities dzn_tSF_3DEN_SupporterLayer
+			, {
+				(_x get3DENAttribute "description") select 0 != ""
+			}	
+		] call BIS_fnc_conditionalSelect;
+	};
 	
 	private _names = "Decode cyrillic chars with http://www.online-decoder.com/ru" + L_BRK + L_BRK + "Groups:" + L_BRK + L_BRK;
 	{
