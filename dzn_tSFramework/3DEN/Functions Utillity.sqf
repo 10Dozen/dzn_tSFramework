@@ -211,20 +211,26 @@ http://www.online-decoder.com/ru
 dzn_fnc_tSF_3DEN_GetGAT = {
 	private _playableUnits = [get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer, {groupId _x != ""}] call BIS_fnc_conditionalSelect;
 	
+	private _listOfRoles = [];
 	private _gat = "// Decode cyrillic chars with http://www.online-decoder.com/ru" + L_BRK + L_BRK;
 	private _firstCommaSkipped = false;
 	{
 		private _units = units _x;
 		{
-			_gat = format[
-				"%1%2%4A ""%3""                TO ""kit_name"" KIT"
-				, _gat
-				, L_BRK
-				, (_x get3DENAttribute "description") select 0
-				, if !(_firstCommaSkipped) then { "" } else { ", " }
-			];
-			
-			if !(_firstCommaSkipped) then { _firstCommaSkipped = true; };
+			private _role = (_x get3DENAttribute "description") select 0;
+			if !(_role in _listOfRoles) then {			
+				_listOfRoles pushBack _role;
+				
+				_gat = format[
+					"%1%2%4A ""%3""                TO ""kit_name"" KIT"
+					, _gat
+					, L_BRK
+					, _role
+					, if !(_firstCommaSkipped) then { "" } else { ", " }
+				];
+				
+				if !(_firstCommaSkipped) then { _firstCommaSkipped = true; };
+			};
 		} forEach _units;
 	} forEach _playableUnits;
 
