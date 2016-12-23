@@ -7,7 +7,7 @@ tSF_IACE_Timeout = -1;
  *		1:  @Name		-	displayed name of the action node
  *		2:  @ID		-	ID of action node
  *		3:  @ParentID	-	ID of parent action node
- *		4:  @Code		-	code to execute
+ *		4:  @Code		-	code to execute (_target is the action-related object)
  *		5:  @Condition	-	condition of action availabness
  *
  */
