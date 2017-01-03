@@ -2,7 +2,7 @@
 if (hasInterface) then {
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Settings.sqf";
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions.sqf";
-
+	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf";
 
 	if (tSF_AdminTool_EnableMissionEndings || tSF_AdminTool_EnableGATTool) then {
 		[] spawn {
@@ -16,6 +16,8 @@ if (hasInterface) then {
 			if (tSF_AdminTool_EnableGATTool) then {
 				[] spawn dzn_fnc_adminTools_addGATControls;			
 			};
+			
+			[] spawn tSF_Diag_AddDiagTopic;
 		};
 	};
 };

@@ -1,15 +1,15 @@
 class CfgDebriefing
 {  
-    class Win
+    class WIN
     {
         title = "Задание выполнено";
         subtitle = "Успех!";
         description = "Задача выполнена";
     };                  
-    class Lose
+    class WIPED
     {
         title = "Задание провалено";
-        subtitle = "Провал!";
-        description = "Задача не была выполнена";
+        subtitle = "Все погибли!";
+        description = "Такие дела...";
     };
 };

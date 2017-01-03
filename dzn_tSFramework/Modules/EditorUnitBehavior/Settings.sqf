@@ -13,3 +13,41 @@ tSF_EUB_initTimeout	=	20;
 tSF_EUB_surrender_OnHit 					= true;
 tSF_EUB_surrender_OnHit_PlayerCloseOnly			= true;
 tSF_EUB_surrender_PlayerDistance				= 10;	// meters
+
+
+
+
+
+/*
+ * *********************************
+ * Description of the module
+ * *********************************
+ */
+tSF_EUB_Schema = [
+	/* Module name */	"Editor Unit Behavior"
+	,[
+		/* Module Settings */
+		[
+			/* Setting */		"tSF_EUB_surrender_OnHit"
+			/* Description */	, "Surrender - Make unit Surrender on hit"
+			/* Type */			, "bool"
+		]
+		, 
+		[
+			/* Setting */		"tSF_EUB_surrender_OnHit_PlayerCloseOnly"
+			/* Description */	, "Surrender - Make unit surrender only if player near"
+			/* Type */			, "bool"
+		]
+		, 
+		[
+			/* Setting */		"tSF_EUB_surrender_PlayerDistance"
+			/* Description */	, "Surrender - Min. distance to make unit surrender"
+			/* Type */			, "distance"
+		]
+		, [
+			/* Setting */		"tSF_EUB_initTimeout"
+			/* Description */	, "Timeout before initialization"
+			/* Type */			, "time"
+		]
+	]
+];

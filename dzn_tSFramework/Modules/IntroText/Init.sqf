@@ -3,21 +3,23 @@ if (hasInterface) then {
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\IntroText\Settings.sqf";
 	[] spawn {
 		waitUntil { time > tSF_Intro_ShowTime };
+		#define	STR_DATE(X)		if (count str(X) == 1) then { "0" + str(X) } else { str(X) }
+		private _formatDate = {
+			format[
+				tSF_Intro_LineText1
+				, STR_DATE(MissionDate select 2)
+				, STR_DATE(MissionDate select 1)
+				, MissionDate select 0
+			]
+		};
+		
 		[
 			[
 				
-				[
-					tSF_Intro_LineText1
-					, tSF_Intro_LineStyle1
-				]
-				,[
-					tSF_Intro_LineText2
-					, tSF_Intro_LineStyle2
-				]
-				,[
-					tSF_Intro_LineText3
-					, tSF_Intro_LineStyle3
-				]
+				[call _formatDate, tSF_Intro_LineStyle1]
+				,[tSF_Intro_LineText2, tSF_Intro_LineStyle2]
+				,[tSF_Intro_LineText3, tSF_Intro_LineStyle3]
+				,["                     ", tSF_Intro_LineStyle3]
 			]
 			, tSF_Intro_TextPosition select 0
 			, tSF_Intro_TextPosition select 1

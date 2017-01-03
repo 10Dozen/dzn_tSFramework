@@ -115,3 +115,103 @@ function getCodeToFile() {
 	a.setAttribute('download', "tSF_briefing.sqf" );
 	a.click();
 }
+
+var openFile = function(event) {
+	setTimeout( readFile(event), 200 );
+}
+
+function readFile(event) {
+	var input = event.target;
+	var reader = new FileReader();
+	reader.onload = function(){
+		text = reader.result;
+		if (text.length > 0) {
+			console.log( "Read!");
+			importBriefing(text);
+		} else {
+			console.log( "Empty!" );
+        }
+	};
+	reader.readAsText(input.files[0]);
+
+};
+
+function importBriefing(sqfText) {
+	console.log("Import Briefing");
+
+	console.log("#     Parsing SQF");
+	parsedTopics = parseBriefing(sqfText);
+	console.log("#     SQF parsed");
+
+	console.log("#     Populating topics");
+	for (var i = 0; i < parsedTopics.length; i++) {
+		populateTopic(i*2, parsedTopics[i][0], parsedTopics[i][1]);
+	}
+	console.log("#     Topics populated");
+
+	console.log("#     All done!");
+}
+
+function parseBriefing(rawBriefing) {
+	var rawLines = rawBriefing.split("\n");
+
+	var tempAllTopics = [];
+	var tempTopic = [];
+	var isSameTopic = false;
+	for (var i = 0; i < rawLines.length; i++) {
+		var rawLine = rawLines[i];
+
+		if (!(rawLine.match(/END/g) === null)) {
+			isSameTopic = false;
+
+			var parsedTopic = [tempTopic[0]];
+			var topicText = "";
+			for (var j = 1; j < tempTopic.length; j++) {
+				topicText = topicText + tempTopic[j];
+			};
+
+			topicText = topicText.substr(1);
+			topicText = topicText.slice(0, -1);
+			topicText = topicText.replace(/(<br \/>|<br\/)/g,"\n");
+
+			parsedTopic.push(topicText);
+
+			tempAllTopics.push(parsedTopic);
+		};
+
+		if (isSameTopic) {
+        	tempTopic.push(rawLine);
+        };
+
+		if (
+			!( rawLine.match(/TOPIC\("(.*)"\)/g) === null )
+			 && rawLine.match(/TOPIC\(NAME\)/g) === null
+		) {
+			tempTopic = [];
+			isSameTopic = true;
+
+			tempTopic.push( (rawLine.match(/TOPIC\("(.*)"\)/))[1] );
+		};
+	};
+
+	tempAllTopics.shift(0);
+	/*
+		Make splited lines all together
+
+	*/
+
+
+	RAW = tempAllTopics;
+
+	return tempAllTopics
+}
+
+function populateTopic(id,title,text) {
+	var topics = $('li');
+
+	var topicTitle = $( $('li')[id] ).find('.topicInput')[0];
+	var topicBody = $( $('li')[id + 1] ).find('.topicData')[0]
+
+	topicTitle.value = title;
+	topicBody.value = text;
+}

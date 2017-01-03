@@ -15,7 +15,16 @@ if (isServer) then {
 		private _side 			= _config select 1;
 		private _skill 			= _config select 2;
 		private _kit 			= _config select 3;		
-		private _applyVehicleHold 	= _config select 4;
+		private _applyVehicleHold 	= false;
+		private _vehicleHoldAspect	= "";
+		if (!isNil {_config select 4}) then {
+			_applyVehicleHold = true;
+			_vehicleHoldAspect = switch (toLower(_config select 4)) do {
+				case "hold": { "vehicle hold" };
+				case "frontal": { "vehicle 45 hold" };
+				case "full frontal": { "vehicle 90 hold" };			
+			};
+		};
 		
 		if !(_kit == "") then {
 			waitUntil { !isNil "dzn_gear_serverInitDone" };
@@ -25,7 +34,7 @@ if (isServer) then {
 		
 		if (_applyVehicleHold) then {
 			waitUntil { !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized && !isNil "dzn_fnc_dynai_addUnitBehavior"} };	
-			[_v, "vehicle hold" ] call dzn_fnc_dynai_addUnitBehavior;
+			[_v, _vehicleHoldAspect] call dzn_fnc_dynai_addUnitBehavior;
 		};
 	};
 	

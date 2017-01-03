@@ -19,3 +19,37 @@ tSF_JIPTeleport_Message			= format [
 	,tSF_JIPTeleport_MaxTime
 	,tSF_JIPTeleport_MaxDistance
 ];
+
+
+/*
+ * *********************************
+ * Description of the module
+ * *********************************
+ */
+tSF_JIPTeleport_Schema = [
+	/* Module name */	"JIP Teleport"
+	,[
+		/* Module Settings */
+		[
+			/* Setting */		"tSF_JIPTeleport_MaxTime"
+			/* Description */	, "Time after spawn when teleport is available"
+			/* Type */			, "time"
+		]
+		, [
+			/* Setting */		"tSF_JIPTeleport_MaxDistance"
+			/* Description */	, "Distance from spawn point where teleport is available"
+			/* Type */			, "distance"
+		]
+		, [
+			/* Setting */		"tSF_JIPTeleport_ShowMessage"
+			/* Description */	, "Show notification for JIP player"
+			/* Type */			, "bool"
+		]
+		, [
+			/* Setting */		"tSF_JIPTeleport_RelativePos"
+			/* Description */	, "Relative teleport position"
+			/* Type */			, "array"
+		]
+		
+	]
+];

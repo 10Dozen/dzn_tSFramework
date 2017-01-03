@@ -45,7 +45,7 @@
 */
 
 
-dzn_tsf_CCP_Compositions = [
+tSF_CCP_Compositions = [
 	[ 
 		"MEDEVAC HEMMT"
 		, [["B_Truck_01_medical_F",120.022,2.71596,340.937,0.0360718, true, {}, true],["Land_CampingChair_V2_F",174.115,1.22864,65.2411,0.00202942, true, {}, true],["Land_CampingChair_V2_F",163.4,2.54147,96.3774,0.00941467, true, {}, true],["Land_CampingTable_F",165.75,4.729,251.325,0.00730896, true, {}, true],["Land_CampingTable_F",164.645,6.68441,251.35,0.00238037, true, {}, true]] 
@@ -60,11 +60,11 @@ dzn_tsf_CCP_Compositions = [
 	]	
 	,[
 		"US Woodland M113 Ambulance"
-		,[["Land_CampingTable_F",310.465,3.2796,87.1914,0.00610352, true, {}, true],["Land_CampingTable_F",273.396,2.43152,86.0686,0.00776672, true, {}, true],["Land_CampingChair_V1_F",313.523,1.52728,58.4346,0.00987244, true, {}, true],["ACE_medicalSupplyCrate_advanced",261.506,0.836323,260.398,0.00273132, true, {}, true],["rhsusf_m113_usarmy_medical",0.268782,3.74711,0.0235631,0.0197906, true, {}, true]]
+		,[["rhsusf_m113_usarmy_medical",0.268782,3.74711,0.0235631,0.0197906, true, {}, true],["Land_CampingTable_F",310.465,3.2796,87.1914,0.00610352, true, {}, true],["Land_CampingTable_F",273.396,2.43152,86.0686,0.00776672, true, {}, true],["Land_CampingChair_V1_F",313.523,1.52728,58.4346,0.00987244, true, {}, true],["ACE_medicalSupplyCrate_advanced",261.506,0.836323,260.398,0.00273132, true, {}, true]]
 	]
 	,[
 		"US Desert M113 Ambulance"
-		,[["Land_CampingTable_F",286.766,1.818,86.3736,0.00160217, true, {}, true],["Land_CampingChair_V1_F",339.299,1.46416,58.8124,0.00619507, true, {}, true],["ACE_medicalSupplyCrate_advanced",308.589,0.309221,260.82,0.00666809, true, {}, true],["Land_CampingTable_F",321.969,3.09331,87.3472,0.00337219, true, {}, true],["rhsusf_m113d_usarmy_medical",22.5458,3.19644,0.0131398,0.0261383, true, {}, true]]
+		,[["rhsusf_m113d_usarmy_medical",22.5458,3.19644,0.0131398,0.0261383, true, {}, true],["Land_CampingTable_F",286.766,1.818,86.3736,0.00160217, true, {}, true],["Land_CampingChair_V1_F",339.299,1.46416,58.8124,0.00619507, true, {}, true],["ACE_medicalSupplyCrate_advanced",308.589,0.309221,260.82,0.00666809, true, {}, true],["Land_CampingTable_F",321.969,3.09331,87.3472,0.00337219, true, {}, true]]
 	]	
 	,[
 		"US Woodland Hummvee Ambulance"
@@ -72,7 +72,7 @@ dzn_tsf_CCP_Compositions = [
 	]
 	,[
 		"US Green Stryker Ambulance"
-		,[["Land_CampingTable_F",135.448,2.11931,311.394,0.00401306, true, {}, true],["Land_CampingTable_F",174.867,0.949609,224.985,0.006073, true, {}, true],["CUP_B_M1133_MEV_Woodland",323.857,4.15756,320.049,-0.0551453, true, {}, true],["Land_CampingChair_V1_F",51.3959,1.88133,323.346,0.0182495, true, {}, true],["ACE_medicalSupplyCrate_advanced",48.1298,2.52318,223.441,0.00415039, true, {}, true]]
+		,[["CUP_B_M1133_MEV_Woodland",323.857,4.15756,320.049,-0.0551453, true, {}, true],["Land_CampingTable_F",135.448,2.11931,311.394,0.00401306, true, {}, true],["Land_CampingTable_F",174.867,0.949609,224.985,0.006073, true, {}, true],["Land_CampingChair_V1_F",51.3959,1.88133,323.346,0.0182495, true, {}, true],["ACE_medicalSupplyCrate_advanced",48.1298,2.52318,223.441,0.00415039, true, {}, true]]
 	]
 	,[
 		"US Desert Styker Ambulance"
@@ -84,15 +84,15 @@ dzn_tsf_CCP_Compositions = [
 	]
 	,[
 		"AAF M113 Ambulance"
-		,[["Land_CampingTable_F",172.898,1.96281,333.6,0.020401, true, {}, true],["CUP_I_M113_Med_AAF",321.051,3.56367,333.408,-0.0454254, true, {}, true],["Land_CampingTable_F",222.951,1.22614,248.147,0.0571289, true, {}, true],["Land_CampingChair_V1_F",67.9447,1.39137,345.086,0.00698853, true, {}, true],["ACE_medicalSupplyCrate_advanced",65.7792,2.02333,245.551,0.00663757, true, {}, true]]
+		,[["CUP_I_M113_Med_AAF",321.051,3.56367,333.408,-0.0454254, true, {}, true],["Land_CampingTable_F",172.898,1.96281,333.6,0.020401, true, {}, true],["Land_CampingTable_F",222.951,1.22614,248.147,0.0571289, true, {}, true],["Land_CampingChair_V1_F",67.9447,1.39137,345.086,0.00698853, true, {}, true],["ACE_medicalSupplyCrate_advanced",65.7792,2.02333,245.551,0.00663757, true, {}, true]]
 	]
 	,[
 		"AAF LandRover Ambulance"
-		,[["Land_CampingTable_F",154.698,1.49552,322.231,0.00566101, true, {}, true],["Land_CampingTable_F",230.081,0.822551,236.333,0.00247192, true, {}, true],["Land_CampingChair_V1_F",42.0795,1.7348,334.104,0.00776672, true, {}, true],["CUP_I_LR_Ambulance_AAF",327.447,4.32036,324.035,0.016571, true, {}, true],["ACE_medicalSupplyCrate_advanced",43.9526,2.36098,234.973,-0.00634766, true, {}, true]]
+		,[["CUP_I_LR_Ambulance_AAF",327.447,4.32036,324.035,0.016571, true, {}, true],["Land_CampingTable_F",154.698,1.49552,322.231,0.00566101, true, {}, true],["Land_CampingTable_F",230.081,0.822551,236.333,0.00247192, true, {}, true],["Land_CampingChair_V1_F",42.0795,1.7348,334.104,0.00776672, true, {}, true],["ACE_medicalSupplyCrate_advanced",43.9526,2.36098,234.973,-0.00634766, true, {}, true]]
 	]
 	,[
 		"RACS LandRover Ambulance"
-		,[["Land_CampingTable_F",181.554,2.15997,355.972,0.0038147, true, {}, true],["Land_CampingTable_F",220.55,1.01019,269.727,0.00387573, true, {}, true],["Land_CampingChair_V1_F",98.2623,1.85519,7.80108,0.00779724, true, {}, true],["ACE_medicalSupplyCrate_advanced",93.9033,2.48183,268.314,0.00178528, true, {}, true],["CUP_I_LR_Ambulance_RACS",2.98221,3.89492,0.0659756,0.038208, true, {}, true]]
+		,[["CUP_I_LR_Ambulance_RACS",2.98221,3.89492,0.0659756,0.038208, true, {}, true],["Land_CampingTable_F",181.554,2.15997,355.972,0.0038147, true, {}, true],["Land_CampingTable_F",220.55,1.01019,269.727,0.00387573, true, {}, true],["Land_CampingChair_V1_F",98.2623,1.85519,7.80108,0.00779724, true, {}, true],["ACE_medicalSupplyCrate_advanced",93.9033,2.48183,268.314,0.00178528, true, {}, true]]
 	]
 	,[
 		"RACS M113 Ambulance"
@@ -132,7 +132,7 @@ dzn_tsf_CCP_Compositions = [
 	]
 	,[
 		"RU GAZ66 Ambulance"
-		,[["Land_CampingTable_F",195.442,2.61136,0.316581,0.00959778, true, {}, true],["Land_CampingTable_F",234.142,1.54292,273.694,0.00965881, true, {}, true],["Land_CampingChair_V1_F",127.222,0.47706,12.1669,0.0187073, true, {}, true],["ACE_medicalSupplyCrate_advanced",103.613,1.08919,272.717,0.00405884, true, {}, true],["rhs_gaz66_ap2_vv",1.73555,5.59436,0.202911,0.0355377, true, {}, true]]
+		,[["rhs_gaz66_ap2_vv",1.73555,5.59436,0.202911,0.0355377, true, {}, true],["Land_CampingTable_F",195.442,2.61136,0.316581,0.00959778, true, {}, true],["Land_CampingTable_F",234.142,1.54292,273.694,0.00965881, true, {}, true],["Land_CampingChair_V1_F",127.222,0.47706,12.1669,0.0187073, true, {}, true],["ACE_medicalSupplyCrate_advanced",103.613,1.08919,272.717,0.00405884, true, {}, true]]
 	]
 	,[
 		"BTR-40"
