@@ -1,4 +1,4 @@
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Settings.sqf";
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Settings.sqf"; 
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions RTB.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions CallIn.sqf";
