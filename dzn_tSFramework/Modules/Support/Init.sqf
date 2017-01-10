@@ -1,7 +1,9 @@
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Settings.sqf"; 
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Settings.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions RTB.sqf";
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions CallIn.sqf";
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions PickUp.sqf";
+// call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions CallIn.sqf";
+// call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions Evac.sqf";
 
 if (hasInterface) then {
 	[] spawn {
@@ -57,13 +59,7 @@ if (isServer) then {
 	call tSF_fnc_Support_processLogics;
 	{ _x call tSF_fnc_Support_processVehicleServer } forEach tSF_Support_Vehicles;
 	
-	if (tSF_Support_ReturnToBase) then {
-		call tSF_fnc_Support_RTB_Handle;
-	};
-	
-	if (tSF_Support_CallIn) then {
-		call tSF_fnc_Support_CallIn_Handle;
-	};
+	call tSF_fnc_Support_StartRequestHandler;
 	
 	publicVariable "tSF_Support_Vehicles";
 	publicVariable "tSF_Support_ReturnPoints";
