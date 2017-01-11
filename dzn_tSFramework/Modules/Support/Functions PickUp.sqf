@@ -1,5 +1,5 @@
-#define	DEBUGIF(X)	if (true) then { X }
-// #define	DEBUGIF(X)	if (false) then { X }
+// #define	DEBUGIF(X)	if (true) then { X }
+#define	DEBUGIF(X)	if (false) then { X }
 
 /*
  *	PickUp Request
