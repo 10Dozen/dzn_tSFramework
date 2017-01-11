@@ -21,9 +21,9 @@ tSF_fnc_Support_Pickup_Action = {
 		[_this, _pos] spawn {
 			params ["_veh","_ingress"];
 			hintSilent "";
-			sleep 3;
+			sleep 1;
 			
-			openMap [true,true];
+			openMap [true,false];
 			
 			[
 				_veh
