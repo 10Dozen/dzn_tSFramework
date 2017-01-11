@@ -388,4 +388,28 @@ tSF_fnc_Support_ResetVehicleVars = {
 	_veh setVariable ["tSF_Support_InProgress", false, true];
 	_veh setVariable ["tSF_Support_Status", "Waiting", true];
 };
- 
+
+tSF_fnc_Support_displayCloseAreaMarker = {
+	if (toLower(_this) == "show") then {
+		createMarkerLocal [
+			"tSF_Support_CloseAreaMarker"
+			, [getPosASL player select 0, getPosASL player select 1]
+		];
+		"tSF_Support_CloseAreaMarker" setMarkerShapeLocal "ELLIPSE";
+        "tSF_Support_CloseAreaMarker" setMarkerSizeLocal [tSF_Support_CallIn_MinDistance, tSF_Support_CallIn_MinDistance];
+        "tSF_Support_CloseAreaMarker" setMarkerColorLocal "ColorRed";
+        "tSF_Support_CloseAreaMarker" setMarkerAlphaLocal 0.5;
+	} else {
+		deleteMarkerLocal "tSF_Support_CloseAreaMarker";
+	};
+};
+
+KK_fnc_setVelocityModelSpaceVisual = {
+    private "_o";
+    _o = _this select 0;
+    _o setVelocity (
+        _o modelToWorldVisual (_this select 1) vectorDiff (
+            _o modelToWorldVisual [0,0,0]
+        )
+    );
+};

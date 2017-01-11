@@ -2,8 +2,7 @@ call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Settings
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions RTB.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions PickUp.sqf";
-// call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions CallIn.sqf";
-// call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions Evac.sqf";
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\Support\Functions CallIn.sqf";
 
 if (hasInterface) then {
 	[] spawn {
