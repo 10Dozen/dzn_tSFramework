@@ -50,25 +50,25 @@ tSF_fnc_Support_RTB_Do = {
 	private _pilot = _veh call tSF_fnc_Support_AddPilot;	
 	_veh engineOn true;
 	
-	DEBUGIF(systemChat "RTB: Pilot assigned";)
+	DEBUGIF(systemChat "RTB: Pilot assigned";);
 	
 	[_pilot, _egressPoint, 400] call tSF_fnc_Support_MoveToPosition;
 	
-	DEBUGIF(systemChat "RTB: Moving to Egress point";)
+	DEBUGIF(systemChat "RTB: Moving to Egress point";);
 	
 	waitUntil {
 		sleep 5;
-		DEBUGIF(systemChat format ["RTB: Check Egress point reached -- %1", _veh distance _egressPoint < 400];)
+		DEBUGIF(systemChat format ["RTB: Check Egress point reached -- %1", _veh distance _egressPoint < 400];);
 		_veh distance _egressPoint < 400
 	};	
 	[_pilot, _veh getVariable "tSF_Support_RTBPoint"] call tSF_fnc_Support_MoveToPosition;
 	
 	waitUntil {
 		sleep 5;
-		DEBUGIF(systemChat format ["RTB: Check Return point reached -- %1", _veh distance (_veh getVariable "tSF_Support_RTBPoint") < 200 && currentWaypoint (group _pilot) > 0]; )
+		DEBUGIF(systemChat format ["RTB: Check Return point reached -- %1", _veh distance (_veh getVariable "tSF_Support_RTBPoint") < 200 && currentWaypoint (group _pilot) > 0]; );
 		_veh distance (_veh getVariable "tSF_Support_RTBPoint") < 200 && currentWaypoint (group _pilot) > 0
 	};
 	
-	DEBUGIF(systemChat "RTB: Landing";)
+	DEBUGIF(systemChat "RTB: Landing";);
 	[_veh, "LAND"] spawn tSF_fnc_Support_Land;
 };

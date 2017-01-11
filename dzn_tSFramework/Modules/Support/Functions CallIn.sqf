@@ -21,16 +21,16 @@ tSF_fnc_Support_Callin_Action = {
 
 	["tSF_Support_clickForCallIn", "onMapSingleClick", {
     		openMap [false, false];
-			"HIDE" call tSF_fnc_Support_displayCloseAreaMarker;
+		"HIDE" call tSF_fnc_Support_displayCloseAreaMarker;
 
     		[
-            	_this
-            	, "Approaching AO"
-            	, "Assuming direct control in 15 seconds..."
-            ] call tSF_fnc_Support_showHint;
-            [_this, "Approaching AO!"] call tSF_fnc_Support_showMsg;
+			_this
+			, "Approaching AO"
+			, "Assuming direct control in 15 seconds..."
+		] call tSF_fnc_Support_showHint;
+		[_this, "Approaching AO!"] call tSF_fnc_Support_showMsg;
 
-			[_this, _pos] spawn tSF_fnc_Support_Callin_Call;
+		[_this, _pos] spawn tSF_fnc_Support_Callin_Call;
 
     		["tSF_Support_clickForCallIn", "onMapSingleClick"] call BIS_fnc_removeStackedEventHandler;
     	}, _veh] call BIS_fnc_addStackedEventHandler;
@@ -69,18 +69,18 @@ tSF_fnc_Support_Callin_Do = {
 	private _ingressPoint = _veh getVariable "tSF_SupportIngressPoint";
 	_ingressPoint set [2,100];
 
-	DEBUGIF(systemChat "Callin: Waiting for engine start";)
+	DEBUGIF(systemChat "Callin: Waiting for engine start";);
 
 	_veh engineOn true;
 	sleep 15;
 
-	DEBUGIF(systemChat "Callin: Moving vehicle to ingress position";)
+	DEBUGIF(systemChat "Callin: Moving vehicle to ingress position";);
 
 	_veh setPosATL _ingressPoint;
 	_veh setDir (_veh getDir _ingressPoint);
 	[_veh, [0,20,25]] call KK_fnc_setVelocityModelSpaceVisual;
 
-	DEBUGIF(systemChat "Callin: Vehicle ready";)
+	DEBUGIF(systemChat "Callin: Vehicle ready";);
 
 	_veh setVariable ["tSF_Support_CallInReady", true, true];
 
@@ -96,6 +96,6 @@ tSF_fnc_Support_Callin_Do = {
 		isNull (driver _veh)
 	};
 
-	DEBUGIF(systemChat "Callin: Ends";)
+	DEBUGIF(systemChat "Callin: Ends";);
 	_veh call tSF_fnc_Support_ResetVehicleVars;
 };

@@ -77,12 +77,21 @@ tSF_fnc_Support_ShowMenu = {
 	private _veh = _callsign call tSF_fnc_Support_getByCallsign;
 	if !(_veh call tSF_fnc_Support_checkVehicleAvailable) exitWith {	
 		[_veh, "IS NOT AVAILABLE", ""] call tSF_fnc_Support_showHint;
-	};	
+	};
+	
+	private _inProgress = !((_veh getVariable "tSF_Support_Status") in ["Waiting"]) && (_veh getVariable "tSF_Support_InProgress");
+	private _canRTB = [_veh, "rtb"] call tSF_fnc_Support_checkVehicleFree;
+	private _canCallin = [_veh, "callin"] call tSF_fnc_Support_checkVehicleFree;
+	private _canPickup = [_veh, "pickup"] call tSF_fnc_Support_checkVehicleFree;
+	
+	if _inProgress exitWith {
+		[_veh, "IS ON MISSION", ""] call tSF_fnc_Support_showHint;
+	};
+
+	[_veh, "READY FOR MISSION", ""] call tSF_fnc_Support_showHint;	
 	
 	tSF_Support_SupporterMenu = [[format ["%1 (%2)", _callsign, (typeof _veh) call tSF_fnc_Support_getVehicleDisplayName],false]];	
-	if (
-		[_veh, "rtb"] call tSF_fnc_Support_checkVehicleFree
-	) then {
+	if (tSF_Support_ReturnToBase && _canRTB) then {
 		tSF_Support_SupporterMenu pushBack [
 			"Return To Base"
 			,[(count tSF_Support_SupporterMenu) + 1]
@@ -94,12 +103,7 @@ tSF_fnc_Support_ShowMenu = {
 		];	
 	};
 	
-	if (
-		!(isNil "tSF_Support_RequestPickup") 
-		&& {
-			[_veh, "pickup"] call tSF_fnc_Support_checkVehicleFree
-		}
-	) then {
+	if (tSF_Support_RequestPickup && _canPickup) then {
 		tSF_Support_SupporterMenu pushBack [
 			"Request Pickup"
 			,[(count tSF_Support_SupporterMenu) + 1]
@@ -111,12 +115,7 @@ tSF_fnc_Support_ShowMenu = {
 		];	
 	};
 	
-	if (
-		!(isNil "tSF_fnc_Support_CallIn_Available") 
-		&& {
-			[_veh, "callin"] call tSF_fnc_Support_checkVehicleFree
-		}
-	) then {
+	if (tSF_Support_CallIn && _canCallin) then {
 		tSF_Support_SupporterMenu pushBack [
 			"Call in"
 			,[(count tSF_Support_SupporterMenu) + 1]
