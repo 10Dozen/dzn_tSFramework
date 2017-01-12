@@ -411,15 +411,23 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 		, ["Picture (def: overview.jpg)",[]]			
 		, ["Max Players", []]
 	];
+	private _scenarioData = ["", "", "Tactical Shift", "overview.jpg", ""];
 	
 	if !(isNull dzn_tSF_3DEN_ScnearioLogic) then {
-		(_form select 0) set [1, "Scenario" get3DENMissionAttribute "IntelBriefingName"];
-		(_form select 1) set [1, "Multiplayer" get3DENMissionAttribute "IntelOverviewText"];
-		(_form select 2) set [1, "Scenario" get3DENMissionAttribute "Author"];
-		(_form select 3) set [1, "Scenario" get3DENMissionAttribute "OverviewPicture"];
-		(_form select 4) set [1, str("Multiplayer" get3DENMissionAttribute "MaxPlayers")];
+		_scenarioData = [
+			"Scenario" get3DENMissionAttribute "IntelBriefingName"
+			, "Multiplayer" get3DENMissionAttribute "IntelOverviewText"
+			, if ("Scenario" get3DENMissionAttribute "Author" == "") then { _scenarioData select 2 } else { "Scenario" get3DENMissionAttribute "Author" }
+			, if ("Scenario" get3DENMissionAttribute "OverviewPicture"== "") then { _scenarioData select 3 } else { "Scenario" get3DENMissionAttribute "OverviewPicture" }
+			, str("Multiplayer" get3DENMissionAttribute "MaxPlayers")
+		];
+		
+		for "_i" from 0 to 4 do {
+			(_form select _i) set [1, _scenarioData select _i];
+		};
 	};
 	
+	tsd = _scenarioData;
 	private _result = [
 		"Scenario Settings"
 		, _form
@@ -430,12 +438,13 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 	
 	collect3DENHistory {
 		private _result = dzn_tSF_3DEN_Parameter;
-	
-		private _summary = if (typename (_result select 1) == "SCALAR") then { "" } else { _result select 1 };
-		private _author = if (typename (_result select 2) == "SCALAR") then { "Tactical Shift" } else { _result select 2 };
-		private _picture = if (typename (_result select 3) == "SCALAR") then { "overview.jpg" } else { _result select 3 };
-		private _maxPlayers = if (typename (_result select 4) == "SCALAR") then { "1" } else { _result select 4 };
-		private _title = if (typename (_result select 0) == "SCALAR") then { format ["CO%1 Scenario Name", _maxPlayers] } else { _result select 0 };
+		
+		#define	RESOLVE_IF_NONE(X)	if (typename (_result select X) == "SCALAR") then { _scenarioData select X } else { _result select X }
+		private _title = RESOLVE_IF_NONE(0);
+		private _summary = RESOLVE_IF_NONE(1);
+		private _author = RESOLVE_IF_NONE(2);
+		private _picture = RESOLVE_IF_NONE(3);
+		private _maxPlayers = RESOLVE_IF_NONE(4);
 		
 		tSF_3DEN_SummaryText = _summary;
 		call dzn_fnc_tSF_3DEN_AddScenarioLogic;
@@ -474,7 +483,26 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 	
 	call dzn_fnc_tSF_3DEN_AddZeus;
 };
-
+dzn_fnc_tSF_3DEN_AddScenarioLogic = {
+	if !(isNull dzn_tSF_3DEN_ScnearioLogic) exitWith {
+		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
+			"Init"
+			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
+		];	
+	};
+	
+	collect3DENHistory {
+		dzn_tSF_3DEN_ScnearioLogic = create3DENEntity ["Logic","Logic",screenToWorld [0.3,0.5]];
+		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute ["Name", "tSF_Scenario_Logic"];
+		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
+			"Init"
+			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
+		];
+		
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		dzn_tSF_3DEN_ScnearioLogic set3DENLayer dzn_tSF_3DEN_MiscLayer;
+	};
+}; 
 
 dzn_fnc_tSF_3DEN_ResolveUnitBehavior = {
 	private _units = dzn_tSF_3DEN_SelectedUnits;
@@ -828,26 +856,7 @@ dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
 };
 
 
-dzn_fnc_tSF_3DEN_AddScenarioLogic = {
-	if !(isNull dzn_tSF_3DEN_ScnearioLogic) exitWith {
-		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
-			"Init"
-			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
-		];	
-	};
-	
-	collect3DENHistory {
-		dzn_tSF_3DEN_ScnearioLogic = create3DENEntity ["Logic","Logic",screenToWorld [0.3,0.5]];
-		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute ["Name", "tSF_Scenario_Logic"];
-		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
-			"Init"
-			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
-		];
-		
-		call dzn_fnc_tSF_3DEN_createMiscLayer;
-		dzn_tSF_3DEN_ScnearioLogic set3DENLayer dzn_tSF_3DEN_MiscLayer;
-	};
-}; 
+
 
 dzn_fnc_tSF_3DEN_CoverMap = {
 	if !(isNull dzn_tSF_3DEN_CoverMap) exitWith {};
