@@ -779,7 +779,7 @@ dzn_fnc_tSF_3DEN_AddAsSupporter = {
 		_logic set3DENAttribute [
 			"Init"
 			, format [
-				"this setVariable ['tSF_Support', '%1'];"
+				"this setVariable ['tSF_AirborneSupport', '%1'];"
 				, _callsign
 			]
 		];
@@ -799,10 +799,10 @@ dzn_fnc_tSF_3DEN_AddSupportReturnPointCore = {
 	collect3DENHistory {
 		dzn_tSF_3DEN_SupportReturnPointCore = create3DENEntity ["Logic","Logic",screenToWorld [0.25,0.5]];
 		
-		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute ["name", "tSF_Support_ReturnPointCore"];
+		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute ["name", "tSF_AirborneSupport_ReturnPointCore"];
 		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute [
 			"Init"
-			, "this setVariable ['tSF_Support_ReturnPoint', 'true'];"
+			, "this setVariable ['tSF_AirborneSupport_ReturnPoint', 'true'];"
 		];
 		
 		call dzn_fnc_tSF_3DEN_createMiscLayer;

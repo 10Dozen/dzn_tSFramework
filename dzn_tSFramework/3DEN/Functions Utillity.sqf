@@ -128,7 +128,7 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 				,["dzn_tSF_3DEN_BaseTrg"			, "baseTrg" ]
 				,["dzn_tSF_3DEN_Zeus"				, "tSF_Zeus" ]
 				,["dzn_tSF_3DEN_CCP"				, "tSF_CCP" ]
-				,["dzn_tSF_3DEN_SupportReturnPointCore"	, "tSF_Support_ReturnPointCore" ]	
+				,["dzn_tSF_3DEN_SupportReturnPointCore"	, "tSF_AirborneSupport_ReturnPointCore" ]	
 				,["dzn_tSF_3DEN_ScnearioLogic"		, "tSF_Scenario_Logic" ]
 				,["dzn_tSF_3DEN_CoverMap"			, "tSF_CoverMap" ]
 				
