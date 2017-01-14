@@ -54,7 +54,7 @@ tSF_Diag_TSF_CollectTotalData = {
 		,[tSF_module_tSNotes				,"tS Notes"]
 		,[tSF_module_tSNotesSettings			,"tS Notes Settings"]		
 		,[tSF_module_CCP					,"Casualties Collection Point"]
-		,[tSF_module_Support				,"Support"]		
+		,[tSF_module_AirborneSupport				,"Airborne Support"]		
 		,[tSF_module_Interactives			,"Interactives"]
 		,[tSF_module_InteractivesACE			,"Interactives ACE"]		
 		,[tSF_module_EditorVehicleCrew		,"Editor Vehicle Crew"]
