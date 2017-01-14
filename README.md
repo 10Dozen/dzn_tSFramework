@@ -31,7 +31,7 @@ Some default mission pre-sets (like player score).
 
 ##### Airborne Support
 Airborne vehicles pickup and return to base by AI or player pilots.
-See slides: https://docs.google.com/presentation/d/1HpwSKT82IjZVIXdV2aGlPYcjGPoMyzE-BrmvPIbmkzI/edit?usp=sharing
+<br />See slides: https://docs.google.com/presentation/d/1HpwSKT82IjZVIXdV2aGlPYcjGPoMyzE-BrmvPIbmkzI/edit?usp=sharing
 
 ##### tS Notes
 Game and TTP notes for each players
