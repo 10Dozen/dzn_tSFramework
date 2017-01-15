@@ -36,10 +36,6 @@ tSF_fnc_AirborneSupport_processVehicleClient = {
 	
 	_name = if (_name == "") then {(typeOf _veh) call tSF_fnc_AirborneSupport_getVehicleDisplayName} else {format ["%1 (%2)", _name, typeOf _veh]};
 	_veh setVariable ["tSF_AirborneSupport_Name", _name];
-	
-	if (tSF_AirborneSupport_ReturnToBase && player call tSF_fnc_AirborneSupport_isAuthorizedUser) then {
-	
-	};
 };
 
 tSF_fnc_AirborneSupport_processVehicleServer = {
@@ -73,6 +69,8 @@ tSF_fnc_AirborneSupport_processVehicleServer = {
  
 tSF_fnc_AirborneSupport_ShowMenu = {
 	params["_callsign"];
+	
+	if !(player call tSF_fnc_AirborneSupport_isAuthorizedUser) exitWith {};
 	
 	private _veh = _callsign call tSF_fnc_AirborneSupport_getByCallsign;
 	if !(_veh call tSF_fnc_AirborneSupport_checkVehicleAvailable) exitWith {	
