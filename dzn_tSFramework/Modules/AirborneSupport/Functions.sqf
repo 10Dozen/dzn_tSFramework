@@ -333,6 +333,8 @@ tSF_fnc_AirborneSupport_AddPilot = {
 		_aiPilot = units ([_veh, _veh getVariable "tSF_AirborneSupport_Side", ["driver"], tSF_AirborneSupport_PilotKit, 0] call dzn_fnc_createVehicleCrew) select 0;
 	};
 	
+	(group _aiPilot) setBehaviour "CARELESS";
+	(group _aiPilot) setCombatMode "BLUE";
 	{
 		_aiPilot disableAI _x;
 	} forEach ["TARGET","AUTOTARGET","SUPPRESSION","AIMINGERROR","COVER","AUTOCOMBAT"];
@@ -358,10 +360,13 @@ tSF_fnc_AirborneSupport_MoveToPosition = {
 tSF_fnc_AirborneSupport_Land = {
 	params ["_veh","_mode"];
 	
-	_veh land _mode;
-	
-	waitUntil { sleep 5; (getPosATL _veh) select 2 < 10 };
+	_veh land _mode;	
 	if (toLower(_mode) == "land") then {
+		private _landingPoint = _veh getVariable "tSF_AirborneSupport_RTBPoint";
+		waitUntil { 
+			sleep 5;
+			((getPosATL _veh) select 2) - (_landingPoint select 2) < 10
+		};
 		_veh allowDamage false;
 		
 		private _pilot = driver _veh;
@@ -372,9 +377,10 @@ tSF_fnc_AirborneSupport_Land = {
 		
 		_veh engineOn false;
 		_veh setVelocity [0,0,0];
-		_veh setPos (_veh getVariable "tSF_AirborneSupport_RTBPoint");		
+		_veh setPos _landingPoint;		
 	};
 	
+	waitUntil { sleep 5; (getPosATL _veh) select 2 < 10 };
 	_veh call tSF_fnc_AirborneSupport_ResetVehicleVars;	
 	_veh allowDamage true;
 };
