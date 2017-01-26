@@ -34,7 +34,7 @@ tSF_fnc_AirborneSupport_processVehicleClient = {
 	
 	_veh setVariable ["tSF_AirborneSupport_Callsign", _name];
 	
-	_name = if (_name == "") then {(typeOf _veh) call tSF_fnc_AirborneSupport_getVehicleDisplayName} else {format ["%1 (%2)", _name, typeOf _veh]};
+	_name = if (_name == "") then {(typeOf _veh) call dzn_fnc_getVehicleDisplayName} else {format ["%1 (%2)", _name, typeOf _veh]};
 	_veh setVariable ["tSF_AirborneSupport_Name", _name];
 };
 
@@ -43,7 +43,7 @@ tSF_fnc_AirborneSupport_processVehicleServer = {
 	
 	_veh setVariable ["tSF_AirborneSupport_Callsign", _name];
 	
-	_name = if (_name == "") then {(typeOf _veh) call tSF_fnc_AirborneSupport_getVehicleDisplayName} else {format ["%1 (%2)", _name, typeOf _veh]};
+	_name = if (_name == "") then {(typeOf _veh) call dzn_fnc_getVehicleDisplayName} else {format ["%1 (%2)", _name, typeOf _veh]};
 	_veh setVariable ["tSF_AirborneSupport_Name", _name];
 	
 	private _pos = getPosATL _veh;
@@ -81,50 +81,59 @@ tSF_fnc_AirborneSupport_ShowMenu = {
 	private _canRTB = [_veh, "rtb"] call tSF_fnc_AirborneSupport_checkVehicleFree;
 	private _canCallin = [_veh, "callin"] call tSF_fnc_AirborneSupport_checkVehicleFree;
 	private _canPickup = [_veh, "pickup"] call tSF_fnc_AirborneSupport_checkVehicleFree;
-	
-	if _inProgress exitWith {
-		[_veh, "IS ON MISSION", ""] call tSF_fnc_AirborneSupport_showHint;
-	};
 
-	[_veh, "READY FOR MISSION", ""] call tSF_fnc_AirborneSupport_showHint;	
-	
-	tSF_AirborneSupport_SupporterMenu = [[format ["%1 (%2)", _callsign, (typeof _veh) call tSF_fnc_AirborneSupport_getVehicleDisplayName],false]];	
-	if (tSF_AirborneSupport_ReturnToBase && _canRTB) then {
+	tSF_AirborneSupport_SupporterMenu = [[format ["%1 (%2)", _callsign, (typeof _veh) call dzn_fnc_getVehicleDisplayName],false]];
+
+	if _inProgress {
+		[_veh, "IS ON MISSION", ""] call tSF_fnc_AirborneSupport_showHint;
 		tSF_AirborneSupport_SupporterMenu pushBack [
-			"Return To Base"
-			,[(count tSF_AirborneSupport_SupporterMenu) + 1]
-			,""
-			,-5
-			,[["expression", format ["'%1' call tSF_fnc_AirborneSupport_RTB_Action",_callsign]]]
-			,"1"
-			,"1"
-		];	
+        	"Abort Current Mission"
+        	,[(count tSF_AirborneSupport_SupporterMenu) + 1]
+        	,""
+        	,-5
+        	,[["expression", format ["'%1' call tSF_fnc_AirborneSupport_AbortMission",_callsign]]]
+        	,"1"
+        	,"1"
+        ];
+	} else {
+		[_veh, "READY FOR MISSION", ""] call tSF_fnc_AirborneSupport_showHint;
+
+		if (tSF_AirborneSupport_ReturnToBase && _canRTB) then {
+			tSF_AirborneSupport_SupporterMenu pushBack [
+				"Return To Base"
+				,[(count tSF_AirborneSupport_SupporterMenu) + 1]
+				,""
+				,-5
+				,[["expression", format ["'%1' call tSF_fnc_AirborneSupport_RTB_Action",_callsign]]]
+				,"1"
+				,"1"
+			];
+		};
+
+		if (tSF_AirborneSupport_RequestPickup && _canPickup) then {
+			tSF_AirborneSupport_SupporterMenu pushBack [
+				"Request Pickup"
+				,[(count tSF_AirborneSupport_SupporterMenu) + 1]
+				,""
+				,-5
+				,[["expression", format ["'%1' call tSF_fnc_AirborneSupport_Pickup_Action",_callsign]]]
+				,"1"
+				,"1"
+			];
+		};
+
+		if (tSF_AirborneSupport_CallIn && _canCallin) then {
+			tSF_AirborneSupport_SupporterMenu pushBack [
+				"Call in"
+				,[(count tSF_AirborneSupport_SupporterMenu) + 1]
+				,""
+				,-5
+				,[["expression", format ["'%1' call tSF_fnc_AirborneSupport_CallIn_Action",_callsign]]]
+				,"1"
+				,"1"
+			];
+		};
 	};
-	
-	if (tSF_AirborneSupport_RequestPickup && _canPickup) then {
-		tSF_AirborneSupport_SupporterMenu pushBack [
-			"Request Pickup"
-			,[(count tSF_AirborneSupport_SupporterMenu) + 1]
-			,""
-			,-5
-			,[["expression", format ["'%1' call tSF_fnc_AirborneSupport_Pickup_Action",_callsign]]]
-			,"1"
-			,"1"
-		];	
-	};
-	
-	if (tSF_AirborneSupport_CallIn && _canCallin) then {
-		tSF_AirborneSupport_SupporterMenu pushBack [
-			"Call in"
-			,[(count tSF_AirborneSupport_SupporterMenu) + 1]
-			,""
-			,-5
-			,[["expression", format ["'%1' call tSF_fnc_AirborneSupport_CallIn_Action",_callsign]]]
-			,"1"
-			,"1"
-		];	
-	};
-	
 	showCommandingMenu "#USER:tSF_AirborneSupport_SupporterMenu";
 };
 
@@ -190,12 +199,6 @@ tSF_fnc_AirborneSupport_isAuthorizedUser = {
 	};
 	
 	_result
-};
- 
-tSF_fnc_AirborneSupport_getVehicleDisplayName = {
-	private _item = (( "configName(_x) == _this") configClasses (configFile >> "CfgVehicles")) select 0;
-	
-	( getText(configFile >> "CfgVehicles" >> configName(_item) >> "displayName") )
 };
 
 tSF_fnc_AirborneSupport_getByCallsign = {
@@ -415,4 +418,21 @@ KK_fnc_setVelocityModelSpaceVisual = {
             _o modelToWorldVisual [0,0,0]
         )
     );
+};
+
+/*
+ *	Abort action
+ */
+tSF_fnc_AirborneSupport_AbortMission = {
+	private _veh = _this call tSF_fnc_AirborneSupport_getByCallsign;
+	if (_veh getVariable ["tSF_AirborneSupport_Status","Waiting"] == "CallIn") exitWith {
+		systemChat format ["Not possible to abort Call In mission of %1", ]
+	};
+	_veh remoteExec ["tSF_fnc_AirborneSupport_AbortMissionRemote", _veh getVariable "tSF_AirborneSupport_Callsign"];
+};
+
+tSF_fnc_AirborneSupport_AbortMissionRemote = {
+	if (scriptDone (_veh getVariable ["tSF_AirborneSupport_CurrentScript", scriptNull]))  exitWith {};
+	terminate (_veh getVariable "tSF_AirborneSupport_CurrentScript");
+	_veh call tSF_fnc_AirborneSupport_ResetVehicleVars;
 };
