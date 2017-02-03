@@ -16,6 +16,7 @@ tSF_IACE_Timeout = -1;
 #define	ACE_INTRACTIVES_TABLE_END	];
 
 ACE_INTRACTIVES_TABLE
+	/*
 	[
 		"SELF"
 		, "IACE Action 1"
@@ -40,6 +41,7 @@ ACE_INTRACTIVES_TABLE
 		, { hint 'IACE Action for CH47 is done' }
 		, { true}	
 	]
+	*/
 
 	
 ACE_INTRACTIVES_TABLE_END
