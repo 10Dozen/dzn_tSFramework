@@ -84,17 +84,17 @@ tSF_fnc_AirborneSupport_ShowMenu = {
 
 	tSF_AirborneSupport_SupporterMenu = [[format ["%1 (%2)", _callsign, (typeof _veh) call dzn_fnc_getVehicleDisplayName],false]];
 
-	if _inProgress {
+	if (_inProgress) then {
 		[_veh, "IS ON MISSION", ""] call tSF_fnc_AirborneSupport_showHint;
 		tSF_AirborneSupport_SupporterMenu pushBack [
-        	"Abort Current Mission"
-        	,[(count tSF_AirborneSupport_SupporterMenu) + 1]
-        	,""
-        	,-5
-        	,[["expression", format ["'%1' call tSF_fnc_AirborneSupport_AbortMission",_callsign]]]
-        	,"1"
-        	,"1"
-        ];
+			"Abort Current Mission"
+			,[(count tSF_AirborneSupport_SupporterMenu) + 1]
+			,""
+			,-5
+			,[["expression", format ["'%1' call tSF_fnc_AirborneSupport_AbortMission",_callsign]]]
+			,"1"
+			,"1"
+		];
 	} else {
 		[_veh, "READY FOR MISSION", ""] call tSF_fnc_AirborneSupport_showHint;
 
@@ -214,7 +214,7 @@ tSF_fnc_AirborneSupport_showHint = {
 	params["_veh","_title","_subtitle"];
 	
 	private _callsign = _veh getVariable "tSF_AirborneSupport_Callsign";
-	private _type = (typeof _veh) call tSF_fnc_AirborneSupport_getVehicleDisplayName;
+	private _type = (typeof _veh) call dzn_fnc_getVehicleDisplayName;
 	
 	hint parseText format [
 		"<t color='#EDB81A' size='1.5' align='center' font='PuristaBold'>%1</t>
@@ -232,7 +232,7 @@ tSF_fnc_AirborneSupport_showMsg = {
 	params["_veh","_msg"];
 	
 	private _callsign = _veh getVariable "tSF_AirborneSupport_Callsign";
-	private _type = (typeof _veh) call tSF_fnc_AirborneSupport_getVehicleDisplayName;
+	private _type = (typeof _veh) call dzn_fnc_getVehicleDisplayName;
 	
 	systemChat format ["> %1 (%2): ""%3""", _callsign, _type, _msg];
 };
@@ -299,11 +299,13 @@ tSF_fnc_AirborneSupport_StartRequestHandler = {
 			if !(_veh getVariable "tSF_AirborneSupport_InProgress") then {				
 				switch toLower(_veh getVariable "tSF_AirborneSupport_Status") do {
 					case "rtb": {
-						_veh spawn tSF_fnc_AirborneSupport_RTB_Do;
+						private _script = _veh spawn tSF_fnc_AirborneSupport_RTB_Do;
+						_veh setVariable ["tSF_AirborneSupport_CurrentScript", _script];
 						_veh call tSF_fnc_AirborneSupport_SetInProgress;
 					};
 					case "pickup": {
-						_veh spawn tSF_fnc_AirborneSupport_Pickup_Do;
+						private _script = _veh spawn tSF_fnc_AirborneSupport_Pickup_Do;
+						_veh setVariable ["tSF_AirborneSupport_CurrentScript", _script];
 						_veh call tSF_fnc_AirborneSupport_SetInProgress;
 					};
 					case "callin": {
@@ -311,7 +313,6 @@ tSF_fnc_AirborneSupport_StartRequestHandler = {
 						_veh call tSF_fnc_AirborneSupport_SetInProgress;
 					};
 				};
-				
 			};
 		} forEach tSF_AirborneSupport_Vehicles;
 	}] call BIS_fnc_addStackedEventHandler;
@@ -426,12 +427,20 @@ KK_fnc_setVelocityModelSpaceVisual = {
 tSF_fnc_AirborneSupport_AbortMission = {
 	private _veh = _this call tSF_fnc_AirborneSupport_getByCallsign;
 	if (_veh getVariable ["tSF_AirborneSupport_Status","Waiting"] == "CallIn") exitWith {
-		systemChat format ["Not possible to abort Call In mission of %1", ]
+		systemChat format ["Not possible to abort Call In mission of %1", _veh getVariable "tSF_AirborneSupport_Callsign"];
 	};
-	_veh remoteExec ["tSF_fnc_AirborneSupport_AbortMissionRemote", _veh getVariable "tSF_AirborneSupport_Callsign"];
+	[
+		_veh
+		, "Mission Aborted"
+		, "Waiting for orders!"
+	] call tSF_fnc_AirborneSupport_showHint;
+
+	(_veh) remoteExec ["tSF_fnc_AirborneSupport_AbortMissionRemote", _veh];
 };
 
 tSF_fnc_AirborneSupport_AbortMissionRemote = {
+	private _veh = _this;
+	
 	if (scriptDone (_veh getVariable ["tSF_AirborneSupport_CurrentScript", scriptNull]))  exitWith {};
 	terminate (_veh getVariable "tSF_AirborneSupport_CurrentScript");
 	_veh call tSF_fnc_AirborneSupport_ResetVehicleVars;
