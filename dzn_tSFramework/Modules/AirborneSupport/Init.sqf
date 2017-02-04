@@ -25,7 +25,7 @@ if (hasInterface) then {
 				
 				tSF_AirborneSupport_ACEActions pushBack [
 					"SELF"
-					, format ["%1 (%2)", _callsign,  (typeof _veh) call tSF_fnc_AirborneSupport_getVehicleDisplayName]
+					, format ["%1 (%2)", _callsign, (typeof _veh) call dzn_fnc_getVehicleDisplayName]
 					, format ["tsf_radio_AirborneSupport_%1", _forEachIndex]
 					, "tsf_radio_support"
 					, compile format ["'%1' call tSF_fnc_AirborneSupport_ShowMenu;", _callsign]
