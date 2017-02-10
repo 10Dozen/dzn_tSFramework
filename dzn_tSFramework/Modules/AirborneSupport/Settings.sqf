@@ -37,7 +37,6 @@ tSF_AirborneSupport_Handler_CheckTimeout	= 3; // seconds
  
 tSF_AirborneSupport_DamageLimit			= 0.75;
 tSF_AirborneSupport_FuelLimit			= 0.15;
-// tSF_AirborneSupport_AllowBaseRefuel		= false;
 
 
 /*
