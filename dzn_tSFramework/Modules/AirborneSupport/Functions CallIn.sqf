@@ -82,10 +82,16 @@ tSF_fnc_AirborneSupport_Callin_Do = {
 
 	DEBUGIF(systemChat "Callin: Vehicle ready";);
 
+	private _pilot = driver _veh;
+	if (!isPlayer _pilot) then {
+		moveOut _pilot;
+		private _grp = group _pilot;
+		deleteVehicle _pilot;
+		deleteGroup _grp;
+	};
+	
 	_veh setVariable ["tSF_AirborneSupport_CallInReady", true, true];
-
-
-
+	
 	waitUntil {
 		sleep 5;
 		DEBUGIF(systemChat "Callin: Waiting for player-driver.";);

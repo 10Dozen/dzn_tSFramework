@@ -32,6 +32,8 @@ tSF_fnc_AirborneSupport_Pickup_Action = {
 			] call tSF_fnc_AirborneSupport_showHint;
 		
 			["tSF_AirborneSupport_clickForPickupLZ", "onMapSingleClick", {
+				if (_pos call dzn_fnc_isInWater) exitWith { systemChat "Landing Zone should not be in water!"; };
+
 				openMap [false,false];
 				private _veh = _this select 0;
 				private _ingress = _this select 1;

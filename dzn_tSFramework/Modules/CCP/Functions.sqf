@@ -109,7 +109,7 @@ tSF_fnc_CCP_doMedicateAction = {
 	private _pos = _playerPos select 1 select 0;
 	private _dir = _playerPos select 1 select 1;
 	
-	player setVariable ["tSF_CCP_isHealing",true];
+	player setVariable ["tSF_CCP_isHealing", true, true];
 	
 	0 cutText ["", "WHITE OUT", 0.5];
 	sleep 1;	
@@ -119,23 +119,26 @@ tSF_fnc_CCP_doMedicateAction = {
 	_stretcher setDir _dir;
 	
 	player attachTo [_stretcher,[0,0,0.05]];	
-	(selectRandom [
-		"Acts_InjuredAngryRifle01"
-		,"Acts_InjuredCoughRifle02"
-		,"Acts_InjuredLookingRifle01"
-		,"Acts_InjuredLookingRifle02"
-		,"Acts_InjuredLookingRifle03"
-		,"Acts_InjuredLookingRifle04"
-		,"Acts_InjuredLookingRifle05"
-		
-		,"Acts_InjuredLyingRifle01"
-		,"Acts_InjuredLyingRifle02"
-		
-		,"Acts_LyingWounded_loop"		
-		,"Acts_LyingWounded_loop1"
-		,"Acts_LyingWounded_loop2"
-		,"Acts_LyingWounded_loop3"
-	]) spawn tSF_CCP_LoopAnimation;
+	[
+		player
+		, (selectRandom [
+			"Acts_InjuredAngryRifle01"
+			,"Acts_InjuredCoughRifle02"
+			,"Acts_InjuredLookingRifle01"
+			,"Acts_InjuredLookingRifle02"
+			,"Acts_InjuredLookingRifle03"
+			,"Acts_InjuredLookingRifle04"
+			,"Acts_InjuredLookingRifle05"
+			
+			,"Acts_InjuredLyingRifle01"
+			,"Acts_InjuredLyingRifle02"
+			
+			,"Acts_LyingWounded_loop"		
+			,"Acts_LyingWounded_loop1"
+			,"Acts_LyingWounded_loop2"
+			,"Acts_LyingWounded_loop3"
+		])
+	] call tSF_CCP_RunLoopAnimationGlobal;
 	[] spawn tSF_CCP_HandleProgressBar;
 	
 	0 cutText ["", "WHITE IN", 1];
@@ -147,7 +150,7 @@ tSF_fnc_CCP_doMedicateAction = {
 	
 	sleep tSF_CCP_TimeToHold;
 	
-	player setVariable ["tSF_CCP_isHealing",false];
+	player setVariable ["tSF_CCP_isHealing",false,true];
 	
 	0 cutText ["", "WHITE OUT", 0.1];
 	sleep 2;
@@ -162,18 +165,21 @@ tSF_fnc_CCP_doMedicateAction = {
 	];	
 };
 
+tSF_CCP_RunLoopAnimationGlobal = {	
+	_this remoteExec ["tSF_CCP_LoopAnimation"];
+};
 
 tSF_CCP_LoopAnimation = {
-	private _animation = _this;
+	params["_u","_animation"];
 	
-	while {player getVariable 'tSF_CCP_isHealing'} do {
-		if (animationState player != _animation ) then {
-			player switchMove _animation ;
-			player playMoveNow _animation;
+	while {_u getVariable "tSF_CCP_isHealing"} do {
+		if (animationState player != _animation ) then {			
+			_u switchMove _animation;
+			_u playMoveNow _animation;
 		};
 	};
 
-	player switchMove "" ;
+	_u switchMove "" ;
 };
 
 tSF_CCP_HandleProgressBar = {

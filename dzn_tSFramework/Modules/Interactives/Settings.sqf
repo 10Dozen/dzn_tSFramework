@@ -15,7 +15,7 @@
 #define	INTRACTIVES_TABLE_END	];
 
 INTRACTIVES_TABLE
-
+	/*
 	[
 		["Land_ToiletBox_F"]
 		, {
@@ -24,5 +24,6 @@ INTRACTIVES_TABLE
 		, "client"
 		, false
 	]
+	*/
 	
 INTRACTIVES_TABLE_END
