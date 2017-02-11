@@ -173,7 +173,7 @@ tSF_CCP_LoopAnimation = {
 	params["_u","_animation"];
 	
 	while {_u getVariable "tSF_CCP_isHealing"} do {
-		if (animationState player != _animation ) then {			
+		if (animationState _u != _animation ) then {			
 			_u switchMove _animation;
 			_u playMoveNow _animation;
 		};
