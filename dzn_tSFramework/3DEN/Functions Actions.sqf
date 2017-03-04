@@ -5,243 +5,128 @@
  */
 
 dzn_fnc_tSF_3DEN_AddSquad = {
-	/*
-	 * @Typa call dzn_fnc_tSF_3DEN_AddSquad
-	 * Type = "NATO", "RUAF"
-	 */
-	
-	private _squadNo = format["1'%1", dzn_tSF_3DEN_SquadLastNumber + 1];
-	private _squadSettings = [];
-	private _infantryClass = "";
-	
+
 	disableSerialization;
-	// Return [ 0, 1 ] or something like this
-	private _squadType = [
+	private _types = "list names" call dzn_tSF_3DEN_getSquadAttributes;
+	private _result = [
 		"Add Squad"
 		, [
-			["Callsign", []]
+			["Callsign (e.g. Razor 1'1)", []]
 			,["Side", ["BLUFOR","OPFOR","INDEPENDENT","CIVILIANS"]]
-			,["Doctrine", [
-				"NATO 1-4-4"
-				, "UK 4-4"
-				, "Ru MSO 1-2-3-3"
-				, "Ru VV 4-3"				
-				, "Platoon Squad"
-				, "Командный отряд"
-				, "NATO Weapon Squad"
-				, "Crew Squad"
-				, "Экипаж"
-				, "Pilots"
-				, "Пилоты"
-				, ""
-			]]
+			,["Doctrine", _types]
 		]
 	] call dzn_fnc_3DEN_ShowChooseDialog;
-	if (count _squadType == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
+	if (_result isEqualTo []) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 
-	#define	SQNAME			(_squadType select 0)
-	#define	IF_SQNAME(X)		if (typename SQNAME == "STRING") then { SQNAME } else { X }
-	#define	ALT_EMPTY_SQNAME			if (typename SQNAME == "STRING") then { SQNAME + " " } else { "" }
+	collect3DENHistory {	
+		[
+			if (typename (_result select 0) == "STRING") then { _result select 0 } else { "" }
+			, _result select 1
+			, _result select 2
+			, screenToWorld [0.5, 0.5]
+		] call dzn_fnc_tSF_3DEN_AddSquadUnits;
 	
-	private _squadName = if (typename (_squadType select 0) == "STRING") then { _squadType select 0 } else { "" };
+		"tSF Tools - New Squad was Added" call dzn_fnc_tSF_3DEN_ShowNotif;
+	};
+};
+
+dzn_fnc_tSF_3DEN_AddPlatoon = {
+	disableSerialization;
+	private _platoons = "list names" call dzn_tSF_3DEN_getPlatoonAttributes;
+	private _result = [
+		"Add Platoon"
+		, [
+			["Callsign (e.g. Razor)", []]
+			,["Platoon # ", ["1","2","3","4","5", ""]]
+			,["Side", ["BLUFOR","OPFOR","INDEPENDENT","CIVILIANS"]]
+			,["Doctrine", _platoons]		
+		]		
+	] call dzn_fnc_3DEN_ShowChooseDialog;
+	if (_result isEqualTo []) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	
-	_infantryClass = switch (_squadType select 1) do {
+	private _platoonName = if (typename (_result select 0) == "STRING") then { format ["%1 ", _result select 0] } else { "" };
+	private _platoonNumber = 1 + (_result select 1);
+	private _side = _result select 2;
+	private _squadTypes = (_result select 3) call dzn_tSF_3DEN_getPlatoonAttributes;
+	
+	private _basicPoint = screenToWorld [0.5, 0.5];
+	private _subCallsign = _squadTypes select 0;
+	
+	collect3DENHistory {		
+		{		
+			// _x = [1, "US Squad"]	
+			private _sqNo = format [_subCallsign, _platoonNumber, _x select 0];	// ["%1'%2", 1, 1]
+			
+			[
+				format ["%1%2", _platoonName, _sqNo]
+				, _side
+				, _x select 1
+				, [ (_basicPoint select 0) + 12*_forEachIndex, (_basicPoint select 1), 0]
+			] call dzn_fnc_tSF_3DEN_AddSquadUnits;
+		} forEach (_squadTypes - [_subCallsign]);
+		
+		"tSF Tools - New Platoon was Added" call dzn_fnc_tSF_3DEN_ShowNotif;	
+	};
+};
+
+dzn_fnc_tSF_3DEN_AddSquadUnits = {
+	// [ "Raven 1'1", 0 (west), "US Squad"]
+	params["_callsign", "_side", "_type", "_basicPos"];
+	
+	if (_callsign != "") then { _callsign = format["%1 ", _callsign] };
+	private _infantryClass = switch (_side) do {
 		case 0: { "B_Soldier_F" };
 		case 1: { "O_Soldier_F" };
 		case 2: { "I_soldier_F" };
 		case 3: { "C_man_1" };
 	};
-	_squadSettings = switch (_squadType select 2) do {
-		/* NATO 1-4-4 */ 	case 0: {
-			[
-				[
-					format["%1 Squad Leader", IF_SQNAME(_squadNo)]
-					,"Sergeant"
-				]
-				,["RED - FTL"			,"Corporal"]
-				,["Automatic Rifleman"		,"Private"]
-				,["Grenadier"			,"Private"]
-				,["Rifleman"			,"Private"]
-				,["BLUE - FTL"			,"Corporal"]
-				,["Automatic Rifleman"		,"Private"]
-				,["Grenadier"			,"Private"]
-				,["Rifleman"			,"Private"]
-			]		
-		};
-		/* UK 4-4*/ 		case 1: {
-			[
-				[
-					format ["%1 Section Leader", IF_SQNAME(_squadNo)]
-					,"Sergeant"
-				]
-				,["Automatic Rifleman"		,"Private"]
-				,["Grenadier"			,"Private"]
-				,["Rifleman"			,"Private"]	
-				,["BLUE - 2IC"			,"Corporal"]
-				,["Automatic Rifleman"		,"Private"]
-				,["Grenadier"			,"Private"]
-				,["Rifleman"			,"Private"]
-			]
-		};
-		/* RuMSO 1-2-3-3 */	case 2: {
-			[
-				[
-					format ["%1 Командир отделения", IF_SQNAME(_squadNo)]
-					,"Sergeant"
-				]
-				,["Наводчик-оператор"				,"Corporal"]
-				,["Механик-водитель"				,"Private"]
-				,["Пулеметчик"					,"Private"]
-				,["Стрелок-Гранатометчик"			,"Private"]
-				,["Стрелок, помощник гранатометчика"	,"Private"]
-				,["BLUE - Старший стрелок"			,"Corporal"]
-				,["Стрелок"						,"Private"]
-				,["Стрелок"						,"Private"]
-			]
-		};
-		/* Ru VV 4-3 */ 	case 3: {
-			[
-				[
-					format ["%1 Командир отделения", IF_SQNAME(_squadNo)]
-					,"Sergeant"
-				]
-				,["Пулеметчик"					,"Private"]
-				,["Стрелок-Гранатометчик"			,"Private"]
-				,["Стрелок, помощник гранатометчика"	,"Private"]
-				,["BLUE - Старший стрелок"			,"Corporal"]
-				,["Стрелок (ГП)"					,"Private"]
-				,["Снайпер"						,"Private"]
-			]
-		};
-		/* "Platoon Squad" */ case 4: {
-			[
-				[
-					format["%1 Platoon Leader", IF_SQNAME("1'6")]
-					,"Lieutenant"
-				]
-				,["Platoon Sergeant"				,"Sergeant"]
-				,["JTAC"						,"Corporal"]
-				,["FO"						,"Corporal"]	
-			]
-		};
-		/* "Командный отряд" */ case 5: {
-			[
-				[
-					format["%1 Командир взвода", IF_SQNAME("1'6")]
-					,"Lieutenant"
-				]
-				,["Зам. командира взвода"			,"Sergeant"]
-				,["ПАН"						,"Corporal"]
-				,["КАО"						,"Corporal"]	
-			]
-		};		
-		/* "NATO 1-2-2-2 Weapon Squad" */ case 6: {
-			[
-				[
-					format["%1 Squad Leader", IF_SQNAME("1'4")]
-					,"Sergeant"
-				]
-				,["Machinegunner"					,"Private"]
-				,["Asst. Machinegunner"				,"Private"]
-				,["Machinegunner"					,"Private"]
-				,["Asst. Machinegunner"				,"Private"]
-				,["Missile Specialist"				,"Private"]
-				,["Missile Specialist"				,"Private"]
-			]
-		};		
-		/* "Crew Squad" */ case 7: {
-			[
-				[
-					format["%1Crew Commander", ALT_EMPTY_SQNAME]
-					,"Corporal"
-				]
-				,["Crew Gunner"					,"Private"]
-				,["Crew Driver"					,"Private"]
-			]		
-		};
-		/* "Экипаж" */ case 8: {
-			[
-				[
-					format["%1Командир экипажа", ALT_EMPTY_SQNAME]
-					,"Corporal"
-				]
-				,["Наводчик-оператор"				,"Private"]
-				,["Механик-водитель"				,"Private"]
-			]		
-		};
-		/* "Airborne Squad" */ case 9: {
-			[
-				[
-					format["%1Pilot", ALT_EMPTY_SQNAME]
-					,"Lieutenant"
-				]
-				,["Gunner"						,"Sergeant"]
-			]		
-		};
-		/* "Пилоты" */ case 10: {
-			[
-				[
-					format["%1Пилот", ALT_EMPTY_SQNAME]
-					,"Lieutenant"
-				]
-				,["Наводчик-оператор"				,"Sergeant"]
-			]
-		};
-	};
 	
+	private _squadSettings = _type call dzn_tSF_3DEN_getSquadAttributes;		
 	private _squadRelativePoses = [
 		[0,0,0]
 		, [2,-1,0]	, [4,-1,0]	, [6,-1,0]	, [8,-1,0]
 		, [2,-5,0]	, [4,-5,0]	, [6,-5,0]	, [8,-5,0]
 	];
 	
-	collect3DENHistory {		
-		if ((_squadType select 2) in [0,1,2,3]) then {
-			dzn_tSF_3DEN_SquadLastNumber = if (dzn_tSF_3DEN_SquadLastNumber + 1 == 6) then { 7 } else { dzn_tSF_3DEN_SquadLastNumber + 1 };
-		};		
-		
-		private _basicPos = screenToWorld [0.5,0.5];		
-		private _unit = create3DENEntity ["Object", _infantryClass, _basicPos];	
-		private _grp = group _unit;
-		
-		for "_i" from 0 to (count(_squadSettings) - 1) do {	
-			private _unit = _grp create3DENEntity [
-				"Object"
-				, _infantryClass
-				, [
-					(_basicPos select 0) + ((_squadRelativePoses select _i) select 0)
-					, (_basicPos select 1) + ((_squadRelativePoses select _i) select 1)		
-					, 0
-				]
-			];
-			
-			set3DENAttributes [
-				[[_unit], "description", (_squadSettings select _i) select 0]
-				,[[_unit], "rank",(_squadSettings select _i) select 1]
-				,[[_unit], "ControlMP", true]
-			];	
-		};
-		set3DENAttributes [
-			[[_grp], "behaviour", "Safe"]
-			,[[_grp], "speedMode", "Limited"]
+	private _unit = create3DENEntity ["Object", _infantryClass, _basicPos];	
+	private _grp = group _unit;
+	call dzn_fnc_tSF_3DEN_createUnitLayer;
+	
+	{
+		// _x = ["RED - FTL","Corporal"]
+		private _unit = _grp create3DENEntity [
+			"Object"
+			, _infantryClass
+			, [
+				(_basicPos select 0) + ((_squadRelativePoses select _forEachIndex) select 0)
+				, (_basicPos select 1) + ((_squadRelativePoses select _forEachIndex) select 1)		
+				, 0
+			]
 		];
 		
-		if (_squadName != "") then {
-			_grp set3DENAttribute ["groupID", _squadName];
-		};
-				
-		delete3DENEntities [(units _grp select 0)];
+		set3DENAttributes [
+			[[_unit], 	"description", 	format [_x select 0, _callsign]]
+			,[[_unit], 	"rank", 		_x select 1]
+			,[[_unit], 	"ControlMP",	 	true]
+		];
 		
-		call dzn_fnc_tSF_3DEN_createUnitLayer;
-		{
-			_x set3DENLayer dzn_tSF_3DEN_UnitsLayer;
-		} forEach (units _grp);
-		
-		"tSF Tools - New Squad was Added" call dzn_fnc_tSF_3DEN_ShowNotif;
-	};
+	} forEach _squadSettings;
+	
+	set3DENAttributes [
+		[[_grp], "behaviour", "Safe"]
+		,[[_grp], "speedMode", "Limited"]
+		,[[_grp], "groupID", if (_callsign == "") then { nil } else { _callsign splitString " " joinString " " }]
+	];
+	_grp set3DENLayer dzn_tSF_3DEN_UnitsLayer;
+	
+	delete3DENEntities [(units _grp select 0)];
+	
+	_grp
 };
 
-
+/*
+ *	Dynai Assets
+ */
 dzn_fnc_tSF_3DEN_AddDynaiCore = {
 	collect3DENHistory {
 		dzn_tSF_3DEN_DynaiCore = create3DENEntity ["Logic","Logic",screenToWorld [0.3,0.5]];
@@ -296,69 +181,50 @@ dzn_fnc_tSF_3DEN_AddDynaiZone = {
 	};
 };
 
-dzn_fnc_tSF_3DEN_AddZeus = {
+dzn_fnc_tSF_3DEN_AddDynaiZoneAssets = {
+	if (dzn_tSF_3DEN_SelectedUnits isEqualTo []) exitWith { "tSF Tools - Dynai: Assets - No zone selected" call dzn_fnc_tSF_3DEN_ShowWarn;};
+	
+	disableSerialization;
+	private _modes = ["Area", "Keypoints", "Vehicle Points", ""];
+	private _result = [
+		"Add Zone Asset"
+		,[
+			["Asset", _modes]
+		]
+	] call dzn_fnc_3DEN_ShowChooseDialog;
+	if (_result isEqualTo []) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
+	dzn_tSF_3DEN_Parameter = _result;
+	
 	collect3DENHistory {
-		if !(isNull dzn_tSF_3DEN_Zeus) exitWith {
-			// "tSF Tools - Zeus Module already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
+		private _zone = dzn_tSF_3DEN_SelectedUnits select 0;
+		private _assetsToAdd = [];
+		private _assetsAttributes = [];
+		private _mode = "";
+		
+		switch (dzn_tSF_3DEN_Parameter) do {
+			/* Area */ case 0: {
+				_assets pushBack (create3DENEntity ["Trigger","EmptyDetectorAreaR250", screenToWorld [0.5, 0.5]]);
+			};
+			/* Keypoints */ case 1: {				
+				for "_i" from 0 to 2 do {
+					_assets pushBack (create3DENEntity ["Logic","LocationArea_F", screenToWorld [0.5 + _i*.2, 0.5 + _i*.2]]);
+				};
+			};
+			/* Vehicle Points */ case 2: {
+				for "_i" from 0 to 2 do {
+					_assets pushBack (create3DENEntity ["Logic","LocationOutpost_F", screenToWorld [0.5 + _i*.2, 0.5 + _i*.2]]);
+				};				
+			};
 		};
 		
-		dzn_tSF_3DEN_Zeus = create3DENEntity ["Logic","ModuleCurator_F",screenToWorld [0.3,0.3]];
-		dzn_tSF_3DEN_Zeus set3DENAttribute ["Name", "tSF_Zeus"];		
-		
-		dzn_tSF_3DEN_Zeus set3DENAttribute [
-			"Init"
-			, "this setVariable ['addons',3,true];this setVariable ['owner','#adminLogged',true];"
-		];
-		
-		call dzn_fnc_tSF_3DEN_createTSFLayer;
-		dzn_tSF_3DEN_Zeus set3DENLayer dzn_tSF_3DEN_tSFLayer;
-		
-		"tSF Tools - Zeus Module was created" call dzn_fnc_tSF_3DEN_ShowNotif;	
+		add3DENConnection ["Sync", _assets, _zone];
+		(format ["tSF Tools - Dyani: %1 asset was added", _modes select dzn_tSF_3DEN_Parameter]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
-dzn_fnc_tSF_3DEN_AddBaseTrg = {
-	collect3DENHistory {	
-		if !(isNull dzn_tSF_3DEN_BaseTrg) exitWith {
-			"tSF Tools - BaseTrg already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
-		};
-		
-		dzn_tSF_3DEN_BaseTrg = create3DENEntity ["Trigger","EmptyDetectorAreaR250", screenToWorld [0.5,0.5]];
-		dzn_tSF_3DEN_BaseTrg set3DENAttribute ["Name", "baseTrg"];
-
-		call dzn_fnc_tSF_3DEN_createTSFLayer;
-		dzn_tSF_3DEN_BaseTrg set3DENLayer dzn_tSF_3DEN_tSFLayer;
-		
-		do3DENAction "ToggleMap";
-		"tSF Tools - BaseTrg was created" call dzn_fnc_tSF_3DEN_ShowNotif;
-	};
-};
-
-dzn_fnc_tSF_3DEN_AddCCP = {
-	collect3DENHistory {	
-		if !(isNull dzn_tSF_3DEN_CCP) exitWith { 
-			"tSF Tools - CCP already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
-		};
-		
-		private _pos = screenToWorld [0.5,0.5];
-		dzn_tSF_3DEN_CCP = create3DENEntity ["Logic","Logic", _pos];
-		private _ccpZone = create3DENEntity [
-			"Trigger"
-			,"EmptyDetectorAreaR250"
-			, [ (_pos select 0) + 50, _pos select 1, 0 ]
-		];
-		
-		dzn_tSF_3DEN_CCP set3DENAttribute ["Name", "tSF_CCP"];
-		
-		call dzn_fnc_tSF_3DEN_createTSFLayer;
-		dzn_tSF_3DEN_CCP set3DENLayer dzn_tSF_3DEN_tSFLayer;
-		_ccpZone set3DENLayer dzn_tSF_3DEN_tSFLayer;
-		
-		add3DENConnection ["Sync", [dzn_tSF_3DEN_CCP],_ccpZone];
-		do3DENAction "ToggleMap";
-		"tSF Tools - CCP was created" call dzn_fnc_tSF_3DEN_ShowNotif;
-	};
-};
+/*
+ * Gear / tSF Assets
+ */
 
 dzn_fnc_tSF_3DEN_AddGearLogic = {
 	private _units = dzn_tSF_3DEN_SelectedUnits;
@@ -400,109 +266,6 @@ dzn_fnc_tSF_3DEN_AddGearLogic = {
 		(format ["tSF Tools - Gear: ""%1"" Kit logic was assigned", _kit]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
-
-dzn_fnc_tSF_3DEN_ConfigureScenario = {
-	disableSerialization;
-	
-	private _form = [
-		["Title", []]			
-		, ["Summary", []]
-		, ["Author (def: TS)",[]]
-		, ["Picture (def: overview.jpg)",[]]			
-		, ["Max Players", []]
-	];
-	private _scenarioData = ["", "", "Tactical Shift", "overview.jpg", ""];
-	
-	if !(isNull dzn_tSF_3DEN_ScnearioLogic) then {
-		_scenarioData = [
-			"Scenario" get3DENMissionAttribute "IntelBriefingName"
-			, "Multiplayer" get3DENMissionAttribute "IntelOverviewText"
-			, if ("Scenario" get3DENMissionAttribute "Author" == "") then { _scenarioData select 2 } else { "Scenario" get3DENMissionAttribute "Author" }
-			, if ("Scenario" get3DENMissionAttribute "OverviewPicture"== "") then { _scenarioData select 3 } else { "Scenario" get3DENMissionAttribute "OverviewPicture" }
-			, str("Multiplayer" get3DENMissionAttribute "MaxPlayers")
-		];
-		
-		for "_i" from 0 to 4 do {
-			(_form select _i) set [1, _scenarioData select _i];
-		};
-	};
-	
-	tsd = _scenarioData;
-	private _result = [
-		"Scenario Settings"
-		, _form
-	] call dzn_fnc_3DEN_ShowChooseDialog;
-	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
-	
-	dzn_tSF_3DEN_Parameter = _result;
-	
-	collect3DENHistory {
-		private _result = dzn_tSF_3DEN_Parameter;
-		
-		#define	RESOLVE_IF_NONE(X)	if (typename (_result select X) == "SCALAR") then { _scenarioData select X } else { _result select X }
-		private _title = RESOLVE_IF_NONE(0);
-		private _summary = RESOLVE_IF_NONE(1);
-		private _author = RESOLVE_IF_NONE(2);
-		private _picture = RESOLVE_IF_NONE(3);
-		private _maxPlayers = RESOLVE_IF_NONE(4);
-		
-		tSF_3DEN_SummaryText = _summary;
-		call dzn_fnc_tSF_3DEN_AddScenarioLogic;
-		call dzn_fnc_tSF_3DEN_CoverMap;
-		
-		set3DENMissionAttributes [
-			["Scenario","IntelBriefingName", _title]
-			, ["Scenario","OverviewText", _summary]	
-			, ["Scenario","OnLoadMission", _summary]			
-			, ["Scenario","OverviewPicture", _picture]
-			, ["Scenario","LoadScreen", _picture]
-			, ["Scenario","OverviewPictureLocked", _picture]
-			, ["Scenario","Author", _author]			
-			, ["Scenario","Saving", false]
-			, ["Scenario","EnableDebugConsole", 1]
-			, ["Scenario","SaveBinarized", false]			
-			
-			, ["Multiplayer","MinPlayers", 1]
-			, ["Multiplayer","MaxPlayers", parseNumber(_maxPlayers)]
-			, ["Multiplayer","GameType","Coop"]
-			, ["Multiplayer","IntelOverviewText", _summary]	
-			, ["Multiplayer","DisabledAI", true]
-			, ["Multiplayer","respawn",3]
-			, ["Multiplayer","RespawnDialog", false]
-			, ["Multiplayer","RespawnButton", 0]
-			, ["Multiplayer","RespawnTemplates", ["ace_spectator","EndMission"]]
-		];
-	
-		private _respawnMrk = create3DENEntity ["Marker","mil_start", screenToWorld [0.5,0.5]];
-		_respawnMrk set3DENAttribute ["name", "respawn_west"];
-		_respawnMrk set3DENAttribute ["text", "Rename me to 'respawn_west'"];
-		do3DENAction "ToggleMap";
-		
-		"tSF Tools - Scenario was configured" call dzn_fnc_tSF_3DEN_ShowNotif;
-	};
-	
-	call dzn_fnc_tSF_3DEN_AddZeus;
-};
-dzn_fnc_tSF_3DEN_AddScenarioLogic = {
-	if !(isNull dzn_tSF_3DEN_ScnearioLogic) exitWith {
-		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
-			"Init"
-			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
-		];	
-	};
-	
-	collect3DENHistory {
-		dzn_tSF_3DEN_ScnearioLogic = create3DENEntity ["Logic","Logic",screenToWorld [0.3,0.5]];
-		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute ["Name", "tSF_Scenario_Logic"];
-		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
-			"Init"
-			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
-		];
-		
-		call dzn_fnc_tSF_3DEN_createMiscLayer;
-		dzn_tSF_3DEN_ScnearioLogic set3DENLayer dzn_tSF_3DEN_MiscLayer;
-	};
-}; 
 
 dzn_fnc_tSF_3DEN_ResolveUnitBehavior = {
 	private _units = dzn_tSF_3DEN_SelectedUnits;
@@ -794,7 +557,6 @@ dzn_fnc_tSF_3DEN_AddAsSupporter = {
 	};
 };
 
-
 dzn_fnc_tSF_3DEN_AddSupportReturnPointCore = {
 	collect3DENHistory {
 		dzn_tSF_3DEN_SupportReturnPointCore = create3DENEntity ["Logic","Logic",screenToWorld [0.25,0.5]];
@@ -809,7 +571,6 @@ dzn_fnc_tSF_3DEN_AddSupportReturnPointCore = {
 		dzn_tSF_3DEN_SupportReturnPointCore set3DENLayer dzn_tSF_3DEN_MiscLayer;
 	};
 }; 
-
 
 dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
 	disableSerialization;
@@ -856,7 +617,176 @@ dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
 };
 
 
+/*
+ * Scenario Assets
+ */
+dzn_fnc_tSF_3DEN_AddZeus = {
+	collect3DENHistory {
+		if !(isNull dzn_tSF_3DEN_Zeus) exitWith {
+			// "tSF Tools - Zeus Module already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
+		};
+		
+		dzn_tSF_3DEN_Zeus = create3DENEntity ["Logic","ModuleCurator_F",screenToWorld [0.3,0.3]];
+		dzn_tSF_3DEN_Zeus set3DENAttribute ["Name", "tSF_Zeus"];		
+		
+		dzn_tSF_3DEN_Zeus set3DENAttribute [
+			"Init"
+			, "this setVariable ['addons',3,true];this setVariable ['owner','#adminLogged',true];"
+		];
+		
+		call dzn_fnc_tSF_3DEN_createTSFLayer;
+		dzn_tSF_3DEN_Zeus set3DENLayer dzn_tSF_3DEN_tSFLayer;
+		
+		"tSF Tools - Zeus Module was created" call dzn_fnc_tSF_3DEN_ShowNotif;	
+	};
+};
 
+dzn_fnc_tSF_3DEN_AddBaseTrg = {
+	collect3DENHistory {	
+		if !(isNull dzn_tSF_3DEN_BaseTrg) exitWith {
+			"tSF Tools - BaseTrg already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
+		};
+		
+		dzn_tSF_3DEN_BaseTrg = create3DENEntity ["Trigger","EmptyDetectorAreaR250", screenToWorld [0.5,0.5]];
+		dzn_tSF_3DEN_BaseTrg set3DENAttribute ["Name", "baseTrg"];
+
+		call dzn_fnc_tSF_3DEN_createTSFLayer;
+		dzn_tSF_3DEN_BaseTrg set3DENLayer dzn_tSF_3DEN_tSFLayer;
+		
+		do3DENAction "ToggleMap";
+		"tSF Tools - BaseTrg was created" call dzn_fnc_tSF_3DEN_ShowNotif;
+	};
+};
+
+dzn_fnc_tSF_3DEN_AddCCP = {
+	collect3DENHistory {	
+		if !(isNull dzn_tSF_3DEN_CCP) exitWith { 
+			"tSF Tools - CCP already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
+		};
+		
+		private _pos = screenToWorld [0.5,0.5];
+		dzn_tSF_3DEN_CCP = create3DENEntity ["Logic","Logic", _pos];
+		private _ccpZone = create3DENEntity [
+			"Trigger"
+			,"EmptyDetectorAreaR250"
+			, [ (_pos select 0) + 50, _pos select 1, 0 ]
+		];
+		
+		dzn_tSF_3DEN_CCP set3DENAttribute ["Name", "tSF_CCP"];
+		
+		call dzn_fnc_tSF_3DEN_createTSFLayer;
+		dzn_tSF_3DEN_CCP set3DENLayer dzn_tSF_3DEN_tSFLayer;
+		_ccpZone set3DENLayer dzn_tSF_3DEN_tSFLayer;
+		
+		add3DENConnection ["Sync", [dzn_tSF_3DEN_CCP],_ccpZone];
+		do3DENAction "ToggleMap";
+		"tSF Tools - CCP was created" call dzn_fnc_tSF_3DEN_ShowNotif;
+	};
+};
+
+dzn_fnc_tSF_3DEN_ConfigureScenario = {
+	disableSerialization;
+	
+	private _form = [
+		["Title", []]			
+		, ["Summary", []]
+		, ["Author (def: TS)",[]]
+		, ["Picture (def: overview.jpg)",[]]			
+		, ["Max Players", []]
+	];
+	private _scenarioData = ["", "", "Tactical Shift", "overview.jpg", ""];
+	
+	if !(isNull dzn_tSF_3DEN_ScnearioLogic) then {
+		_scenarioData = [
+			"Scenario" get3DENMissionAttribute "IntelBriefingName"
+			, "Multiplayer" get3DENMissionAttribute "IntelOverviewText"
+			, if ("Scenario" get3DENMissionAttribute "Author" == "") then { _scenarioData select 2 } else { "Scenario" get3DENMissionAttribute "Author" }
+			, if ("Scenario" get3DENMissionAttribute "OverviewPicture"== "") then { _scenarioData select 3 } else { "Scenario" get3DENMissionAttribute "OverviewPicture" }
+			, str("Multiplayer" get3DENMissionAttribute "MaxPlayers")
+		];
+		
+		for "_i" from 0 to 4 do {
+			(_form select _i) set [1, _scenarioData select _i];
+		};
+	};
+	
+	tsd = _scenarioData;
+	private _result = [
+		"Scenario Settings"
+		, _form
+	] call dzn_fnc_3DEN_ShowChooseDialog;
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
+	
+	dzn_tSF_3DEN_Parameter = _result;
+	
+	collect3DENHistory {
+		private _result = dzn_tSF_3DEN_Parameter;
+		
+		#define	RESOLVE_IF_NONE(X)	if (typename (_result select X) == "SCALAR") then { _scenarioData select X } else { _result select X }
+		private _title = RESOLVE_IF_NONE(0);
+		private _summary = RESOLVE_IF_NONE(1);
+		private _author = RESOLVE_IF_NONE(2);
+		private _picture = RESOLVE_IF_NONE(3);
+		private _maxPlayers = RESOLVE_IF_NONE(4);
+		
+		tSF_3DEN_SummaryText = _summary;
+		call dzn_fnc_tSF_3DEN_AddScenarioLogic;
+		call dzn_fnc_tSF_3DEN_CoverMap;
+		
+		set3DENMissionAttributes [
+			["Scenario","IntelBriefingName", _title]
+			, ["Scenario","OverviewText", _summary]	
+			, ["Scenario","OnLoadMission", _summary]			
+			, ["Scenario","OverviewPicture", _picture]
+			, ["Scenario","LoadScreen", _picture]
+			, ["Scenario","OverviewPictureLocked", _picture]
+			, ["Scenario","Author", _author]			
+			, ["Scenario","Saving", false]
+			, ["Scenario","EnableDebugConsole", 1]
+			, ["Scenario","SaveBinarized", false]			
+			
+			, ["Multiplayer","MinPlayers", 1]
+			, ["Multiplayer","MaxPlayers", parseNumber(_maxPlayers)]
+			, ["Multiplayer","GameType","Coop"]
+			, ["Multiplayer","IntelOverviewText", _summary]	
+			, ["Multiplayer","DisabledAI", true]
+			, ["Multiplayer","respawn",3]
+			, ["Multiplayer","RespawnDialog", false]
+			, ["Multiplayer","RespawnButton", 0]
+			, ["Multiplayer","RespawnTemplates", ["ace_spectator","EndMission"]]
+		];
+	
+		private _respawnMrk = create3DENEntity ["Marker","mil_start", screenToWorld [0.5,0.5]];
+		_respawnMrk set3DENAttribute ["name", "respawn_west"];
+		_respawnMrk set3DENAttribute ["text", "Rename me to 'respawn_west'"];
+		do3DENAction "ToggleMap";
+		
+		"tSF Tools - Scenario was configured" call dzn_fnc_tSF_3DEN_ShowNotif;
+	};
+	
+	call dzn_fnc_tSF_3DEN_AddZeus;
+};
+
+dzn_fnc_tSF_3DEN_AddScenarioLogic = {
+	if !(isNull dzn_tSF_3DEN_ScnearioLogic) exitWith {
+		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
+			"Init"
+			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
+		];	
+	};
+	
+	collect3DENHistory {
+		dzn_tSF_3DEN_ScnearioLogic = create3DENEntity ["Logic","Logic",screenToWorld [0.3,0.5]];
+		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute ["Name", "tSF_Scenario_Logic"];
+		dzn_tSF_3DEN_ScnearioLogic set3DENAttribute [
+			"Init"
+			, format ["tSF_SummaryText = '%1'", tSF_3DEN_SummaryText]
+		];
+		
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		dzn_tSF_3DEN_ScnearioLogic set3DENLayer dzn_tSF_3DEN_MiscLayer;
+	};
+}; 
 
 dzn_fnc_tSF_3DEN_CoverMap = {
 	if !(isNull dzn_tSF_3DEN_CoverMap) exitWith {};
