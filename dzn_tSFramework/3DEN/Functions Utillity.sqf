@@ -26,8 +26,12 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 	
 	private _resolveOption = {};
 	private _options = [
-		["Add Playable Squad"			, { [] spawn dzn_fnc_tSF_3DEN_AddSquad }]	
-		,["[DynAI] Add Zone"			, { [] spawn { call dzn_fnc_tSF_3DEN_AddDynaiZone } }]		
+		["Add Playable Squad"			, { [] spawn dzn_fnc_tSF_3DEN_AddSquad }]
+		,["Add Playable Platoon"		, { [] spawn dzn_fnc_tSF_3DEN_AddPlatoon }]
+		
+		,["[DynAI] Add Zone"			, { [] spawn dzn_fnc_tSF_3DEN_AddDynaiZone }]
+		,["[DynAI] Add Zone's Asset"	, { [] spawn dzn_fnc_tSF_3DEN_AddDynaiZoneAssets }]
+		
 		,["[Gear] Add Kit Logic"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddGearLogic } }]
 		
 		,["[Unit] Add Unit Behavior"		, { [] spawn { call dzn_fnc_tSF_3DEN_ResolveUnitBehavior } }]	
