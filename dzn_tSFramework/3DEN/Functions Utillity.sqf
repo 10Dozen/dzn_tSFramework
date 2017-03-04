@@ -23,25 +23,30 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 	dzn_tSF_3DEN_toolDisplayed = true;
 	
 	dzn_tSF_3DEN_SelectedUnits = get3DENSelected "object";
+	dzn_tSF_3DEN_SelectedLogics = get3DENSelected "logic";
 	
 	private _resolveOption = {};
 	private _options = [
-		["Add Playable Squad"			, { [] spawn dzn_fnc_tSF_3DEN_AddSquad }]	
-		,["[DynAI] Add Zone"			, { [] spawn { call dzn_fnc_tSF_3DEN_AddDynaiZone } }]		
-		,["[Gear] Add Kit Logic"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddGearLogic } }]
+		["Add Playable Squad"			, { [] spawn dzn_fnc_tSF_3DEN_AddSquad }]
+		,["Add Playable Platoon"			, { [] spawn dzn_fnc_tSF_3DEN_AddPlatoon }]
 		
-		,["[Unit] Add Unit Behavior"		, { [] spawn { call dzn_fnc_tSF_3DEN_ResolveUnitBehavior } }]	
-		,["[Vehicle] Add Vehicle Crew"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddEVCLogic } }]
-		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddERSLogic } }]
+		,["[DynAI] Add Zone"				, { [] spawn dzn_fnc_tSF_3DEN_AddDynaiZone }]
+		,["[DynAI] Add Zone's Asset"		, { [] spawn dzn_fnc_tSF_3DEN_AddDynaiZoneAssets }]
 		
-		,["[Support] Assign Vehicle as Support"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddAsSupporter } }]
-		,["[Support] Add Return point"		, { [] spawn { call dzn_fnc_tSF_3DEN_AddSupportReturnPoint } }]		
+		,["[Gear] Add Kit Logic"			, { [] spawn dzn_fnc_tSF_3DEN_AddGearLogic }]
 		
-		,["[tSF] Configure Scenario"		, { [] spawn { call dzn_fnc_tSF_3DEN_ConfigureScenario } }]
+		,["[Unit] Add Unit Behavior"		, { [] spawn dzn_fnc_tSF_3DEN_ResolveUnitBehavior }]	
+		,["[Vehicle] Add Vehicle Crew"		, { [] spawn dzn_fnc_tSF_3DEN_AddEVCLogic }]
+		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn dzn_fnc_tSF_3DEN_AddERSLogic }]
+		
+		,["[Support] Assign Vehicle as Support"	, { [] spawn dzn_fnc_tSF_3DEN_AddAsSupporter }]
+		,["[Support] Add Return point"		, { [] spawn dzn_fnc_tSF_3DEN_AddSupportReturnPoint }]		
+		
+		,["[tSF] Configure Scenario"		, { [] spawn dzn_fnc_tSF_3DEN_ConfigureScenario }]
 	/*	
 		,["[tSF] Add Zeus"			, { call dzn_fnc_tSF_3DEN_AddZeus }]	
 	*/
-		,["[tSF] Add Base Trigger"		, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
+		,["[tSF] Add Base Trigger"			, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
 		,["[tSF] Add CCP"				, { call dzn_fnc_tSF_3DEN_AddCCP }]	
 		,[" "						, { }]	
 		
@@ -126,7 +131,7 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 			} forEach [
 				["dzn_tSF_3DEN_DynaiCore"			, "dzn_dynai_core" ]
 				,["dzn_tSF_3DEN_BaseTrg"			, "baseTrg" ]
-				,["dzn_tSF_3DEN_Zeus"				, "tSF_Zeus" ]
+				,["dzn_tSF_3DEN_Zeus"			, "tSF_Zeus" ]
 				,["dzn_tSF_3DEN_CCP"				, "tSF_CCP" ]
 				,["dzn_tSF_3DEN_SupportReturnPointCore"	, "tSF_AirborneSupport_ReturnPointCore" ]	
 				,["dzn_tSF_3DEN_ScnearioLogic"		, "tSF_Scenario_Logic" ]
@@ -148,25 +153,26 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 #define	L_BRK		(toString [13,10])
 
 dzn_fnc_tSF_3DEN_GetDynaiZoneNames = {
-	private _dynaiZones = [
-		get3DENLayerEntities dzn_tSF_3DEN_DynaiLayer
-		, {
-			typeOf _x == "Logic" 
-			&& (_x get3DENAttribute "name") select 0 != ""
-			&& (_x get3DENAttribute "name") select 0 != "dzn_dynai_core"
-		}
-	] call BIS_fnc_conditionalSelect;
+	private _dynaiZones = (all3DENEntities select 3) select { 
+		typeOf _x == "Logic" 
+		&& (_x get3DENAttribute "name" select 0) != ""
+		&& (_x get3DENAttribute "name" select 0) != "dzn_dynai_core"
+		&& !((get3DENConnections _x) select { (_x select 1) get3DENAttribute "name" select 0 == "dzn_dynai_core" } isEqualTo [])
+	};
 	
 	private _names = "Dynai zones:" + L_BRK;
 	{
-		_names = format["%1%2%3", _names, L_BRK, (_x get3DENAttribute "name") select 0];
+		_names = format[
+			"%1%2%3"
+			, _names
+			, L_BRK
+			, (_x get3DENAttribute "name") select 0
+		];
 	} forEach _dynaiZones;
 	
 	[parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Dynai zone names were copied!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
 	copyToClipboard _names;
 };
-
-
 
 dzn_fnc_tSF_3DEN_GetUnitNames = {
 /*
@@ -209,7 +215,7 @@ http://www.online-decoder.com/ru
 };
 
 dzn_fnc_tSF_3DEN_GetGAT = {
-	private _playableUnits = [get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer, {groupId _x != ""}] call BIS_fnc_conditionalSelect;
+	private _playableUnits = (get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer) select { groupId _x != "" };
 	
 	private _listOfRoles = [];
 	private _gat = "// Decode cyrillic chars with http://www.online-decoder.com/ru" + L_BRK + L_BRK;
@@ -217,23 +223,32 @@ dzn_fnc_tSF_3DEN_GetGAT = {
 	{
 		private _units = units _x;
 		{
-			private _role = (_x get3DENAttribute "description") select 0;
-			if !(_role in _listOfRoles) then {			
+			private _role = (_x get3DENAttribute "description") select 0;			
+			if (!isNil "_role" && { !(_role in _listOfRoles) }) then {
 				_listOfRoles pushBack _role;
 				
+				private _tabs = "";
+				_tabs = switch (true) do {
+					case (count _role < 8): { "					" };
+					case (count _role < 16): { "				" };
+					case (count _role < 24): { "			" };
+					case (count _role > 23): { "		" };
+				};
+				
 				_gat = format[
-					"%1%2%4A ""%3""                TO ""kit_name"" KIT"
+					"%1%2%4A ""%3""%5TO ""kit_name"" KIT"
 					, _gat
 					, L_BRK
 					, _role
 					, if !(_firstCommaSkipped) then { "" } else { ", " }
+					, _tabs
 				];
 				
 				if !(_firstCommaSkipped) then { _firstCommaSkipped = true; };
 			};
 		} forEach _units;
 	} forEach _playableUnits;
-
+	
 	[parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>GAT was copied!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
 	copyToClipboard _gat;
 };

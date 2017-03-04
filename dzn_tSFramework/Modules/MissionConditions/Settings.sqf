@@ -31,10 +31,17 @@ tSF_MissionCondition_DefaultCheckTimer 			= 15;
  *	Все игроки добрались до зоны (триггер baseTrg):
  *			{call fnc_CheckPlayersReturned}
  *	Хоть один игрок добрался до зоны: 
- *			{ {_x inArea TGT_NAME} count (call BIS_fnc_listPlayers) > 0}
+ *			{ {_x inArea TRG_1} count (call BIS_fnc_listPlayers) > 0}
+ *			или
+ *			[[TRG_1], ">", 1] call dzn_fnc_ccPlayers 	
+ *	Игроков в зоне больше 3 (see https://github.com/10Dozen/dzn_commonFunctions/wiki/Area-Functions#dzn_fnc_ccplayers)
+ *			[[TRG_1], ">", 3] call dzn_fnc_ccPlayers 
  *	Все игроки умерли:
  *			{ {alive _x} count (call BIS_fnc_listPlayers) < 1}
- *
+ *	Юнитов красной стороны в зоне TRG_1 меньше 3 (see https://github.com/10Dozen/dzn_commonFunctions/wiki/Area-Functions#dzn_fnc_ccunits)
+ *			[[TRG_1, east], "<", 3] call dzn_fnc_ccUnits
+ *	Вооруженных юнитов красной стороны в зонах TRG_1, TRG_2, TRG_3 меньше 3
+ *			[[ [TRG_1, TRG_2, TRG_3], east, "primaryWeapon _x != ''"], "<", 3] call dzn_fnc_ccUnits
  */
 
 // If you're Lim~, then you may need this. Uncomment to use.
