@@ -102,11 +102,11 @@ dzn_tSF_3DEN_SquadTypes = [
 		[
 			["%1Командир отделения"			,"Sergeant"]
 			,["Пулеметчик"				,"Private"]
-			,["Стерлок, помощнник пулеметчика"	,"Private"]
+			,["Стрелок, помощнник пулеметчика"	,"Private"]
 			,["Пулеметчик"				,"Private"]
-			,["Стерлок, помощнник пулеметчика"	,"Private"]
-			,["Missile Specialist"			,"Private"]
-			,["Missile Specialist"			,"Private"]
+			,["Стрелок, помощнник пулеметчика"	,"Private"]
+			,["ПТ-стрелок"			,"Private"]
+			,["Стрелок, помощник ПТ"		,"Private"]
 		]
 	]
 	, [

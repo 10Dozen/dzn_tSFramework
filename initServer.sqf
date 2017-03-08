@@ -21,6 +21,18 @@ setDate MissionDate;
  *	Weather
  */
 if (!isNil "dzn_fnc_setWeather") then {
-	  ("par_weather" call BIS_fnc_getParamValue) spawn dzn_fnc_setWeather;
+	("par_weather" call BIS_fnc_getParamValue) spawn dzn_fnc_setWeather;
 };
 
+
+/*
+ *	Collect Some Player connection data
+ */
+PlayerConnectedData = [];
+PlayerConnectedEH = addMissionEventHandler ["PlayerConnected", {
+	diag_log "Client connected";
+	diag_log _this;
+	// [ DirectPlayID, getPlayerUID player, name player, @bool, clientOwner ]
+	PlayerConnectedData pushBack _this;
+	publicVariable "PlayerConnectedData";
+}];
