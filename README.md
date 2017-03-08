@@ -1,6 +1,6 @@
 ![img](https://dl.dropboxusercontent.com/u/24204278/SQUAD/tsf_10d.png)
 ------
-##### Version: 1.7
+##### Version: 1.8
 Tactical Shift Framework
 
 #### Content
@@ -10,7 +10,7 @@ Editor tool that allows to create scenarios quick and accurate. Check [3DEN Tool
 ##### Briefing
 Briefing helper tool to create briefings in standard way.
 
-##### Interactives framework
+##### Interactives & ACE Actions framework 
 Framework to apply custom code to specific objects or classes on client/server/both. Also allows to apply code for each new instance of objects of given class.
 
 ##### CCP
@@ -28,6 +28,7 @@ Some default mission pre-sets (like player score).
 - Weapon Safe mode on start
 - Earplugs In on start
 - Player rating
+- Calculator
 
 ##### Airborne Support
 Airborne vehicles pickup and return to base by AI or player pilots.
@@ -52,6 +53,9 @@ Add crew to editor placed vehicle according set up crew config.
 
 ##### JIP Teleport
 Allows JIP players to teleport to their's squad leader.
+
+##### Platoon Operational Markers
+Allows Platoon Leader to add, set up and drag markers (visible for platoon leader obly) during the missions.
 
 ##### tSF File Sweeper
 Batch script that clears all files that are not used by Arma 3 when mission is played (html-helpers, 3den tool). Run it before mission export.
