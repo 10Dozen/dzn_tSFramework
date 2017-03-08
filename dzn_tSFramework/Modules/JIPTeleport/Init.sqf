@@ -17,7 +17,7 @@ if (hasInterface && call dzn_tSF_JIPTeleport_isJIP) exitWith {
 				player setVariable ["tSF_JIPTeleport_Action", nil];
 				
 				private _u = if (leader (group player) == player) then {
-					(units player) select 0
+					(units (group player) select 1)
 				} else {
 					leader (group player)
 				};

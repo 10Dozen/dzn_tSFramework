@@ -1,3 +1,4 @@
+tSF_DEBUG = true;
 
 // dzn Gear
   // set true to engage Edit mode

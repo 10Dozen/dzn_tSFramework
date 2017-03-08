@@ -105,13 +105,15 @@ dzn_fnc_adminTools_showGATTool = {
 	private _PlayerNamesList = [];
 	{ _PlayerNamesList pushBack (name _x);	} forEach _PlayerList;
 
-	private _GATList = [];
+	private _GATList = (allVariables missionNamespace)  select {  ["kit_", _x, false] call BIS_fnc_inString &&  !(["lkit_", _x, false] call BIS_fnc_inString) };
+	_GATList pushBack "";
+	/*
 	{ 
 		if !((_x select 1) in _GATList) then {
 			_GATList pushBack (_x select 1);
 		}
 	} forEach dzn_gear_gat_table;
-
+	*/
 	private _Result = [];
 	_Result = [
 		"GAT Tool"

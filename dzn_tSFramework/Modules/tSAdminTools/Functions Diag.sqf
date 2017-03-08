@@ -129,7 +129,7 @@ tSF_Diag_Dynai_CollectData = {
 	*/
 	private _dynaiTopic = "<font size='14' color='#b7f931'>Zones</font><br /";
 	
-	waitUntil { !isNil "dzn_dynai_zoneProperties" };
+	waitUntil { !isNil "dzn_dynai_zoneProperties" && !isNil "dzn_dynai_core" };
 	
 	private _zonesItems = [];
 	
