@@ -1,4 +1,4 @@
-![img](https://dl.dropboxusercontent.com/u/24204278/SQUAD/tsf_10d.png)
+![img](http://tacticalshift.ru/tsf_10d.png)
 ------
 ##### Version: 1.8
 Tactical Shift Framework
