@@ -3,6 +3,9 @@
 ##### Version: 1.8
 Tactical Shift Framework
 
+##### Getting Started
+See [Google Slides](https://vk.com/away.php?utf=1&to=https%3A%2F%2Fdocs.google.com%2Fpresentation%2Fd%2F1-hwUq2sYlP9BzIy4GzOBALAaTHpBOzPOXhZyXPhatXQ%2Fedit%3Fusp%3Dsharing).
+
 #### Content
 ##### 3DEN Tool
 Editor tool that allows to create scenarios quick and accurate. Check [3DEN Tools Wiki](https://github.com/10Dozen/dzn_tSFramework/wiki/3DEN-Tools) for details.
