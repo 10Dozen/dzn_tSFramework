@@ -253,6 +253,21 @@ dzn_fnc_tSF_3DEN_GetGAT = {
 	copyToClipboard _gat;
 };
 
+dzn_fnc_tSF_3DEN_GetCargoSeats = {
+	if (dzn_tSF_3DEN_SelectedUnits isEqualTo []) exitWith {
+		[parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>No vehicle selected!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+	};
+	
+	if (count dzn_tSF_3DEN_SelectedUnits > 1) exitWith {
+		[parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Select single vehicle!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+	};
+	
+	private _seats = 0;
+	{
+		_seats = _seats + (dzn_tSF_3DEN_SelectedUnits emptyPositions _x);
+	} forEach ["Cargo", "Commander"];
+	[parseText (format ["<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Total: %1 cargo seats</t>", _seats], [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+};
 
 /*
  *	Dialog Function
@@ -508,6 +523,12 @@ dzn_fnc_3DEN_ShowChooseDialog = {
 		_gatButton ctrlSetPosition [OK_BUTTON_X - 0.35, _yCoord + 0.1, 1.75*OK_BUTTON_WIDTH, (1 * GUI_GRID_H)];
 		_gatButton ctrlCommit 0;	
 		_gatButton  ctrlSetEventHandler ["ButtonClick", "[] spawn dzn_fnc_tSF_3DEN_GetGAT;"];
+		
+		_vesButton = _dialog ctrlCreate ["RscButtonMenuOK", BASE_IDC + _controlCount];
+		_vesButton ctrlSetStructuredText parseText "<t align='center' size='0.75' color='#999999'>Cargo Seats</t>";
+		_vesButton ctrlSetPosition [OK_BUTTON_X - 0.17, _yCoord + 0.1, 1.75*OK_BUTTON_WIDTH, (1 * GUI_GRID_H)];
+		_vesButton ctrlCommit 0;	
+		_vesButton  ctrlSetEventHandler ["ButtonClick", "[] spawn dzn_fnc_tSF_3DEN_GetCargoSeats;"];
 	};	
 	_controlCount = _controlCount + 1;
 
