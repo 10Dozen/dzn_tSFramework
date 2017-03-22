@@ -264,9 +264,9 @@ dzn_fnc_tSF_3DEN_GetCargoSeats = {
 	
 	private _seats = 0;
 	{
-		_seats = _seats + (dzn_tSF_3DEN_SelectedUnits emptyPositions _x);
+		_seats = _seats + ((dzn_tSF_3DEN_SelectedUnits select 0) emptyPositions _x);
 	} forEach ["Cargo", "Commander"];
-	[parseText (format ["<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Total: %1 cargo seats</t>", _seats], [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+	[parseText (format ["<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Total: %1 cargo seats (w/o driver/gunner)</t>", _seats]), [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
 };
 
 /*
