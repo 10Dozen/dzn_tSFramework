@@ -258,14 +258,14 @@ dzn_fnc_tSF_3DEN_GetCargoSeats = {
 		[parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>No vehicle selected!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
 	};
 	
-	if (count dzn_tSF_3DEN_SelectedUnits > 1) exitWith {
-		[parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Select single vehicle!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
-	};
-	
 	private _seats = 0;
 	{
-		_seats = _seats + ((dzn_tSF_3DEN_SelectedUnits select 0) emptyPositions _x);
-	} forEach ["Cargo", "Commander"];
+		private _v = _x;
+		{
+			_seats = _seats + (_v emptyPositions _x);
+		} forEach ["Cargo", "Commander"];
+	} forEach dzn_tSF_3DEN_SelectedUnits;
+	
 	[parseText (format ["<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Total: %1 cargo seats (w/o driver/gunner)</t>", _seats]), [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
 };
 
