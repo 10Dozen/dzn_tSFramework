@@ -259,14 +259,29 @@ dzn_fnc_tSF_3DEN_GetCargoSeats = {
 	};
 	
 	private _seats = 0;
+	private _drivers = 0;
+	private _gunners = 0;
 	{
 		private _v = _x;
 		{
 			_seats = _seats + (_v emptyPositions _x);
 		} forEach ["Cargo", "Commander"];
+		
+		_drivers = _drivers + (_v emptyPositions "Driver");
+		_gunners = _gunners + (_v emptyPositions "Gunner");
 	} forEach dzn_tSF_3DEN_SelectedUnits;
 	
-	[parseText (format ["<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Total: %1 cargo seats (w/o driver/gunner)</t>", _seats]), [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
+	[
+		parseText (format [
+			"<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>Total: %1 cargo seats (%2 drivers, %3 gunners)</t>"
+			, _seats
+			, _drivers
+			, _gunners
+		])
+		, [0,.7,1,1]
+		, nil
+		, 7, 0.2, 0
+	] spawn BIS_fnc_textTiles;
 };
 
 /*
