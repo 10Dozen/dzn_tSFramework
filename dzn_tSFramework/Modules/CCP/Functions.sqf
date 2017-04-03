@@ -235,8 +235,10 @@ tSF_CCP_HandleProgressBar = {
 tSF_fnc_CCP_healUnconcious = {
 	private _units = (call BIS_fnc_listPlayers) select {
 		alive _x
+		
 		&& !(_x getVariable ["tSF_CCP_forceHealing", false])
 		&& !(_x getVariable ["tSF_CCP_isHealing", false])
+		
 		&& _x getVariable ["ACE_isUnconscious", false]
 		&& _x distance tSF_CCP_Position < 15
 	};
