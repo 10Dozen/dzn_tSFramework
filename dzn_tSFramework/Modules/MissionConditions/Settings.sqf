@@ -12,6 +12,9 @@ PlayersBaseTrigger = if (!isNil "baseTrg") then { baseTrg } else { "" };
 */
 tSF_MissionCondition_DefaultCheckTimer 			= 15;
 
+// If you're Lim~, then you may need this. Uncomment to use.
+// if (isNil "ts_tasks") then { ts_tasks = 0 };
+
 /*
  * List of mission Ends and Conditions (up to 20 conditions allowed)
  * In format MissionCondition%1 = [ 
@@ -44,8 +47,6 @@ tSF_MissionCondition_DefaultCheckTimer 			= 15;
  *			[ [TRG_1, TRG_2, TRG_3], "east", "primaryWeapon _x != ''", "< 3"] call dzn_fnc_ccUnits
  */
 
-// If you're Lim~, then you may need this. Uncomment to use.
-// if (isNil "ts_tasks") then { ts_tasks = 0 };
-
+// Код условия может быть строкой или кодом в { }
 MissionCondition1 = [ "WIN", "false", "All objectives done" ];
-MissionCondition2 = [ "WIPED", "{alive _x} count (call BIS_fnc_listPlayers) < 1", "All dead", 30 ];
+MissionCondition2 = [ "WIPED", { {alive _x} count (call BIS_fnc_listPlayers) < 1 }, "All dead", 30 ];
