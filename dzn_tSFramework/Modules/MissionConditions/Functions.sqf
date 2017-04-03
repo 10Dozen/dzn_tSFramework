@@ -25,6 +25,10 @@ dzn_fnc_missionConditions_prepareConditions = {
 			
 				tSF_Ends pushBack [_ending,_desc];
 			
+				if (typename _condition == "CODE") then {
+					_condition = ((str(_condition) splitString "") select [1, str(_condition) - 2]) joinString "";
+				};
+				
 				waitUntil {
 					sleep _sleepTime;
 					call compile _condition
