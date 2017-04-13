@@ -1,4 +1,4 @@
-tSF_IACE_Timeout = -1;
+tSF_ACEActions_Timeout = -1;
 
 /*
  *	Configuration of ACE Actions:
@@ -12,36 +12,36 @@ tSF_IACE_Timeout = -1;
  *
  */
 
-#define	ACE_INTRACTIVES_TABLE		tSF_IACE_Actions = [
-#define	ACE_INTRACTIVES_TABLE_END	];
+#define	ACE_ACTIONS_TABLE		tSF_ACEActions_Actions = [
+#define	ACE_ACTIONS_TABLE_END	];
 
-ACE_INTRACTIVES_TABLE
+ACE_ACTIONS_TABLE
 	/*
 	[
 		"SELF"
-		, "IACE Action 1"
-		, "iace_action_1"
+		, "ACE Action 1"
+		, "ace_action_1"
 		, ""
 		, { hint "IACE Action 1 is done"; }
 		, { true }
 	]
 	,[
 		"SELF"
-		, "IACE Sub Action of 1"
-		, "iace_subaction_1"
-		, "iace_action_1"
+		, "ACE Sub Action of 1"
+		, "ace_subaction_1"
+		, "ace_action_1"
 		, { hint "IACE Sub Action 1 is done"; }
 		, { true }
 	]
 	,[
 		["RHS_CH_47F"]
-		, "IACE Action for CH47"
-		, "iace_action_for_CH47"
+		, "ACE Action for CH47"
+		, "ace_action_for_CH47"
 		, ""
-		, { hint 'IACE Action for CH47 is done' }
+		, { hint 'ACE Action for CH47 is done' }
 		, { true}	
 	]
 	*/
 
 	
-ACE_INTRACTIVES_TABLE_END
+ACE_ACTIONS_TABLE_END
