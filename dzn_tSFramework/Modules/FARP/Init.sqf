@@ -1,4 +1,7 @@
 FARP_Init = "IN PROGRESS";
+
+tSF_fnc_FARP_VehiclesDefaultLoadout = [];
+
 if (isNil "tsf_FARP") exitWith { diag_log "tSF: No FARP allowed zones were set!" };
 
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\FARP\Settings.sqf";
@@ -72,7 +75,9 @@ if (isServer) then {
 		[] spawn { 
 			waitUntil { time > 1 };
 			FARP_allowedAreaMarkers call tSF_fnc_FARP_removeAllowedAreaMarkers;			
-			removeMissionEventHandler ["EachFrame", tSF_FARP_BriefingHelper];
+			if (!isNil "tSF_FARP_BriefingHelperEH") then {
+				removeMissionEventHandler ["EachFrame", tSF_FARP_BriefingHelperEH];
+			};
 			
 			tSF_FARP_Position = call tSF_fnc_FARP_findMarker;			
 			
