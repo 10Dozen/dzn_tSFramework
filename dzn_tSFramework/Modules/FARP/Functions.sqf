@@ -187,6 +187,59 @@ tSF_fnc_FARP_showMenu = {
 	_farpMenu call dzn_fnc_ShowAdvDialog;
 };
 
+/*
+tSF_fnc_FARP_getDefaultLoadout = {
+	params["_class",["_mode", "LOADOUT"]];
+	private _class = _this select 0;
+	private _mode = if (toUpper(_mode) == "LOADOUT") then { true } else { false };
+	private _loadout = [];
+	
+	
+	if ( {_class = _x select 0} count tSF_fnc_FARP_VehiclesDefaultLoadout > 0 ) then {
+		_loadout = (tSF_fnc_FARP_VehiclesDefaultLoadout select {_class = _x select 0}) select 0;
+	} else {
+		private _v = _class createVehicleLocal [0,0,50];
+		_loadout = magazinesAllTurrets _v;
+		deleteVehicle _v;
+		
+		tSF_fnc_FARP_VehiclesDefaultLoadout pushBack [_class _loadout];
+		publicVariable "tSF_fnc_FARP_VehiclesDefaultLoadout";	
+	};
+	
+	if (_mode) exitWith { _loadout };
+	
+	private _output = [];
+	{
+		private _magClass = _x select 0;
+		private _turretPath = _x select 1;
+		private _ammoCount = _x select 2;
+		
+		
+		
+	} forEach _loadout;
+
+	[
+["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
+,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
+,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
+,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
+,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
+,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
+,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
+,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
+,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00002e+007,0]
+,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00002e+007,0]
+,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
+,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
+,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
+,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
+,["SmokeLauncherMag",[1],2,1.00003e+007,0]
+,["SmokeLauncherMag",[1],2,1.00003e+007,0]]
+
+};
+*/
+
+
 tSF_fnc_FARP_countFullMagazinesRatio = {
 	params["_curMags", "_fullMags"];
 	
@@ -265,15 +318,11 @@ tSF_fnc_FARP_showServiceMenu = {
 		_farpServiceMenu pushBack [
 			_farpMenuLine, "LABEL"
 			, format[
-				"<t align='right' size='0.6' color='#999999'>%1</t> %2 <t size='.75' color='#aaaaaa'>(%3 Rnds)</t>"
+				"<t align='left' size='0.6' color='#999999'>%1 </t>%2"
 				, [_turret, ["ARRAY"]] call dzn_fnc_stringify
 				, _mag call dzn_fnc_getItemDisplayName
-				, getNumber(configFile >> "CfgMagazines" >> _mag >> "count")
 			]
-		];
-		
-		
-		
+		];		
 		_farpServiceMenu pushBack [_farpMenuLine, "CHECKBOX"];
 		_farpServiceMenu pushBack [_farpMenuLine, "SLIDER", [0, _fullMagCount, _curMagCount]];
 		_farpMenuLine = _farpMenuLine + 1;
@@ -292,14 +341,14 @@ tSF_fnc_FARP_showServiceMenu = {
 
 
 tSF_fnc_FARP_ProcessService = {
-	FARPDATA = _this;
 	
 	/*
 		[
-			VEHICLE
+			@VEHICLE
 			,[
 				0[@Checkbox_REPAIR]
 				1[@SliderValue_REPAIR, [@Min, @Max]]
+				
 				2[@Checkbox_REFUEL]
 				3[@SliderValue_REFUEL, [@Min, @Max]]
 				
@@ -311,27 +360,29 @@ tSF_fnc_FARP_ProcessService = {
 			]
 		]
 	*/
+	params["_veh", "_dialogResult"];
 	
-	/*
-		ARGS:
-			@vehicle
-			@NeedRepair
-			@RequestedLevel
-			@NeedREfuel
-			@RequstedLevel
-			@NeedRearm
-			@List of Magazines count
-	*/
-	private _veh = _this select 0;
+	private _needRepair = ((_dialogResult select 0) select 0);
+	private _repairLevelRequested = ((_dialogResult select 1) select 0)/100;
 	
-	private _needRepair = true;
-	private _repairLevelRequested = 100/100;
+	private _needRefuiling = ((_dialogResult select 2) select 0);
+	private _fuelLevelRequested = ((_dialogResult select 3) select 0)/100;
 	
-	private _needRefuiling = true;
-	private _fuelLevelRequested = 100/100;
-		
-	private _needRearm = true;
-	private _magazines = [5,2,1];
+	private _magazinesList = (_veh getVariable "tSF_FARP_VehicleState") select 2; // [ [@MagazineName, @TurretPath, @CurrFullMags, @FullMags] ... ]
+	private _rearmList = [];	// [ [@MagazineClass, @TurretPath, @NeedRearm, @CurrFullMags, @MagsToRearm] ]
+	
+	{
+		_rearmList pushBack [
+			_x select 0
+			, _x select 1
+			, _dialogResult select (4 + 2*_forEachIndex) select 0
+			, _x select 2
+			, _dialogResult select (5 + 2*_forEachIndex) select 0
+		];	
+	} forEach _magazinesList;
+	
+	FARPDATA = _this;
+	MAGDATA = _rearmList;
 	
 	
 	if (_needRepair) then {	
@@ -391,6 +442,56 @@ tSF_fnc_FARP_ProcessService = {
 	
 	
 
+	
+	
+	
+	{
+		private _mag = _x select 0;
+		private _turret = _x select 1;
+		private _needRearm = _x select 2;
+		private _currentMags = _x select 3;
+		private _requestedMags = _x select 4;
+		
+		if (_needRearm) then {
+			systemChat format ["Rearming : %1", _mag call dzn_fnc_getItemDisplayName];
+			if (_requestedMags > _currentMags) then {
+				
+				
+				private _diff = _requestedMags - _currentMags;
+				if (tSF_FARP_Rearm_ResoucesLevel < _diff) then {
+					_diff = tSF_FARP_Rearm_ResoucesLevel;
+					tSF_FARP_Rearm_ResoucesLevel = 0;
+				} else {
+					tSF_FARP_Rearm_ResoucesLevel = tSF_FARP_Rearm_ResoucesLevel - _diff;
+				};
+				
+				// Removing all magazines of type (to remove non full magazines too)
+				for "_i" from 0 to (_currentMags+1) do {
+					_veh removeMagazineTurret [_mag, _turret];
+				};
+				
+				ADDMAG = [_currentMags, _diff];
+				// Adding magazines (return full mags and difference between requested and actual)
+				for "_i" from 1 to (_currentMags + _diff) do {					
+					_veh addMagazineTurret [_mag, _turret];
+				};
+				
+				systemChat format ["Rearming : %1 : Added x%2", _mag call dzn_fnc_getItemDisplayName, _diff];
+			} else {			
+				private _diff = _currentMags - _requestedMags;
+				tSF_FARP_Rearm_ResoucesLevel = tSF_FARP_Rearm_ResoucesLevel + _diff;
+				
+				for "_i" from 1 to _diff do {
+					_veh removeMagazineTurret [_mag, _turret];
+				};
+
+				systemChat format ["Rearming : %1 : Removed x%2", _mag call dzn_fnc_getItemDisplayName, _diff];
+			};
+		};	
+	} forEach _rearmList;	
+	
+	
+	/*
 	if (_needRearm) then {
 		private _setMagazines = [];	// List of [MagClass, TurretPath]
 		systemChat "Rearm";
@@ -422,9 +523,10 @@ tSF_fnc_FARP_ProcessService = {
 				_setMagazines pushBack [_x select 0, _x select 1];				
 			};			
 		} forEach (magazinesAllTurrets _veh);
+		
 		publicVariable "tSF_FARP_Rearm_ResoucesLevel";
 	};
-	
+	*/
 };
 
 
