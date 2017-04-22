@@ -213,7 +213,7 @@ tSF_fnc_FARP_showMenu = {
 			_farpMenu pushBack [_farpMenuLine,"LABEL", format["<t align='left'>Ammunition</t><t align='right'>%1%2</t>", [magazinesAllTurrets _x, _fullLoadout] call tSF_fnc_FARP_countFullMagazinesRatio, "%"] ];
 			
 			if (_x getVariable ["tSF_FARP_OnSerivce", false]) then {
-				_farpMenu pushBack [_farpMenuLine,"LABEL", "Servicing..."];
+				_farpMenu pushBack [_farpMenuLine,"LABEL", format ["Servicing... (%1 s)", _x getVariable ["tSF_FARP_ServicingTimeLeft", 0]]];
 			
 			} else {			
 				_farpMenu pushBack [_farpMenuLine,"BUTTON", "<t align='center'>SERVICE</t>", compile format ["closeDialog 2; [] spawn { sleep 0.05; (FARP_Vehicles select %1) call tSF_fnc_FARP_showServiceMenu; }", _forEachIndex] ];
@@ -359,6 +359,7 @@ tSF_fnc_FARP_ProcessService = {
 	
 	_veh setVariable ["tSF_FARP_OnSerivce", true, true];
 	
+	private _sleepTime = 0;
 	private _needRepair = false;
 	private _repairLevelRequested = 0;
 	
@@ -442,7 +443,7 @@ tSF_fnc_FARP_ProcessService = {
 			publicVariable "tSF_FARP_Repair_ResoucesLevel";
 		};
 		
-		sleep (if (tSF_FARP_Repair_ProportionalMode) then { tSF_FARP_Repair_TimeMultiplier * _repairDiff } else { tSF_FARP_Repair_TimeMultiplier });
+		_sleepTime = _sleepTime + (if (tSF_FARP_Repair_ProportionalMode) then { tSF_FARP_Repair_TimeMultiplier * _repairDiff } else { tSF_FARP_Repair_TimeMultiplier });
 	};	
 	
 	if (_needRefuiling) then {
@@ -463,7 +464,7 @@ tSF_fnc_FARP_ProcessService = {
 		
 		_veh setFuel (_currentFuelLevel + _fuelDiff);
 		
-		sleep (if (tSF_FARP_Refuel_ProportionalMode) then { tSF_FARP_Refuel_TimeMultiplier * _fuelDiff } else { tSF_FARP_Refuel_TimeMultiplier });
+		_sleepTime = _sleepTime +  (if (tSF_FARP_Refuel_ProportionalMode) then { tSF_FARP_Refuel_TimeMultiplier * _fuelDiff } else { tSF_FARP_Refuel_TimeMultiplier });
 	};
 	
 	if (_needRearmTotal) then {
@@ -518,10 +519,29 @@ tSF_fnc_FARP_ProcessService = {
 		
 		if (tSF_FARP_Rearm_ResoucesLevel >= 0) then { publicVariable "tSF_FARP_Rearm_ResoucesLevel" };
 		
-		sleep (if (tSF_FARP_Rearm_ProportionalMode) then { tSF_FARP_Rearm_TimeMultiplier * _diff } else { tSF_FARP_Rearm_TimeMultiplier });
+		_sleepTime = _sleepTime +  (if (tSF_FARP_Rearm_ProportionalMode) then { tSF_FARP_Rearm_TimeMultiplier * _diff } else { tSF_FARP_Rearm_TimeMultiplier });
 	};
 	
-	_veh setVariable ["tSF_FARP_OnSerivce", false, true];
+	_veh setVariable ["tSF_FARP_ServicingTimeLeft", _sleepTime, true];
+	_veh spawn {
+		// VEH1 = _this;
+		// private _ehid = addMissionEventHandler ["EachFrame", { VEH1 setVelocity [0,0,0]; VEH1 engineOn false}];
+	
+		while { (_this getVariable "tSF_FARP_ServicingTimeLeft") > 0 } do {
+			sleep 5;
+			
+			_this setVariable [
+				"tSF_FARP_ServicingTimeLeft"
+				, if ((_this getVariable "tSF_FARP_ServicingTimeLeft") - 5 < 0) then { 0 } else { (_this getVariable "tSF_FARP_ServicingTimeLeft") - 5 }
+				, true
+			];
+		};
+		
+		_this setVariable ["tSF_FARP_ServicingTimeLeft", 0, true];
+		_this setVariable ["tSF_FARP_OnSerivce", false, true];
+		
+		// removeMissionEventHandler ["EachFrame", _ehid];
+	};	
 };
 
 
