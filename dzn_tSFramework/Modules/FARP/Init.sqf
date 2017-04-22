@@ -1,6 +1,6 @@
 FARP_Init = "IN PROGRESS";
 
-tSF_fnc_FARP_VehiclesDefaultLoadout = [];
+tSF_FARP_VehicleDefaultLoadouts = [];
 
 if (isNil "tsf_FARP") exitWith { diag_log "tSF: No FARP allowed zones were set!" };
 
