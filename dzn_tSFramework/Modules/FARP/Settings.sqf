@@ -3,7 +3,7 @@ tSF_FARP_Composition			= "NATO HEMMT RFA";	// Name of default composition; See '
 
 
 // General availability of assets
-tSF_FARP_Repair_Allowed			= false;
+tSF_FARP_Repair_Allowed			= true;
 tSF_FARP_Refuel_Allowed			= true;
 tSF_FARP_Rearm_Allowed			= true;
 
