@@ -220,8 +220,12 @@ tSF_CCP_HandleProgressBar = {
 		CCP_bar ctrlCommit 0;
 	};
 
-	["<t align='center'>Medical Aid</t>", [16,22.5, 16, 0.033], [0,0,0,0],  "!(player getVariable 'tSF_CCP_isHealing')"] call dzn_fnc_ShowMessage;
-
+	[
+		"<t align='center' shadow='2' font='PuristaMedium'>MEDICAL AID</t>"
+		, [1,18.5,74,0.04], [0,0,0,0]
+		, "!(player getVariable 'tSF_CCP_isHealing')"
+	] call dzn_fnc_ShowMessage;
+	
 	for "_i" from 0 to CCP_bar_max do {
 		(uiNamespace getVariable "CCP_bar") progressSetPosition CCP_bar_progress;
 		(uiNamespace getVariable "CCP_bar") ctrlCommit 0;
