@@ -62,7 +62,7 @@ tSF_fnc_FARP_createFARP_Client = {
 			_x
 			, "<t color='#9bbc2f' size='1.2'>Serve vehicles</t>"
 			, { [] spawn tSF_fnc_FARP_showMenu; }
-			, 5
+			, 8
 			, "true"
 			, 6
 		] call dzn_fnc_addAction;
@@ -120,7 +120,53 @@ tSF_fnc_FARP_countMagazines = {
 	_magazines
 };
  
-tSF_fnc_FARP_showMenu = {
+
+tSF_fnc_FARP_spawnAssets = {
+	params["_assetId","_assetName","_assetsList"];
+	
+	if (_assetName == "RENEW KIT") exitWith {
+		call compile preprocessFile "dzn_gear\Kits.sqf";
+		player setVariable ["tSF_FARP_RenewGearInProgress", true, true];
+		
+		[
+			player
+			, selectRandom["HubStandingUC_idle1","HubStandingUB_idle1"]
+			, "player getVariable 'tSF_FARP_RenewGearInProgress'"
+			, true
+		] spawn dzn_fnc_playAnimLoop;
+		
+		[
+			"<t align='center' shadow='2' font='PuristaMedium'>RENEWING GEAR</t>"
+			, [1,18.5,74,0.04], [0,0,0,0]
+			, "!(player getVariable 'tSF_FARP_RenewGearInProgress')"
+		] call dzn_fnc_ShowMessage;
+		
+		[
+			1,tSF_FARP_Assets_RenewKitTime,1
+			,"BOTTOM"
+			, {				
+				0 cutText ["", "WHITE OUT", 0.1];
+				sleep 0.5;
+				player setVariable ["tSF_FARP_RenewGearInProgress", false, true];
+				[player, player getVariable "dzn_gear"] call dzn_fnc_gear_assignKit;	
+				sleep 0.5;
+				0 cutText ["", "WHITE IN", 1];
+			}
+		] spawn dzn_fnc_ShowProgressBar;
+	};
+	
+	if ((_assetsList select _assetId) in ["ACE_Wheel","ACE_Track"]) then {
+		hint format ["%1 asset deployed", _assetName];
+		private _pos = ((tSF_FARP_Objects select { typeOf _x == "Land_CampingTable_F" }) select 0) modelToWorld [0,0.3,1];	
+		private _asset = (_assetsList select _assetId) createVehicle _pos;
+		_asset setPosATL _pos;
+	} else {
+		hint format ["%1 asset added to equipment box", _assetName];
+		tSF_FARP_EquipmentBox addItemCargoGlobal [(_assetsList select _assetId),1];
+	};
+};
+ 
+ tSF_fnc_FARP_showMenu = {
 	private _repairLabel 	= "<t color='#dd3333'>Not available</t>";
 	private _refuelLabel 	= "<t color='#dd3333'>Not available</t>";
 	private _rearmLabel 		= "<t color='#dd3333'>Not available</t>";	
@@ -219,6 +265,40 @@ tSF_fnc_FARP_showMenu = {
 			_farpMenuLine = _farpMenuLine + 1;
 		} forEach tSF_FARP_Vehicles;
 	};
+	
+	
+	/*
+	 *	Assets
+	 */
+		
+	private _assets = tSF_FARP_Assets_BasicList apply { _x };	
+	private _assetsNames = tSF_FARP_Assets_BasicList apply { toUpper(_x call dzn_fnc_getItemDisplayName) };
+	
+	if (tSF_FARP_Assets_AllowNVG) then {
+		_assets pushBack "NVGoggles_OPFOR";
+		_assetsNames pushBack "NVG";
+	};
+	
+	if (tSF_FARP_Assets_AllowPrimayMagazine) then {
+		_assets pushBack (getArray(configFile >> "CfgWeapons" >> primaryWeapon player >> "magazines") select 0);
+		_assetsNames pushBack ((getArray(configFile >> "CfgWeapons" >> primaryWeapon player >> "magazines") select 0) call dzn_fnc_getItemDisplayName);
+	};
+	
+	if (tSF_FARP_Assets_AllowRenewKit) then {
+		// player getVariable "dzn_gear"
+		if (!isNil {player getVariable "dzn_gear"}) then {
+			_assets pushBack "dzn_gear_kit";
+			_assetsNames pushBack "RENEW KIT";
+		};
+	};
+	
+	_farpMenu pushBack [_farpMenuLine, "LABEL",""];
+	_farpMenu pushBack [_farpMenuLine + 1, "HEADER","<t align='center'>ASSETS DISPENSER</t>"];
+	
+	_farpMenu pushBack [_farpMenuLine + 2, "LABEL","Select asset"];
+	_farpMenu pushBack [_farpMenuLine + 2, "LISTBOX", _assetsNames, _assets];
+	_farpMenu pushBack [_farpMenuLine + 2, "BUTTON","<t align='center'>REQUEST</t>", { (_this select 0) spawn tSF_fnc_FARP_spawnAssets; closeDialog 2;}];	
+	
 	_farpMenu call dzn_fnc_ShowAdvDialog;
 };
 
@@ -401,6 +481,7 @@ tSF_fnc_FARP_ProcessService = {
 				};
 				
 				_veh setHitPointDamage [_x select 0, 1 - (_currHealth + _repairDiff), true];
+				if (tSF_FARP_Repair_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Repair_TimeMultiplier*(100*_repairDiff*_hitpointsWeight); };
 			};
 		} forEach _hitpoints;
 		
@@ -409,7 +490,7 @@ tSF_fnc_FARP_ProcessService = {
 			publicVariable "tSF_FARP_Repair_ResoucesLevel";
 		};
 		
-		_sleepTime = _sleepTime + (if (tSF_FARP_Repair_ProportionalMode) then { tSF_FARP_Repair_TimeMultiplier * _repairDiff } else { tSF_FARP_Repair_TimeMultiplier });
+		if !(tSF_FARP_Repair_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Repair_TimeMultiplier; }
 	};	
 	
 	if (_needRefuiling) then {
@@ -430,12 +511,14 @@ tSF_fnc_FARP_ProcessService = {
 		
 		_veh setVariable ["tSF_FARP_FuelToLoad", _currentFuelLevel + _fuelDiff, true];
 		
-		_sleepTime = _sleepTime +  (if (tSF_FARP_Refuel_ProportionalMode) then { tSF_FARP_Refuel_TimeMultiplier * _fuelDiff } else { tSF_FARP_Refuel_TimeMultiplier });
+		_sleepTime = _sleepTime +  (if (tSF_FARP_Refuel_ProportionalMode) then { tSF_FARP_Refuel_TimeMultiplier * _fuelDiff*100 } else { tSF_FARP_Refuel_TimeMultiplier });
 	};	
 	
 	if (_needRearmTotal) then {
-		private _diff = 0;
+		
 		{
+			private _diff = 0;
+			
 			private _mag = _x select 0;
 			private _turret = _x select 1;
 			private _needRearm = _x select 2;
@@ -479,15 +562,17 @@ tSF_fnc_FARP_ProcessService = {
 
 					systemChat format ["Rearming : %1 : Removed x%2", _mag call dzn_fnc_getItemDisplayName, _diff];
 				};
+				
+				if (tSF_FARP_Rearm_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Rearm_TimeMultiplier * _diff };
 			};	
 		} forEach _rearmList;
 		
-		if (tSF_FARP_Rearm_ResoucesLevel >= 0) then { publicVariable "tSF_FARP_Rearm_ResoucesLevel" };
-		
-		_sleepTime = _sleepTime + (if (tSF_FARP_Rearm_ProportionalMode) then { tSF_FARP_Rearm_TimeMultiplier * _diff } else { tSF_FARP_Rearm_TimeMultiplier });
+		if (tSF_FARP_Rearm_ResoucesLevel >= 0) then { publicVariable "tSF_FARP_Rearm_ResoucesLevel" };		
+		if !(tSF_FARP_Rearm_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Rearm_TimeMultiplier; }
 	};
 	
 	_veh setVariable ["tSF_FARP_ServicingTimeLeft", _sleepTime, true];
+	hint format ["Vehicle will be serviced in %1 seconds", _sleepTime];
 	_veh spawn {
 		while { (_this getVariable "tSF_FARP_ServicingTimeLeft") > 0 } do {
 			sleep 5;
