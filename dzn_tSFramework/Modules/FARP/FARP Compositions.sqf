@@ -1,5 +1,6 @@
 
 #define	EQUIP_BOX_CODE	missionNamespace setVariable ["tSF_FARP_EquipmentBox",_this, true]; clearItemCargoGlobal _this; sleep 2; _this enableSimulation true
+
 tSF_FARP_Compositions = [
 
 	[
