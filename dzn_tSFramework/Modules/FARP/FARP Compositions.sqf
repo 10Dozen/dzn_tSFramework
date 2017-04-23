@@ -1,6 +1,5 @@
 
-#define	EQUIP_BOX_CODE	missionNamespace setVariable ["tSF_FARP_EquipmentBox",_this, true]; clearItemCargoGlobal _this; sleep 2; _this enableSimulation true
-
+#define	EQUIP_BOX_CODE	missionNamespace setVariable ["tSF_FARP_EquipmentBox",_this, true]; clearItemCargoGlobal _this; sleep 2; _this enableSimulationGlobal true
 tSF_FARP_Compositions = [
 
 	[
@@ -25,34 +24,6 @@ tSF_FARP_Compositions = [
 			,["RoadCone_F",141.182,5.356,359.999,0.024,false,{},true]
 			,["RoadCone_F",97.5375,3.592,359.999,0.024,false,{},true]
 			,["RoadCone_F",47.4087,5.395,359.999,0.024,false,{},true]
-		]
-	]
-	,[
-		"FARP HEMTT NATO"
-		, [
-			["B_Truck_01_ammo_F",344.909,12.64,0,-0.01,false,{},true]
-			,["B_Truck_01_fuel_F",97.2404,9.221,184.683,-0.01,false,{},true]
-			,["B_Truck_01_Repair_F",5.11885,11.839,1.063,-0.005,false,{},true]
-			
-			,["ACE_Wheel",21.4821,7.061,0.948,0.028,false,{},true]
-			,["ACE_Wheel",21.9095,7.017,1.805,0.339,false,{},true]
-			,["ACE_Wheel",31.8056,7.941,0.175,0.028,false,{},true]
-			,["ACE_Wheel",31.5062,7.806,0.512,0.339,false,{},true]
-			
-			,["Land_RedWhitePole_F",50.2153,9.68,359.946,0.024,false,{},true]
-			,["Land_RedWhitePole_F",318.5,8.388,359.942,0.024,false,{},true]
-			,["Land_RedWhitePole_F",230.834,7.086,0.254,0.024,false,{},true]
-			,["Land_RedWhitePole_F",122.025,7.899,0.137,0.024,false,{},true]
-			,["RoadCone_F",100.839,7.024,360,0.024,false,{},true]
-			,["RoadCone_F",81.2633,7.165,360,0.024,false,{},true]
-			,["RoadCone_F",62.7593,7.902,360,0.024,false,{},true]
-			
-			,["Land_Pallet_MilBoxes_F",323.392,8.055,0,0,false,{},true]
-			,["Land_CanisterPlastic_F",30.3557,9.105,274.663,0.024,false,{},true]
-			,["Land_WeldingTrolley_01_F",16.8076,10.926,0.002,0.024,false,{},true]
-			,["Land_CampingTable_F",23.1396,8.51,359.996,0.024,false,{},true]
-			,["Land_CampingChair_V1_F",18.0055,9.512,354.811,0.027,false,{},true]
-			,["Land_CampingTable_F",12.4712,12.08,90.513,0.024,false,{},true]			
 		]
 	]
 
