@@ -12,10 +12,10 @@ tSF_fnc_FARP_drawAllowedAreaMarkers = {
 
 		_mrk setMarkerBrush "SolidBorder";
 		_mrk setMarkerColor "ColorOrange";
-		_mrk setMarkerAlpha 0.8;
+		_mrk setMarkerAlpha 0.25;
 
 		_markers pushBack _mrk;
-	} forEach (synchronizedObjects tsf_FARP);
+	} forEach (synchronizedObjects tSF_FARP);
 
 	_markers
 };
@@ -34,6 +34,7 @@ tSF_fnc_FARP_findMarker = {
 
 	_markerPos
 };
+
 
 
 tSF_fnc_FARP_createFARP_Server = {
@@ -60,7 +61,7 @@ tSF_fnc_FARP_createFARP_Client = {
 	{
 		[
 			_x
-			, "<t color='#9bbc2f' size='1.2'>Serve vehicles</t>"
+			, "<t color='#9bbc2f' size='1.2'>FARP Menu</t>"
 			, { [] spawn tSF_fnc_FARP_showMenu; }
 			, 8
 			, "true"
@@ -131,7 +132,7 @@ tSF_fnc_FARP_spawnAssets = {
 		[
 			player
 			, selectRandom["HubStandingUC_idle1","HubStandingUB_idle1"]
-			, "player getVariable 'tSF_FARP_RenewGearInProgress'"
+			, "_this getVariable 'tSF_FARP_RenewGearInProgress'"
 			, true
 		] spawn dzn_fnc_playAnimLoop;
 		
@@ -166,7 +167,7 @@ tSF_fnc_FARP_spawnAssets = {
 	};
 };
  
- tSF_fnc_FARP_showMenu = {
+tSF_fnc_FARP_showMenu = {
 	private _repairLabel 	= "<t color='#dd3333'>Not available</t>";
 	private _refuelLabel 	= "<t color='#dd3333'>Not available</t>";
 	private _rearmLabel 		= "<t color='#dd3333'>Not available</t>";	
@@ -211,6 +212,7 @@ tSF_fnc_FARP_spawnAssets = {
 	
 	if (tSF_FARP_Vehicles isEqualTo []) then {
 		_farpMenu pushBack [_farpMenuLine, "LABEL", "<t align='center'>NO VEHICLES</t>"];
+		_farpMenuLine = _farpMenuLine + 1;
 	} else {
 		{
 			private _classname = typeOf _x;
@@ -266,11 +268,7 @@ tSF_fnc_FARP_spawnAssets = {
 		} forEach tSF_FARP_Vehicles;
 	};
 	
-	
-	/*
-	 *	Assets
-	 */
-		
+	// Assets
 	private _assets = tSF_FARP_Assets_BasicList apply { _x };	
 	private _assetsNames = tSF_FARP_Assets_BasicList apply { toUpper(_x call dzn_fnc_getItemDisplayName) };
 	
@@ -366,6 +364,7 @@ tSF_fnc_FARP_showServiceMenu = {
 		, "BUTTON", "<t align='center' font='PuristaBold'>SERVICE</t>"
 		, { 
 			[tSF_FARP_Servicing_Vehicle, _this] spawn tSF_fnc_FARP_ProcessService;
+			hint "Vehicle servicing started";
 			closeDialog 2; 
 		}
 	];
@@ -394,8 +393,12 @@ tSF_fnc_FARP_ProcessService = {
 				8...9 (MAG3)
 			]
 		]
-	*/
+	*/	
 	params["_veh", "_dialogResult"];
+	
+	if !(local _veh) exitWith {	
+		_this remoteExec ["tSF_fnc_FARP_ProcessService", _veh];
+	};
 	
 	_veh setVariable ["tSF_FARP_OnSerivce", true, true];	
 	private _sleepTime = 0;
@@ -449,6 +452,7 @@ tSF_fnc_FARP_ProcessService = {
 	_veh setVelocity [0,0,0];
 	_veh setFuel 0;
 	
+	
 	if (_needRepair) then {	
 		private _hitPointsDamages = getAllHitPointsDamage _veh;
 		
@@ -463,7 +467,6 @@ tSF_fnc_FARP_ProcessService = {
 		};
 		private _hitpointsWeight = 1/(count _hitpoints);
 		
-		systemChat "Repairing";
 		private _repairDiff = 0;
 		{
 			private _currHealth = 1 - (_x select 1);
@@ -493,9 +496,7 @@ tSF_fnc_FARP_ProcessService = {
 		if !(tSF_FARP_Repair_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Repair_TimeMultiplier; }
 	};	
 	
-	if (_needRefuiling) then {
-		systemChat "Refuiling";
-		
+	if (_needRefuiling) then {		
 		private _currentFuelLevel = fuel _veh;
 		private _fuelDiff = _fuelLevelRequested - _currentFuelLevel;
 		
@@ -526,7 +527,6 @@ tSF_fnc_FARP_ProcessService = {
 			private _requestedMags = _x select 4;
 			
 			if (_needRearm) then {
-				systemChat format ["Rearming : %1", _mag call dzn_fnc_getItemDisplayName];
 				if (_requestedMags > _currentMags) then {
 					_diff = _requestedMags - _currentMags;
 					if (tSF_FARP_Rearm_ResoucesLevel >= 0) then {
@@ -547,8 +547,6 @@ tSF_fnc_FARP_ProcessService = {
 					for "_i" from 1 to (_currentMags + _diff) do {
 						_veh addMagazineTurret [_mag, _turret];
 					};
-					
-					systemChat format ["Rearming : %1 : Added x%2", _mag call dzn_fnc_getItemDisplayName, _diff];
 				} else {			
 					_diff = _currentMags - _requestedMags;
 					
@@ -559,8 +557,6 @@ tSF_fnc_FARP_ProcessService = {
 					for "_i" from 1 to _diff do {
 						_veh removeMagazineTurret [_mag, _turret];
 					};
-
-					systemChat format ["Rearming : %1 : Removed x%2", _mag call dzn_fnc_getItemDisplayName, _diff];
 				};
 				
 				if (tSF_FARP_Rearm_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Rearm_TimeMultiplier * _diff };
@@ -571,8 +567,7 @@ tSF_fnc_FARP_ProcessService = {
 		if !(tSF_FARP_Rearm_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Rearm_TimeMultiplier; }
 	};
 	
-	_veh setVariable ["tSF_FARP_ServicingTimeLeft", _sleepTime, true];
-	hint format ["Vehicle will be serviced in %1 seconds", _sleepTime];
+	_veh setVariable ["tSF_FARP_ServicingTimeLeft", round(_sleepTime), true];	
 	_veh spawn {
 		while { (_this getVariable "tSF_FARP_ServicingTimeLeft") > 0 } do {
 			sleep 5;
@@ -584,7 +579,11 @@ tSF_fnc_FARP_ProcessService = {
 			];
 		};
 		
-		_this setFuel (_this getVariable "tSF_FARP_FuelToLoad");
+		if (local _this) then {
+			_this setFuel (_this getVariable "tSF_FARP_FuelToLoad");
+		} else {
+			[_this, _this getVariable "tSF_FARP_FuelToLoad"] remoteExec ["setFuel", _this];
+		};
 		
 		_this setVariable ["tSF_FARP_ServicingTimeLeft", nil, true];
 		_this setVariable ["tSF_FARP_FuelToLoad", nil, true];
@@ -592,138 +591,3 @@ tSF_fnc_FARP_ProcessService = {
 		_this setVariable ["tSF_FARP_OnSerivce", false, true];
 	};
 };
-
-
-
-
-/*
-
-[
-configfile >> "CfgWeapons" >> "CUP_Vgmg_MK19_veh" >> "magazines"
-
-configfile >> "CfgMagazines" >> "CUP_96Rnd_40mm_MK19_M" >> "displayName"
-configfile >> "CfgMagazines" >> "CUP_96Rnd_40mm_MK19_M" >> "count"
-
-
-"CUP_Vgmg_MK19_veh" call dzn_fnc_getItemDisplayName
-
-"CUP_96Rnd_40mm_MK19_M" call dzn_fnc_getItemDisplayName
-"CUP_32Rnd_40mm_MK19_M" call dzn_fnc_getItemDisplayName
-
-https://community.bistudio.com/wiki/allTurrets		vehicle weaponsTurret turretPath
-
-
-getArray (configfile >> "CfgWeapons" >> "CUP_Vgmg_MK19_veh" >> "magazines")
-getNumber (configfile >> "CfgMagazines" >> "CUP_96Rnd_40mm_MK19_M" >> "count")
-
-	["CUP_Vgmg_MK19_veh","CUP_Vhmg_M2_AAV_Noeject"]
-	
-	["CUP_96Rnd_40mm_MK19_M",[0],0,1.00002e+007,0]
-	,["CUP_96Rnd_40mm_MK19_M",[0],0,1.00002e+007,0]
-	,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-	,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-	,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-	,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-	,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-	,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-	,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00002e+007,0]
-	,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00002e+007,0]
-	,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
-	,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
-	,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
-	,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
-	,["SmokeLauncherMag",[1],2,1.00003e+007,0]
-	,["SmokeLauncherMag",[1],2,1.00003e+007,0]
-]
-
-
-magazinesAllTurrets vehicle player;
-
-[
-["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-,["CUP_96Rnd_40mm_MK19_M",[0],96,1.00002e+007,0]
-,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00002e+007,0]
-,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00002e+007,0]
-,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
-,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
-,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
-,["CUP_200Rnd_TE1_Red_Tracer_127x99_M",[0],200,1.00003e+007,0]
-,["SmokeLauncherMag",[1],2,1.00003e+007,0]
-,["SmokeLauncherMag",[1],2,1.00003e+007,0]]
-
-[
-	["HitHull","HitEngine","HitLTrack","HitRTrack","HitFuel","","","","","HitTurret","HitGun","HitTurret","HitGun","HitTurret","HitGun","HitTurret","HitGun","HitTurret","HitGun","HitTurret","HitGun","HitTurret","HitGun","HitTurret","HitGun"]
-	,["","","pas_l","pas_p","engine_hit","light_l","light_l","light_r","light_r","main_turret","main_gun","","","","","","","","","","","","","",""]
-	,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-]
-
-[
-["hitwindshield_1","hitwindshield_2","HitGlass1","HitGlass2","HitGlass3","HitGlass4","HitGlass5","HitGlass6","HitBody","hitfuel","HitLFWheel","HitRFWheel","HitLF2Wheel","HitRF2Wheel","HitEngine","HitHull","HitRGlass","HitLGlass","HitLBWheel","HitLMWheel","HitRBWheel","HitRMWheel","","","","","","","","","HitTurret","HitGun","HitTurret","HitGun","HitTurret","HitGun","HitTurret","HitGun"]
-,["windshield_1","windshield_2","glass1","glass2","glass3","glass4","","","vehicle","fuel","wheel_1","wheel_2","wheel_3","wheel_4","engine","","","","","","","","light_hd_1","light_hd_2","light_hd_1","light_hd_2","light_hd_1","light_hd_2","light_hd_2","light_hd_1","","","","","","","",""]
-,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-]
-
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\FARP\Functions.sqf";
-(vehicle player) call tSF_fnc_FARP_ProcessService
-
-
-
-
-tSF_fnc_FARP_showFARPMenu = {
-	[
-		[0, "HEADER", "FARP Menu"]
-		
-		,[1, "HEADER", "<t align='center' font='PuristaBold'>AVAILABLE RESOURCES</t>"]
-		,[2, "LABEL", "<t align='right'>Fuel</t>"]
-		,[2, "LABEL", "200"]
-		,[3, "LABEL", "<t align='right'>Ammo</t>"]
-		,[3, "LABEL", "120"]
-		,[4, "LABEL", "<t align='right'>Repair</t>"]
-		,[4, "LABEL", "69"]	
-		
-		,[5, "HEADER", "<t align='center' font='PuristaBold'>VEHICLES ON FARP</t>"]		
-		
-		,[6,"LABEL", "M1035 HMWWV (M2)"]		
-		,[7,"LABEL", "Damage"]
-		,[7,"LABEL", "25"]
-		,[7,"LABEL", "Fuel"]
-		,[7,"LABEL", "72"]
-		,[7,"LABEL", "Ammo"]
-		,[7,"LABEL", "62"]
-		,[7,"BUTTON", "<t align='center'>SERVICE</t>", { hint 'Serviced'; }]
-	
-	] call dzn_fnc_ShowAdvDialog;
-	
-	
-	[
-		[0, "HEADER", "FARP - M1035 HMWWV (M2) Vehicle Menu"]
-		
-		,[1, "LABEL", "Repair"]
-		,[1,"CHECKBOX"]
-		,[1,"SLIDER",[0,100,75]]
-		
-		,[2, "LABEL", "Fuel"]
-		,[2,"CHECKBOX"]
-		,[2,"SLIDER",[0,100,72]]
-		
-		,[3, "LABEL", "Ammo"]
-		,[3,"CHECKBOX"]
-		,[3,"SLIDER",[0,100,72]]
-		
-		,[4,"BUTTON","SERVE", { hint 'SERVE' }]
-		,[4,"LABEL",""]
-		,[4,"LABEL",""]
-		,[4,"BUTTON","CANCEL", { closeDialog 2; }]
-	] call dzn_fnc_ShowAdvDialog
-
-	
-	
-};
-
-*/
