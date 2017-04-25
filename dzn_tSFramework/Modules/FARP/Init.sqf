@@ -86,5 +86,12 @@ if (isServer) then {
 			
 			publicVariable "tSF_FARP_Position";
 		};
-	};		
+	};
+	
+	"tSF_FARP_MakeOwner" addPublicVariableEventHandler {
+		private _owner = _this select 1 select 0;
+		private _obj = _this select 1 select 1;
+		
+		_obj setOwner _owner;
+	};
 };
