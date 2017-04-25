@@ -1,5 +1,4 @@
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\InteractivesACE\Settings.sqf";
-
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ACEActions\Settings.sqf";
 
 tSF_ACEActions_addAction = {
 	params ["_type","_name","_id","_node","_code","_cond"];
