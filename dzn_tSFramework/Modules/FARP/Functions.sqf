@@ -68,8 +68,6 @@ tSF_fnc_FARP_createFARP_Client = {
 			, 6
 		] call dzn_fnc_addAction;
 	} forEach tSF_FARP_Objects;
-
-	player setVariable ["tSF_CCP_forceHealing", false];
 };
 
 /*
