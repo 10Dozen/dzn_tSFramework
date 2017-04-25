@@ -49,7 +49,7 @@ tSF_fnc_FARP_createFARP_Server = {
 	tSF_FARP_Objects = [[_pos, _dir], _composition] call dzn_fnc_setComposition;
 	tSF_FARP_Objects apply { _x lock true };
 
-	publicVariable "tSF_CCP_Objects";
+	publicVariable "tSF_FARP_Objects";
 };
 
 
@@ -363,9 +363,9 @@ tSF_fnc_FARP_showServiceMenu = {
 		_farpMenuLine + 1
 		, "BUTTON", "<t align='center' font='PuristaBold'>SERVICE</t>"
 		, { 
-			[tSF_FARP_Servicing_Vehicle, _this] spawn tSF_fnc_FARP_ProcessService;
 			hint "Vehicle servicing started";
 			closeDialog 2; 
+			[tSF_FARP_Servicing_Vehicle,  _this] spawn tSF_fnc_FARP_RunService;			
 		}
 	];
 	_farpServiceMenu pushBack [_farpMenuLine + 1, "LABEL", ""];
@@ -374,6 +374,25 @@ tSF_fnc_FARP_showServiceMenu = {
 
 	_farpServiceMenu call dzn_fnc_ShowAdvDialog;
 };
+
+
+tSF_fnc_FARP_RunService = {
+	params ["_veh","_data"];
+	
+	_veh setVariable ["tSF_FARP_ServiceData", _data];
+	{ moveOut _x; } forEach (crew _veh);
+	_veh lock true;
+	
+	tSF_FARP_MakeOwner = [clientOwner, _veh];
+	publicVariableServer "tSF_FARP_MakeOwner";
+	
+	waitUntil {sleep 1; local _veh};
+	{ moveOut _x; } forEach (crew _veh);
+	_veh lock true;
+	
+	_veh spawn tSF_fnc_FARP_ProcessService;
+};
+
 
 tSF_fnc_FARP_ProcessService = {
 	/*
@@ -393,12 +412,9 @@ tSF_fnc_FARP_ProcessService = {
 				8...9 (MAG3)
 			]
 		]
-	*/	
-	params["_veh", "_dialogResult"];
-	
-	if !(local _veh) exitWith {	
-		_this remoteExec ["tSF_fnc_FARP_ProcessService", _veh];
-	};
+	*/
+	private _veh = _this;
+	private _dialogResult = _this getVariable "tSF_FARP_ServiceData";
 	
 	_veh setVariable ["tSF_FARP_OnSerivce", true, true];	
 	private _sleepTime = 0;
@@ -589,5 +605,7 @@ tSF_fnc_FARP_ProcessService = {
 		_this setVariable ["tSF_FARP_FuelToLoad", nil, true];
 		
 		_this setVariable ["tSF_FARP_OnSerivce", false, true];
+		
+		[_this, false] remoteExec ["lock"];
 	};
 };
