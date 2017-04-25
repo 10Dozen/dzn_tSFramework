@@ -10,9 +10,9 @@ tSF_fnc_CCP_drawAllowedAreaMarkers = {
 		_mrk setMarkerSize [_trgArea select 0, _trgArea select 1];
 		_mrk setMarkerDir (_trgArea select 2);
 
-		_mrk setMarkerBrush "FDiagonal";
+		_mrk setMarkerBrush "SolidBorder";
 		_mrk setMarkerColor "ColorKhaki";
-		_mrk setMarkerAlpha 0.8;
+		_mrk setMarkerAlpha 0.5;
 
 		_markers pushBack _mrk;
 	} forEach (synchronizedObjects tsf_CCP);
