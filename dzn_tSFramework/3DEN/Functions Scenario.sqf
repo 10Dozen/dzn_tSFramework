@@ -39,29 +39,51 @@ dzn_fnc_tSF_3DEN_AddBaseTrg = {
 	};
 };
 
-dzn_fnc_tSF_3DEN_AddCCP = {
-	collect3DENHistory {	
-		if !(isNull dzn_tSF_3DEN_CCP) exitWith { 
-			"tSF Tools - CCP already exists" call dzn_fnc_tSF_3DEN_ShowWarn;
+
+dzn_fnc_tSF_3DEN_AddSupportPoint = {	
+	private ["_objectVarName", "_objectName", "_displayName"];
+	switch (toUpper _this) do {
+		case "CCP": {
+			_objectVarName = "dzn_tSF_3DEN_CCP";
+			_objectName = "tSF_CCP";
+			_displayName = "CCP";
 		};
-		
-		private _pos = screenToWorld [0.5,0.5];
-		dzn_tSF_3DEN_CCP = create3DENEntity ["Logic","Logic", _pos];
-		private _ccpZone = create3DENEntity [
-			"Trigger"
-			,"EmptyDetectorAreaR250"
-			, [ (_pos select 0) + 50, _pos select 1, 0 ]
+		case "FARP": {
+			_objectVarName = "dzn_tSF_3DEN_FARP";
+			_objectName = "tSF_FARP";
+			_displayName = "FARP";
+		}
+	};	
+	collect3DENHistory {
+		XC =  format ["
+			if !(isNull %1) exitWith {
+				'tSF Tools - %3 already exists' call dzn_fnc_tSF_3DEN_ShowWarn;
+			};
+			
+			private _pos = screenToWorld [0.5,0.5];
+			%1 = create3DENEntity ['Logic','Logic', _pos];
+			private _zone = create3DENEntity [
+				'Trigger'
+				, 'EmptyDetectorAreaR250'
+				, [ (_pos select 0) + 50, _pos select 1, 0 ]
+			];
+			
+			%1 set3DENAttribute ['Name', '%2'];
+			
+			call dzn_fnc_tSF_3DEN_createTSFLayer;
+			%1 set3DENLayer dzn_tSF_3DEN_tSFLayer;
+			_zone set3DENLayer dzn_tSF_3DEN_tSFLayer;
+			add3DENConnection ['Sync', [%1],_zone];
+			do3DENAction 'ToggleMap';
+			
+			'tSF Tools - %3 was created' call dzn_fnc_tSF_3DEN_ShowNotif;
+			"
+			, _objectVarName
+			, _objectName
+			, _displayName
 		];
 		
-		dzn_tSF_3DEN_CCP set3DENAttribute ["Name", "tSF_CCP"];
-		
-		call dzn_fnc_tSF_3DEN_createTSFLayer;
-		dzn_tSF_3DEN_CCP set3DENLayer dzn_tSF_3DEN_tSFLayer;
-		_ccpZone set3DENLayer dzn_tSF_3DEN_tSFLayer;
-		
-		add3DENConnection ["Sync", [dzn_tSF_3DEN_CCP],_ccpZone];
-		do3DENAction "ToggleMap";
-		"tSF Tools - CCP was created" call dzn_fnc_tSF_3DEN_ShowNotif;
+		call compile XC;
 	};
 };
 
