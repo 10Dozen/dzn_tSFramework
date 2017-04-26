@@ -162,11 +162,20 @@ tSF_fnc_CCP_doMedicateAction = {
 			,"Acts_LyingWounded_loop2"
 			,"Acts_LyingWounded_loop3"
 		])
-	] call tSF_CCP_RunLoopAnimationGlobal;
-	[] spawn tSF_CCP_HandleProgressBar;
-
+		, "_this getVariable 'tSF_CCP_isHealing'"
+		, true
+	] spawn dzn_fnc_playAnimLoop;
+	
+	[
+		"<t align='center' shadow='2' font='PuristaMedium'>MEDICAL AID</t>"
+		, [1,18.5,74,0.04], [0,0,0,0]
+		, "!(player getVariable 'tSF_CCP_isHealing')"
+	] call dzn_fnc_ShowMessage;
+	
+	[1, (tSF_CCP_TimeToHeal + tSF_CCP_TimeToHold), 1, "BOTTOM", {}, 10] spawn dzn_fnc_ShowProgressBar;
+	
+	
 	0 cutText ["", "WHITE IN", 1];
-
 	sleep tSF_CCP_TimeToHeal;
 
 	[player,player] call ace_medical_fnc_treatmentAdvanced_fullHealLocal;
@@ -179,6 +188,7 @@ tSF_fnc_CCP_doMedicateAction = {
 
 	0 cutText ["", "WHITE OUT", 0.1];
 	sleep 2;
+	
 	detach player;
 	deleteVehicle _stretcher;
 	0 cutText ["", "WHITE IN", 1];
@@ -188,52 +198,6 @@ tSF_fnc_CCP_doMedicateAction = {
 		, (_ccp getVariable "tSF_CCP_UsedStretcherPositions") - [_playerPos select 0]
 		, true
 	];
-};
-
-tSF_CCP_RunLoopAnimationGlobal = {
-	_this remoteExec ["tSF_CCP_LoopAnimation"];
-};
-
-tSF_CCP_LoopAnimation = {
-	params["_u","_animation"];
-
-	while {_u getVariable "tSF_CCP_isHealing"} do {
-		if (animationState _u != _animation ) then {
-			_u switchMove _animation;
-			_u playMoveNow _animation;
-		};
-	};
-
-	_u switchMove "" ;
-};
-
-tSF_CCP_HandleProgressBar = {
-	CCP_bar_progress = 0;
-	CCP_bar_max = tSF_CCP_TimeToHeal + tSF_CCP_TimeToHold;
-	CCP_bar_step = 1/CCP_bar_max;
-
-	with uiNamespace do {
-		CCP_bar = findDisplay 46 ctrlCreate ["RscProgress", -1];
-		CCP_bar ctrlSetPosition [0,.8,1,0.05];
-
-		CCP_bar progressSetPosition 0.0;
-		CCP_bar ctrlCommit 0;
-	};
-
-	[
-		"<t align='center' shadow='2' font='PuristaMedium'>MEDICAL AID</t>"
-		, [1,18.5,74,0.04], [0,0,0,0]
-		, "!(player getVariable 'tSF_CCP_isHealing')"
-	] call dzn_fnc_ShowMessage;
-	
-	for "_i" from 0 to CCP_bar_max do {
-		(uiNamespace getVariable "CCP_bar") progressSetPosition CCP_bar_progress;
-		(uiNamespace getVariable "CCP_bar") ctrlCommit 0;
-		sleep 1;
-		CCP_bar_progress = CCP_bar_progress + CCP_bar_step;
-	};
-
-	ctrlDelete (uiNamespace getVariable "CCP_bar");
 };
 
 tSF_fnc_CCP_healUnconcious = {
