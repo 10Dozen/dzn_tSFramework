@@ -47,7 +47,8 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[tSF] Add Zeus"			, { call dzn_fnc_tSF_3DEN_AddZeus }]	
 	*/
 		,["[tSF] Add Base Trigger"			, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
-		,["[tSF] Add CCP"				, { call dzn_fnc_tSF_3DEN_AddCCP }]	
+		,["[tSF] Add CCP"				, { "CCP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
+		,["[tSF] Add FARP"				, { "FARP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
 		,[" "						, { }]	
 		
 	];
@@ -109,6 +110,7 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 		, "dzn_tSF_3DEN_Zeus"
 		, "dzn_tSF_3DEN_BaseTrg"
 		, "dzn_tSF_3DEN_CCP"
+		, "dzn_tSF_3DEN_FARP"
 		, "dzn_tSF_3DEN_SupportReturnPointCore"
 		, "dzn_tSF_3DEN_ScnearioLogic"
 		, "dzn_tSF_3DEN_CoverMap"
@@ -133,6 +135,7 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 				,["dzn_tSF_3DEN_BaseTrg"			, "baseTrg" ]
 				,["dzn_tSF_3DEN_Zeus"			, "tSF_Zeus" ]
 				,["dzn_tSF_3DEN_CCP"				, "tSF_CCP" ]
+				,["dzn_tSF_3DEN_FARP"			, "tSF_FARP" ]
 				,["dzn_tSF_3DEN_SupportReturnPointCore"	, "tSF_AirborneSupport_ReturnPointCore" ]	
 				,["dzn_tSF_3DEN_ScnearioLogic"		, "tSF_Scenario_Logic" ]
 				,["dzn_tSF_3DEN_CoverMap"			, "tSF_CoverMap" ]
