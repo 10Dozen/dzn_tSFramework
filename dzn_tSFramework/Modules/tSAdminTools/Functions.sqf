@@ -212,8 +212,8 @@ tSF_fnc_adminTools_showGSOScreen = {
 	if !(_pl isEqualTo []) then {
 		_gsoTeleportPositions pushBack (getPosATL (_pl select 0));
 		_gsoTeleportSelections pushBack "PL";		
-		_playerTeleportSelections pushBack (getPosATL (_pl select 0));
-		_playerTeleportPositions pushBack "PL";
+		_playerTeleportPositions pushBack (getPosATL (_pl select 0));
+		_playerTeleportSelections pushBack "PL";
 	};
 	
 	if (tSF_module_CCP && {!isNil "tSF_CCP_Position"}) then {
@@ -299,7 +299,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 				"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
 				<br /> Kit '%1' was assigned to %2"
 				, _kit
-				, roleDescription _u
+				, name _u
 			];		
 		}]
 		
