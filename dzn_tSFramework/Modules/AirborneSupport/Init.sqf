@@ -7,12 +7,13 @@ call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\
 if (hasInterface) then {
 	[] spawn {
 		waitUntil { !isNil "tSF_AirborneSupport_Vehicles" && { !(tSF_AirborneSupport_Vehicles isEqualTo []) } };
-		waitUntil { !isNil "tSF_ACEActions_addAction" };
+		waitUntil { !isNil "tSF_fnc_ACEActions_addAction" };
 		
 		{ _x call tSF_fnc_AirborneSupport_processVehicleClient } forEach tSF_AirborneSupport_Vehicles;
 	
 		if (
-			player call tSF_fnc_AirborneSupport_isAuthorizedUser
+			/* player call tSF_fnc_AirborneSupport_isAuthorizedUser */
+			true
 		) then {
 			tSF_AirborneSupport_ACEActions = [
 				["SELF", "Radio (Support)", "tsf_radio_support", "", {}, { true }]		
@@ -42,7 +43,7 @@ if (hasInterface) then {
 				];
 			};
 			
-			tSF_AirborneSupport_ACEActions call tSF_ACEActions_processActionList;
+			tSF_AirborneSupport_ACEActions call tSF_fnc_ACEActions_processActionList;
 		};
 	};
 };
