@@ -7,7 +7,7 @@ call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\
 if (hasInterface) then {
 	[] spawn {
 		waitUntil { !isNil "tSF_AirborneSupport_Vehicles" && { !(tSF_AirborneSupport_Vehicles isEqualTo []) } };
-		waitUntil { !isNil "tSF_IACE_addAction" };
+		waitUntil { !isNil "tSF_ACEActions_addAction" };
 		
 		{ _x call tSF_fnc_AirborneSupport_processVehicleClient } forEach tSF_AirborneSupport_Vehicles;
 	
