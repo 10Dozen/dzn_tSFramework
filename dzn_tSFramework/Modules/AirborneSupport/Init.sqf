@@ -43,7 +43,7 @@ if (hasInterface) then {
 				];
 			};
 			
-			tSF_AirborneSupport_ACEActions call tSF_IACE_processActionList;
+			tSF_AirborneSupport_ACEActions call tSF_ACEActions_processActionList;
 		};
 	};
 };
