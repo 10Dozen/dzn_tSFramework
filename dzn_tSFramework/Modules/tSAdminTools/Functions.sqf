@@ -321,8 +321,28 @@ tSF_fnc_adminTools_showGSOScreen = {
 			hint format ["%1 healed", name _u];
 		}]
 		
-		, [14, "LABEL", ""]
-		, [14, "LABEL", ""]
+		, [14, "BUTTON", "DEPLOY TACTICAL PIPE", {
+			if (!isNil "tSF_WaterPipe") then {
+				{ deleteVehicle _x; } forEach tSF_WaterPipe;
+			};
+			
+			tSF_WaterPipe = [ player, [
+				["Land_Water_pipe_EP1",73.3514,1.536,0,0,false,{},true]
+				,["Land_ChairPlastic_F",116.533,1.172,274.331,0.024,false,{},true]
+				,["Land_ChairPlastic_F",79.6645,2.365,195.455,0.024,false,{},true]
+				,["Land_Carpet_2_EP1",29.6481,1.748,62.135,0,false,{},true]
+			]] call dzn_fnc_setComposition;
+		}]
+		, [14, "BUTTON", "NVG TO ALL PLAYERS", {
+			[] spawn {
+				hint "All players NVG assignment started";
+				{
+					[_x, "NVGoggles_OPFOR"] remoteExec ["addWeapon",_x];
+					sleep 0.2;
+				} forEach (call BIS_fnc_listPlayers);
+				hint "All players NVG assignment  done";	
+			};
+		}]
 		, [14, "BUTTON", "HEAL ALL PLAYERS", {
 			[] spawn {
 				hint "All players healing started";
