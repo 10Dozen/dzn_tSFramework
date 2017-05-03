@@ -114,6 +114,7 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 		, "dzn_tSF_3DEN_SupportReturnPointCore"
 		, "dzn_tSF_3DEN_ScnearioLogic"
 		, "dzn_tSF_3DEN_CoverMap"
+		, "dzn_tSF_3DEN_Headless"
 		
 		, "dzn_tSF_3DEN_UnitsLayer"
 		, "dzn_tSF_3DEN_tSFLayer"
@@ -139,6 +140,7 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 				,["dzn_tSF_3DEN_SupportReturnPointCore"	, "tSF_AirborneSupport_ReturnPointCore" ]	
 				,["dzn_tSF_3DEN_ScnearioLogic"		, "tSF_Scenario_Logic" ]
 				,["dzn_tSF_3DEN_CoverMap"			, "tSF_CoverMap" ]
+				,["dzn_tSF_3DEN_Headless"			, "HC"]
 				
 				,["dzn_tSF_3DEN_tSFLayer"			, "tSF Layer" ]
 				,["dzn_tSF_3DEN_DynaiLayer"			, "DynAI Layer" ]
