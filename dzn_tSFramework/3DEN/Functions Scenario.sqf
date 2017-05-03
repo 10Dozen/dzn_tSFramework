@@ -113,7 +113,6 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 		};
 	};
 	
-	tsd = _scenarioData;
 	private _result = [
 		"Scenario Settings"
 		, _form
@@ -134,7 +133,8 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 		
 		tSF_3DEN_SummaryText = _summary;
 		call dzn_fnc_tSF_3DEN_AddScenarioLogic;
-		call dzn_fnc_tSF_3DEN_CoverMap;
+		call dzn_fnc_tSF_3DEN_AddCoverMap;
+		call dzn_fnc_tSF_3DEN_AddHeadlessClient;
 		
 		set3DENMissionAttributes [
 			["Scenario","IntelBriefingName", _title]
@@ -191,7 +191,7 @@ dzn_fnc_tSF_3DEN_AddScenarioLogic = {
 	};
 }; 
 
-dzn_fnc_tSF_3DEN_CoverMap = {
+dzn_fnc_tSF_3DEN_AddCoverMap = {
 	if !(isNull dzn_tSF_3DEN_CoverMap) exitWith {};
 	
 	collect3DENHistory {
@@ -202,7 +202,6 @@ dzn_fnc_tSF_3DEN_CoverMap = {
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
 		dzn_tSF_3DEN_CoverMap set3DENLayer dzn_tSF_3DEN_MiscLayer;
 	};
-
 };
 
 dzn_fnc_tSF_3DEN_AddHeadlessClient = {
