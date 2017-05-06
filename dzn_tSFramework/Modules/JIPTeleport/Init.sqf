@@ -11,30 +11,36 @@ if (hasInterface && call dzn_tSF_JIPTeleport_isJIP) exitWith {
 		"tSF_JIPTeleport_Action"
 		, [
 			player
-			, "<t color='#EDB81A'>JIP Teleport</t>"
+			, "<t size='1.25' color='#EDB81A'>JIP Teleport</t>"
 			, {
 				player removeAction (player getVariable "tSF_JIPTeleport_Action");
 				player setVariable ["tSF_JIPTeleport_Action", nil];
 				
-				private _u = if (leader (group player) == player) then {
-					(units (group player) select 1)
+				private _u = objNull;
+				private _grpUnits = units (group player);
+				if (_grpUnits isEqualTo [] || count _grpUnits < 2 ) then {
+					hint "Sorry, you are the only one, so wait for GSO to teleport you.";
 				} else {
-					leader (group player)
-				};
-				
-				private _pos = _u modelToWorldVisual tSF_JIPTeleport_RelativePos;
-				_pos set [2, 0];
+					_u = if (leader (group player) == player) then {
+						( _grpUnits - [leader (group player)] ) select 0
+					} else {
+						leader (group player)
+					};
+					
+					private _pos = _u modelToWorldVisual tSF_JIPTeleport_RelativePos;
+					_pos set [2, 0];
 
-				[_pos] spawn {
-					player allowDamage false;
-					
-					sleep 1;					
-					moveOut player;
-					player setPosATL (_this select 0);
-					
-					sleep 1;
-					player allowDamage true;				
-				};			
+					[_pos] spawn {
+						player allowDamage false;
+						
+						sleep 1;					
+						moveOut player;
+						player setPosATL (_this select 0);
+						
+						sleep 1;
+						player allowDamage true;				
+					};
+				};
 			}
 		] call dzn_fnc_addAction
 	];

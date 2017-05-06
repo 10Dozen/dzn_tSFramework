@@ -1,7 +1,7 @@
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\InteractivesACE\Settings.sqf";
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ACEActions\Settings.sqf";
 
 
-tSF_IACE_addAction = {
+tSF_fnc_ACEActions_addAction = {
 	params ["_type","_name","_id","_node","_code","_cond"];
 	
 	private _action = [
@@ -28,9 +28,7 @@ tSF_IACE_addAction = {
 		_actionType = 0;
 	};	
 	
-	if (_node != "") then {
-		_path pushBack _node;	
-	};
+	if (_node != "") then { _path pushBack _node; };
 	
 	{
 		call compile format [
@@ -44,17 +42,17 @@ tSF_IACE_addAction = {
 	} forEach _classes;
 };
 
-tSF_IACE_processActionList = {
+tSF_fnc_ACEActions_processActionList = {
 	private _list = [];
 	
 	{if (_x select 3 == "") then {_list pushBack _x;};} forEach _this;
 	private _orderedList = _list + (_this - _list);
 	
-	{_x call tSF_IACE_addAction;} forEach _orderedList;
+	{_x call tSF_fnc_ACEActions_addAction;} forEach _orderedList;
 };
 
 if (hasInterface) then {
-	waitUntil {time > tSF_IACE_Timeout};
+	waitUntil {time > tSF_ACEActions_Timeout};
 	
-	tSF_IACE_Actions call tSF_IACE_processActionList;
+	tSF_ACEActions_Actions call tSF_fnc_ACEActions_processActionList;
 };

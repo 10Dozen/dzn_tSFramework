@@ -1,6 +1,6 @@
 ![img](http://tacticalshift.ru/tsf_10d.png)
 ------
-##### Version: 1.8
+##### Version: 1.9
 Tactical Shift Framework
 
 ##### Getting Started
@@ -18,6 +18,9 @@ Framework to apply custom code to specific objects or classes on client/server/b
 
 ##### CCP
 Casualties Collection Point module allows to set CCP during the briefing. At CCP players may be healed after some time (ACE3). 
+
+##### FARP
+Forward Area Refueling/Rearming Point module allows to set FARP during the briefing. At FARP vehicles may be rearmed, refueled and repaired after some time.
 
 ##### Intro Text
 Shows formatted intro text for each player.
