@@ -268,7 +268,7 @@ tSF_fnc_AirborneSupport_checkVehicleFree = {
 			_result = (_veh distance2d (_veh getVariable "tSF_AirborneSupport_RTBPoint") > 200);
 		};
 		case "callin": {
-			_result = true;
+			_result = (isNull (driver _veh));
 		};
 		case "pickup": {
 			_result = true;
