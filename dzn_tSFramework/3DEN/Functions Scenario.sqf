@@ -210,6 +210,7 @@ dzn_fnc_tSF_3DEN_AddHeadlessClient = {
 	collect3DENHistory {
 		dzn_tSF_3DEN_Headless = create3DENEntity ["Logic","HeadlessClient_F",screenToWorld [0.7,0.7]];
 		dzn_tSF_3DEN_Headless set3DENAttribute ["Name", "HC"];
+		dzn_tSF_3DEN_Headless set3DENAttribute ["ControlMP", true];
 		
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
 		dzn_tSF_3DEN_Headless set3DENLayer dzn_tSF_3DEN_MiscLayer;
