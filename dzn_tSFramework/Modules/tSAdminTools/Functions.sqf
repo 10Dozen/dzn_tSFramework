@@ -11,7 +11,7 @@ tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay = {
 	if (isNull (findDisplay 312)) then {
 		tSF_adminTools_MenuAddedToZeus = false;
 	} else {
-		if !(tSF_adminTools_MenuAddedToZeus) then {
+		if (isNil "tSF_adminTools_MenuAddedToZeus" || !tSF_adminTools_MenuAddedToZeus) then {
 			(findDisplay 312) displayAddEventHandler ["KeyUp", {
 				if (tSF_adminTools_isKeyPressed) exitWith {};				
 				private _key = _this select 1;
