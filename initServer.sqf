@@ -2,12 +2,17 @@
  *	You can change MissionDate to some specific date to override date set in mission editor:
  *		format:		[@Year, @Month, @Day, @Hours, @Minutes] (e.g. [2012, 12, 31, 12, 45])
  */
- 
+private _time = ;
+
 MissionDate = [
 	date select 0
 	, date select 1
 	, date select 2
-	, if ("par_daytime" call BIS_fnc_getParamValue == 0) then {10+round(random 4)} else {21+round(random 8)}
+	, switch ("par_daytime" call BIS_fnc_getParamValue) do {
+		case 0: { 10 + round(random 4) };
+		case 1: { 21 + round(random 8) };
+		case 2: { round(random 24) };
+	}
 	, selectRandom [0,10,15,20,25,30,40,45,50]
 ];
 publicVariable "MissionDate";
