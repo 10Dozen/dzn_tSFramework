@@ -10,10 +10,10 @@ tSF_Diag_AddDiagTopic = {
 	call tSF_Diag_Dynai_CollectData;
 };
 
-tSF_Diag_TSF_CollectTotalData = {	
+tSF_Diag_TSF_CollectTotalData = {		
 	private _formatDate = {
 		#define	STR_DATE(X)		if (count str(X) == 1) then { "0" + str(X) } else { str(X) }
-		format[tSF_Intro_LineText1, STR_DATE(MissionDate select 2), STR_DATE(MissionDate select 1), MissionDate select 0	]
+		format["%1/%2/%3", STR_DATE(MissionDate select 2), STR_DATE(MissionDate select 1), MissionDate select 0]
 	};
 	
 	private _topicHead = format[
