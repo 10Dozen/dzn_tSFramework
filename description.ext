@@ -17,9 +17,9 @@ class Params
 	class par_daytime
 	{
 	    title = "Время суток";
-	    values[] = {0,1};
+	    values[] = {0,1,2};
 	    default = 0;
-	    texts[] = {"День","Ночь"};
+	    texts[] = {"День","Ночь", "Случайно"};
 	};
 	class par_weather
 	{
