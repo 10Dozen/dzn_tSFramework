@@ -2,8 +2,6 @@
  *	You can change MissionDate to some specific date to override date set in mission editor:
  *		format:		[@Year, @Month, @Day, @Hours, @Minutes] (e.g. [2012, 12, 31, 12, 45])
  */
-private _time = ;
-
 MissionDate = [
 	date select 0
 	, date select 1
