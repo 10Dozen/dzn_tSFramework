@@ -17,9 +17,9 @@ class Params
 	class par_daytime
 	{
 	    title = "Время суток";
-	    values[] = {0,1};
+	    values[] = {0,1,2};
 	    default = 0;
-	    texts[] = {"День","Ночь"};
+	    texts[] = {"День","Ночь", "Случайно"};
 	};
 	class par_weather
 	{
@@ -48,7 +48,17 @@ class Params
 		title = "---- dzn DynAI Settings ---------"; 
 		values[] = {0};
 		texts[] = {""};
-	};	
+	};
+	class par_dynai_enableGroupResponse
+	{
+		title = "     Group Response system";
+		values[] = {0,1};
+		default = 1;
+		texts[] = {
+			"Disabled"
+			, "Enabled"
+		};
+	};
 	class par_dynai_amountMultiplier
 	{
 		title = "     Group Amount Multiplier";
