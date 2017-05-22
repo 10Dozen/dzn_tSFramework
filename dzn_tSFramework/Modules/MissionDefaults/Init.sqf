@@ -8,7 +8,8 @@ if (tSF_MissionDefaults_AddPlayerRating) then { player addRating 1000000; };
 
 if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 	[] spawn {
-		if (!isNil "tSF_DEBUG" && { tSF_DEBUG }) exitWith {};
+		// Exit if admin or singleplayer
+		if (serverCommandAvailable "#logout" || !(isMultiplayer) || isServer ) exitWith {};
 		waitUntil { time > 0 };
 		
 		player enableSimulation false;
