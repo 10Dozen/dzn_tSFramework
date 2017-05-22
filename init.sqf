@@ -1,5 +1,5 @@
-tSF_DEBUG = true;
 
+//	Tacitcal Shift Framework initialization
 [] spawn {
 	waitUntil { !isNil "MissionDate" };
 	// dzn Gear 	(set true to engage Edit mode)
