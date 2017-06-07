@@ -26,18 +26,18 @@ if (hasInterface) then {
 		] spawn BIS_fnc_typeText;
 	};
 
-
 	if !(tSF_Intro_ShowCurrentTime) exitWith {};
-	
-	private _GetFormattedTime = {
-		private _hrs = floor (daytime);
-		private _min = str( floor ((daytime - _hrs) * 60));
-		if (count (_min) == 1) then {
-			_min = "0" + _min;
-		};
-		
-		( format ["%1:%2", str(_hrs), _min] )
-	};
-	
-	tSF_Intro_LineText1 = format ["%1 %2", call _GetFormattedTime, tSF_Intro_LineText1];
+	tSF_Intro_LineText1 = format [
+		"%1 %2"
+		, call {
+			private _hrs = MissionDate select 3;
+			private _min = MissionDate select 4;
+			if (count (_min) == 1) then {
+				_min = "0" + _min;
+			};
+
+			( format ["%1:%2", str(_hrs), _min] )
+		}
+		, tSF_Intro_LineText1
+	];
 };
