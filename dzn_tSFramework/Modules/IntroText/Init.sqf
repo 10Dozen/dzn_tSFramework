@@ -31,7 +31,7 @@ if (hasInterface) then {
 		"%1 %2"
 		, call {
 			private _hrs = MissionDate select 3;
-			private _min = MissionDate select 4;
+			private _min = str(MissionDate select 4);
 			if (count (_min) == 1) then {
 				_min = "0" + _min;
 			};
