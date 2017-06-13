@@ -61,6 +61,8 @@ if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 				
 				{
 					private _mrkUserID = parseNumber ( (_x select [15,10]) splitString "/" select 0 );
+					if (isNil "_mrkUserID") exitWith {};
+					
 					private _userIDs = PlayerConnectedData select { _x select 1 == getPlayerUID player && _x select 2 == name player };
 					
 					private _isOwned = false;
@@ -85,7 +87,7 @@ if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 							[format ["<t size='0.8'>@Calc: %1", _result], [26,43,33,.027], [0,0,0,.5]] call dzn_fnc_ShowMessage;						
 						};
 					
-					};			
+					};
 				} forEach _diff;
 			};
 		};
