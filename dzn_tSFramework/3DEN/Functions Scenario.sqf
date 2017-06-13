@@ -82,7 +82,7 @@ dzn_fnc_tSF_3DEN_AddSupportPoint = {
 			];
 			
 			%1 set3DENAttribute ['Name', '%2'];
-			%1 set3DENAttribute ['Init', 'tSF_CCP_Composition = ""%4""'];
+			%1 set3DENAttribute ['Init', 'tSF_%3_Composition = ""%4""'];
 			
 			call dzn_fnc_tSF_3DEN_createTSFLayer;
 			%1 set3DENLayer dzn_tSF_3DEN_tSFLayer;
