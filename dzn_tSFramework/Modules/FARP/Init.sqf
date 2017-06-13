@@ -2,7 +2,7 @@ tSF_FARP_VehicleDefaultLoadouts = [];
 
 if (isNil "tSF_FARP") exitWith { diag_log "tSF: No FARP allowed zones were set!" };
 
-private _editorSetComposition = tSF_FARP_Composition;
+private _editorSetComposition = if (isNil "tSF_FARP_Composition") then { "" } else { tSF_FARP_Composition };
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\FARP\FARP Compositions.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\FARP\Settings.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\FARP\Functions.sqf";
