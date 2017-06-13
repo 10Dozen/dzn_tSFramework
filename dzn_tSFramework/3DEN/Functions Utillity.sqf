@@ -12,6 +12,12 @@ dzn_tSF_3DEN_onKeyPress = {
 			if (_ctrl) then { [] spawn dzn_fnc_tSF_3DEN_ShowTool; };
 			_handled = true;
 		};
+		// Q
+		case 16: {
+			dzn_tSF_3DEN_keyIsDown = true;
+			call dzn_fnc_tSF_3DEN_snapToSurface;
+			_handled = true;
+		}
 	};
 	
 	[] spawn { sleep 1; dzn_tSF_3DEN_keyIsDown = false; };
@@ -287,6 +293,12 @@ dzn_fnc_tSF_3DEN_GetCargoSeats = {
 		, nil
 		, 7, 0.2, 0
 	] spawn BIS_fnc_textTiles;
+};
+
+
+dzn_fnc_tSF_3DEN_snapToSurface = {	
+	do3DENAction "LevelWithSurface";
+	do3DENAction "SnapToSurface";
 };
 
 /*
