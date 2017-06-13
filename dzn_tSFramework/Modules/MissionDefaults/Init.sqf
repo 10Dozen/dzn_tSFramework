@@ -63,6 +63,28 @@ if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 			private _diff = allMapMarkers - tSF_MissionDefaults_Calculator_MarkersLast;
 			
 			{
+				// Phonetic alphabet
+				if (tSF_MissionDefaults_EnableMarkerPhoneticAutocompletion) then {
+					if (["_", markerText _x] call BIS_fnc_inString) then {
+						private _parts = (markerText _x) splitString "_";
+						private _count = count(_parts select 0);
+						
+						private _phonetic = (tSF_MissionDefaults_PhoneticAlphabet select {
+							toUpper(_x select [0,1]) == toUpper((_parts select 0) select [_count - 1,1])						
+						}) select 0;
+						
+						private _updatedText = format [
+							"%1%2%3"
+							, (_parts select 0) select [0, _count - 1]
+							, _phonetic
+							, if (!isNil {_parts select 1}) then { _parts select 1 } else { "" }
+						];
+						
+						_x setMarkerText _updatedText;
+					};			
+				};
+				
+				// Calculator
 				private _mrkUserID = parseNumber ( (_x select [15,10]) splitString "/" select 0 );
 				private _userIDs = PlayerConnectedData select { _x select 1 == getPlayerUID player && _x select 2 == name player };
 				
