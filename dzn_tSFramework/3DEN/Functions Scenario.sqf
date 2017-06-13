@@ -41,21 +41,34 @@ dzn_fnc_tSF_3DEN_AddBaseTrg = {
 
 
 dzn_fnc_tSF_3DEN_AddSupportPoint = {	
-	private ["_objectVarName", "_objectName", "_displayName"];
+	private ["_objectVarName", "_objectName", "_displayName","_list"];
 	switch (toUpper _this) do {
 		case "CCP": {
 			_objectVarName = "dzn_tSF_3DEN_CCP";
 			_objectName = "tSF_CCP";
 			_displayName = "CCP";
+			call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\CCP\CCP Compositions.sqf";
+			_list = tSF_CCP_Compositions apply { _x select 0 };
 		};
 		case "FARP": {
 			_objectVarName = "dzn_tSF_3DEN_FARP";
 			_objectName = "tSF_FARP";
-			_displayName = "FARP";
-		}
-	};	
+			_displayName = "FARP";			
+			call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\FARP\FARP Compositions.sqf";
+			_list = tSF_FARP_Compositions apply { _x select 0 };
+		};
+	};
+	
+	_list pushBack "";	
+	private _compositionName = _list select (
+		([
+			format["tSF Tool - %1", _displayName]
+			, [[format ["%1 type", _displayName], _list]]
+		] call dzn_fnc_3DEN_ShowChooseDialog) select 0
+	);
+	
 	collect3DENHistory {
-		XC =  format ["
+		private _code = format ["
 			if !(isNull %1) exitWith {
 				'tSF Tools - %3 already exists' call dzn_fnc_tSF_3DEN_ShowWarn;
 			};
@@ -69,6 +82,7 @@ dzn_fnc_tSF_3DEN_AddSupportPoint = {
 			];
 			
 			%1 set3DENAttribute ['Name', '%2'];
+			%1 set3DENAttribute ['Init', 'tSF_CCP_Composition = ""%4""'];
 			
 			call dzn_fnc_tSF_3DEN_createTSFLayer;
 			%1 set3DENLayer dzn_tSF_3DEN_tSFLayer;
@@ -76,14 +90,15 @@ dzn_fnc_tSF_3DEN_AddSupportPoint = {
 			add3DENConnection ['Sync', [%1],_zone];
 			do3DENAction 'ToggleMap';
 			
-			'tSF Tools - %3 was created' call dzn_fnc_tSF_3DEN_ShowNotif;
+			'tSF Tools - %3 was created (%4)' call dzn_fnc_tSF_3DEN_ShowNotif;
 			"
 			, _objectVarName
 			, _objectName
 			, _displayName
+			, _compositionName
 		];
 		
-		call compile XC;
+		call compile _code;
 	};
 };
 
