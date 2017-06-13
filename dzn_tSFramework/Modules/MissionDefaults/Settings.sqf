@@ -21,3 +21,16 @@ tSF_MissionDefaults_AddPlayerRating	= true;
  *	Turns on in-game calculator (via markers like '@12 + 2*4')
  */
 tSF_MissionDefaults_EnableCutieCalc	= true;
+
+/*
+ *	Marker Phonetic Autocompletion
+ */
+tSF_MissionDefaults_EnableMarkerPhoneticAutocompletion	= true;
+tSF_MissionDefaults_PhoneticAlphabet = [
+	"Alpha"
+	,"Bravo"
+	,"Charlie"
+	,"Delta"
+	,"Echo"
+	,"Foxtrot"
+];
