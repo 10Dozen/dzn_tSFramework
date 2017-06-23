@@ -3,7 +3,9 @@
 #include "Functions DynAI.sqf";
 #include "Functions tSF.sqf";
 #include "Functions Scenario.sqf";
-#include "Squads and Platoons Structures.sqf"
+#include "Functions Compositions.sqf";
+#include "Squads and Platoons Structures.sqf";
+#include "Compositions.sqf";
 
 // 313 is Eden Display
 disableSerialization;
