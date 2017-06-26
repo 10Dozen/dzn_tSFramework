@@ -4,9 +4,11 @@
 
 if (isNil "tsf_CCP") exitWith { diag_log "No CCP allowed zones were set!" };
 
+private _editorSetComposition = if (isNil "tSF_CCP_Composition") then { "" } else { tSF_CCP_Composition };
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\CCP\Settings.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\CCP\CCP Compositions.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\CCP\Functions.sqf";
+if (_editorSetComposition != "") then { tSF_CCP_Composition = _editorSetComposition; };
 
 if (hasInterface) then {
 	"tSF_CCP_showNotAllowedText" addPublicVariableEventHandler {

@@ -21,3 +21,21 @@ tSF_MissionDefaults_AddPlayerRating	= true;
  *	Turns on in-game calculator (via markers like '@12 + 2*4')
  */
 tSF_MissionDefaults_EnableCutieCalc	= true;
+
+/*
+ *	Marker Phonetic Autocompletion
+ */
+tSF_MissionDefaults_EnableMarkerPhoneticAutocompletion	= true;
+tSF_MissionDefaults_PhoneticAlphabet = [
+	"Alpha"	,"Bravo"	,"Charlie"	,"Delta"	,"Echo"	,"Foxtrot"	
+	,"Golf"	,"Hotel"	,"India"	,"Juliett"	,"Kilo"	,"Lima"	
+	,"Mike"	,"November"	,"Oscar"	,"Papa"	,"Quebec"	,"Romeo"	
+	,"Sierra"	,"Tango"	,"Uniform"	,"Victor"	,"Whiskey"	,"X-ray"	
+	,"Yankee"	,"Zulu"
+	
+	,"Анна"	,"Борис"	,"Василий"	,"Григорий"	,"Дмитрий"	,"Елена"
+	,"Женя"	,"Зоя"	,"Иван"	,"Константин"	,"Леонид"	,"Михаил"
+	,"Николай"	,"Ольга"	,"Павел"	,"Роман"	,"Семен"	,"Татьяна"
+	,"Ульяна"	,"Федор"	,"Харитон"	,"Цапля"	,"Чайка"	,"Шура"
+	,"Щука"	,"Эхо"	,"Юрий"	,"Яков"
+];

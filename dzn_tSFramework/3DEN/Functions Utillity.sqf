@@ -12,6 +12,12 @@ dzn_tSF_3DEN_onKeyPress = {
 			if (_ctrl) then { [] spawn dzn_fnc_tSF_3DEN_ShowTool; };
 			_handled = true;
 		};
+		// Q
+		case 16: {
+			dzn_tSF_3DEN_keyIsDown = true;
+			call dzn_fnc_tSF_3DEN_snapToSurface;
+			_handled = true;
+		}
 	};
 	
 	[] spawn { sleep 1; dzn_tSF_3DEN_keyIsDown = false; };
@@ -49,6 +55,7 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[tSF] Add Base Trigger"			, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
 		,["[tSF] Add CCP"				, { "CCP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
 		,["[tSF] Add FARP"				, { "FARP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
+		,["Add Artillery Composition"		, { call dzn_fnc_tSF_3DEN_ShowArtilleryCompositionMenu }]
 		,[" "						, { }]	
 		
 	];
@@ -289,6 +296,12 @@ dzn_fnc_tSF_3DEN_GetCargoSeats = {
 	] spawn BIS_fnc_textTiles;
 };
 
+
+dzn_fnc_tSF_3DEN_snapToSurface = {	
+	do3DENAction "LevelWithSurface";
+	do3DENAction "SnapToSurface";
+};
+
 /*
  *	Dialog Function
  */
@@ -512,7 +525,7 @@ dzn_fnc_3DEN_ShowChooseDialog = {
 	_okButton ctrlSetBackgroundColor [0.67,0.81,0.22, 1];
 	_okButton ctrlSetPosition [OK_BUTTON_X, _yCoord, OK_BUTTON_WIDTH, 0.75*OK_BUTTON_HEIGHT];
 	_okButton ctrlCommit 0;
-	_okButton ctrlSetEventHandler ["ButtonClick", "missionNamespace setVariable ['dzn_ChooseDialog_Result', 1]; closeDialog 1;"];
+	_okButton ctrlSetEventHandler ["ButtonClick", "missionNamespace setVariable ['dzn_ChooseDialog_Result', 1]; closeDialog 2;"];
 	_controlCount = _controlCount + 1;
 
 	_cancelButton = _dialog ctrlCreate ["RscButtonMenuCancel", BASE_IDC + _controlCount];

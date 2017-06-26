@@ -94,22 +94,23 @@ dzn_fnc_tSF_3DEN_AddSquadUnits = {
 	
 	{
 		// _x = ["RED - FTL","Corporal"]
-		private _unit = _grp create3DENEntity [
-			"Object"
-			, _infantryClass
-			, [
-				(_basicPos select 0) + ((_squadRelativePoses select _forEachIndex) select 0)
-				, (_basicPos select 1) + ((_squadRelativePoses select _forEachIndex) select 1)		
-				, 0
-			]
-		];
+		if (_forEachIndex > 0) then {
+			_unit = _grp create3DENEntity [
+				"Object"
+				, _infantryClass
+				, [
+					(_basicPos select 0) + ((_squadRelativePoses select _forEachIndex) select 0)
+					, (_basicPos select 1) + ((_squadRelativePoses select _forEachIndex) select 1)		
+					, 0
+				]
+			];
+		};
 		
 		set3DENAttributes [
 			[[_unit], 	"description", 	format [_x select 0, _callsign]]
 			,[[_unit], 	"rank", 		_x select 1]
 			,[[_unit], 	"ControlMP",	 	true]
 		];
-		
 	} forEach _squadSettings;
 	
 	set3DENAttributes [
@@ -118,8 +119,6 @@ dzn_fnc_tSF_3DEN_AddSquadUnits = {
 		,[[_grp], "groupID", if (_callsign == "") then { nil } else { _callsign splitString " " joinString " " }]
 	];
 	_grp set3DENLayer dzn_tSF_3DEN_UnitsLayer;
-	
-	delete3DENEntities [(units _grp select 0)];
 	
 	_grp
 };

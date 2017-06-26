@@ -10,6 +10,7 @@ var defaultTopics = [
 	,["IV. Service Support:", "IV. Поддержка:", ""]
 	,["V. Command & Signal:", "V. Сигналы:", "PL NET 50\n1'1 - SR CH 1\n1'2 - SR CH 2"]
 	,["VI. Mission notes:", "VI. Замечания:", "Powered by Tactical Shift Framework"]
+	,["VII. GSO notes:", "VII. Замечания для GSO:", "-"]
 ];
 
 var textAreaSettings = {
@@ -82,11 +83,24 @@ function getCode() {
 	for (var i = 0; i < topicCount; i++) {
 		var text = ( $($( ".topicData" )[i]).val() ).replace(/(\r\n|\n|\r)/g,"<br />");
 		
+		if (i == topicCount - 1) {
+		topics = topics
+			+ "\nif ((serverCommandAvailable '#logout') || !(isMultiplayer) || isServer) then {"
+			+ "\nTOPIC(\"" + escapeQuotes ( $($( ".topicInput" )[i]).val() ) + "\")"
+			+ "\n\"" +  escapeQuotes(text) + "\""
+			+ "\nEND"
+			+ "\n};\n";
+			
+		} else {
+		
 		topics = topics
 			+ "\nTOPIC(\"" + escapeQuotes ( $($( ".topicInput" )[i]).val() ) + "\")"
 			+ "\n\"" +  escapeQuotes(text) + "\""
 			+ "\nEND\n";
+		}
 	}
+	
+	
 	
 	var endBlock = "\nADD_TOPICS"
 	

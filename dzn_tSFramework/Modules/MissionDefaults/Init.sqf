@@ -51,52 +51,101 @@ if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 	[] spawn {
 		if !(tSF_MissionDefaults_EnableCutieCalc) exitWith {};
 		
-		tSF_MissionDefaults_Calculator_MarkersLast = [];
-		tSF_MissionDefaults_CalculatorCanCheck = true;
-		tSF_MissionDefaults_CalculatorCheck = { tSF_MissionDefaults_CalculatorCanCheck = false; sleep 1; tSF_MissionDefaults_CalculatorCanCheck = true; };
-		
-		tSF_CutieCalc_EH = addMissionEventHandler ["EachFrame", {
-			if !(tSF_MissionDefaults_CalculatorCanCheck) exitWith {};
-			[] spawn tSF_MissionDefaults_CalculatorCheck;
+		private _markersLast = [];
+		while { alive player } do {
+			if (time > 0) then { sleep 1; };
 			
-			if (tSF_MissionDefaults_Calculator_MarkersLast isEqualTo allMapMarkers) exitWith {};
-			private _diff = allMapMarkers - tSF_MissionDefaults_Calculator_MarkersLast;
-			
-			{
-				private _mrkUserID = parseNumber ( (_x select [15,10]) splitString "/" select 0 );
-				private _userIDs = PlayerConnectedData select { _x select 1 == getPlayerUID player && _x select 2 == name player };
+			if !(_markersLast isEqualTo allMapMarkers) then {
+				private _diff = allMapMarkers - _markersLast;
+				_markersLast = allMapMarkers;
 				
-				private _isOwned = false;
 				{
-					if ( [str(_mrkUserID), str(_x select 0)] call dzn_fnc_inString ) exitWith { _isOwned = true };
-				} forEach _userIDs;
-				
-				if (_isOwned) then {
-					private _line = markerText _x;
-					if ( _line select [0,1] == "@" ) then {
-						if !( ((toArray _line) - [
-							64,49,50,51,52,53,54,55,56,57,48,43,45,47,42,46,94
-							,115,105,110,32,99,111,116,97
-						]) isEqualTo [] ) exitWith {
-							systemChat "@Calc: Don't cheat, sweetie! Only math allowed >_<'";
+					private _mrkUserID = parseNumber ( (_x select [15,10]) splitString "/" select 0 );
+					if (isNil "_mrkUserID") exitWith {};
+					
+					private _userIDs = PlayerConnectedData select { _x select 1 == getPlayerUID player && _x select 2 == name player };
+					
+					private _isOwned = false;
+					{
+						if ( [str(_mrkUserID), str(_x select 0)] call dzn_fnc_inString ) exitWith { _isOwned = true };
+					} forEach _userIDs;
+					
+					if (_isOwned) then {
+						private _line = markerText _x;
+						if ( _line select [0,1] == "@" ) then {
+							if !( ((toArray _line) - [
+								64,49,50,51,52,53,54,55,56,57,48,43,45,47,42,46,94
+								,115,105,110,32,99,111,116,97
+							]) isEqualTo [] ) exitWith {
+								systemChat "@Calc: Don't cheat, sweetie! Only math allowed >_<'";
+							};
+							
+							private _result = call compile (_line select [1,count _line]); 
+							
+							systemChat format ["@Calc: %1", _result];
+							deleteMarker _x;
+							[format ["<t size='0.8'>@Calc: %1", _result], [26,43,33,.027], [0,0,0,.5]] call dzn_fnc_ShowMessage;						
 						};
-						
-						hint str(_this);
-						private _result = call compile (_line select [1,count _line]); 
-						
-						systemChat format ["@Calc: %1", _result];
-						[format ["<t size='0.8'>@Calc: %1", _result], [26,43,33,.027], [0,0,0,.5]] call dzn_fnc_ShowMessage;
-						deleteMarker _x;
-				};
-				
-				};
-			} forEach _diff;
-			
-			tSF_MissionDefaults_Calculator_MarkersLast = allMapMarkers;			
-		}];
+					
+					};
+				} forEach _diff;
+			};
+		};
+	};
+	
+	[] spawn {
+		if !(tSF_MissionDefaults_EnableMarkerPhoneticAutocompletion) exitWith {};	
 		
-		waitUntil { sleep 30; !alive player };
-		removeMissionEventHandler ["EachFrame", tSF_CutieCalc_EH];
+		private _markersLast = [];
+		while { alive player } do {
+			if (time > 0) then { sleep 2; };
+			
+			if !(_markersLast isEqualTo allMapMarkers) then {
+				private _diff = allMapMarkers - _markersLast;			
+				_markersLast = allMapMarkers;
+				
+				{
+					private _sign = switch (true) do {
+						case (["_", markerText _x] call dzn_fnc_inString): { "_" };
+						case (["!", markerText _x] call dzn_fnc_inString): { "!" };
+						default { "" };						
+					};
+					
+					if (_sign != "") then {
+						
+						
+						private _parts = (markerText _x) splitString _sign;
+						private _count = count(_parts select 0);
+						
+						private _letter = toUpper (
+							if (toArray ((_parts select 0) select [_count - 1,1]) isEqualTo [65533]) then {
+								(_parts select 0) select [_count - 2,2]
+							} else {
+								(_parts select 0) select [_count - 1,1]
+							}
+						);
+						
+						BBB = _letter;
+						
+						private _phonetic = tSF_MissionDefaults_PhoneticAlphabet select { 
+							if (toArray (_x select [0,1]) isEqualTo [65533]) then {
+								_x select [0,2] == _letter 
+							} else {
+								_x select [0,1] == _letter 
+							}
+						} select 0;
+						if (isNil "_phonetic") exitWith {};					
+						
+						_x setMarkerText format [
+							"%1%2%3"
+							, (_parts select 0) select [0, _count - 1]
+							, _phonetic
+							, if (!isNil {_parts select 1}) then { _parts select 1 } else { "" }
+						];
+					};			
+				} forEach _diff;
+			};
+		};
 	};
 };
 
