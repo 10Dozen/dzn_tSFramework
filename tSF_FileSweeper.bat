@@ -30,7 +30,6 @@ echo Removing tSF Helpers >> tSF_FS_log.txt
 del  /q /f  init3DEN.sqf
 del  /q /f  README.md
 @RD /S /Q dzn_tSFramework\3DEN
-@RD /S /Q dzn_tSFramework\Tools
 @RD /S /Q dzn_tSFramework\Modules\Briefing\BriefingHelper
 @RD /S /Q dzn_tSFramework\Modules\MissionConditions\EndingsHelper
 
