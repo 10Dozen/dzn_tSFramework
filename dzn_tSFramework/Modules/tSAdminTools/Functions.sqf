@@ -189,22 +189,23 @@ dzn_fnc_adminTools_callEndings = {
 };
 
 tSF_fnc_adminTools_addWaterPipeAction = {
-	_x addAction [
-		"Use"
-		, {
-			PP_wetD = ppEffectCreate ["WetDistortion",300];
-			PP_wetD ppEffectEnable true;
-			PP_wetD ppEffectAdjust [3.72,0.13,0.4,2,1,-2,-1,0.04,0.01,0.2,0.2,0,0,0,0];
-			PP_wetD ppEffectCommit 10;
-			sleep 60;
+	_this addAction [
+		"Use Pipe"
+		, {			
+			PP_eff = ppEffectCreate ["WetDistortion",300];
+			PP_eff ppEffectEnable true;
+			PP_eff ppEffectForceInNVG true;
+			PP_eff ppEffectAdjust [5,0,2,0,0,0,0,0,0,0,0,0,0,0,0];
+			PP_eff ppEffectCommit 30;
 			
-			PP_wetD = ppEffectCreate ["WetDistortion",300];
-			PP_wetD ppEffectEnable true;
-			PP_wetD ppEffectAdjust [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-			PP_wetD ppEffectCommit 60;
-			sleep 60;
+			sleep 45;
 			
-			PP_wetD ppEffectEnable false;
+			PP_eff ppEffectAdjust [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+			PP_eff ppEffectCommit 15;
+			
+			sleep 20;
+			
+			ppEffectDestroy PP_eff;
 		}				
 	];
 };
@@ -380,4 +381,3 @@ tSF_fnc_adminTools_showGSOScreen = {
 		}]
 	] call dzn_fnc_ShowAdvDialog;
 };
-
