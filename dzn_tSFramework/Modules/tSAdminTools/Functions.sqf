@@ -188,6 +188,26 @@ dzn_fnc_adminTools_callEndings = {
 	publicVariable "MissionFinished";
 };
 
+tSF_fnc_adminTools_addWaterPipeAction = {
+	_x addAction [
+		"Use"
+		, {
+			PP_wetD = ppEffectCreate ["WetDistortion",300];
+			PP_wetD ppEffectEnable true;
+			PP_wetD ppEffectAdjust [3.72,0.13,0.4,2,1,-2,-1,0.04,0.01,0.2,0.2,0,0,0,0];
+			PP_wetD ppEffectCommit 10;
+			sleep 60;
+			
+			PP_wetD = ppEffectCreate ["WetDistortion",300];
+			PP_wetD ppEffectEnable true;
+			PP_wetD ppEffectAdjust [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+			PP_wetD ppEffectCommit 60;
+			sleep 60;
+			
+			PP_wetD ppEffectEnable false;
+		}				
+	];
+};
 
 /*
  *
@@ -332,6 +352,11 @@ tSF_fnc_adminTools_showGSOScreen = {
 				,["Land_ChairPlastic_F",79.6645,2.365,195.455,0.024,false,{},true]
 				,["Land_Carpet_2_EP1",29.6481,1.748,62.135,0,false,{},true]
 			]] call dzn_fnc_setComposition;
+			
+			publicVariable "tSF_WaterPipe";
+			{
+				(tSF_WaterPipe select 0) call tSF_fnc_adminTools_addWaterPipeAction			
+			} remoteExec ["bis_fnc_call", 0];
 		}]
 		, [14, "BUTTON", "NVG TO ALL PLAYERS", {
 			[] spawn {
@@ -355,3 +380,4 @@ tSF_fnc_adminTools_showGSOScreen = {
 		}]
 	] call dzn_fnc_ShowAdvDialog;
 };
+
