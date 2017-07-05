@@ -1,6 +1,6 @@
 ![img](http://tacticalshift.ru/tsf_10d.png)
 ------
-##### Version: 1.95
+##### Version: 1.96
 Tactical Shift Framework
 
 ##### Getting Started
