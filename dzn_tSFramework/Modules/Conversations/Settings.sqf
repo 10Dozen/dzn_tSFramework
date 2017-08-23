@@ -13,7 +13,7 @@
  *
  *	@Answer (ARRAY):
  *		[ @Label, @CodeToExecute, @Argument, @GoTo ]
- *		0: @Label		- (string) text of the answer button
+ *		0: @Label or [@Code, @Argument]	- (string) text of the answer button or [(code), (any)] code that returns string (argument is available as _this in code)
  *		1: @CodeToExecute	- (code) code to execute on answer selection. Will be spawned after closeDialog 2 command. Variable _this contains [ 0@Object, 1@ConversationName, 2@GoToID, 3@EventID ]
  *		2: @Argument		- (any) argument to use in @CodeToExecute as _this select 4
  *		3: @GoToID		- (number) ID to next @ConversationEvent. -1 to close dialog without transition.
