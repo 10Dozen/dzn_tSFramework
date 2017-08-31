@@ -1,6 +1,6 @@
 // **************************
 //
-// 	DZN TS FRAMEWORK v1.97
+// 	DZN TS FRAMEWORK v1.98
 //
 // **************************
 
@@ -29,6 +29,7 @@ tSF_module_EditorRadioSettings = false;
 tSF_module_POM = true;
 tSF_module_tSAdminTools = true;
 
+tSF_module_Conversations = true;
 
 // **************************
 //  INIT
@@ -54,6 +55,8 @@ tSF_module_tSAdminTools = true;
 	, "EditorUnitBehavior"
 	, "EditorRadioSettings"	
 	, "tSAdminTools"
+	
+	, "Conversations"
 ] apply {	
 	call compile format ["if (tSF_module_%1) then { [] execVM 'dzn_tSFramework\Modules\%1\Init.sqf' }", _x]
 };

@@ -4,7 +4,7 @@
 Tactical Shift Framework
 
 ##### Getting Started
-See [Google Slides](https://vk.com/away.php?utf=1&to=https%3A%2F%2Fdocs.google.com%2Fpresentation%2Fd%2F1-hwUq2sYlP9BzIy4GzOBALAaTHpBOzPOXhZyXPhatXQ%2Fedit%3Fusp%3Dsharing).
+See [Google Slides](https://vk.com/away.php?utf=1&to=https%3A%2F%2Fdocs.google.com%2Fpresentation%2Fd%2F1-hwUq2sYlP9BzIy4GzOBALAaTHpBOzPOXhZyXPhatXQ%2Fedit%3Fusp%3Dsharing) and [Modules](https://docs.google.com/presentation/d/13p3Mz7pnrZPh3XKO3-B73k0_0E6bkZo6aWEgm2z6kso/edit?usp=sharing).
 
 #### Content
 ##### 3DEN Tool
