@@ -1,6 +1,6 @@
 ![img](http://tacticalshift.ru/tsf_10d.png)
 ------
-##### Version: 1.97
+##### Version: 1.98
 Tactical Shift Framework
 
 ##### Getting Started
@@ -60,6 +60,9 @@ Add crew to editor placed vehicle according set up crew config.
 
 ##### JIP Teleport
 Allows JIP players to teleport to their's squad leader.
+
+##### Conversations
+Allows to attach 'conversation' dialogs to objects.
 
 ##### Platoon Operational Markers
 Allows Platoon Leader to add, set up and drag markers (visible for platoon leader obly) during the missions.
