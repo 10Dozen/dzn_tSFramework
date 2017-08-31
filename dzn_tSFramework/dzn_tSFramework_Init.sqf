@@ -29,7 +29,7 @@ tSF_module_EditorRadioSettings = false;
 tSF_module_POM = true;
 tSF_module_tSAdminTools = true;
 
-tSF_module_Conversations = true;
+tSF_module_Conversations = false;
 
 // **************************
 //  INIT
