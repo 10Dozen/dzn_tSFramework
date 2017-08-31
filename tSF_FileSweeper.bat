@@ -58,6 +58,7 @@ call :removeFolder tSF_module_EditorUnitBehavior EditorUnitBehavior
 call :removeFolder tSF_module_EditorRadioSettings EditorRadioSettings
 call :removeFolder tSF_module_tSAdminTools tSAdminTools
 call :removeFolder tSF_module_POM POM
+call :removeFolder tSF_module_Conversations Conversations
 
 echo #####################################################################
 echo #                                                                   #
