@@ -71,13 +71,52 @@ tSF_fnc_ArtillerySupport_AssertStatus = {
 	
 	switch (toUpper(_state)) do {
 		case "STATE": {
-			toUpper((_battery select 0) getVariable "tSF_ArtillerySupport_State") == toUpper(_assertValue)		
+			toUpper((_battery select 0) getVariable ["tSF_ArtillerySupport_State", ""]) == toUpper(_assertValue)		
 		};
 		case "REQUESTER": {
-			((_battery select 0) getVariable "tSF_ArtillerySupport_Requester") == _assertValue		
+			((_battery select 0) getVariable ["tSF_ArtillerySupport_Requester", objNull]) == _assertValue		
 		};
 	}	
 };
+
+tSF_fnc_ArtillerySupport_SetStatus = {
+	// [@Battery/@Callsign, @State, @AssertValue] call tSF_fnc_ArtillerySupport_CheckStatus
+	params["_callsign","_state","_value"];
+
+	private _battery = if (typename _callsign == "ARRAY") then { _callsign } else { _callsign call tSF_fnc_ArtillerySupport_GetBattery };
+	
+	switch (toUpper(_state)) do {
+		case "STATE": {
+			(_battery select 0) setVariable ["tSF_ArtillerySupport_State", _value];
+		};
+		case "REQUESTER": {
+			(_battery select 0) setVariable ["tSF_ArtillerySupport_Requester", _value];	
+		};
+		case "CREW": {
+			(_battery select 0) setVariable ["tSF_ArtillerySupport_Crew", _value];	
+		};
+	}
+};
+
+tSF_fnc_ArtillerySupport_GetStatus = {
+	// [@Battery/@Callsign, @State, @AssertValue] call tSF_fnc_ArtillerySupport_GetkStatus
+	params["_callsign","_state"];
+
+	private _battery = if (typename _callsign == "ARRAY") then { _callsign } else { _callsign call tSF_fnc_ArtillerySupport_GetBattery };
+	
+	switch (toUpper(_state)) do {
+		case "STATE": {
+			(_battery select 0) getVariable "tSF_ArtillerySupport_State";
+		};
+		case "REQUESTER": {
+			(_battery select 0) getVariable "tSF_ArtillerySupport_Requester";	
+		};
+		case "CREW": {
+			(_battery select 0) getVariable "tSF_ArtillerySupport_Crew";	
+		};
+	}
+};
+
 
 tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable = {
 	// [ @Logic, @Callsign, @VehicleDisplayName, @Vehicles ] call tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable
@@ -146,7 +185,7 @@ tSF_fnc_ArtillerySupport_ShowRequestMenu = {
 		,[10,"LABEL",""]
 		,[10,"BUTTON","REQUEST", {
 			closeDialog 2;
-			[tSF_ArtillerySupport_LastRequested, _this] call tSF_fnc_ArtillerySupport_RequestFiremissionLocal;
+			[tSF_ArtillerySupport_LastRequested, _this] spawn tSF_fnc_ArtillerySupport_RequestFiremissionLocal;
 		}]
 	] call dzn_fnc_ShowAdvDialog;
 };
@@ -184,9 +223,43 @@ tSF_fnc_ArtillerySupport_RequestFiremissionLocal = {
 		_pos = ((_requestOptions select 1) select 2) select ((_requestOptions select 1) select 0);
 	};
 	
+	C2 = [_pos, _trp, _type, _number, _spread];	
+	private _grp = createGroup (side player);
 	
+	[_battery, "State", "Requested"] call tSF_fnc_ArtillerySupport_SetStatus;
+	[_battery, "Requester", player] call tSF_fnc_ArtillerySupport_SetStatus;
+	[_battery, "Crew", _grp] call tSF_fnc_ArtillerySupport_SetStatus;
 	
-	C2 = [_pos, _trp, _type, _number, _spread];
+	{
+		private _unit = _grp createUnit [typeOf player, [0,0,0], [], 0, "NONE"];
+		_unit moveInGunner _x;	
+	} forEach (_battery select 3);
+		
+	
+	if !(_pos inRangeOfArtillery [ _battery select 3, _type]) exitWIth {
+		hint "Wrong Firemission request! TGT POS is out of range!";
+		[_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_SetStatus;
+		[_battery, "Requester", nil] call tSF_fnc_ArtillerySupport_SetStatus;
+		
+		{
+			moveOut _x;
+			deleteVehicle _x;			
+		} forEach (units _grp);
+		deleteGroup _grp;
+		
+		[_battery, "Crew", nil] call tSF_fnc_ArtillerySupport_SetStatus;
+	};
+	
+	[_battery, "State", "Searching Fire"] call tSF_fnc_ArtillerySupport_SetStatus;
+	
+	private _lead = leader _grp;
+	private _ETA = (vehicle _lead) getArtilleryETA [_pos, _type];
+	hint str(_ETA);
+	
+	_lead commandArtilleryFire [_pos, _type, 1];
+	sleep (_ETA - 3);
+	hint "SPLASH!";
+	
 	
 };
 
