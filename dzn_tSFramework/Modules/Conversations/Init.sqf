@@ -113,16 +113,20 @@ tSF_fnc_Conversations_AttachConversation = {
 	// [@Object, @Conversation, @Override] call tSF_fnc_Conversations_AttachConversation
 	params["_obj", "_conversation", ["_override", true]];	
 	
-	if (!isNil { _obj getVariable "tSF_Conversations_Name" } && !_override) exitWith { false };
+	if (
+		isNil { _obj getVariable "tSF_Conversations_Name" }
+		|| _override
+	) then {
+		_obj setVariable ["tSF_Conversations_Name", _conversation, true];		
+	};
 	
-	_obj setVariable ["tSF_Conversations_Name", _conversation, true];
 	if (isNil { _obj getVariable "tSF_Conversations_ActionID" }) then {
 		_obj setVariable [
 			"tSF_Conversations_ActionID"
 			, [_obj, "<t color='#EDB81A'>Talk To</t>", { (_this select 0) spawn tSF_fnc_Conversations_Talk; }, 5, "alive _target", 6] call dzn_fnc_addAction
 		];
+		_obj setVariable ["tSF_Conversations_EventID", -1];
 	};
-	_obj setVariable ["tSF_Conversations_EventID", -1];
 	
 	true
 };
