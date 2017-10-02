@@ -273,7 +273,22 @@ tSF_fnc_ArtillerySupport_getSpreadedPos = {
 };
 
 tSF_fnc_ArtillerySupport_getRoundsPerGun = {
-
+	params["_r", "_guns"];
+	
+	private _left = _r % _guns;
+	private _result = [];
+	for "_i" from 0 to (_guns-1) do { _result pushBack ceil(_r/_guns); };
+	
+	while { _left > 0 } do {
+		for "_i" from 0 to (_guns-1) do {
+			if (_left == 0) exitWith {};
+			
+			_result set [_i, (_result select _i) + 1];
+			_left = _left - 1;
+		};
+	};
+	
+	_result	
 };
 
 /* public static void Spread(double n, double k) {
