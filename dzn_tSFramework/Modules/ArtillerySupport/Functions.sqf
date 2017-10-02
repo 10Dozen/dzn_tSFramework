@@ -271,3 +271,34 @@ tSF_fnc_ArtillerySupport_getSpreadedPos = {
 	
 	( _pos getPos [_spread, random(360)] )
 };
+
+tSF_fnc_ArtillerySupport_getRoundsPerGun = {
+
+};
+
+/* public static void Spread(double n, double k) {
+        double mid = ( Math.ceil((int) n / (int) k) );
+        double notUsed = n - k*mid;
+
+        double[] result = new double[(int) k];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = mid;
+        }
+
+        while (notUsed > 0) {
+            for (int i = 0; i < result.length; i++) {
+                if (notUsed > 0) {
+                    result[i] = ++result[i];
+                    notUsed--;
+                }
+            }
+        }
+
+        String out ="";
+        for (int i = 0; i < result.length; i++) {
+            out = out + ( (int) result[i] ) + "  ";
+        }
+
+        System.out.println( "N=" + (int) n + ", K=" + (int) k + ", Result: [ " + out + "]");
+    }
+    */
