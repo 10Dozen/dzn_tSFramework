@@ -157,15 +157,45 @@ tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable = {
  */
 
 tSF_fnc_ArtillerySupport_RequestFiremission = {
+/*
+	[
+		[
+			L Alpha 1-2:3
+			,"Pinkie-2"
+			,"M252 81mm Mortar"
+			,[B Alpha 1-2:1,B Alpha 1-2:2,B Alpha 1-2:3]
+		]
+		,[
+			0@ [""]
+			1@ ,[
+				0
+				," "
+				,[]
+			]
+			2@ ,[
+				0
+				,"HE"
+				,["8Rnd_82mm_Mo_shells","8Rnd_82mm_Mo_Smoke_white"]
+			]
+			3@ ,[
+				0
+				,"5"
+				,[]
+			]
+		]
+	]
+*/
+	tSF_A1 = _this;
 	params["_battery","_requestOptions"];
 
 	private _typeName = (_requestOptions select 2) select 1;
 	private _type = ((_requestOptions select 2) select 2) select ((_requestOptions select 2) select 0);
 	private _number = parseNumber ((_requestOptions select 3) select 1);
-	private _spread = (_requestOptions select 4) select 0;	
+	private _spread = 50;	
 	
 	private _grid = (_requestOptions select 0) select 0;
 	private _trpName = (_requestOptions select 1) select 1;
+	private _pos = [];
 	
 	if ( (_grid == "" && _trpName == " ") || (count _grid < 8) ) then {
 		_pos = [0,0,0];
@@ -191,15 +221,16 @@ tSF_fnc_ArtillerySupport_CancelFiremission = {
 	params["_battery"];	
 	
 	private _grp = [_battery, "Crew"] call tSF_fnc_ArtillerySupport_GetStatus;
-	for "_i" from 0 to (count (units _grp)) do {
+	
+	while { !((units _grp) isEqualTo []) } do {
 		private _u = units _grp select 0;
-		moveOut _u
+		moveOut _u;
 		deleteVehicle _u;
 	};
 	deleteGroup _grp;
 	
-	[_battery, "Crew", nil] call tSF_fnc_ArtillerySupport_SetStatus;
-	[_battery, "Requester", nil] call tSF_fnc_ArtillerySupport_SetStatus;
+	[_battery, "Crew", grpNull] call tSF_fnc_ArtillerySupport_SetStatus;
+	[_battery, "Requester", objNull] call tSF_fnc_ArtillerySupport_SetStatus;
 	[_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_SetStatus;
 };
 
@@ -229,4 +260,14 @@ tSF_fnc_ArtillerySupport_FireForEffect = {
 tSF_fnc_ArtillerySupport_AbortFiremission = {
 	params["_battery"];
 	[_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_SetStatus;
+};
+
+/*
+
+*/
+
+tSF_fnc_ArtillerySupport_getSpreadedPos = {
+	params["_pos", "_spread"];
+	
+	( _pos getPos [_spread, random(360)] )
 };

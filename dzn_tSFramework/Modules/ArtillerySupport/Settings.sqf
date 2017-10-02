@@ -7,11 +7,7 @@ tSF_ArtillerySupport_requestHandlerTimeout = 5;
 	[ @DisplayName, @NumberAvailable, @ListfRounds ]
 */
 tSF_ArtillerySupport_FiremissionsProperties = [
-	[
-		"HE"
-		, 6
-		, ["8Rnd_82mm_Mo_shells"]
-	]
+	["HE", 6, ["8Rnd_82mm_Mo_shells"]]
 	, ["SMK", 9, ["8Rnd_82mm_Mo_Smoke_white"]]
 ];
 

@@ -2,6 +2,7 @@
 
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Settings.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Functions.sqf";
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Functions Request.sqf";
 
 if (hasInterface) then {
 	[] spawn {
@@ -31,7 +32,6 @@ if (isServer) then {
 	
 	tSF_ArtillerySupport_Batteries = [];
 	tSF_ArtillerySupport_TRPs = [];
-	
 	
 	call tSF_fnc_ArtillerySupport_processLogics;
 	// call tSF_fnc_ArtillerySupport_StartRequestHandler;

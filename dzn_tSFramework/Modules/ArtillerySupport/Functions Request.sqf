@@ -7,7 +7,7 @@ tSF_fnc_ArtillerySupport_ShowMenu = {
 		_battery call tSF_fnc_ArtillerySupport_ShowRequestMenu;
 	} else {
 		if (
-			[_this, "State", "Searching Fire"] call tSF_fnc_ArtillerySupport_AssertStatus
+			[_this, "State", "Waiting Correction"] call tSF_fnc_ArtillerySupport_AssertStatus
 			&& [_this, "Requester", player] call tSF_fnc_ArtillerySupport_AssertStatus
 		) then {
 			_battery call tSF_fnc_ArtillerySupport_ShowCorrectionMenu;
@@ -36,9 +36,12 @@ tSF_fnc_ArtillerySupport_ShowRequestMenu = {
 		,[6,"LABEL","<t align='left'>Type</t> <t align='center' color='#999999'>ROUND</t> <t align='right'>Number</t>"]
 		,[6,"LISTBOX",["5","6","7","8","9","10","1","2","3","4"],[]]
 		,[7,"LABEL",""]
-		
+		/*
 		,[8,"LABEL","<t align='right'>Spread (m)</t>"]
 		,[8,"SLIDER",[0,500,30]]
+		*/
+		
+		,[8,"LABEL",""]
 		,[9,"LABEL",""]
 		,[10,"BUTTON","CANCEL",{closeDialog 2;}]
 		,[10,"LABEL",""]
@@ -53,6 +56,12 @@ tSF_fnc_ArtillerySupport_ShowCorrectionMenu = {
 	// [ @Logic, @Callsign, @VehicleDisplayName, @Vehicles ]
 	tSF_ArtillerySupport_LastRequested = _this;
 	private _firemission = [_this, "Firemission"] call tSF_fnc_ArtillerySupport_GetStatus; //  [_pos, _type, _typeName, _number, _spread]
+	
+	private _pos = _firemission select 0;
+	private _type = _firemission select 1;
+	private _typeName = _firemission select 2;
+	private _number = _firemission select 3;
+	private _spread = _firemission select 4;
 	
 	[
 		[0,"HEADER","Adjust Firemission"]
