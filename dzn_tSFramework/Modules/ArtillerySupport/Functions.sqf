@@ -63,6 +63,15 @@ tSF_fnc_ArtillerySupport_isAuthorizedUser = {
 	true
 };
 
+
+tSF_fnc_ArtillerySupport_IsAvailable = {
+	// @Battery call tSF_fnc_ArtillerySupport_IsAvailable
+	
+	[_this, "State", "Waiting Correction"] call tSF_fnc_ArtillerySupport_AssertStatus
+	&& [_this, "Requester", player] call tSF_fnc_ArtillerySupport_AssertStatus
+	&& (_this call tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable) select 4
+};
+
 tSF_fnc_ArtillerySupport_AssertStatus = {
 	// [@Battery/@Callsign, @State, @AssertValue] call tSF_fnc_ArtillerySupport_CheckStatus
 	params["_callsign","_state","_assertValue"];
@@ -135,19 +144,39 @@ tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable = {
 	private _listOfTypes = [];
 	private _listOfRounds = [];
 	private _line = "";
+	private _totalRounds = [];
+	private _available = false;
 	
 	{
+		if ((_x select 1) > 0) then { 
+			_listOfTypes pushBack (_x select 0);
+			_listOfRounds pushBack (_x select 2);
+		
+			_available = true; 
+		};
+		
+		if (_forEachIndex > 0) then { _line = _line + " | "; };
+		_line = _line + format ["%1: %2", (_x select 0),  (_x select 1)];
+		_totalRounds pushBack (_x select 1);
+		
+		/*
 		_listOfTypes pushBack (_x select 0);
 		_listOfRounds pushBack (_x select 2);
 		
-		if (_forEachIndex > 0) then { _line = _line + " | "; };
-		_line = _line + format ["%1: %2", (_x select 0),  (_x select 1)];		
+		
+		_line = _line + format ["%1: %2", (_x select 0),  (_x select 1)];
+		_totalRounds pushBack (_x select 1);
+		
+		if ((_x select 1) > 0) then { _available = true; };
+		*/
 	} forEach _fm;
 	
 	[
 		_listOfTypes
 		, _listOfRounds
 		, _line
+		, _totalRounds
+		, _available
 	]
 };
 
@@ -185,7 +214,6 @@ tSF_fnc_ArtillerySupport_RequestFiremission = {
 		]
 	]
 */
-	tSF_A1 = _this;
 	params["_battery","_requestOptions"];
 
 	private _typeName = (_requestOptions select 2) select 1;
@@ -207,11 +235,13 @@ tSF_fnc_ArtillerySupport_RequestFiremission = {
 		};
 	};
 	
+	tS_A1 = [_pos, _type, _typeName, _number, _spread];
 	[_battery, "Firemission", [_pos, _type, _typeName, _number, _spread]] call tSF_fnc_ArtillerySupport_SetStatus;	
 	[
 		_battery
 		, _pos
 		, _type
+		, _typeName
 		, _number
 		, _spread
 	] execFSM "dzn_tSFramework\Modules\ArtillerySupport\Firemission.fsm";
@@ -291,29 +321,17 @@ tSF_fnc_ArtillerySupport_getRoundsPerGun = {
 	_result	
 };
 
-/* public static void Spread(double n, double k) {
-        double mid = ( Math.ceil((int) n / (int) k) );
-        double notUsed = n - k*mid;
-
-        double[] result = new double[(int) k];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = mid;
-        }
-
-        while (notUsed > 0) {
-            for (int i = 0; i < result.length; i++) {
-                if (notUsed > 0) {
-                    result[i] = ++result[i];
-                    notUsed--;
-                }
-            }
-        }
-
-        String out ="";
-        for (int i = 0; i < result.length; i++) {
-            out = out + ( (int) result[i] ) + "  ";
-        }
-
-        System.out.println( "N=" + (int) n + ", K=" + (int) k + ", Result: [ " + out + "]");
-    }
-    */
+tSF_fnc_ArtillerySupport_UpdateBatteryMissionsAvailable = {
+	params["_battery", "_roundType", "_add"];
+	
+	// [["HE",6,"8Rnd_82mm_Mo_shells"],["SMK",9,"8Rnd_82mm_Mo_Smoke_white"]] --> ["HE",6,"8Rnd_82mm_Mo_shells"]
+	private _fm = ((_battery select 0) getVariable "tSF_ArtillerySupport_AvailableFiremissions") select { _x select 0 == _roundType } select 0;
+	
+	_fm set [1, (_fm select 1) + _add];
+	
+	(_battery select 0) setVariable [
+		"tSF_ArtillerySupport_AvailableFiremissions"
+		, (_battery select 0) getVariable "tSF_ArtillerySupport_AvailableFiremissions"
+		, true
+	];
+};

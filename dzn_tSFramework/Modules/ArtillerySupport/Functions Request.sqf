@@ -3,13 +3,10 @@ tSF_fnc_ArtillerySupport_ShowMenu = {
 	// @BatteryCallsign call tSF_fnc_ArtillerySupport_ShowMenu
 	private _battery = _this call tSF_fnc_ArtillerySupport_GetBattery;	
 	
-	if ([_this, "State", "Waiting"] call tSF_fnc_ArtillerySupport_AssertStatus) then {
+	if ([_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_AssertStatus) then {
 		_battery call tSF_fnc_ArtillerySupport_ShowRequestMenu;
 	} else {
-		if (
-			[_this, "State", "Waiting Correction"] call tSF_fnc_ArtillerySupport_AssertStatus
-			&& [_this, "Requester", player] call tSF_fnc_ArtillerySupport_AssertStatus
-		) then {
+		if (_battery call tSF_fnc_ArtillerySupport_IsAvailable) then {
 			_battery call tSF_fnc_ArtillerySupport_ShowCorrectionMenu;
 		} else {
 			hint "Artillery is not available";		
@@ -21,6 +18,7 @@ tSF_fnc_ArtillerySupport_ShowRequestMenu = {
 	// [ @Logic, @Callsign, @VehicleDisplayName, @Vehicles ]
 	tSF_ArtillerySupport_LastRequested = _this;
 	private _AvailableFMs = _this call tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable;
+	
 	
 	[
 		[0,"HEADER","Firemission Request"]
@@ -35,13 +33,9 @@ tSF_fnc_ArtillerySupport_ShowRequestMenu = {
 		,[6,"LISTBOX", _AvailableFMs select 0, _AvailableFMs select 1]
 		,[6,"LABEL","<t align='left'>Type</t> <t align='center' color='#999999'>ROUND</t> <t align='right'>Number</t>"]
 		,[6,"LISTBOX",["5","6","7","8","9","10","1","2","3","4"],[]]
-		,[7,"LABEL",""]
-		/*
-		,[8,"LABEL","<t align='right'>Spread (m)</t>"]
-		,[8,"SLIDER",[0,500,30]]
-		*/
-		
-		,[8,"LABEL",""]
+		,[7,"LABEL",""]		
+		,[8,"LABEL","<t align='right'>Spread diameter(m)</t>"]
+		,[8,"SLIDER",[0,500,30]]		
 		,[9,"LABEL",""]
 		,[10,"BUTTON","CANCEL",{closeDialog 2;}]
 		,[10,"LABEL",""]
