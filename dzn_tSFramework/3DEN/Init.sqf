@@ -35,6 +35,13 @@ dzn_tSF_3DEN_SupporterLayer = objNull;
 
 dzn_tSF_3DEN_DynaiSubfolders = [];
 dzn_tSF_3DEN_ToDoListFolder = objNull;
+dzn_tSF_3DEN_KeyBindings = "<br />
+tSF Tool - ""Ctrl"" + ""Space"" to use<br />
+<br />
+Snap To Surface - ""Ctrl"" + ""Q""<br />
+Mark To Do item as done - ""Shift"" + ""D""<br />
+<br />
+Show key bindings - ""F8""";
 
 (findDisplay 313) displayAddEventHandler ["KeyDown", "_this call dzn_tSF_3DEN_onKeyPress"];
-["tSF Tools Activated - Press ""Ctrl + 'Space"" to use", 0, 30, true] call BIS_fnc_3DENNotification;
+["tSF 3DEN Tools Activated<br />Press ""F8"" to see keybindings", 0, 30, true] call BIS_fnc_3DENNotification;

@@ -9,9 +9,11 @@ dzn_tSF_3DEN_onKeyPress = {
 	switch _key do {
 		// Space
 		case 57: {
-			dzn_tSF_3DEN_keyIsDown = true;			
-			if (_ctrl) then { [] spawn dzn_fnc_tSF_3DEN_ShowTool; };
-			_handled = true;
+			dzn_tSF_3DEN_keyIsDown = true;
+			if (_ctrl) then {	
+				[] spawn dzn_fnc_tSF_3DEN_ShowTool;				
+				_handled = true;
+			};
 		};
 		// Q
 		case 16: {
@@ -27,7 +29,13 @@ dzn_tSF_3DEN_onKeyPress = {
 			if (_shift) then { 
 				_handled = call dzn_fnc_tSF_3DEN_togleToDoListItem;
 			};
-		}
+		};
+		// F8
+		case 66: {
+			dzn_tSF_3DEN_keyIsDown = true;			
+			call dzn_fnc_tSF_3DEN_showKeyBindings;
+			_handled = true;
+		};
 		
 	};
 	
@@ -87,6 +95,9 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 	dzn_tSF_3DEN_toolDisplayed = false;
 };
 
+dzn_fnc_tSF_3DEN_showKeyBindings = {
+	["tSF 3DEN Tools Keybindings<br />" + dzn_tSF_3DEN_KeyBindings , 0, 10, true] call BIS_fnc_3DENNotification;
+};
 
 /*
  *	LAYERS & UTILITIES
