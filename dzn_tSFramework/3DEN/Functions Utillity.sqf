@@ -3,6 +3,7 @@ dzn_tSF_3DEN_onKeyPress = {
 	
 	private _key = _this select 1; 
 	private _ctrl = _this select 3; 
+	private _shift = _this select 2; 
 	private _handled = false;
 
 	switch _key do {
@@ -15,9 +16,19 @@ dzn_tSF_3DEN_onKeyPress = {
 		// Q
 		case 16: {
 			dzn_tSF_3DEN_keyIsDown = true;
-			call dzn_fnc_tSF_3DEN_snapToSurface;
-			_handled = true;
+			if (_ctrl) then {
+				call dzn_fnc_tSF_3DEN_snapToSurface;
+				_handled = true;
+			};
+		};
+		// D
+		case 32: {
+			dzn_tSF_3DEN_keyIsDown = true;
+			if (_shift) then { 
+				_handled = call dzn_fnc_tSF_3DEN_togleToDoListItem;
+			};
 		}
+		
 	};
 	
 	[] spawn { sleep 1; dzn_tSF_3DEN_keyIsDown = false; };
@@ -56,6 +67,7 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[tSF] Add CCP"				, { "CCP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
 		,["[tSF] Add FARP"				, { "FARP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
 		,["Add Artillery Composition"		, { call dzn_fnc_tSF_3DEN_ShowArtilleryCompositionMenu }]
+		,["Add To Do List"				, { call dzn_fnc_tSF_3DEN_addToDoList }]
 		,[" "						, { }]	
 		
 	];
@@ -161,6 +173,11 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 };
 
 
+
+
+/*
+	SubFunctions
+*/
 
 #define	L_BRK		(toString [13,10])
 
@@ -297,10 +314,81 @@ dzn_fnc_tSF_3DEN_GetCargoSeats = {
 };
 
 
-dzn_fnc_tSF_3DEN_snapToSurface = {	
+dzn_fnc_tSF_3DEN_snapToSurface = {
 	do3DENAction "LevelWithSurface";
 	do3DENAction "SnapToSurface";
 };
+
+dzn_fnc_tSF_3DEN_addToDoList = {
+	dzn_tSF_3DEN_ToDoListFolder = objNull;
+	{	
+		if !(_x isEqualTo [] || isNil{ (_x select 0) get3DENAttribute "name" select 0 } ) then {
+			private _entity = _x select 0;
+			if ((_entity get3DENAttribute "name") select 0 == "To Do List") then {
+				dzn_tSF_3DEN_ToDoListFolder = _entity;
+			};
+		};
+	} forEach all3DENEntities;	
+	if (typename dzn_tSF_3DEN_ToDoListFolder == "SCALAR") exitWith {};
+	
+	dzn_tSF_3DEN_ToDoListFolder = -1 add3DENLayer "To Do List";
+	
+	{
+		private _layer = dzn_tSF_3DEN_ToDoListFolder add3DENLayer (_x select 0);
+		
+		{
+			do3DENAction "CreateComment";
+			private _item = get3DENSelected "comment" select 0;
+			_item set3DENAttribute ["Name", _x];
+			_item set3DENAttribute ["Position", [0,50,0]];
+			
+			_item set3DENLayer _layer;
+		} forEach (_x select 1);	
+	} forEach [
+		["A. Editor", [
+			"1. Playable units"
+			, "2. Transport vehicles"
+			, "3. Combat vehicles"
+			, "4. Supplies"
+			, "5. CCP"
+			, "6. FARP"
+		]]
+		, ["B. tS Framework", [
+			"1. Briefing"
+			, "2. Intro text"
+			, "3. Editor Vehicles"
+		]]		
+		, ["C. dzn Gear", [
+			"1. Playable kits"
+			, "2. Hostile NPC Kits"
+			, "3. Allied NPC Kits"
+			, "4. Civilians NPC kits"
+			, "5. Vehicles and supplies kits"
+		]]
+		, ["D. dzn Dynai", [
+			"1. Main patrol zones"
+			, "2. Additional patrol/overwatch zones"
+			, "3. Reinforcement zones"
+			, "4. Reinforcement scripts"
+		]]
+	];
+};
+
+dzn_fnc_tSF_3DEN_togleToDoListItem = {
+	if (isNil { get3DENSelected "comment" select 0 }) exitWith { false };
+	private _item = get3DENSelected "comment" select 0;
+	private _name = (_item get3DENAttribute "Name" select 0);
+	
+	if (["[DONE]", _name] call BIS_fnc_inString) then {
+		
+		_item set3DENAttribute ["Name", _name select [6]];
+	} else {
+		_item set3DENAttribute ["Name", "[DONE]" + (_item get3DENAttribute "Name" select 0)];
+	};
+	
+	true
+};
+
 
 /*
  *	Dialog Function

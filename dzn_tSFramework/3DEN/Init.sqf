@@ -34,6 +34,7 @@ dzn_tSF_3DEN_MiscLayer = objNull;
 dzn_tSF_3DEN_SupporterLayer = objNull;
 
 dzn_tSF_3DEN_DynaiSubfolders = [];
+dzn_tSF_3DEN_ToDoListFolder = objNull;
 
-(findDisplay 313) displayAddEventHandler ["KeyDown", "_handled = _this call dzn_tSF_3DEN_onKeyPress;"];
+(findDisplay 313) displayAddEventHandler ["KeyDown", "_this call dzn_tSF_3DEN_onKeyPress"];
 ["tSF Tools Activated - Press ""Ctrl + 'Space"" to use", 0, 30, true] call BIS_fnc_3DENNotification;
