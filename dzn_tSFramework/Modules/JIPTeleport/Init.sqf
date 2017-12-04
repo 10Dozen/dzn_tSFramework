@@ -5,7 +5,7 @@ dzn_tSF_JIPTeleport_isJIP = {
 };
 
 if (hasInterface && call dzn_tSF_JIPTeleport_isJIP) exitWith {	
-	waitUntil { !(isNull (findDisplay 46)) && { isPlayer player && local player && time > 2 } }; 
+	waitUntil { !(isNull (findDisplay 46)) && { isPlayer player && local player && time > (2 max tSF_JIPTeleport_InitTimeout) } }; 
 	
 	player setVariable [
 		"tSF_JIPTeleport_Action"
