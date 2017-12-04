@@ -92,7 +92,7 @@ tSF_fnc_CCP_createCCP_Client = {
 
 		[
 			_x
-			, "<t color='#9bbc2f' size='1'>Provde first aid to uncon. patients</t>"
+			, "<t color='#9bbc2f' size='1'>Provide first aid to uncon. patients</t>"
 			, {[] spawn tSF_fnc_CCP_healUnconcious; }
 			, 5
 			, "!(player getVariable ['tSF_CCP_isHealing',false])"
