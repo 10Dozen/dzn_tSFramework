@@ -426,3 +426,37 @@ tSF_fnc_adminTools_showGSOScreen = {
 		}]
 	] call dzn_fnc_ShowAdvDialog;
 };
+
+
+/*
+ *	F6 Zeus Screen
+ */
+
+ tSF_fnc_adminTools_showZeusSceen = {
+ /*
+ 	[ GSO Zeus Screen							]
+ 	---------------------------------------------
+ 	[ Artillery									]
+ 	[ TGT_1      V ][ REMOVE	  ][ ADD		]	// Create logic module that can be moved to need position
+ 	[______________][ Grid	  Disp][ 10m	  V ]	// Grid and dispersion
+ 	[ Round		][ 82mm   V ][ HE    V ][ 5   V ]	// Caliber, round type, number of rounds
+ 	[ 20	  V ][Delay  ETA][<----------|----->]	// Delay between fire, ETA of rounds (m.b. should be on differeng sides)
+ 	[											]
+ 	[		  ][		  ][		  ][ FIRE	]	// Fire button
+	---------------------------------------------
+
+
+
+
+
+ */
+ 	[
+ 		[0, "HEADER", "GSO Zeus Screen"]
+ 		, [1, "LABEL", ""]
+ 		, [2, "LABEL", ""]
+
+
+
+	] call dzn_fnc_ShowAdvDialog;
+
+ };
