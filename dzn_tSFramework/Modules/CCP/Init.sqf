@@ -12,15 +12,15 @@ if (_editorSetComposition != "") then { tSF_CCP_Composition = _editorSetComposit
 
 if (hasInterface) then {
 	"tSF_CCP_showNotAllowedText" addPublicVariableEventHandler {
-		if (tSF_CCP_showNotAllowedText) then { [side player, "HQ"] commandChat tSF_CCP_STR_NotAllowedText };
+		if (tSF_CCP_showNotAllowedText) then { [side player, "HQ"] commandChat format [tSF_CCP_STR_NotAllowedText, tSF_CCP_STR_FullName] };
 		tSF_CCP_showNotAllowedText = false;
 	};
 	"tSF_CCP_showAlreadySet" addPublicVariableEventHandler {
-		if (tSF_CCP_showAlreadySet) then { [side player, "HQ"] commandChat tSF_CCP_STR_AlreadySet };
+		if (tSF_CCP_showAlreadySet) then { [side player, "HQ"] commandChat format [tSF_CCP_STR_AlreadySet, tSF_CCP_STR_FullName] };
 		tSF_CCP_showAlreadySet = false;
 	};
 	"tSF_CCP_showSuccessSet" addPublicVariableEventHandler {
-		if (tSF_CCP_showSuccessSet) then { [side player, "HQ"] commandChat tSF_CCP_STR_SuccessSet };
+		if (tSF_CCP_showSuccessSet) then { [side player, "HQ"] commandChat format [tSF_CCP_STR_SuccessSet, tSF_CCP_STR_FullName] };
 		tSF_CCP_showSuccessSet = false;
 	};
 	
@@ -82,7 +82,7 @@ if (isServer) then {
 			tSF_CCP_allowedAreaMarkers call tSF_fnc_CCP_removeAllowedAreaMarkers;
 			
 			["tSF_CCP_BriefingHelper", "onEachFrame"] call BIS_fnc_removeStackedEventHandler;
-			tSF_CCP_Position = call tSF_fnc_CCP_findMarker;			
+			tSF_CCP_Position = call tSF_fnc_CCP_findAndUpdateMarker;
 			
 			[
 				tSF_CCP_Position

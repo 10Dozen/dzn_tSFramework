@@ -139,7 +139,6 @@ dzn_fnc_adminTools_showGATTool = {
  */
 tSF_fnc_admintTools_teleportTo = {
 	params["_pos","_u"];
-	AX = _pos;
 	
 	if !(local _u) exitWith {
 		[_pos, _u] remoteExec ["tSF_fnc_admintTools_teleportTo", _u];
@@ -210,47 +209,89 @@ tSF_fnc_adminTools_addWaterPipeAction = {
 	];
 };
 
+tSF_fnc_adminTools_createTeleportRP = {
+	[
+		[0, "HEADER", "ADD RALLYPOINT"]
+		, [1, "LABEL", "SHORTCUT"]
+		, [1, "INPUT"]
+		, [2, "LABEL", ""]
+		, [3, "BUTTON", "CANCEL", { closeDialog 2; }]
+		, [3, "LABEL", ""]
+		, [3, "BUTTON", "ADD", {
+			closeDialog 2;
+			private _text = _this select 0 select 0;
+
+			// Exit if empty string
+			if ((_text splitString " " joinString "") == "") exitWith {};
+
+			// Check if shortcut already exist
+			private _toUpdate = tSF_AdminTools_Rallypoints select { _x == _text };
+			private _pos = getPosATL player;
+
+			if (_toUpdate isEqualTo []) then {
+				// Add new Rallypoint
+				tSF_AdminTools_Rallypoints pushBack [_text, _pos];
+				hint parseText format ["<t size='1' color='#FFD000' shadow='1'>Rallypoint Added</t><br />'%1' at %2", _text, _pos];
+			} else {
+				// Update existing Rallypoint
+				(_toUpdate select 0) set [1, _pos];
+				hint parseText format [ "<t size='1' color='#FFD000' shadow='1'>Rallypoint Updated</t><br />'%1' at %2", _text, _pos];
+			};
+
+			tSF_AdminTools_TeleportListNeedUpdate = true;
+			publicVariable "tSF_AdminTools_Rallypoints";
+		}]
+	] call dzn_fnc_ShowAdvDialog;
+};
+
 /*
  *
  */
 tSF_fnc_adminTools_showGSOScreen = {
+	#define ADD_GSO_POS(X,Y) 	tSF_AdminTools_GSO_TeleportPositions pushBack X; tSF_AdminTools_GSO_TeleportSelections pushBack Y
+	#define	ADD_PLR_POS(X,Y)	tSF_AdminTools_PLR_TeleportPositions pushBack X; tSF_AdminTools_PLR_TeleportSelections pushBack Y
+
+	if (tSF_AdminTools_TeleportListNeedUpdate) then {
+		tSF_AdminTools_GSO_TeleportPositions = [];
+		tSF_AdminTools_GSO_TeleportSelections = [];
+		tSF_AdminTools_PLR_TeleportPositions = [getPosATL player];
+		tSF_AdminTools_PLR_TeleportSelections = ["GSO"];
+
+		{
+			private _mrkPos = (getMarkerPos format["respawn%1", _x]);
+			if !(_mrkPos isEqualTo [0,0,0]) then {
+				ADD_GSO_POS(_mrkPos, "Base");
+			};
+		} forEach ["", "_west","_east","_guerrila","_civilian"];
 	
-	private _gsoTeleportSelections = [];
-	private _gsoTeleportPositions = [];
-	private _playerTeleportSelections = ["GSO"];
-	private _playerTeleportPositions = [getPosATL player];
-	
-	if !((getMarkerPos "respawn_west") isEqualTo [0,0,0]) then { 
-		_gsoTeleportPositions pushBack (getMarkerPos "respawn_west");
-		_gsoTeleportSelections pushBack "Base";
+		private _pl = (call BIS_fnc_listPlayers) select {
+			["1'6 ", roleDescription _x] call dzn_fnc_inString
+			|| ["platoon leader", roleDescription _x] call dzn_fnc_inString
+			|| ["командир взвода", roleDescription _x] call dzn_fnc_inString
+		};
+		if !(_pl isEqualTo []) then {
+			ADD_GSO_POS(getPosATL (_pl select 0),"PL");
+			ADD_PLR_POS(getPosATL (_pl select 0),"PL");
+		};
+
+		if (tSF_module_CCP && {!isNil "tSF_CCP_Position"}) then {
+			ADD_GSO_POS(tSF_CCP_Position, "CCP");
+			ADD_PLR_POS(tSF_CCP_Position, "CCP");
+		};
+
+		if (tSF_module_FARP && {!isNil "tSF_FARP_Position"}) then {
+			ADD_GSO_POS(tSF_FARP_Position, "FARP");
+			ADD_PLR_POS(tSF_FARP_Position, "FARP");
+		};
+
+		{
+			ADD_GSO_POS(_x select 1, _x select 0);
+			ADD_PLR_POS(_x select 1, _x select 0);
+		} forEach tSF_AdminTools_Rallypoints;
+
+        tSF_AdminTools_TeleportListNeedUpdate = false;
 	};
-	
-	private _pl = (call BIS_fnc_listPlayers) select { 
-		["1'6 ", roleDescription _x] call dzn_fnc_inString 
-		|| ["platoon leader", roleDescription _x] call dzn_fnc_inString 
-		|| ["командир взвода", roleDescription _x] call dzn_fnc_inString 
-	};
-	if !(_pl isEqualTo []) then {
-		_gsoTeleportPositions pushBack (getPosATL (_pl select 0));
-		_gsoTeleportSelections pushBack "PL";		
-		_playerTeleportPositions pushBack (getPosATL (_pl select 0));
-		_playerTeleportSelections pushBack "PL";
-	};
-	
-	if (tSF_module_CCP && {!isNil "tSF_CCP_Position"}) then {
-		_gsoTeleportPositions pushBack tSF_CCP_Position;
-		_gsoTeleportSelections pushBack "CCP";		
-		_playerTeleportPositions pushBack tSF_CCP_Position;
-		_playerTeleportSelections pushBack "CCP";
-	};
-	
-	if (tSF_module_FARP && {!isNil "tSF_FARP_Position"}) then {
-		_gsoTeleportPositions pushBack tSF_FARP_Position;
-		_gsoTeleportSelections pushBack "FARP";		
-		_playerTeleportPositions pushBack tSF_FARP_Position;
-		_playerTeleportSelections pushBack "FARP";
-	};	
-	
+
 	private _endsNames = [];
 	private _ends = [];
 	{
@@ -271,6 +312,10 @@ tSF_fnc_adminTools_showGSOScreen = {
 				((_this select 0 select 2) select (_this select 0 select 0))
 				, player
 			] spawn tSF_fnc_admintTools_teleportTo;
+		}]
+		, [1, "BUTTON", "ADD RP", {
+			closeDialog 2;
+			[] spawn tSF_fnc_adminTools_createTeleportRP;
 		}]
 		
 		, [2, "LABEL", ""]

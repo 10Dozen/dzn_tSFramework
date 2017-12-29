@@ -25,11 +25,15 @@ tSF_fnc_CCP_removeAllowedAreaMarkers = {
 	{deleteMarker _x;} forEach _this;
 };
 
-tSF_fnc_CCP_findMarker = {
+tSF_fnc_CCP_findAndUpdateMarker = {
 	// call dzn_fnc_tsf_CCP_findMarker
 	private _markerPos = getPosASL tsf_CCP;
 	{
-		if (toLower(markerText _x) == "ccp") then { _markerPos = markerPos _x; };
+		if (toLower(markerText _x) == "ccp") then {
+		 	_x setMarkerText tSF_CCP_STR_ShortName;
+		 	_x setMarkerType "mil_flag";
+			_markerPos = markerPos _x;
+		};
 	} forEach allMapMarkers;
 
 	_markerPos
@@ -73,6 +77,11 @@ tSF_fnc_CCP_createCCP_Server = {
 	(tSF_CCP_Objects select 0) setVariable ["tSF_CCP_StretcherPositions",_stretcherPositions,true];
 	(tSF_CCP_Objects select 0) setVariable ["tSF_CCP_UsedStretcherPositions",[],true];
 	publicVariable "tSF_CCP_Objects";
+
+	// Add helipad position
+	private _hpadPos = _pos findEmptyPosition [12, 30, "B_Heli_Transport_01_camo_F"];
+	if (_hpadPos isEqualTo []) then { _hpadPos = _pos; };
+	private _hpad = "Land_HelipadEmpty_F" createVehicle _pos;
 };
 
 tSF_fnc_CCP_createCCP_Client = {

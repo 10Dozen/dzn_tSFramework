@@ -1,7 +1,13 @@
 
 if (hasInterface) then {
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Settings.sqf";
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions.sqf";	
+	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions.sqf";
+	tSF_AdminTools_Rallypoints = [];
+	tSF_AdminTools_TeleportListNeedUpdate = true;
+	tSF_AdminTools_GSO_TeleportPositions = [];
+	tSF_AdminTools_GSO_TeleportSelections = [];
+	tSF_AdminTools_PLR_TeleportPositions = [];
+    tSF_AdminTools_PLR_TeleportSelections = [];
 
 	if (tSF_AdminTool_EnableMissionEndings || tSF_AdminTool_EnableGATTool) then {
 		[] spawn {
