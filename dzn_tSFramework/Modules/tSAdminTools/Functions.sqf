@@ -148,7 +148,7 @@ tSF_fnc_admintTools_teleportTo = {
 	player allowDamage false;
 	sleep 1;
 
-	_pos set [2,0];
+	//_pos set [2,0];
 	moveOut player;
 	player setVelocity [0,0,0];
 	player setPosATL _pos;
@@ -210,6 +210,7 @@ tSF_fnc_adminTools_addWaterPipeAction = {
 };
 
 tSF_fnc_adminTools_createTeleportRP = {
+	uiSleep 0.05;
 	[
 		[0, "HEADER", "ADD RALLYPOINT"]
 		, [1, "LABEL", "SHORTCUT"]
@@ -225,7 +226,7 @@ tSF_fnc_adminTools_createTeleportRP = {
 			if ((_text splitString " " joinString "") == "") exitWith {};
 
 			// Check if shortcut already exist
-			private _toUpdate = tSF_AdminTools_Rallypoints select { _x == _text };
+			private _toUpdate = tSF_AdminTools_Rallypoints select { _x select 0 == _text };
 			private _pos = getPosATL player;
 
 			if (_toUpdate isEqualTo []) then {
@@ -248,8 +249,8 @@ tSF_fnc_adminTools_createTeleportRP = {
  *
  */
 tSF_fnc_adminTools_showGSOScreen = {
-	#define ADD_GSO_POS(X,Y) 	tSF_AdminTools_GSO_TeleportPositions pushBack X; tSF_AdminTools_GSO_TeleportSelections pushBack Y
-	#define	ADD_PLR_POS(X,Y)	tSF_AdminTools_PLR_TeleportPositions pushBack X; tSF_AdminTools_PLR_TeleportSelections pushBack Y
+	#define ADD_GSO_POS(X,Y) 	tSF_AdminTools_GSO_TeleportPositions pushBack (X); tSF_AdminTools_GSO_TeleportSelections pushBack (Y)
+	#define	ADD_PLR_POS(X,Y)	tSF_AdminTools_PLR_TeleportPositions pushBack (X); tSF_AdminTools_PLR_TeleportSelections pushBack (Y)
 
 	if (tSF_AdminTools_TeleportListNeedUpdate) then {
 		tSF_AdminTools_GSO_TeleportPositions = [];
@@ -275,13 +276,13 @@ tSF_fnc_adminTools_showGSOScreen = {
 		};
 
 		if (tSF_module_CCP && {!isNil "tSF_CCP_Position"}) then {
-			ADD_GSO_POS(tSF_CCP_Position, "CCP");
-			ADD_PLR_POS(tSF_CCP_Position, "CCP");
+			ADD_GSO_POS(ASLtoATL tSF_CCP_Position, "CCP");
+			ADD_PLR_POS(ASLtoATL tSF_CCP_Position, "CCP");
 		};
 
 		if (tSF_module_FARP && {!isNil "tSF_FARP_Position"}) then {
-			ADD_GSO_POS(tSF_FARP_Position, "FARP");
-			ADD_PLR_POS(tSF_FARP_Position, "FARP");
+			ADD_GSO_POS(ASLtoATL tSF_FARP_Position, "FARP");
+			ADD_PLR_POS(ASLtoATL tSF_FARP_Position, "FARP");
 		};
 
 		{
@@ -289,7 +290,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 			ADD_PLR_POS(_x select 1, _x select 0);
 		} forEach tSF_AdminTools_Rallypoints;
 
-        tSF_AdminTools_TeleportListNeedUpdate = false;
+		tSF_AdminTools_TeleportListNeedUpdate = false;
 	};
 
 	private _endsNames = [];
@@ -305,7 +306,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 		[0, "HEADER", "GSO Screen"]
 		
 		, [1, "LABEL", "Teleport GSO"]
-		, [1, "LISTBOX", _gsoTeleportSelections, _gsoTeleportPositions]
+		, [1, "LISTBOX", tSF_AdminTools_GSO_TeleportSelections, tSF_AdminTools_GSO_TeleportPositions]
 		, [1, "BUTTON", "TELEPORT", {
 			closeDialog 2;
 			[
@@ -313,12 +314,13 @@ tSF_fnc_adminTools_showGSOScreen = {
 				, player
 			] spawn tSF_fnc_admintTools_teleportTo;
 		}]
-		, [1, "BUTTON", "ADD RP", {
+		
+		, [2, "LABEL", ""]
+		, [2, "LABEL", ""]
+		, [2, "BUTTON", "ADD RALLYPOINT", {
 			closeDialog 2;
 			[] spawn tSF_fnc_adminTools_createTeleportRP;
 		}]
-		
-		, [2, "LABEL", ""]
 		
 		, [3, "HEADER","<t align='center'>MISSION</t>"]
 		
@@ -370,7 +372,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 		}]
 		
 		, [12, "LABEL", "Teleport"]
-		, [12, "LISTBOX", _playerTeleportSelections, _playerTeleportPositions]
+		, [12, "LISTBOX", tSF_AdminTools_PLR_TeleportSelections, tSF_AdminTools_PLR_TeleportPositions]
 		, [12, "BUTTON", "TELEPORT", {
 			closeDialog 2;
 			private _u = (_this select 2 select 2) select (_this select 2 select 0);
