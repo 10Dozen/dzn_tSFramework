@@ -6,7 +6,7 @@ tSF_CCP_Composition			= "Civil SUV";	// Name of default composition; See 'Defaul
 
 // Texts
 tSF_CCP_STR_ShortName		= "CCP";
-tSF_CCP_STR_FullName		= "Casualty Collection Point";
+tSF_CCP_STR_FullName			= "Casualty Collection Point";
 
 tSF_CCP_STR_NotAllowedText		= "This area is not secured to deploy %1 there. Choose different location.";
 tSF_CCP_STR_AlreadySet		= "%1 was already set (remove previous one to change location).";

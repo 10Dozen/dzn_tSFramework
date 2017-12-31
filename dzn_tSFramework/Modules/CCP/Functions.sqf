@@ -1,6 +1,9 @@
 
 tSF_fnc_CCP_drawAllowedAreaMarkers = {
 	// @Markers = call tSF_fnc_CCP_drawAllowedAreaMarkers
+	private _mrk = ["mrk_CCP_default", getPosATL tsf_CCP, "mil_box", "ColorKhaki", format ["%1 Default", tSF_CCP_STR_ShortName], true] call dzn_fnc_createMarkerIcon;
+	_mrk setMarkerAlpha 0.5;
+	
 	private _markers = [];
 	{
 		private _trgArea = triggerArea _x;
@@ -16,7 +19,9 @@ tSF_fnc_CCP_drawAllowedAreaMarkers = {
 
 		_markers pushBack _mrk;
 	} forEach (synchronizedObjects tsf_CCP);
-
+	
+	
+	
 	_markers
 };
 
@@ -28,21 +33,36 @@ tSF_fnc_CCP_removeAllowedAreaMarkers = {
 tSF_fnc_CCP_findAndUpdateMarker = {
 	// call dzn_fnc_tsf_CCP_findMarker
 	private _markerPos = getPosASL tsf_CCP;
+	private _useDefault = true;
+	
 	{
-		if (toLower(markerText _x) == "ccp") then {
-		 	_x setMarkerText tSF_CCP_STR_ShortName;
+		if (toLower(markerText _x) == "ccp") then {		 	
+			_x setMarkerText tSF_CCP_STR_ShortName;
 		 	_x setMarkerType "mil_flag";
+		 	_x setMarkerColor "ColorKhaki";
+			deleteMarker "mrk_CCP_default";
 			_markerPos = markerPos _x;
+			
+			_useDefault = false;
 		};
 	} forEach allMapMarkers;
-
+	
+	if (_useDefault) then {
+		[] spawn {
+			"mrk_CCP_default" setMarkerText tSF_CCP_STR_ShortName;
+			"mrk_CCP_default" setMarkerType "mil_flag";
+			"mrk_CCP_default" setMarkerColor "ColorKhaki";
+			"mrk_CCP_default" setMarkerAlpha 1;
+		};
+	};
+	
 	_markerPos
 };
 
 
 tSF_fnc_CCP_createCCP_Server = {
-	params["_pos","_composition"];
-
+	params["_pos","_composition"];	
+	
 	private _dir = 0;
 	if !(typename _pos == "ARRAY") then {
 		_dir = getDir _pos;
@@ -79,15 +99,13 @@ tSF_fnc_CCP_createCCP_Server = {
 	publicVariable "tSF_CCP_Objects";
 
 	// Add helipad position
-	private _hpadPos = _pos findEmptyPosition [12, 30, "B_Heli_Transport_01_camo_F"];
+	private _hpadPos = _pos findEmptyPosition [20, 50, "B_Heli_Transport_01_camo_F"];
 	if (_hpadPos isEqualTo []) then { _hpadPos = _pos; };
-	private _hpad = "Land_HelipadEmpty_F" createVehicle _pos;
+	private _hpad = "Land_HelipadEmpty_F" createVehicle _hpadPos;
 };
 
 tSF_fnc_CCP_createCCP_Client = {
-	waitUntil { !isNil "tSF_CCP_Position" };
-	["mrk_auto_ccp", tSF_CCP_Position, "mil_flag", "ColorKhaki", "CCP", true] call dzn_fnc_createMarkerIcon;
-
+	waitUntil {!isNil "tSF_CCP_Position"};
 	waitUntil {!isNil "tSF_CCP_Objects"};
 	{
 		[
