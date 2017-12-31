@@ -12,7 +12,11 @@ if (hasInterface) then {
 	if (tSF_AdminTool_EnableMissionEndings || tSF_AdminTool_EnableGATTool) then {
 		[] spawn {
 			waitUntil { sleep 15; call dzn_fnc_adminTools_checkIsAdmin };
-			tSF_GATList = (allVariables missionNamespace)  select {  ["kit_", _x, false] call BIS_fnc_inString &&  !(["lkit_", _x, false] call BIS_fnc_inString) };
+			tSF_GATList = (allVariables missionNamespace)  select {  
+				["kit_", _x, false] call BIS_fnc_inString 
+				&& !(["lkit_", _x, false] call BIS_fnc_inString)
+				&& !(["cba_xeh", _x, false] call BIS_fnc_inString)
+			};
 			tSF_GATList pushBack "";
 			
 			call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf";
