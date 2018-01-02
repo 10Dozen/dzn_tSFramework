@@ -1,3 +1,23 @@
+tSF_fnc_adminTools_handleKey = {
+	if (tSF_adminTools_isKeyPressed) exitWith {};
+	switch (_this select 1) do {
+		// F5
+		case 63: {
+			tSF_adminTools_isKeyPressed = true;
+			[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
+			[] spawn tSF_fnc_adminTools_showGSOScreen;
+		};
+		// F6
+		case 64: {
+			tSF_adminTools_isKeyPressed = true;
+			[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
+			[] spawn tSF_fnc_adminTools_RapidArtillery_showZeusSceen;
+		};
+	};
+	
+	false
+};
+
 dzn_fnc_adminTools_checkIsAdmin = {
 	(serverCommandAvailable "#logout") || !(isMultiplayer) || isServer
 };
@@ -12,16 +32,7 @@ tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay = {
 		tSF_adminTools_MenuAddedToZeus = false;
 	} else {
 		if (isNil "tSF_adminTools_MenuAddedToZeus" || {!tSF_adminTools_MenuAddedToZeus}) then {
-			(findDisplay 312) displayAddEventHandler ["KeyUp", {
-				if (tSF_adminTools_isKeyPressed) exitWith {};				
-				private _key = _this select 1;
-				if (_key == 63) then {
-					tSF_adminTools_isKeyPressed = true;
-					[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };					
-					[] spawn tSF_fnc_adminTools_showGSOScreen;
-				};				
-				false
-			}];
+			(findDisplay 312) displayAddEventHandler ["KeyUp", {call tSF_fnc_adminTools_handleKey}];
 			tSF_adminTools_MenuAddedToZeus = true;
 		}
 	};
@@ -137,11 +148,11 @@ dzn_fnc_adminTools_showGATTool = {
 /*
  *	GSO Menu
  */
-tSF_fnc_admintTools_teleportTo = {
+tSF_fnc_adminTools_teleportTo = {
 	params["_pos","_u"];
 	
 	if !(local _u) exitWith {
-		[_pos, _u] remoteExec ["tSF_fnc_admintTools_teleportTo", _u];
+		[_pos, _u] remoteExec ["tSF_fnc_adminTools_teleportTo", _u];
 	};
 	
 	0 cutText ["", "WHITE OUT", 0.1];
@@ -246,7 +257,7 @@ tSF_fnc_adminTools_createTeleportRP = {
 };
 
 /*
- *
+ *	F5 GSO Main Screen
  */
 tSF_fnc_adminTools_showGSOScreen = {
 	#define ADD_GSO_POS(X,Y) 	tSF_AdminTools_GSO_TeleportPositions pushBack (X); tSF_AdminTools_GSO_TeleportSelections pushBack (Y)
@@ -312,7 +323,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 			[
 				((_this select 0 select 2) select (_this select 0 select 0))
 				, player
-			] spawn tSF_fnc_admintTools_teleportTo;
+			] spawn tSF_fnc_adminTools_teleportTo;
 		}]
 		
 		, [2, "LABEL", ""]
@@ -377,7 +388,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 			closeDialog 2;
 			private _u = (_this select 2 select 2) select (_this select 2 select 0);
 			private _pos = (_this select 5 select 2) select (_this select 5 select 0);
-			[_pos, _u] spawn tSF_fnc_admintTools_teleportTo;
+			[_pos, _u] spawn tSF_fnc_adminTools_teleportTo;
 			hint format ["%1 teleported", name _u];
 		}]
 		
@@ -429,36 +440,180 @@ tSF_fnc_adminTools_showGSOScreen = {
 	] call dzn_fnc_ShowAdvDialog;
 };
 
-
 /*
- *	F6 Zeus Screen
+ *	F6 Rapid Artillery Zeus Screen
+ *
+ *	Scope:
+ *	[ ]	8-grid position
  */
+tSF_fnc_adminTools_RapidArtillery_showZeusSceen = {
+	if !(tSF_AdminTools_RapidArtillery_Enabled) exitWith {};
+	
+	private _tgtNames = (entities tSF_AdminTools_RapidArtillery_TargetClass) apply { name _x };
+	private _tgtPos = (entities tSF_AdminTools_RapidArtillery_TargetClass) apply { getPosATL _x };
+	
+	private _gunType = tSF_AdminTools_RapidArtillery_ArtillerySettings apply { _x select 0 };
+	
+	private _countValues = [1,3,6,9];
+	private _countTitles = _countValues apply { format ["%1 times", _x] };
+	
+	
+	private _etaValues = [40,50,60,5,10,15,20,30];
+	private _etaTitles = _etaValues apply { format ["%1 sec", _x] };
 
- tSF_fnc_adminTools_showZeusSceen = {
- /*
- 	[ GSO Zeus Screen							]
- 	---------------------------------------------
- 	[ Artillery									]
- 	[ TGT_1      V ][ REMOVE	  ][ ADD		]	// Create logic module that can be moved to need position
- 	[______________][ Grid	  Disp][ 10m	  V ]	// Grid and dispersion
- 	[ Round		][ 82mm   V ][ HE    V ][ 5   V ]	// Caliber, round type, number of rounds
- 	[ 20	  V ][Delay  ETA][<----------|----->]	// Delay between fire, ETA of rounds (m.b. should be on differeng sides)
- 	[											]
- 	[		  ][		  ][		  ][ FIRE	]	// Fire button
-	---------------------------------------------
-
-
-
-
-
- */
+	private _delayValues = [2,5,10,15,20,30,40,50,60,90,120];
+	private _delayTitles = _delayValues apply { format ["%1 sec", _x] };
+ 
  	[
- 		[0, "HEADER", "GSO Zeus Screen"]
- 		, [1, "LABEL", ""]
- 		, [2, "LABEL", ""]
-
-
-
+ 		[0, "HEADER", "GSO Zeus Screen - Rapid Artillery Support"]
+ 		, [1, "DROPDOWN", _tgtNames, _tgtPos]
+ 		, [1, "LABEL", "TGT<t align='center'>or</t><t align='right'>8-GRID</t>"]
+ 		, [1, "INPUT"]
+		
+ 		, [2, "LABEL", "Gun"]
+ 		, [2, "LABEL", "Round"]
+ 		, [2, "LABEL", "Quantity"]
+		
+		, [3, "DROPDOWN", _gunType, [0,1,2]]
+		, [3, "DROPDOWN", tSF_AdminTools_RapidArtillery_AllowedRounds, [0,1,2]]
+		, [3, "DROPDOWN", _countTitles, _countValues]
+		
+		, [4, "DROPDOWN", _etaTitles, _etaValues]
+		, [4, "LABEL", "ETA <t align='right'>Delay</t>"]
+		, [4, "DROPDOWN", _delayTitles, _delayValues]
+		
+		, [5, "LABEL", ""]
+		, [6, "BUTTON", "CANCEL", { closeDialog 2 }]
+		, [6, "LABEL", ""]
+		, [6, "BUTTON", "CREATE FIREMISSION", {
+			closeDialog 2;
+			AC1 = _this;
+			params ["_tgt", "_grid", "_gun", "_round", "_times", "_eta", "_delay"];
+			// [@Pos, @TargetName], @GunID, @RoundID, @Times, @ETA, @Delay
+			
+			if (count (_grid select 0) > 0 && count (_grid select 0) < 8) exitWith {};
+			
+			private _selectedTarget = [];
+			if ((_grid select 0) == "") then {
+				_selectedTarget = [_tgt select 2 select (_tgt select 0), _tgt select 1];
+			} else {
+				_selectedTarget = [
+					((_grid select 0) splitString " " joinString "") call dzn_fnc_getPosOnMapGrid
+					, "Target"
+				];
+			};
+			
+			[
+				_selectedTarget
+				, _gun select 0
+				, _round select 0
+				, _times select 2 select (_times select 0)
+				, _eta select 2 select (_eta select 0)
+				, _delay select 2 select (_delay select 0)	
+			] spawn tSF_fnc_adminTools_RapidArtillery_createFiremission;		
+		}]
 	] call dzn_fnc_ShowAdvDialog;
+};
 
- };
+tSF_fnc_adminTools_RapidArtillery_createFiremission = {
+	// params["_pos","_tgtName","_gun","_type","_times","_eta","_delay"];
+	params ["_posAttr", "_gunID", "_typeID", "_times", "_eta", "_delay"];
+	AC = _this;
+	tSF_AdminTools_RapidArtillery_FiremissionCount = tSF_AdminTools_RapidArtillery_FiremissionCount + 1;
+	private _firemissionNumber = tSF_AdminTools_RapidArtillery_FiremissionCount;
+	
+	private _pos 		= _posAttr select 0;
+	private _tgtName 	= _posAttr select 1;
+	private _gunName 	= tSF_AdminTools_RapidArtillery_ArtillerySettings select _gunID select 0;
+	private _typeName	= tSF_AdminTools_RapidArtillery_AllowedRounds select _typeID;
+	private _type		= ((tSF_AdminTools_RapidArtillery_ArtillerySettings select _gunID) select 1) select _typeID;
+	
+	// Hint
+	hint parseText format [
+		"<t size='1' color='#FFD000' shadow='1'>Rapid Artillery Firemission #%1:</t>
+		<br /><br />%2 at %3
+		<br />%4, %5, %6
+		<br /><t color='#FFD000'>ETA %7 sec</t> with %8 sec delay between shots"
+		, _firemissionNumber
+		, _tgtName, _pos call dzn_fnc_getMapGrid
+		, _gunName, _typeName, _times
+		, _eta, _delay		
+	];
+	player createDiaryRecord [tSF_AdminTools_Topic, [
+		"Rapid Artillery Missions"
+		, format [
+			"<font color='#12C4FF' size='14'>Firemission #%1</font><br />%2 at %3, %4, %5 %6 times"
+			, _firemissionNumber, _tgtName, _pos call dzn_fnc_getMapGrid, _gunName, _typeName, _times
+		]
+	]];
+	
+	// Firemission
+	sleep (_eta - 1);
+	hint parseText format [
+		"<t size='1' color='#FFD000' shadow='1'>Rapid Artillery Firemission #%1:</t>
+		<br /><br /><t size='1.25'>Splash!</t>"
+		, _firemissionNumber
+	];
+	sleep 1;
+	
+	for "_i" from 1 to _times do {
+		[
+			_pos
+			, _type
+			, random (switch (true) do {
+				case (_times == 1): { 5 };
+				case (_times == 3): { 25 };
+				case (_times == 6): { 40 };
+				case (_times == 9): { 50 };
+			})
+			, ["mortar", _gunName, false] call bis_fnc_InString
+		] call tSF_fnc_adminTools_RapidArtillery_spawnShell;
+	
+		sleep _delay;	
+	};
+	
+	hint parseText format [
+		"<t size='1' color='#FFD000' shadow='1'>Rapid Artillery Firemission #%1:</t>
+		<br /><br />%2 at %3, %4, %5
+		<br />Rounds complete!"
+		, _firemissionNumber
+		, _tgtName, _pos call dzn_fnc_getMapGrid, _typeName, _times
+	];
+};
+
+tSF_fnc_adminTools_RapidArtillery_spawnShell = {
+	params ["_pos","_type","_disp","_isMortar", ["_h", 500],["_v", -100]];
+	
+	_pos = _pos getPos [_disp, random 360];
+	_pos set [2, _h];
+	
+	private _shell = _type createVehicle _pos;
+	_shell setVectorDirandUp [[0,0,-1],[0.1,0.1,1]];
+	
+	if (_type isKindOf "FlareCore") then {
+		private _flare = objNull;
+		
+		for "_i" from 1 to (if (_isMortar) then { 1 } else { 2 }) do {
+			_flare = "F_40mm_White" createVehicle [0,0,0];
+			_flare attachTo [_shell, [0,0,0]];
+		};
+		
+		if (isNil "dzn_fnc_flares_setFlareEffectGlobal") exitWith { deleteVehicle _shell; objNull };
+		
+		_shell setPosATL [_pos select 0, _pos select 1, 280];		
+		[[0,0,0,0,0,_shell], if (_isMortar) then { "mortar" } else { "howitzer" }] call dzn_fnc_flares_setFlareEffectGlobal;
+		
+		_shell setVelocity [0,0,0.1];
+		_shell spawn {			
+			while { (getPosATL _this select 2) > 1 } do {
+				_this setVelocity [0,0,-4];	
+			};
+		};
+	} else {	
+		_shell setVelocity [0,0,_v];
+	};
+	
+	_shell
+};
+
+
