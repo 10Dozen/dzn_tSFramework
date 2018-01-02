@@ -215,7 +215,7 @@ tSF_fnc_adminTools_createTeleportRP = {
 		[0, "HEADER", "ADD RALLYPOINT"]
 		, [1, "LABEL", "SHORTCUT"]
 		, [1, "INPUT"]
-		, [2, "LABEL", ""]
+		, [2, "LABEL", "<t align='center'><t color='#ffaa00'>Note:</t> Type name of existing RP to update it</t>"]
 		, [3, "BUTTON", "CANCEL", { closeDialog 2; }]
 		, [3, "LABEL", ""]
 		, [3, "BUTTON", "ADD", {
