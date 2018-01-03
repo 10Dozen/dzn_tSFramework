@@ -13,6 +13,12 @@ tSF_fnc_adminTools_handleKey = {
 			[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
 			[] spawn tSF_fnc_adminTools_RapidArtillery_showZeusSceen;
 		};
+		// F7
+		case 65: {
+			tSF_adminTools_isKeyPressed = true;
+			[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
+			[] spawn tSF_fnc_adminTools_ForceRespawn_showMenu;
+		};
 	};
 	
 	false
@@ -442,9 +448,6 @@ tSF_fnc_adminTools_showGSOScreen = {
 
 /*
  *	F6 Rapid Artillery Zeus Screen
- *
- *	Scope:
- *	[ ]	8-grid position
  */
 tSF_fnc_adminTools_RapidArtillery_showZeusSceen = {
 	if !(tSF_AdminTools_RapidArtillery_Enabled) exitWith {};
@@ -518,7 +521,7 @@ tSF_fnc_adminTools_RapidArtillery_showZeusSceen = {
 tSF_fnc_adminTools_RapidArtillery_createFiremission = {
 	// params["_pos","_tgtName","_gun","_type","_times","_eta","_delay"];
 	params ["_posAttr", "_gunID", "_typeID", "_times", "_eta", "_delay"];
-	AC = _this;
+	
 	tSF_AdminTools_RapidArtillery_FiremissionCount = tSF_AdminTools_RapidArtillery_FiremissionCount + 1;
 	private _firemissionNumber = tSF_AdminTools_RapidArtillery_FiremissionCount;
 	
@@ -597,7 +600,7 @@ tSF_fnc_adminTools_RapidArtillery_spawnShell = {
 			_flare = "F_40mm_White" createVehicle [0,0,0];
 			_flare attachTo [_shell, [0,0,0]];
 		};
-		
+		q
 		if (isNil "dzn_fnc_flares_setFlareEffectGlobal") exitWith { deleteVehicle _shell; objNull };
 		
 		_shell setPosATL [_pos select 0, _pos select 1, 280];		
@@ -616,4 +619,40 @@ tSF_fnc_adminTools_RapidArtillery_spawnShell = {
 	_shell
 };
 
+/*
+ *	F7 Force Respwn Zeus Menu
+ */
+tSF_fnc_adminTools_ForceRespawn_showMenu = {
+	private _players = (call BIS_fnc_listPlayers) select { !alive _x };
+	private _playersStr = (_players apply { name _x }) joinString ", ";
+	
+	tSF_adminTools_ForceRespawn_List = _players;
+	
+	[
+		[0, "HEADER", "GSO Zeus Screen - Force Respawn"]
+		, [1, "LABEL", format ["Players pending respawn: %1", count _players]]
+		, [2, "LABEL",  _playersStr]
+		, [3, "LABEL", ""]
+		, [4, "BUTTON", "CLOSE", { closeDialog 2; }]
+		, [4, "LABEL", ""]
+		, [4, "BUTTON", "RESPAWN ALL", {
+			closeDialog 2;
+			
+			hint "Respawn in 5 seconds";
+			{
+				[] remoteExec ["tSF_fnc_adminTools_ForceRespawn_RespawnPlayer", _x];
+			} forEach tSF_adminTools_ForceRespawn_List;
+		}]
+	] call dzn_fnc_ShowAdvDialog;
+};
 
+tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {
+	hint "Respawning in 5 seconds";
+	
+	setPlayerRespawnTime 5;
+	sleep 7;
+	setPlayerRespawnTime 9999999;
+	
+	[player, player getVariable "dzn_gear", false] spawn dzn_fnc_gear_assignKit;
+};
+publicVariable "tSF_fnc_adminTools_ForceRespawn_RespawnPlayer";
