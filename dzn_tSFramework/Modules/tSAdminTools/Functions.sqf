@@ -600,7 +600,7 @@ tSF_fnc_adminTools_RapidArtillery_spawnShell = {
 			_flare = "F_40mm_White" createVehicle [0,0,0];
 			_flare attachTo [_shell, [0,0,0]];
 		};
-		q
+		
 		if (isNil "dzn_fnc_flares_setFlareEffectGlobal") exitWith { deleteVehicle _shell; objNull };
 		
 		_shell setPosATL [_pos select 0, _pos select 1, 280];		
@@ -622,20 +622,34 @@ tSF_fnc_adminTools_RapidArtillery_spawnShell = {
 /*
  *	F7 Force Respwn Zeus Menu
  */
+/*
+ *	F7 Force Respwn Zeus Menu
+ */
 tSF_fnc_adminTools_ForceRespawn_showMenu = {
 	private _players = (call BIS_fnc_listPlayers) select { !alive _x };
 	private _playersStr = (_players apply { name _x }) joinString ", ";
 	
+	if (count _playersStr > 104) then { _playersStr = format ["%1...", _playersStr select [0,101]]; };
 	tSF_adminTools_ForceRespawn_List = _players;
 	
 	[
 		[0, "HEADER", "GSO Zeus Screen - Force Respawn"]
 		, [1, "LABEL", format ["Players pending respawn: %1", count _players]]
-		, [2, "LABEL",  _playersStr]
-		, [3, "LABEL", ""]
-		, [4, "BUTTON", "CLOSE", { closeDialog 2; }]
+		, [2, "LABEL",  format ["<t color='#FFD000' size='0.85'>%1</t>", _playersStr]]
+		, [3, "INPUT"]
+		
+		, [4, "LABEL", ""]		
+		, [4, "BUTTON", "SEND MESSAGE", {
+			closeDialog 2;
+			{
+				(_this select 0 select 0) remoteExec ["tSF_fnc_adminTools_ForceRespawn_NotifySpectator", _x];
+			} forEach tSF_adminTools_ForceRespawn_List;
+		}]
 		, [4, "LABEL", ""]
-		, [4, "BUTTON", "RESPAWN ALL", {
+		
+		, [5, "BUTTON", "CLOSE", { closeDialog 2; }]
+		, [5, "LABEL", ""]
+		, [5, "BUTTON", "RESPAWN ALL", {
 			closeDialog 2;
 			
 			hint "Respawn in 5 seconds";
@@ -646,8 +660,8 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 	] call dzn_fnc_ShowAdvDialog;
 };
 
-tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {
-	hint "Respawning in 5 seconds";
+tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {	
+	"Respawning in 5 seconds" call tSF_fnc_adminTools_ForceRespawn_NotifySpectator;
 	
 	setPlayerRespawnTime 5;
 	sleep 7;
@@ -656,3 +670,17 @@ tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {
 	[player, player getVariable "dzn_gear", false] spawn dzn_fnc_gear_assignKit;
 };
 publicVariable "tSF_fnc_adminTools_ForceRespawn_RespawnPlayer";
+
+tSF_fnc_adminTools_ForceRespawn_NotifySpectator = {
+	[
+		[
+			"<t color='#FFD000'>Сообщение от GSO</t>"
+			, format ["<t align='center'>%1</t>", _this]
+		]
+		, "TOP"
+		, [0,0,0,.75]
+		, 30	
+	] call dzn_fnc_ShowMessage;
+};
+publicVariable "tSF_fnc_adminTools_ForceRespawn_NotifySpectator";
+
