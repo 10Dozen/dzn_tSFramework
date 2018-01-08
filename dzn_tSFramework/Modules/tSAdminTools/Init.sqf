@@ -1,12 +1,23 @@
 
 if (hasInterface) then {
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Settings.sqf";
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions.sqf";	
+	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions.sqf";
+	tSF_AdminTools_Rallypoints = [];
+	tSF_AdminTools_TeleportListNeedUpdate = true;
+	tSF_AdminTools_GSO_TeleportPositions = [];
+	tSF_AdminTools_GSO_TeleportSelections = [];
+	tSF_AdminTools_PLR_TeleportPositions = [];
+	tSF_AdminTools_PLR_TeleportSelections = [];
+	tSF_AdminTools_RapidArtillery_FiremissionCount = 0;
 
 	if (tSF_AdminTool_EnableMissionEndings || tSF_AdminTool_EnableGATTool) then {
 		[] spawn {
 			waitUntil { sleep 15; call dzn_fnc_adminTools_checkIsAdmin };
-			tSF_GATList = (allVariables missionNamespace)  select {  ["kit_", _x, false] call BIS_fnc_inString &&  !(["lkit_", _x, false] call BIS_fnc_inString) };
+			tSF_GATList = (allVariables missionNamespace)  select {  
+				["kit_", _x, false] call BIS_fnc_inString 
+				&& !(["lkit_", _x, false] call BIS_fnc_inString)
+				&& !(["cba_xeh", _x, false] call BIS_fnc_inString)
+			};
 			tSF_GATList pushBack "";
 			
 			call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf";
@@ -20,16 +31,7 @@ if (hasInterface) then {
 			{
 				_x spawn {
 					waitUntil {!isNull (findDisplay _this)};
-					(findDisplay _this) displayAddEventHandler ["KeyUp",  {
-						if (tSF_adminTools_isKeyPressed) exitWith {};				
-						private _key = _this select 1;
-						if (_key == 63) then {
-							tSF_adminTools_isKeyPressed = true;
-							[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };					
-							[] spawn tSF_fnc_adminTools_showGSOScreen;
-						};				
-						false
-					}];
+					(findDisplay _this) displayAddEventHandler ["KeyUp",  {call tSF_fnc_adminTools_handleKey}];
 				};
 			} forEach [
 				46, 60492, 12249 /* 46 (game) | 60492 (spectator arma) | 12249 (ACE Spectator) */

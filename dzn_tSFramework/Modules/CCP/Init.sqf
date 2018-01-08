@@ -12,15 +12,15 @@ if (_editorSetComposition != "") then { tSF_CCP_Composition = _editorSetComposit
 
 if (hasInterface) then {
 	"tSF_CCP_showNotAllowedText" addPublicVariableEventHandler {
-		if (tSF_CCP_showNotAllowedText) then { [side player, "HQ"] commandChat tSF_CCP_STR_NotAllowedText };
+		if (tSF_CCP_showNotAllowedText) then { [side player, "HQ"] commandChat format [tSF_CCP_STR_NotAllowedText, tSF_CCP_STR_FullName] };
 		tSF_CCP_showNotAllowedText = false;
 	};
 	"tSF_CCP_showAlreadySet" addPublicVariableEventHandler {
-		if (tSF_CCP_showAlreadySet) then { [side player, "HQ"] commandChat tSF_CCP_STR_AlreadySet };
+		if (tSF_CCP_showAlreadySet) then { [side player, "HQ"] commandChat format [tSF_CCP_STR_AlreadySet, tSF_CCP_STR_FullName] };
 		tSF_CCP_showAlreadySet = false;
 	};
 	"tSF_CCP_showSuccessSet" addPublicVariableEventHandler {
-		if (tSF_CCP_showSuccessSet) then { [side player, "HQ"] commandChat tSF_CCP_STR_SuccessSet };
+		if (tSF_CCP_showSuccessSet) then { [side player, "HQ"] commandChat format [tSF_CCP_STR_SuccessSet, tSF_CCP_STR_FullName] };
 		tSF_CCP_showSuccessSet = false;
 	};
 	
@@ -40,14 +40,11 @@ if (isServer) then {
 		
 		tSF_CCP_allowedAreaMarkers = call tSF_fnc_CCP_drawAllowedAreaMarkers;
 		
-		tSF_CCP_AllowedLocation = [];
-		{
-			tSF_CCP_AllowedLocation pushBack ([_x, true] call dzn_fnc_convertTriggerToLocation);
-		} forEach (synchronizedObjects tsf_CCP);
+		tSF_CCP_AllowedLocation = synchronizedObjects tsf_CCP;		
 		
 		// Handle markers on briefing
 		if !(tSF_CCP_AllowedLocation isEqualTo []) then {
-			["tSF_CCP_BriefingHelper", "onEachFrame", {
+			tSF_CCP_BriefingHelperEH = addMissionEventHandler ["EachFrame", {
 				if (count tSF_tSF_CCP_MarkersLastChecked == count allMapMarkers) exitWith {};
 				private _markersToCheck = allMapMarkers - tSF_tSF_CCP_MarkersLastChecked;
 				tSF_tSF_CCP_MarkersLastChecked = allMapMarkers;
@@ -56,7 +53,7 @@ if (isServer) then {
 					if (toLower(markerText _x) == "ccp") then {
 						if (tSF_CCP_Placed && markerText tSF_CCP_Marker != "") then {						
 							if (tSF_CCP_Marker != _x) then { 
-								[side player, "HQ"] commandChat tSF_CCP_STR_AlreadySet;
+								[side player, "HQ"] commandChat format [tSF_CCP_STR_SuccessSet, tSF_CCP_STR_FullName];
 								publicVariable "tSF_CCP_showAlreadySet";
 								deleteMarker _x;
 							};
@@ -64,25 +61,27 @@ if (isServer) then {
 							if ([getMarkerPos _x, tSF_CCP_AllowedLocation] call dzn_fnc_isInLocation) then {
 								tSF_CCP_Placed = true;
 								tSF_CCP_Marker = _x;
-								[side player, "HQ"] commandChat tSF_CCP_STR_SuccessSet;
+								[side player, "HQ"] commandChat format [tSF_CCP_STR_SuccessSet, tSF_CCP_STR_FullName];
 								publicVariable "tSF_CCP_showSuccessSet";
 							} else {
-								[side player, "HQ"] commandChat tSF_CCP_STR_NotAllowedText;
+								[side player, "HQ"] commandChat format [tSF_CCP_STR_NotAllowedText, tSF_CCP_STR_FullName];
 								publicVariable "tSF_CCP_showNotAllowedText";							
 								deleteMarker _x;
 							};
 						};
 					};
 				} forEach _markersToCheck;
-			}] call BIS_fnc_addStackedEventHandler;
+			}];
 		};
 		
 		[] spawn { 
 			waitUntil { time > 1 };
 			tSF_CCP_allowedAreaMarkers call tSF_fnc_CCP_removeAllowedAreaMarkers;
+			if (!isNil "tSF_CCP_BriefingHelperEH") then {
+				removeMissionEventHandler ["EachFrame", tSF_CCP_BriefingHelperEH];
+			};
 			
-			["tSF_CCP_BriefingHelper", "onEachFrame"] call BIS_fnc_removeStackedEventHandler;
-			tSF_CCP_Position = call tSF_fnc_CCP_findMarker;			
+			tSF_CCP_Position = call tSF_fnc_CCP_findAndUpdateMarker;
 			
 			[
 				tSF_CCP_Position

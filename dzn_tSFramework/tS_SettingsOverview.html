@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+	<head>
+		<title>tSF Settings Overview</title>
+		<style>
+			body {
+				font-family: "Consolas";
+			}
+
+			h3 {
+				background-color: #999;
+				padding-left: 10px
+			}
+		</style>
+
+		<script src="tS_SettingsOverview.jquery.min.js"></script>
+		<script>
+			var fileList = [
+				["ACEActions", "Modules/ACEActions/Settings.sqf"]
+				, ["Airborne Support", "Modules/AirborneSupport/Settings.sqf"]
+				, ["Briefing", "Modules/Briefing/tSF_briefing.sqf"]
+				, ["Briefing Settings", "Modules/Briefing/Settings.sqf"]
+				, ["CCP", "Modules/CCP/Settings.sqf"]
+				, ["Conversations", "Modules/CCP/Settings.sqf"]
+				, ["EditorRadioSettings", "Modules/EditorRadioSettings/Settings.sqf"]
+				, ["EditorUnitBehavior", "Modules/EditorUnitBehavior/Settings.sqf"]
+				, ["EditorVehicleCrew", "Modules/EditorVehicleCrew/Settings.sqf"]
+				, ["FARP", "Modules/FARP/Settings.sqf"]
+				, ["Interactives", "Modules/Interactives/Settings.sqf"]
+				, ["Intro Text", "Modules/IntroText/Settings.sqf"]
+				, ["JIPTeleport", "Modules/JIPTeleport/Settings.sqf"]
+				, ["MissionConditions", "Modules/MissionConditions/Settings.sqf"]
+				, ["MissionDefaults", "Modules/MissionDefaults/Settings.sqf"]
+				, ["POM", "Modules/POM/Settings.sqf"]
+				, ["tSAdminTools", "Modules/tSAdminTools/Settings.sqf"]
+				, ["tSNotes", "Modules/tSNotes/Settings.sqf"]
+				, ["tSNotesSettings", "Modules/tSNotesSettings/Settings.sqf"]
+			];
+
+
+			function toggleTab() {
+
+				if ( $($(this).find("iframe")[0]).css("display") == "inline" ) {
+					$($(this).find("iframe")[0]).css("display","none");
+					$($(this).find("h3")[0]).css("background-color", "#999");
+				} else {
+					$($(this).find("iframe")[0]).css("display","inline");
+					$($(this).find("h3")[0]).css("background-color", "rgb(255, 182, 49)");
+				};
+
+			};
+
+			$( document ).ready(function() {
+				fileList.forEach( function (item, i, arr) {
+					$("body").append("<div><h3>" + item[0] + "</h3><iframe style='display: none' src='" + item[1] + "' width='95%' height='300px'></iframe></div>");
+				});
+
+				$("div").on("click", toggleTab);
+			});
+		</script>
+	</head>
+	<body>
+
+	<!--
+		<h3>Intro Text</h3>
+		<iframe src="Modules/IntroText/Settings.sqf"
+				width="100%"
+				height="300px"
+		></iframe>
+		-->
+	</body>
+</html>
+
+<!--
+<!doctype html>
+<html lang="us">
+	<head>
+		<meta charset="utf-8">
+		<title>JSPG</title>
+		
+		<link rel="stylesheet" href="src/css/jspg.css">
+		<script src="src/js/jquery.min.js"></script>
+		
+		<script src="Game.js"></script>
+		<script src="src/js/jspg.js"></script>
+	</head>
+	<body>
+		<div id="header">
+			<div id="header-title">
+				<span>JS</span> PG
+			</div>
+			<div id="header-status" class = "animated">
+				<!--
+				<button class="btn-roll-all">Roll</button>
+				<button class="btn-clear">Clear</button>		
+
+			</div>
+		</div>
+		
+		<div id="game-form">			
+			<ul id="scenes">
+				<!-- https://a.ppy.sh/7015713?1448466217.png 
+				<li>
+					<div class="scene-description scene-even portrait portrait-left">
+						<img src="http://65.media.tumblr.com/avatar_6ea49b9b3506_128.png"/>
+						My Text textextMy Text textextMy Text textextMy Text textextMy Text textext
+						My Text textextMy Text textextMy Text textextMy Text textextMy Text textext
+						My Text textextMy Text textextMy Text textextMy Text textext
+					</div>
+				</li>
+				-->
+				<!--
+				<li>
+					<div class="scene-description scene-even">
+						<img height="128" src="https://coubsecure-a.akamaihd.net/get/b208/p/coub/simple/cw_timeline_pic/b4bbc180c7d/bf6b0e19b1739f1f8df5e/med_1451489660_image.jpg"/>
+						<br />- You chose a wrong door, leather man. Leather club is two blocks down!
+						
+					</div>
+				</li>
+				<li>
+					<div class="scene-description scene-odd">
+						<img src="https://img.youtube.com/vi/kKeRbnDlAhs/mqdefault.jpg"/>
+						<br />- Fuck You!
+					</div>
+				</li>
+
+			</ul>
+			<ul>
+				<div class="actions">
+				<!--
+					<div class="action-btn btn-1">Action 1</div>
+
+				</div>
+			</ul>
+		</div>		
+	</body>
+</html>
+		-->
