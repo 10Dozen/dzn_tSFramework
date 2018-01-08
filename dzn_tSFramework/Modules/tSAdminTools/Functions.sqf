@@ -370,7 +370,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 		, [11, "BUTTON", "ASSIGN KIT", {
 			private _u = (_this select 2 select 2) select (_this select 2 select 0);			
 			private _kit = if ((_this select 4 select 0) != "") then { (_this select 4 select 0) } else { _this select 3 select 1 };
-			
+	
 			if (isNil { call compile _kit }) exitWith {
 				hint parseText format [
 					"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
@@ -379,13 +379,32 @@ tSF_fnc_adminTools_showGSOScreen = {
 				];
 			};
 			
-			[_u, _kit] remoteExec ["dzn_fnc_gear_assignKit", _u];
-			hint parseText format [
-				"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
-				<br /> Kit '%1' was assigned to %2"
-				, _kit
-				, name _u
-			];		
+			closeDialog 2;
+			
+			[_u, _kit] spawn {
+				params["_u","_kit"];
+				
+				private _DialogResult = [
+					[format [
+						"Do you want to assign <t color='#FFD000'>%1</t> to <t color='#FFD000'>%2</t>?"
+						, _kit
+						, name _u
+					]]
+					, ["Yes"]
+					, ["No"]
+				] call dzn_fnc_ShowBasicDialog;
+				
+				waitUntil {!dialog};
+				
+				if !(_DialogResult) exitWith {};
+				[_u, _kit] remoteExec ["dzn_fnc_gear_assignKit", _u];
+				hint parseText format [
+					"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
+					<br /> Kit '%1' was assigned to %2"
+					, _kit
+					, name _u
+				];
+			};
 		}]
 		
 		, [12, "LABEL", "Teleport"]
@@ -410,12 +429,12 @@ tSF_fnc_adminTools_showGSOScreen = {
 			if (!isNil "tSF_WaterPipe") then {
 				{ deleteVehicle _x; } forEach tSF_WaterPipe;
 			};
-			
+			private _h = getPosATL player select 2;
 			tSF_WaterPipe = [ player, [
-				["Land_Water_pipe_EP1",73.3514,1.536,0,0,false,{},true]
-				,["Land_ChairPlastic_F",116.533,1.172,274.331,0.024,false,{},true]
-				,["Land_ChairPlastic_F",79.6645,2.365,195.455,0.024,false,{},true]
-				,["Land_Carpet_2_EP1",29.6481,1.748,62.135,0,false,{},true]
+				["Land_Water_pipe_EP1",73.3514,1.536,0,_h,false,{},true]
+				,["Land_ChairPlastic_F",116.533,1.172,274.331,_h + 0.024,false,{},true]
+				,["Land_ChairPlastic_F",79.6645,2.365,195.455,_h + 0.024,false,{},true]
+				,["Land_Carpet_2_EP1",29.6481,1.748,62.135,_h,false,{},true]
 			]] call dzn_fnc_setComposition;
 			
 			publicVariable "tSF_WaterPipe";
