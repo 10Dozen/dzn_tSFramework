@@ -55,3 +55,7 @@ dzn_fnc_missionConditions_startClienListener = {
 	waitUntil {sleep 1; !isNil "MissionFinished"};
 	[MissionFinished, true, 2] call BIS_fnc_endMission;
 };
+
+fnc_isAllDead = {
+	{alive _x} count (call BIS_fnc_listPlayers) < 1
+};

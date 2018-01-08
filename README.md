@@ -1,6 +1,6 @@
 ![img](http://tacticalshift.ru/tsf_10d.png)
 ------
-##### Version: 1.98
+##### Version: 1.99
 Tactical Shift Framework
 
 ##### Getting Started
@@ -51,6 +51,9 @@ Client-side settings like View Distance
 Admin-enabled ability to:
 - finish mission by one of the endings (from Diary or via tSF_End function)
 - assign gear kit to remote players
+- GSO Screen with teleport for GSO and Players
+- Rapid Artillery screen
+- GSO Respawn screen
 
 ##### Editor Unit Behavior
 Make editor placed unit to 'Surrender' on player's approach.

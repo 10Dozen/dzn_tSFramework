@@ -31,6 +31,9 @@ tSF_FARP_Assets_AllowRenewKit		= true;
 tSF_FARP_Assets_RenewKitTime		= 10;
 
 // Texts
-tSF_FARP_STR_NotAllowedText		= "This area is not secured to deploy FARP there. Choose different location.";
-tSF_FARP_STR_AlreadySet		= "FARP location was already set (remove previous one to change location).";
-tSF_FARP_STR_SuccessSet  		= "FARP will be deployed at selected location";
+tSF_FARP_STR_ShortName		= "FARP";
+tSF_FARP_STR_FullName		= "Forward Arming Refueling Point";
+
+tSF_FARP_STR_NotAllowedText		= "This area is not secured to deploy %1 there. Choose different location.";
+tSF_FARP_STR_AlreadySet		= "%1 location was already set (remove previous one to change location).";
+tSF_FARP_STR_SuccessSet  		= "%1 will be deployed at selected location";

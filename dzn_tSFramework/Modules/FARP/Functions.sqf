@@ -1,6 +1,9 @@
 
 tSF_fnc_FARP_drawAllowedAreaMarkers = {
 	// @Markers = call tSF_fnc_FARP_drawAllowedAreaMarkers
+	private _mrk = ["mrk_FARP_default", getPosATL tsf_FARP, "mil_box", "ColorOrange", format ["(%1)", tSF_FARP_STR_ShortName], true] call dzn_fnc_createMarkerIcon;
+	_mrk setMarkerAlpha 0.5;
+	
 	private _markers = [];
 	{
 		private _trgArea = triggerArea _x;
@@ -25,17 +28,34 @@ tSF_fnc_FARP_removeAllowedAreaMarkers = {
 	{deleteMarker _x;} forEach _this;
 };
 
-tSF_fnc_FARP_findMarker = {
-	// call tSF_fnc_tsf_FARP_findMarker
+tSF_fnc_FARP_findAndUpdateMarker = {
+	// call tSF_fnc_FARP_findAndUpdateMarker
 	private _markerPos = getPosASL tsf_FARP;
+	private _useDefault = true;
+	
 	{
-		if (toLower(markerText _x) == "farp") then { _markerPos = markerPos _x; };
+		if (toLower(markerText _x) == "farp") then {		 	
+			_x setMarkerText tSF_FARP_STR_ShortName;
+		 	_x setMarkerType "mil_flag";
+		 	_x setMarkerColor "ColorOrange";
+			deleteMarker "mrk_FARP_default";
+			_markerPos = markerPos _x;
+			
+			_useDefault = false;
+		};
 	} forEach allMapMarkers;
-
+	
+	if (_useDefault) then {
+		[] spawn {
+			"mrk_FARP_default" setMarkerText tSF_FARP_STR_ShortName;
+			"mrk_FARP_default" setMarkerType "mil_flag";
+			"mrk_FARP_default" setMarkerColor "ColorOrange";
+			"mrk_FARP_default" setMarkerAlpha 1;
+		};
+	};
+	
 	_markerPos
 };
-
-
 
 tSF_fnc_FARP_createFARP_Server = {
 	params["_pos","_composition"];
@@ -48,6 +68,9 @@ tSF_fnc_FARP_createFARP_Server = {
 
 	tSF_FARP_Objects = [[_pos, _dir], _composition] call dzn_fnc_setComposition;
 	tSF_FARP_Objects apply { _x lock true };
+	
+	private _pad = "Land_HelipadCircle_F" createVehicle [0,0,0];
+	_pad setPos (tSF_FARP_Position getPos [20, 225]);
 
 	publicVariable "tSF_FARP_Objects";
 };
@@ -55,8 +78,6 @@ tSF_fnc_FARP_createFARP_Server = {
 
 tSF_fnc_FARP_createFARP_Client = {
 	waitUntil { !isNil "tSF_FARP_Position" };
-	["mrk_auto_farp", tSF_FARP_Position, "mil_flag", "ColorOrange", "FARP", true] call dzn_fnc_createMarkerIcon;
-
 	waitUntil {!isNil "tSF_FARP_Objects"};
 	{
 		[
@@ -204,7 +225,7 @@ tSF_fnc_FARP_showMenu = {
 		&& { 
 			(getPosATL _x select 2) < 0.4
 			&& speed _x < 5
-			&& [ _x, tSF_FARP_Position, 20] call dzn_fnc_isInArea2d 
+			&& [ _x, tSF_FARP_Position, 25] call dzn_fnc_isInArea2d 
 		}		
 	};
 	

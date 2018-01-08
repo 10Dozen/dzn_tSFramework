@@ -1,7 +1,7 @@
 
 tSF_fnc_CCP_drawAllowedAreaMarkers = {
 	// @Markers = call tSF_fnc_CCP_drawAllowedAreaMarkers
-	private _mrk = ["mrk_CCP_default", getPosATL tsf_CCP, "mil_box", "ColorKhaki", format ["%1 Default", tSF_CCP_STR_ShortName], true] call dzn_fnc_createMarkerIcon;
+	private _mrk = ["mrk_CCP_default", getPosATL tsf_CCP, "mil_box", "ColorKhaki", format ["(%1)", tSF_CCP_STR_ShortName], true] call dzn_fnc_createMarkerIcon;
 	_mrk setMarkerAlpha 0.5;
 	
 	private _markers = [];
@@ -20,8 +20,6 @@ tSF_fnc_CCP_drawAllowedAreaMarkers = {
 		_markers pushBack _mrk;
 	} forEach (synchronizedObjects tsf_CCP);
 	
-	
-	
 	_markers
 };
 
@@ -31,7 +29,7 @@ tSF_fnc_CCP_removeAllowedAreaMarkers = {
 };
 
 tSF_fnc_CCP_findAndUpdateMarker = {
-	// call dzn_fnc_tsf_CCP_findMarker
+	// call tSF_fnc_CCP_findAndUpdateMarker
 	private _markerPos = getPosASL tsf_CCP;
 	private _useDefault = true;
 	

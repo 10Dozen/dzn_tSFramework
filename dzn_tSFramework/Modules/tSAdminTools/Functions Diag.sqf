@@ -4,6 +4,25 @@ tSF_Diag_AddDiagTopic = {
 		player createDiarySubject [tSF_Diag_Subject, "tSF DIAGNOSTICS"];
 	};
 	
+	private _text = "<font size='14' color='#b7f931'>%1</font>";
+	private _texts = [];
+	{
+		if (!isNil (_x select 1)) then {
+			_texts pushBack format [
+				"<font color='#ffffff'>%2</font>        %1"
+				, _x select 0
+				, if (_forEachIndex == 3) then { call compile ("call " + (_x select 1)) } else { call compile (_x select 1) }
+			];
+		};
+	} forEach [
+		["tS Framework", "tSF_Version"]
+		, ["dzn_Gear", "dzn_gear_version"]
+		, ["dzn_Dynai", "dzn_dynai_version"]
+		, ["dzn_CommonFunctions", "dzn_fnc_getVersion"]
+	];
+	
+	player createDiaryRecord ["tSF_Diagpage", ["Overview", format [_text, _texts joinString "<br />"]]];
+
 	call tSF_Diag_Gear_CollectKitData;
 	call tSF_Diag_Gear_CollectTotalData;
 	call tSF_Diag_TSF_CollectTotalData;	
