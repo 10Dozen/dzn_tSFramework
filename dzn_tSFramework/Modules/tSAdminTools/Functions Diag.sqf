@@ -26,7 +26,7 @@ tSF_Diag_AddDiagTopic = {
 	call tSF_Diag_Gear_CollectKitData;
 	call tSF_Diag_Gear_CollectTotalData;
 	call tSF_Diag_TSF_CollectTotalData;	
-	[] spawn tSF_Diag_Dynai_CollectData;
+	call tSF_Diag_Dynai_CollectData;
 };
 
 tSF_Diag_TSF_CollectTotalData = {		
