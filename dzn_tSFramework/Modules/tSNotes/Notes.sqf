@@ -59,4 +59,16 @@ TOPIC(true, "Прочее")
 "
 END
 
+TOPIC(true,"Фонетический алфавит")
+	[
+		"<font color='#12C4FF' size='14'>Латинский</font>"
+		, "A - Alpha", "B - Bravo", "C - Charlie", "D - Delta", "E - Echo", "F - Foxtrot", "G - Golf", "H - Hotel", "I - India", "J - Juliett", "K - Kilo", "L - Lima", "M - Mike"
+		, "N - November", "O - Oscar", "P - Papa", "Q - Quebec", "R - Romeo", "S - Sierra", "T - Tango", "U - Uniform", "V - Victor", "W - Whiskey", "X - X-ray", "Y - Yankee", "Z - Zulu"
+		
+		, "<br /><font color='#12C4FF' size='14'>Кириллический</font>"
+		, "А - Анна", "Б - Борис", "В - Василий", "Г - Григорий", "Д - Дмитрий", "Е - Елена", "Ж - Женя", "З - Зоя", "И - Иван", "К - Константин", "Л - Леонид", "М - Михаил", "Н - Николай"
+		, "О - Ольга", "П - Павел", "Р - Роман", "С - Семен", "Т - Татьяна", "У - Ульяна", "Ф - Федор", "Х - Харитон", "Ц - Цапля", "Ч - Чайка", "Ш - Шура", "Щ - Щука", "Э - Эхо", "Ю - Юрий", "Я - Яков"
+	] joinString "<br />" 
+END
+	
 ADD_TOPICS
