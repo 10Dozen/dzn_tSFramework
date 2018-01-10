@@ -99,7 +99,7 @@ tSF_fnc_CCP_createCCP_Server = {
 	// Add helipad position
 	private _hpadPos = _pos findEmptyPosition [20, 50, "B_Heli_Transport_01_camo_F"];
 	if (_hpadPos isEqualTo []) then { _hpadPos = _pos; };
-	private _hpad = "Land_HelipadEmpty_F" createVehicle _hpadPos;
+	private _hpad = tSF_CCP_HelipadClass createVehicle _hpadPos;
 };
 
 tSF_fnc_CCP_createCCP_Client = {
