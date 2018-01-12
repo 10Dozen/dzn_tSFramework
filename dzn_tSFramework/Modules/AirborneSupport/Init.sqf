@@ -1,19 +1,14 @@
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\Settings.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\Functions.sqf";
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\Functions RTB.sqf";
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\Functions PickUp.sqf";
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\Functions CallIn.sqf";
+call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\Functions Request.sqf";
 
 if (hasInterface) then {
 	[] spawn {
 		waitUntil { !isNil "tSF_AirborneSupport_Vehicles" && { !(tSF_AirborneSupport_Vehicles isEqualTo []) } };
 		waitUntil { !isNil "tSF_fnc_ACEActions_addAction" };
 		
-		{ _x call tSF_fnc_AirborneSupport_processVehicleClient } forEach tSF_AirborneSupport_Vehicles;
-	
 		if (
-			/* player call tSF_fnc_AirborneSupport_isAuthorizedUser */
-			true
+			player call tSF_fnc_AirborneSupport_isAuthorizedUser
 		) then {
 			tSF_AirborneSupport_ACEActions = [
 				["SELF", "Radio (Support)", "tsf_radio_support", "", {}, { true }]		
@@ -51,14 +46,12 @@ if (hasInterface) then {
 if (isServer) then {
 	waitUntil { time > tSF_AirborneSupport_initTimeout };
 	
-	tSF_AirborneSupport_Vehicles = [];
+	tSF_AirborneSupport_Vehicles = [];	// [@Vehicle, @Name]
 	tSF_AirborneSupport_ReturnPoints = [];
 	tSF_AirborneSupport_ReturnPointsList = [];
 	
 	call tSF_fnc_AirborneSupport_processLogics;
 	{ _x call tSF_fnc_AirborneSupport_processVehicleServer } forEach tSF_AirborneSupport_Vehicles;
-	
-	call tSF_fnc_AirborneSupport_StartRequestHandler;
 	
 	publicVariable "tSF_AirborneSupport_Vehicles";
 	publicVariable "tSF_AirborneSupport_ReturnPoints";
