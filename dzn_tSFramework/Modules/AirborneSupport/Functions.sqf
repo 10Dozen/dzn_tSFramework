@@ -306,3 +306,36 @@ KK_fnc_setVelocityModelSpaceVisual = {
         )
     );
 };
+
+
+tSF_fnc_AirborneSupport_showTeleportMenu = {
+	tSF_AirborneSupport_TeleportMenu = [
+		["Re-deploy",false]		
+		, ["Deploy to Squad",[2],"",-5,[["expression", "[player,'squad'] spawn tSF_fnc_AirborneSupport_doTeleport"]],"1","1"]
+		, ["Deploy to Base",[3],"",-5,[["expression", "[player,'base'] spawn tSF_fnc_AirborneSupport_doTeleport"]],"1","1"]
+	];
+	showCommandingMenu "#USER:tSF_AirborneSupport_TeleportMenu";
+};
+
+tSF_fnc_AirborneSupport_doTeleport = {
+	params["_unit","_dest"];
+	
+	private _pos = if ("base" == toLower(_dest)) then {
+		selectRandom tSF_AirborneSupport_ReturnPointsList		
+	} else {
+		getPosATL ( selectRandom (units (group _unit)) )
+	};
+	
+	_pos = [(_pos select 0) + 10, (_pos select 1) - 10,0];
+	
+	
+	0 cutText ["", "WHITE OUT", 0.1];
+	_unit allowDamage false;
+	sleep 1;					
+	moveOut _unit;
+	_unit setPosATL _pos;
+	sleep 1;
+	_unit allowDamage true;	
+	
+	0 cutText ["", "WHITE IN", 1];
+};
