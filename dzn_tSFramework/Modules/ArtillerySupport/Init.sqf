@@ -46,6 +46,8 @@ if (isServer) then {
 	[+] Handle TRP gathering
 	[+] Firemissions on TRP position
 	[+] Add firemission spreading temlpate:
-	[ ] Crew caching
-	[ ] Hints for actions
-	
+	[+] Crew caching
+	[+] Hints for actions
+	[+] Spawn crew before InRange calculation
+	[+] Mission start timeout + hint
+	[ ] MP Compatibility (e.g. now other user can request FM during FM in progress)

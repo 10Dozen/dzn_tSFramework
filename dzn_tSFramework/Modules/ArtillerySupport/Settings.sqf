@@ -1,8 +1,8 @@
 
 tSF_ArtillerySupport_initTimeout = 0;
-tSF_ArtillerySupport_requestHandlerTimeout = 5;
 
-tSF_ArtillerySupport_BatteryReloadTime = 15;
+tSF_ArtillerySupport_FiremissionPreparationTimeout	= 15;
+tSF_ArtillerySupport_BatteryReloadTime 			= 15;
 
 /*
 	@FiremissionsProperties 

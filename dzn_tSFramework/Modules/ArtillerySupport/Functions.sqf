@@ -81,22 +81,22 @@ tSF_fnc_ArtillerySupport_SetStatus = {
 	
 	switch (toUpper(_state)) do {
 		case "STATE": {
-			(_battery select 0) setVariable ["tSF_ArtillerySupport_State", _value];
+			(_battery select 0) setVariable ["tSF_ArtillerySupport_State", _value, true];
 		};
 		case "REQUESTER": {
-			(_battery select 0) setVariable ["tSF_ArtillerySupport_Requester", _value];	
+			(_battery select 0) setVariable ["tSF_ArtillerySupport_Requester", _value, true];	
 		};
 		case "CREW": {
-			(_battery select 0) setVariable ["tSF_ArtillerySupport_Crew", _value];	
+			(_battery select 0) setVariable ["tSF_ArtillerySupport_Crew", _value, true];	
 		};
 		case "FIREMISSION": {
-			(_battery select 0) setVariable ["tSF_ArtillerySupport_Firemission", _value];	
+			(_battery select 0) setVariable ["tSF_ArtillerySupport_Firemission", _value, true];	
 		};
 		case "CORRECTIONS": {
-			(_battery select 0) setVariable ["tSF_ArtillerySupport_Corrections", _value];	
+			(_battery select 0) setVariable ["tSF_ArtillerySupport_Corrections", _value, true];	
 		};
 		case "CREW": {
-			(_battery select 0) getVariable ["tSF_ArtillerySupport_Crew", _value];	
+			(_battery select 0) getVariable ["tSF_ArtillerySupport_Crew", _value, true];	
 		};
 	}
 };
