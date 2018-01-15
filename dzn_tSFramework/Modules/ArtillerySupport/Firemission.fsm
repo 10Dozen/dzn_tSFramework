@@ -8,7 +8,7 @@ item3[] = {"Exit",1,250,400.000000,-1175.000000,500.000000,-1125.000000,0.000000
 item4[] = {"Calculate_initial",2,250,-75.000000,-950.000000,25.000000,-900.000000,0.000000,"Calculate initial" \n "TGT POS"};
 item5[] = {"TGT_POS_in_range",4,218,-75.000000,-850.000000,25.000000,-800.000000,0.000000,"TGT POS" \n "in range"};
 item6[] = {"TGT_POS_not_in_r",4,218,100.000000,-950.000000,200.000000,-900.000000,1.000000,"TGT POS" \n "not in range"};
-item7[] = {"Searching_Fire",2,4346,-75.000000,-750.000000,25.000000,-700.000000,0.000000,"Searching Fire"};
+item7[] = {"Searching_Fire",2,250,-75.000000,-750.000000,25.000000,-700.000000,0.000000,"Searching Fire"};
 item8[] = {"Report_Not_In_Ra",2,250,250.000000,-950.000000,350.000000,-900.000000,0.000000,"Report" \n "Not In Range"};
 item9[] = {"true",4,218,400.000000,-1075.000000,500.000000,-1025.000000,0.000000,"true"};
 item10[] = {"Report_Invalid_TGT",2,250,250.000000,-1075.000000,350.000000,-1025.000000,0.000000,"Report" \n "Invalid TGT POS"};
@@ -19,7 +19,7 @@ item14[] = {"Report_Aborted",2,250,250.000000,-600.000000,350.000000,-550.000000
 item15[] = {"",7,210,446.000000,-579.000000,454.000000,-571.000000,0.000000,""};
 item16[] = {"Correction",2,250,-350.000000,-600.000000,-250.000000,-550.000000,0.000000,"Correction"};
 item17[] = {"Waiting_FFE",4,218,-75.000000,-500.000000,25.000000,-450.000000,0.000000,"Waiting" \n "FFE"};
-item18[] = {"Fire_For_Effect",2,250,-75.000000,-400.000000,25.000000,-350.000000,0.000000,"Fire For Effect"};
+item18[] = {"Fire_For_Effect",2,4346,-75.000000,-400.000000,25.000000,-350.000000,0.000000,"Fire For Effect"};
 item19[] = {"Corrected_TGT_POS",4,218,-350.000000,-500.000000,-250.000000,-450.000000,1.000000,"Corrected" \n "TGT POS" \n "not in range"};
 item20[] = {"Corrected_TGT_POS_1",4,218,-350.000000,-750.000000,-250.000000,-700.000000,0.000000,"Corrected" \n "TGT POS" \n "in range"};
 item21[] = {"true",4,218,-75.000000,-675.000000,25.000000,-625.000000,0.000000,"true"};
@@ -49,20 +49,21 @@ link16[] = {15,11};
 link17[] = {16,19};
 link18[] = {16,20};
 link19[] = {17,18};
-link20[] = {18,25};
-link21[] = {19,24};
-link22[] = {20,7};
-link23[] = {21,22};
-link24[] = {22,12};
-link25[] = {22,13};
-link26[] = {22,17};
-link27[] = {23,22};
-link28[] = {24,23};
-link29[] = {25,26};
-link30[] = {26,27};
-link31[] = {27,15};
-globals[] = {0.000000,0,0,0,0,640,480,1,294,6316128,1,-343.164612,157.478729,-171.337891,-875.797791,506,712,1};
-window[] = {0,-1,-1,-32000,-32000,988,318,1589,105,1,524};
+link20[] = {18,12};
+link21[] = {18,25};
+link22[] = {19,24};
+link23[] = {20,7};
+link24[] = {21,22};
+link25[] = {22,12};
+link26[] = {22,13};
+link27[] = {22,17};
+link28[] = {23,22};
+link29[] = {24,23};
+link30[] = {25,26};
+link31[] = {26,27};
+link32[] = {27,15};
+globals[] = {0.000000,0,0,0,0,640,480,1,297,6316128,1,-471.695343,518.234009,-406.399353,-1438.360352,609,869,1};
+window[] = {2,-1,-1,-1,-1,990,2135,3356,107,3,627};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -76,18 +77,24 @@ class FSM
                         itemno = 0;
                         init = /*%FSM<STATEINIT""">*/"params[" \n
                          "	""_battery""" \n
-                         "	,""_pos""" \n
+                         "	, ""_pos""" \n
                          "	, ""_type""" \n
                          "	, ""_typeName""" \n
                          "	, ""_number""" \n
-                         "	, ""_spread""" \n
-                         "	, [""_debug"", true]" \n
+                         "	, ""_shape""" \n
+                         "	, ""_dir""" \n
+                         "	, ""_size""" \n
+                         "	, ""_delay""" \n
+                         "	, ""_debug""" \n
                          "];" \n
                          "" \n
                          "if (_debug) then { systemChat ""[FM] Init""; };" \n
                          "if (_debug) then { diag_log ""[FM] Init""; };" \n
                          "" \n
-                         "private _correctedPos = [] + _pos;"/*%FSM</STATEINIT""">*/;
+                         "private _correctedPos = [] + _pos;" \n
+                         "private _timer = 0;" \n
+                         "" \n
+                         "A312 = _this;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
@@ -136,15 +143,10 @@ class FSM
                 {
                         name = "Calculate_initial";
                         itemno = 4;
-                        init = /*%FSM<STATEINIT""">*/"private _grp = createGroup (side player);" \n
-                         "{" \n
-                         "	private _unit = _grp createUnit [typeOf player, [0,0,0], [], 0, ""NONE""];" \n
-                         "	_unit moveInGunner _x;	" \n
-                         "} forEach (_battery select 3);" \n
+                        init = /*%FSM<STATEINIT""">*/"private _grp = [_battery, true] call tSF_fnc_ArtillerySupport_AddCrew;" \n
                          "" \n
                          "[_battery, ""State"", ""Requested""] call tSF_fnc_ArtillerySupport_SetStatus;" \n
                          "[_battery, ""Requester"", player] call tSF_fnc_ArtillerySupport_SetStatus;" \n
-                         "[_battery, ""Crew"", _grp] call tSF_fnc_ArtillerySupport_SetStatus;" \n
                          "" \n
                          "if (_debug) then { systemChat format [""[FM] Position calculated: %1"", _pos]; };" \n
                          "if (_debug) then { diag_log format [""[FM] Position calculated: %1"", _pos]; };" \n
@@ -189,16 +191,23 @@ class FSM
                          "private _lead = leader _grp;" \n
                          "private _ETA = (vehicle _lead) getArtilleryETA [_pos, _type];" \n
                          "" \n
-                         "hint str(_ETA);" \n
+                         "[" \n
+                         "	_battery" \n
+                         "	, format [""ETA %1 sec"", ceil _ETA + 2]" \n
+                         "	, ""Searching fire!""" \n
+                         "] call tSF_fnc_ArtillerySupport_showHint;" \n
+                         "" \n
                          "if (_debug) then { systemChat format [""[FM] ETA %1 sec"", _ETA]; };" \n
                          "if (_debug) then { diag_log format [""[FM] ETA %1 sec"", _ETA]; };" \n
-                         "	" \n
+                         "" \n
+                         "_lead setVehicleAmmo 1;" \n
                          "_lead commandArtilleryFire [_pos, _type, 1];" \n
                          "_lead setVehicleAmmo 1;" \n
                          "" \n
-                         "_ETA spawn {" \n
-                         "	sleep (_this - 3);" \n
-                         "	hint ""SPLASH!"";" \n
+                         "[_battery, _ETA] spawn {" \n
+                         "	sleep ((_this select 1) - 3);" \n
+                         "" \n
+                         "	[_this select 0, ""SPLASH!"", ""Searching fire""] call tSF_fnc_ArtillerySupport_showHint;	" \n
                          "};" \n
                          "" \n
                          ""/*%FSM</STATEINIT""">*/;
@@ -224,7 +233,12 @@ class FSM
                 {
                         name = "Report_Not_In_Ra";
                         itemno = 8;
-                        init = /*%FSM<STATEINIT""">*/"hint ""Wrong Firemission request! TGT POS is out of range!"";" \n
+                        init = /*%FSM<STATEINIT""">*/"[" \n
+                         "	_battery" \n
+                         "	, ""Request Rejected""" \n
+                         "	, ""Target Position is out of range!""" \n
+                         "] call tSF_fnc_ArtillerySupport_showHint;" \n
+                         "" \n
                          "if (_debug) then { systemChat ""[FM] Out Of Range""; };" \n
                          "if (_debug) then { diag_log ""[FM] Out Of Range""; };"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
@@ -249,7 +263,12 @@ class FSM
                 {
                         name = "Report_Invalid_TGT";
                         itemno = 10;
-                        init = /*%FSM<STATEINIT""">*/"hint ""Wrong Firemission request! TGT POS is not defined!"";" \n
+                        init = /*%FSM<STATEINIT""">*/"[" \n
+                         "	_battery" \n
+                         "	, ""Request Rejected""" \n
+                         "	, ""Target Position is not valid!""" \n
+                         "] call tSF_fnc_ArtillerySupport_showHint;" \n
+                         "" \n
                          "if (_debug) then { systemChat ""[FM] Invalid TGT POS""; };" \n
                          "if (_debug) then { diag_log ""[FM] Invalid TGT POS""; };"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
@@ -275,6 +294,14 @@ class FSM
                         name = "Report_Aborted";
                         itemno = 14;
                         init = /*%FSM<STATEINIT""">*/"hint ""Firemission aborted!"";" \n
+                         "" \n
+                         "[" \n
+                         "	_battery" \n
+                         "	, ""Firemission Aborted""" \n
+                         "	, """"" \n
+                         "] call tSF_fnc_ArtillerySupport_showHint;" \n
+                         "" \n
+                         "" \n
                          "if (_debug) then { systemChat ""[FM] Aborted""; };" \n
                          "if (_debug) then { diag_log ""[FM] Aborted""; };"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
@@ -348,32 +375,90 @@ class FSM
                          "private _lead = leader _grp;" \n
                          "private _ETA = (vehicle _lead) getArtilleryETA [_pos, _type];" \n
                          "" \n
-                         "hint str(_ETA);" \n
+                         "[" \n
+                         "	_battery" \n
+                         "	, format [""ETA %1 sec"", ceil _ETA + 2]" \n
+                         "	, ""Fire for Effect!""" \n
+                         "] call tSF_fnc_ArtillerySupport_showHint;" \n
+                         "" \n
                          "if (_debug) then { systemChat format [""[FM] FOE: ETA %1 sec"", _ETA]; };" \n
                          "if (_debug) then { diag_log format [""[FM] FOE: ETA %1 sec"", _ETA]; };" \n
                          "" \n
                          "private _roundPerGun = [_number, count units _grp] call tSF_fnc_ArtillerySupport_getRoundsPerGun;" \n
+                         "private _tgtsPerGun = [" \n
+                         "	[_pos, _shape, _size, _dir, _number] call tSF_fnc_ArtillerySupport_GetTargerts" \n
+                         "	, count units _grp" \n
+                         "] call tSF_fnc_ArtillerySupport_getTgtPerGun;" \n
+                         "" \n
+                         "private _timeout = 0;" \n
                          "" \n
                          "{" \n
-                         "	for ""_i"" from 1 to (_roundPerGun select _forEachIndex) do {" \n
-                         "		_x commandArtilleryFire [" \n
-                         "			[_pos, _spread] call tSF_fnc_ArtillerySupport_getSpreadedPos" \n
-                         "			, _type" \n
-                         "			, 1" \n
-                         "		];" \n
-                         "		_x setVehicleAmmo 1;" \n
+                         "	[" \n
+                         "		_x" \n
+                         "		, _type" \n
+                         "		, _roundPerGun select _forEachIndex" \n
+                         "		, _tgtsPerGun select _forEachIndex" \n
+                         "		, _delay" \n
+                         "		, _timeout" \n
+                         "		, _battery" \n
+                         "	] spawn tSF_fnc_ArtillerySupport_Fire;" \n
+                         "" \n
+                         "	_timeout = _timeout + ((_roundPerGun select _forEachIndex))*_delay;" \n
                          "} forEach (units _grp);" \n
                          "" \n
-                         "_ETA spawn {" \n
-                         "	sleep (_this - 3);" \n
-                         "	hint ""SPLASH!"";" \n
+                         "if (_timeout == 0) then {" \n
+                         "	_timeout = (_roundPerGun select 0)*6;" \n
                          "};" \n
                          "" \n
-                         "private _timer = time + _ETA + 1*_number; " \n
+                         "/*" \n
+                         "	Delay = 5 sec" \n
+                         "	RoundsPerGun = 3" \n
+                         "" \n
+                         "	Gun 0 Rounds 3:	Timeout = 0 " \n
+                         "							will be shot in 15 seconds" \n
+                         "							Timeout = 0 + (3 + 1)*5 = 20" \n
+                         "	Gun 1 Rounds 2:	Timeout = 0" \n
+                         "							first round in 20 seconds and end at 35 seconds" \n
+                         "							Timeout = 20 + (2+1)*5 = 20+15 = 35" \n
+                         "	Gun 2 Rounds 2: 	Timeout = Timeout +  5 * (2 + 1) = 20 + 5*3 = 20 + 15 = 35	" \n
+                         "							first round in 35 seconds" \n
+                         "" \n
+                         "" \n
+                         "" \n
+                         "*/" \n
+                         "" \n
+                         "[" \n
+                         "	_battery" \n
+                         "	, _typeName" \n
+                         "	, -1" \n
+                         "] call tSF_fnc_ArtillerySupport_UpdateBatteryMissionsAvailable;" \n
+                         "" \n
+                         "[_battery, _ETA] spawn {" \n
+                         "	sleep ((_this select 1) - 3);" \n
+                         "	" \n
+                         "	[(_this select 0), ""SPLASH"", ""Fire for Effect""] call tSF_fnc_ArtillerySupport_showHint;" \n
+                         "};" \n
+                         "" \n
+                         "_timer = time + _ETA + _timeout; " \n
                          ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
+                                /*%FSM<LINK "Aborted">*/
+                                class Aborted
+                                {
+                                        itemno = 12;
+                                        priority = 1.000000;
+                                        to="Report_Aborted";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[" \n
+                                         "	_battery" \n
+                                         "	, ""State""" \n
+                                         "	, ""Waiting""" \n
+                                         "] call tSF_fnc_ArtillerySupport_AssertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
                                 /*%FSM<LINK "FFE_Finished">*/
                                 class FFE_Finished
                                 {
@@ -455,9 +540,16 @@ class FSM
                 {
                         name = "Report_Wrong_Cor";
                         itemno = 24;
-                        init = /*%FSM<STATEINIT""">*/"hint ""New TGT POS is out of range!"";" \n
+                        init = /*%FSM<STATEINIT""">*/"[" \n
+                         "	_battery" \n
+                         "	, ""Corrections Rejected""" \n
+                         "	, ""New Target Position is out of range!""" \n
+                         "] call tSF_fnc_ArtillerySupport_showHint;" \n
+                         "" \n
                          "if (_debug) then { systemChat ""[FM] Corrected TGT POS is Out of Range""; };" \n
-                         "if (_debug) then { diag_log ""[FM] Corrected TGT POS is Out of Range""; };"/*%FSM</STATEINIT""">*/;
+                         "if (_debug) then { diag_log ""[FM] Corrected TGT POS is Out of Range""; };" \n
+                         "" \n
+                         "_correctedPos = _pos;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
@@ -480,7 +572,12 @@ class FSM
                 {
                         name = "Report_Completed";
                         itemno = 26;
-                        init = /*%FSM<STATEINIT""">*/"hint ""Firemission completed!"";" \n
+                        init = /*%FSM<STATEINIT""">*/"[" \n
+                         "	_battery" \n
+                         "	, ""Firemission Completed!""" \n
+                         "	, """"" \n
+                         "] call tSF_fnc_ArtillerySupport_showHint;" \n
+                         "" \n
                          "if (_debug) then { systemChat ""[FM] Completed""; };" \n
                          "if (_debug) then { diag_log ""[FM] Completed""; };"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;

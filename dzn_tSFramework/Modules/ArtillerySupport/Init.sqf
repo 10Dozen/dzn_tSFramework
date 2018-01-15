@@ -34,7 +34,6 @@ if (isServer) then {
 	tSF_ArtillerySupport_TRPs = [];
 	
 	call tSF_fnc_ArtillerySupport_processLogics;
-	// call tSF_fnc_ArtillerySupport_StartRequestHandler;
 	
 	publicVariable "tSF_ArtillerySupport_Batteries";
 };
@@ -44,12 +43,9 @@ if (isServer) then {
 	[TO DO]
 	
 	[+] Rearm guns on shooting
-	[ ] Handle No Ammo case (remove from selection)
-	[ ] Add configurable spreading of adjusting fire
-	[ ] Handle TRP gathering
-	[ ] Firemissions on TRP position
-	[ ] Add firemission spreading temlpate:
-	[ ]	Type: Circle, Line
-	[ ]	Size: 15m, 30m, 50m
-	[ ] Less randomized spreading
+	[+] Handle TRP gathering
+	[+] Firemissions on TRP position
+	[+] Add firemission spreading temlpate:
+	[ ] Crew caching
+	[ ] Hints for actions
 	
