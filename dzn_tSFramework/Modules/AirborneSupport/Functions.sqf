@@ -1,25 +1,19 @@
 /*
  *	General
- */	
- 
+ */
+
 tSF_fnc_AirborneSupport_isAuthorizedUser = {
 	// Player call tSF_fnc_AirborneSupport_isAuthorizedUser
-	private _unit = _this;	
-	private _result = false;
+	private _role = toLower(roleDescription _this);
+	private _listOfAuthorizedUsers = tSF_AirborneSupport_AuthorizedUsers apply { toLower(_x) };
+
+	if ("any" in _listOfAuthorizedUsers) exitWith { true };
 	
-	private _listOfAuthorizedUsers = [];
-	{_listOfAuthorizedUsers pushBack toLower(_x);} forEach tSF_AirborneSupport_AuthorizedUsers;
-	
-	if (
-		"any" in _listOfAuthorizedUsers
-		|| toLower(roleDescription _unit) in  _listOfAuthorizedUsers
-	) exitWith { true };
-	
-	if ("admin" in _listOfAuthorizedUsers) exitWith {
-		(serverCommandAvailable "#logout") || !(isMultiplayer) || isServer	
+	if ("admin" in _listOfAuthorizedUsers && ((serverCommandAvailable "#logout") || !(isMultiplayer) || isServer)) exitWith {
+		true
 	};
 	
-	_result
+	( { [_x, _role, false] call BIS_fnc_inString } count _listOfAuthorizedUsers ) > 0	
 };
 
 tSF_fnc_AirborneSupport_GetProvider = {
