@@ -214,7 +214,7 @@ tSF_fnc_ArtillerySupport_RequestFiremission = {
 tSF_fnc_ArtillerySupport_CancelFiremission = {
 	params["_battery"];	
 	
-	[_battery, false] call tSF_fnc_ArtillerySupport_AddCrew;
+	[_battery, false] spawn tSF_fnc_ArtillerySupport_AddCrew;
 	
 	[_battery, "Requester", objNull] call tSF_fnc_ArtillerySupport_SetStatus;
 	[_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_SetStatus;
@@ -385,7 +385,38 @@ tSF_fnc_ArtillerySupport_showHint = {
 	];
 };
 
+
 tSF_fnc_ArtillerySupport_AddCrew = {
+	// [@Battery, @Add] spawn tSF_fnc_ArtillerySupport_AddCrew
+	params["_battery", "_add"];
+	
+	private _crewGrp = [_battery, "CREW"] call tSF_fnc_ArtillerySupport_GetStatus;
+	
+	if (_add) then {
+		// ADD NEW CREW 
+		_crewGrp = createGroup (side player);
+		{
+			private _unit = _crewGrp createUnit [typeOf player, [0,0,0], [], 0, "NONE"];
+			_unit moveInGunner _x;	
+		} forEach (_battery select 3);
+		
+		[_battery, "CREW", _crewGrp] call tSF_fnc_ArtillerySupport_SetStatus;
+	} else {
+		if !(isNull _crewGrp) then {
+			{
+				moveOut _x;
+				sleep 0.5;
+				
+				deleteVehicle _x;
+			} forEach (units _crewGrp);
+		};
+	};
+
+	_crewGrp
+};
+
+/*
+tSF_fnc_ArtillerySupport_AddCrewOld = {
 	// [@Battery, @Add] call tSF_fnc_ArtillerySupport_AddCrew
 	params["_battery", "_add"];
 	
@@ -427,6 +458,7 @@ tSF_fnc_ArtillerySupport_ToggleCrewSimulation = {
 		_x enableSimulation (_enable);
 	} forEach (units _grp);
 };
+*/
 
 tSF_fnc_ArtillerySupport_HandleBatteryReload = {
 	private _battery = _this;
