@@ -41,6 +41,9 @@ Some default mission pre-sets (like player score).
 Airborne vehicles pickup and return to base by AI or player pilots.
 <br />See slides: https://docs.google.com/presentation/d/1HpwSKT82IjZVIXdV2aGlPYcjGPoMyzE-BrmvPIbmkzI/edit?usp=sharing
 
+##### Artillery Support
+Artillery compositions that can be used for firemissions served by AI.
+
 ##### tS Notes
 Game and TTP notes for each players
 
