@@ -50,4 +50,5 @@ if (isServer) then {
 	[+] Hints for actions
 	[+] Spawn crew before InRange calculation
 	[+] Mission start timeout + hint
-	[ ] MP Compatibility (e.g. now other user can request FM during FM in progress)
+	[+] MP Compatibility (e.g. now other user can request FM during FM in progress)
+	[ ] Remove debugging info

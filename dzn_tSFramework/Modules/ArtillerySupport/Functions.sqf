@@ -1,6 +1,21 @@
+#define	DEBUG	false
+
+tSF_fnc_ArtillerySupport_isAuthorizedUser = {
+	// Player call tSF_fnc_ArtillerySupport_isAuthorizedUser
+	private _role = toLower(roleDescription _this);
+	private _listOfAuthorizedUsers = tSF_AirborneSupport_AuthorizedUsers apply { toLower(_x) };
+
+	if ("any" in _listOfAuthorizedUsers) exitWith { true };
+	
+	if ("admin" in _listOfAuthorizedUsers && ((serverCommandAvailable "#logout") || !(isMultiplayer) || isServer)) exitWith {
+		true
+	};
+	
+	( { [_x, _role, false] call BIS_fnc_inString } count _listOfAuthorizedUsers ) > 0	
+};
 
 /*
- *	Utility
+ *	Server side 
  */
 
 tSF_fnc_ArtillerySupport_processLogics = {
@@ -38,23 +53,33 @@ tSF_fnc_ArtillerySupport_processLogics = {
 	} forEach (entities "Logic");
 };
 
+tSF_fnc_ArtillerySupport_HandleBatteryReload = {
+	private _battery = _this;
+	while { true } do {
+		waitUntil { 
+			sleep 10; 
+			{ _x < 1 } count ((_battery call tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable) select 3) > 0
+		};
+		
+		sleep tSF_ArtillerySupport_BatteryReloadTime;
+		{
+			private _fmRound = _x; // ["HE",0,"8Rnd_82mm_Mo_shells"]
+			private _fmAmmo = _fmRound select 1;
+			private _max = (tSF_ArtillerySupport_FiremissionsProperties select { _x select 0 == _fmRound select 0 }) select 0 select 1;
+			
+			[_battery, _fmRound select 0, _max - _fmAmmo] call tSF_fnc_ArtillerySupport_UpdateBatteryMissionsAvailable;
+		} forEach ((_battery select 0) getVariable "tSF_ArtillerySupport_AvailableFiremissions");
+	};
+};
+
+/*
+ *	Common functions
+ */
+
 tSF_fnc_ArtillerySupport_GetBattery = {
 	//@Callsign call tSF_fnc_ArtillerySupport_GetBattery
 	
 	(tSF_ArtillerySupport_Batteries select { _x select 1 == _this }) select 0
-};
-
-tSF_fnc_ArtillerySupport_isAuthorizedUser = {
-	true
-};
-
-
-tSF_fnc_ArtillerySupport_IsAvailable = {
-	// @Battery call tSF_fnc_ArtillerySupport_IsAvailable
-	
-	[_this, "State", "Waiting Correction"] call tSF_fnc_ArtillerySupport_AssertStatus
-	&& [_this, "Requester", player] call tSF_fnc_ArtillerySupport_AssertStatus
-	&& (_this call tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable) select 4
 };
 
 tSF_fnc_ArtillerySupport_AssertStatus = {
@@ -129,6 +154,14 @@ tSF_fnc_ArtillerySupport_GetStatus = {
 	}
 };
 
+tSF_fnc_ArtillerySupport_IsAvailable = {
+	// @Battery call tSF_fnc_ArtillerySupport_IsAvailable
+	
+	[_this, "State", "Waiting Correction"] call tSF_fnc_ArtillerySupport_AssertStatus
+	&& [_this, "Requester", player] call tSF_fnc_ArtillerySupport_AssertStatus
+	&& (_this call tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable) select 4
+};
+
 tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable = {
 	// [ @Logic, @Callsign, @VehicleDisplayName, @Vehicles ] call tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable
 	private _fm = (_this select 0) getVariable "tSF_ArtillerySupport_AvailableFiremissions";
@@ -160,14 +193,67 @@ tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable = {
 	]
 };
 
+tSF_fnc_ArtillerySupport_AddCrew = {
+	// [@Battery, @Add] spawn tSF_fnc_ArtillerySupport_AddCrew
+	params["_battery", "_add"];
+	
+	private _crewGrp = [_battery, "CREW"] call tSF_fnc_ArtillerySupport_GetStatus;
+	
+	if (_add) then {
+		// ADD NEW CREW 
+		_crewGrp = createGroup (side player);
+		{
+			private _unit = _crewGrp createUnit [tSF_ArtillerySupport_CrewClassname, [0,0,0], [], 0, "NONE"];
+			
+			if (tSF_ArtillerySupport_CrewKitname != "" && { !isNil "dzn_gear_serverInitDone" }) then {
+				[_unit, tSF_ArtillerySupport_CrewKitname, false] call dzn_fnc_gear_assignKit;
+			} else {
+				if (isNil "dzn_gear_serverInitDone") then { diag_log "dzn_fnc_createVehicle: No dzn_gear initialized at the moment"; };
+			};
+			
+			_unit moveInGunner _x;	
+		} forEach (_battery select 3);
+		
+		[_battery, "CREW", _crewGrp] call tSF_fnc_ArtillerySupport_SetStatus;
+	} else {
+		if !(isNull _crewGrp) then {
+			{
+				moveOut _x;
+				sleep 0.5;
+				
+				deleteVehicle _x;
+			} forEach (units _crewGrp);
+		};
+	};
+
+	_crewGrp
+};
+
+tSF_fnc_ArtillerySupport_showHint = {
+	params["_battery","_title","_subtitle"];
+	
+	private _callsign = _battery select 1;
+	private _type = _battery select 2;
+	
+	hint parseText format [
+		"<t color='#EDB81A' size='1.5' align='center' font='PuristaBold'>%1</t>
+		<br/><t color='#EDB81A' font='PuristaBold'>%2</t>
+		<br/><t font='PuristaBold'>%3</t>
+		<br/><br/>%4"
+		, _callsign
+		, _type
+		, _title
+		, _subtitle
+	];
+};
 
 /*
- *	Firemission
+ *	Firemission Contol
  */
 
 tSF_fnc_ArtillerySupport_RequestFiremission = {
 	// _requestOptions [0"_gridCtrl", 1"_trpCtrl", 2"_shapeCtrl", 3"_dirCtrl", 4"_sizeCtrl", 5"_typeCtrl", 6"_timesCtrl", 7"_delayCtrl"];
-	params["_battery","_requestOptions"];
+	params["_battery","_requestOptions", "_state"];
 	
 	private _grid = (_requestOptions select 0) select 0;
 	private _trpName = if (count (_requestOptions select 1) > 1) then { (_requestOptions select 1) select 1 } else { " " };
@@ -193,22 +279,11 @@ tSF_fnc_ArtillerySupport_RequestFiremission = {
 	
 	private _delay = ((_requestOptions select 7) select 2) select ((_requestOptions select 7) select 0);
 	
-	tS_A1 = [
-		_grid
-		, _trpName
-		, _pos
-		, _shape, _dir, _size
-		, _typeName, _type, _number
-		, _delay
-	];
-	tS_A2 = _battery;
 	// ["03909865"," ",[3900,3770,0],"LINE",90,25,"HE","8Rnd_82mm_Mo_shells",3,2]
-	// ["","TRP002",[0,0,0],"CIRCLE",0,50,"HE","8Rnd_82mm_Mo_shells",5,0]
-	
-	[_battery, "Firemission", [_pos, _type, _typeName, _number, _shape, _dir, _size, _delay, _trpName]] call tSF_fnc_ArtillerySupport_SetStatus;	
-	[_battery,_pos, _type, _typeName, _number, _shape, _dir, _size, _delay, true] execFSM "dzn_tSFramework\Modules\ArtillerySupport\Firemission.fsm";
-	
-	
+	// ["","TRP002",[0,0,0],"CIRCLE",0,50,"HE","8Rnd_82mm_Mo_shells",5,0]	
+	[_battery, "STATE", _state] call tSF_fnc_ArtillerySupport_SetStatus;	
+	[_battery, "Firemission", [_pos, _type, _typeName, _number, _shape, _dir, _size, _delay, _trpName]] call tSF_fnc_ArtillerySupport_SetStatus;
+	[_battery,_pos, _type, _typeName, _number, _shape, _dir, _size, _delay, false] execFSM "dzn_tSFramework\Modules\ArtillerySupport\Firemission.fsm";
 };
 
 tSF_fnc_ArtillerySupport_CancelFiremission = {
@@ -235,7 +310,6 @@ tSF_fnc_ArtillerySupport_AdjustFiremission = {
 		]
 	] call tSF_fnc_ArtillerySupport_SetStatus; 
 	[_battery, "State", "Correction Requested"] call tSF_fnc_ArtillerySupport_SetStatus;
-
 };
 
 tSF_fnc_ArtillerySupport_FireForEffect = {
@@ -247,24 +321,10 @@ tSF_fnc_ArtillerySupport_AbortFiremission = {
 	[_this, "State", "Waiting"] call tSF_fnc_ArtillerySupport_SetStatus;
 };
 
-tSF_fnc_ArtillerySupport_getRoundsPerGun = {
-	params["_r", "_guns"];
-	
-	private _result = [];
-	private _left = _r - floor(_r/_guns) * _guns;
-	for "_i" from 1 to _guns do { _result pushBack floor(_r/_guns); };
-	
-	while { _left > 0 } do {
-		for "_i" from 0 to (_guns-1) do {
-			if (_left == 0) exitWith {};
-			
-			_result set [_i, (_result select _i) + 1];
-			_left = _left - 1;
-		};
-	};
-	
-	_result
-};
+
+/*
+ *	Firemission Fire For Effect Calculations
+ */
 
 tSF_fnc_ArtillerySupport_UpdateBatteryMissionsAvailable = {
 	params["_battery", "_roundType", "_add"];
@@ -327,21 +387,39 @@ tSF_fnc_ArtillerySupport_getTgtPerGun = {
 	_result
 };
 
-tSF_Log = [];
+tSF_fnc_ArtillerySupport_getRoundsPerGun = {
+	params["_r", "_guns"];
+	
+	private _result = [];
+	private _left = _r - floor(_r/_guns) * _guns;
+	for "_i" from 1 to _guns do { _result pushBack floor(_r/_guns); };
+	
+	while { _left > 0 } do {
+		for "_i" from 0 to (_guns-1) do {
+			if (_left == 0) exitWith {};
+			
+			_result set [_i, (_result select _i) + 1];
+			_left = _left - 1;
+		};
+	};
+	
+	_result
+};
 
 tSF_fnc_ArtillerySupport_Fire = {
 	params ["_u", "_type", "_rounds", "_tgts", "_delay", "_timeout", "_battery"];
 	
-	systemChat format ["[FIRE %2] Timeout %1 sec", _timeout, _u];
+	if (DEBUG) then { systemChat format ["[FIRE %2] Timeout %1 sec", _timeout, _u]; };
 	for "_i" from 0 to _timeout do {
 		sleep 1;
 		if ([_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_AssertStatus) exitWith { _i = 999; };
 	};
 	
-	systemChat format ["[FIRE %2] Timeout ended after %1 sec", _timeout, _u];
+	if (DEBUG) then { systemChat format ["[FIRE %2] Timeout ended after %1 sec", _timeout, _u]; };
 	for "_i" from 1 to _rounds do {
 		if ([_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_AssertStatus) exitWith { _i = 999; };
-		systemChat format ["[FIRE %1] Shot %2 to position %3", _u, _i, _tgts select (_i - 1)];
+		
+		if (DEBUG) then { systemChat format ["[FIRE %1] Shot %2 to position %3", _u, _i, _tgts select (_i - 1)]; };
 		
 		_u commandArtilleryFire [_tgts select (_i - 1), _type, 1];
 		_u setVehicleAmmo 1;
@@ -349,132 +427,5 @@ tSF_fnc_ArtillerySupport_Fire = {
 		if (_delay > 40) then { [_battery, "Shot fired", "Fire for Effect"] call tSF_fnc_ArtillerySupport_showHint; };
 		
 		sleep (_delay max 6);
-	};
-};
-
-
-
-tSF_fnc_showTgts ={
-	if (!isNil "tgts") then {
-		{ deleteVehicle _x } forEach tgts;
-	};
-	
-	tgts = [];
-	
-	{
-		tgts pushBack ("Sign_Sphere100cm_F" createVehicle _x);
-	} forEach _this;
-};
-
-
-tSF_fnc_ArtillerySupport_showHint = {
-	params["_battery","_title","_subtitle"];
-	
-	private _callsign = _battery select 1;
-	private _type = _battery select 2;
-	
-	hint parseText format [
-		"<t color='#EDB81A' size='1.5' align='center' font='PuristaBold'>%1</t>
-		<br/><t color='#EDB81A' font='PuristaBold'>%2</t>
-		<br/><t font='PuristaBold'>%3</t>
-		<br/><br/>%4"
-		, _callsign
-		, _type
-		, _title
-		, _subtitle
-	];
-};
-
-
-tSF_fnc_ArtillerySupport_AddCrew = {
-	// [@Battery, @Add] spawn tSF_fnc_ArtillerySupport_AddCrew
-	params["_battery", "_add"];
-	
-	private _crewGrp = [_battery, "CREW"] call tSF_fnc_ArtillerySupport_GetStatus;
-	
-	if (_add) then {
-		// ADD NEW CREW 
-		_crewGrp = createGroup (side player);
-		{
-			private _unit = _crewGrp createUnit [typeOf player, [0,0,0], [], 0, "NONE"];
-			_unit moveInGunner _x;	
-		} forEach (_battery select 3);
-		
-		[_battery, "CREW", _crewGrp] call tSF_fnc_ArtillerySupport_SetStatus;
-	} else {
-		if !(isNull _crewGrp) then {
-			{
-				moveOut _x;
-				sleep 0.5;
-				
-				deleteVehicle _x;
-			} forEach (units _crewGrp);
-		};
-	};
-
-	_crewGrp
-};
-
-/*
-tSF_fnc_ArtillerySupport_AddCrewOld = {
-	// [@Battery, @Add] call tSF_fnc_ArtillerySupport_AddCrew
-	params["_battery", "_add"];
-	
-	private _crewGrp = [_battery, "CREW"] call tSF_fnc_ArtillerySupport_GetStatus;
-	
-	if (_add) then {
-		if (isNull _crewGrp) then {
-			// ADD NEW CREW 
-			_crewGrp = createGroup (side player);
-			{
-				private _unit = _crewGrp createUnit [typeOf player, [0,0,0], [], 0, "NONE"];
-				_unit moveInGunner _x;	
-			} forEach (_battery select 3);
-			
-			[_battery, "CREW", _crewGrp] call tSF_fnc_ArtillerySupport_SetStatus;
-		} else {
-			// GET CREW FROM CACHE
-			[_crewGrp, true] remoteExec ["tSF_fnc_ArtillerySupport_ToggleCrewSimulation", 0];
-			{ ((units _crewGrp) select _forEachIndex) moveInGunner _x; } forEach (_battery select 3);
-		};
-	} else {
-		// DISMOUNT AND CACHE CREW
-		[_crewGrp, false] remoteExec ["tSF_fnc_ArtillerySupport_ToggleCrewSimulation", 0];
-	};
-	
-	_crewGrp
-};
-
-tSF_fnc_ArtillerySupport_ToggleCrewSimulation = {
-	params ["_grp", "_enable"];
-	{	
-		if !(_enable) then {
-			moveOut _x;
-			unassignVehicle _x;
-			sleep 0.5;
-		};
-		
-		_x hideObjectGlobal !(_enable);
-		_x enableSimulation (_enable);
-	} forEach (units _grp);
-};
-*/
-
-tSF_fnc_ArtillerySupport_HandleBatteryReload = {
-	private _battery = _this;
-	while { true } do {
-		waitUntil { 
-			sleep 10; 
-			{ _x < 1 } count ((_battery call tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable) select 3) > 0
-		};
-		
-		sleep tSF_ArtillerySupport_BatteryReloadTime;
-		{
-			private _fmRound = _x; // ["HE",0,"8Rnd_82mm_Mo_shells"]
-			private _fmAmmo = _fmRound select 1;
-			private _max = (tSF_ArtillerySupport_FiremissionsProperties select { _x select 0 == _fmRound select 0 }) select 0 select 1;
-			
-			[_battery, _fmRound select 0, _max - _fmAmmo] call tSF_fnc_ArtillerySupport_UpdateBatteryMissionsAvailable;
-		} forEach ((_battery select 0) getVariable "tSF_ArtillerySupport_AvailableFiremissions");
 	};
 };

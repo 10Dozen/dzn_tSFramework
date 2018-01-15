@@ -98,8 +98,15 @@ tSF_fnc_ArtillerySupport_ShowRequestMenu = {
 		,[10,"LABEL",""]
 		,[10,"BUTTON","REQUEST", {
 			closeDialog 2;
-			[tSF_ArtillerySupport_LastRequested, _this] spawn tSF_fnc_ArtillerySupport_RequestFiremission;
+			[tSF_ArtillerySupport_LastRequested, _this, "Pending Searching Fire"] spawn tSF_fnc_ArtillerySupport_RequestFiremission;
 		}]
+		,[11,"LABEL",""]
+		,[11,"BUTTON","FIRE FOR EFFECT", { 
+			closeDialog 2;
+			[tSF_ArtillerySupport_LastRequested, _this, "Pending Fire For Effect"] spawn tSF_fnc_ArtillerySupport_RequestFiremission;
+			
+		}]
+		,[11,"LABEL",""]
 	] call dzn_fnc_ShowAdvDialog;
 };
 
