@@ -1,6 +1,7 @@
 
 tSF_CCP_TimeToHeal			= 30;		// Timeout before healed
 tSF_CCP_TimeToHold			= 60;		// Timeout before finishing MediCare cycle
+tSF_CCP_HelipadClass			= "Land_HelipadEmpty_F";	// "Land_HelipadEmpty_F", "Land_HelipadCircle_F", "Land_HelipadSquare_F", "Land_HelipadCivil_F"
 
 tSF_CCP_Composition			= "Civil SUV";	// Name of default composition; See 'DefaultCompositions.sqf' for names
 
