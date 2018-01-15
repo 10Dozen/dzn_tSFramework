@@ -74,7 +74,7 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[tSF] Add Base Trigger"			, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
 		,["[tSF] Add CCP"				, { "CCP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
 		,["[tSF] Add FARP"				, { "FARP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
-		,["Add Artillery Composition"		, { call dzn_fnc_tSF_3DEN_ShowArtilleryCompositionMenu }]
+		,["[Support] Add Artillery Composition"		, { call dzn_fnc_tSF_3DEN_ShowArtilleryCompositionMenu }]
 		,["Add To Do List"				, { call dzn_fnc_tSF_3DEN_addToDoList }]
 		,[" "						, { }]	
 		
