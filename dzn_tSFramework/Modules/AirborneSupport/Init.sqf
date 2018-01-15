@@ -57,3 +57,8 @@ if (isServer) then {
 	publicVariable "tSF_AirborneSupport_ReturnPoints";
 	publicVariable "tSF_AirborneSupport_ReturnPointsList";
 };
+
+/*
+	ToDo
+	
+	[ ] Pickup is not working well (setVelocity cause damage and make unit not entarable... maybe attach?)

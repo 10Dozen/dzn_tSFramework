@@ -5,7 +5,7 @@ item0[] = {"Start",0,250,-50.000000,-1125.000000,50.000000,-1075.000000,0.000000
 item1[] = {"true",4,218,-50.000000,-1050.000000,50.000000,-1000.000000,0.000000,"true"};
 item2[] = {"Reset",2,250,-50.000000,-975.000000,50.000000,-925.000000,0.000000,"Reset"};
 item3[] = {"Pick_Up_Requeste",4,218,-300.000000,-900.000000,-200.000000,-850.000000,0.000000,"Pick Up" \n "Requested"};
-item4[] = {"Pickup_Started_Move",2,250,-300.000000,-825.000000,-200.000000,-775.000000,0.000000,"Pickup Started" \n "Move to Ingress"};
+item4[] = {"Pickup_Started_Move",2,4346,-300.000000,-825.000000,-200.000000,-775.000000,0.000000,"Pickup Started" \n "Move to Ingress"};
 item5[] = {"Reaching_Ingress",4,218,-300.000000,-750.000000,-200.000000,-700.000000,0.000000,"Reaching" \n "Ingress"};
 item6[] = {"Move_to_Landing",2,250,-300.000000,-675.000000,-200.000000,-625.000000,0.000000,"Move to" \n "Landing Zone"};
 item7[] = {"Reaching_LZ",4,218,-300.000000,-600.000000,-200.000000,-550.000000,0.000000,"Reaching" \n "LZ"};
@@ -186,10 +186,7 @@ class FSM
                          "	 _pos = _landingPoint findEmptyPosition [0, 175, typeOf _veh];" \n
                          "};" \n
                          "" \n
-                         "_helipad = [" \n
-                         "		[_pos, _ingressPoint getDir _landingPoint]" \n
-                         "		, ""Land_HelipadEmpty_F""" \n
-                         "] call dzn_fnc_createVehicle;	" \n
+                         "_helipad = [_veh, _pos, _ingressPoint getDir _landingPoint] call tSF_fnc_AirborneSupport_SetLandingPad;" \n
                          "" \n
                          "if (_debug) then { systemChat ""Pickup: LZ created""; };" \n
                          "" \n

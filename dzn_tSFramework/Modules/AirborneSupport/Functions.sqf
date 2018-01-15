@@ -72,6 +72,7 @@ tSF_fnc_AirborneSupport_SetStatus = {
 		case "LANDING POINT": 	{ _veh setVariable ["tSF_AirborneSupport_LandingPoint", _value, true]; };
 		case "INGRESS POINT": 	{ _veh setVariable ["tSF_AirborneSupport_IngressPoint", _value, true]; };
 		case "EGRESS POINT": 	{ _veh setVariable ["tSF_AirborneSupport_EgressPoint", _value, true]; };
+		case "LANDING PAD": 		{ _veh setVariable ["tSF_AirborneSupport_LandingPad", _value, true ]; };
 	}
 };
 
@@ -93,6 +94,7 @@ tSF_fnc_AirborneSupport_GetStatus = {
 		case "LANDING POINT": 	{ _veh getVariable ["tSF_AirborneSupport_LandingPoint", [0,0,0] ]; };
 		case "INGRESS POINT": 	{ _veh getVariable ["tSF_AirborneSupport_IngressPoint", [0,0,0] ]; };
 		case "EGRESS POINT": 	{ _veh getVariable ["tSF_AirborneSupport_EgressPoint", [0,0,0] ]; };
+		case "LANDING PAD": 		{ _veh getVariable ["tSF_AirborneSupport_LandingPad", objNull ]; };
 	}
 };
 
@@ -226,6 +228,20 @@ tSF_fnc_AirborneSupport_AddPilot = {
 	_aiPilot
 };
 
+tSF_fnc_AirborneSupport_SetLandingPad = {
+	params ["_veh", "_pos", "_dir"];
+	
+	private _pad = [_veh, "LANDING PAD"] call tSF_fnc_AirborneSupport_GetStatus;
+	if (isNull _pad) then {
+		_pad = [[_pos, _dir], "Land_HelipadEmpty_F" ] call dzn_fnc_createVehicle;
+		[_veh, "LANDING PAD", _pad] call tSF_fnc_AirborneSupport_SetStatus;
+	};
+	
+	_pad setPos _pos;
+	
+	_pad
+};
+
 tSF_fnc_AirborneSupport_MoveToPosition = {
 	params["_pilot","_pos",["_radius",200]];
 	
@@ -271,13 +287,15 @@ tSF_fnc_AirborneSupport_Land = {
 		waitUntil { (getPosATL _veh select 2) < 10 };
 		_veh spawn {
 			private _veh = _this;
+			private _landingPad = [_veh, "LANDING PAD"] call tSF_fnc_AirborneSupport_GetStatus;
 			
 			waitUntil { [_veh, "STATE", "WAITING"] call  tSF_fnc_AirborneSupport_AssertStatus };
 			
-			while {  [_veh, "STATE", "WAITING"] call  tSF_fnc_AirborneSupport_AssertStatus } do {
-				_veh setVelocity [0,0,-2];			
+			while {  [_veh, "STATE", "WAITING"] call  tSF_fnc_AirborneSupport_AssertStatus && (getPosATL _veh select 2) > .5 } do {
+				_veh setVelocity [0,0,-2];
 			};
-		
+			
+			_veh setVelocity [0,0,0];		
 		};
 	};	
 };
