@@ -28,10 +28,8 @@ if (isServer) then {
 	waitUntil { time > tSF_ArtillerySupport_initTimeout };
 	
 	tSF_ArtillerySupport_Batteries = [];
-	tSF_ArtillerySupport_TRPs = [];
 	
 	call tSF_fnc_ArtillerySupport_processLogics;
 	
 	publicVariable "tSF_ArtillerySupport_Batteries";
 };
-
