@@ -3,7 +3,7 @@
 tSF_fnc_ArtillerySupport_isAuthorizedUser = {
 	// Player call tSF_fnc_ArtillerySupport_isAuthorizedUser
 	private _role = toLower(roleDescription _this);
-	private _listOfAuthorizedUsers = tSF_AirborneSupport_AuthorizedUsers apply { toLower(_x) };
+	private _listOfAuthorizedUsers = tSF_ArtillerySupport_AuthorizedUsers apply { toLower(_x) };
 
 	if ("any" in _listOfAuthorizedUsers) exitWith { true };
 	
@@ -223,6 +223,8 @@ tSF_fnc_ArtillerySupport_AddCrew = {
 				
 				deleteVehicle _x;
 			} forEach (units _crewGrp);
+			
+			[_battery, "CREW", grpNull] call tSF_fnc_ArtillerySupport_SetStatus;
 		};
 	};
 
