@@ -1,16 +1,13 @@
-
-
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Settings.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Functions.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Functions Request.sqf";
 
 if (hasInterface) then {
-	[] spawn {
-		private _actionList = [ ["SELF", "Radio (Artillery)", "tsf_radio_artillery_support", "", { }, { player call tSF_fnc_ArtillerySupport_isAuthorizedUser }] ];
-		
+	[] spawn {		
 		waitUntil { !isNil "tSF_fnc_ACEActions_processActionList" };
 		waitUntil { !isNil "tSF_ArtillerySupport_Batteries" && { !(tSF_ArtillerySupport_Batteries isEqualTo []) } };
 		
+		private _actionList = [ ["SELF", "Radio (Artillery)", "tsf_radio_artillery_support", "", { }, { player call tSF_fnc_ArtillerySupport_isAuthorizedUser }] ];
 		{
 			// [ @Logic, @Callsign, @VehicleDisplayName, @Vehicles ]
 			_actionList pushBack [
@@ -31,8 +28,10 @@ if (isServer) then {
 	waitUntil { time > tSF_ArtillerySupport_initTimeout };
 	
 	tSF_ArtillerySupport_Batteries = [];
+	tSF_ArtillerySupport_TRPs = [];
 	
 	call tSF_fnc_ArtillerySupport_processLogics;
 	
 	publicVariable "tSF_ArtillerySupport_Batteries";
 };
+
