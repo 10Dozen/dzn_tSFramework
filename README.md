@@ -1,6 +1,6 @@
 ![img](http://tacticalshift.ru/tsf_10d.png)
 ------
-##### Version: 1.99
+##### Version: 2.00
 Tactical Shift Framework
 
 ##### Getting Started
@@ -40,6 +40,9 @@ Some default mission pre-sets (like player score).
 ##### Airborne Support
 Airborne vehicles pickup and return to base by AI or player pilots.
 <br />See slides: https://docs.google.com/presentation/d/1HpwSKT82IjZVIXdV2aGlPYcjGPoMyzE-BrmvPIbmkzI/edit?usp=sharing
+
+##### Artillery Support
+Artillery compositions that can be used for firemissions served by AI.
 
 ##### tS Notes
 Game and TTP notes for each players
