@@ -43,6 +43,7 @@ Airborne vehicles pickup and return to base by AI or player pilots.
 
 ##### Artillery Support
 Artillery compositions that can be used for firemissions served by AI.
+<br />See slides: https://docs.google.com/presentation/d/1bxc_cWJFGv_U2zxG9GgvuXOnDtyNHzKI6N9rEPQbHSk/edit?usp=sharing
 
 ##### tS Notes
 Game and TTP notes for each players
