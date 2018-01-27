@@ -128,7 +128,8 @@ tSF_Diag_Dynai_CollectData = {
 tSF_Diag_Gear_CollectTotalData = {
 	/*
 	 *	Kits vs GAT
-	 */	
+	 */
+	if (isNil "dzn_gear_gat_table") exitWith {};
 	private _gatTopic = "<font size='14' color='#b7f931'>Gear Assignment Table</font><br />";
 	
 	private _allKits = [];
@@ -173,7 +174,7 @@ tSF_Diag_Gear_CollectKitData = {
 	/*
 	 *	Kit content
 	 */
-
+	if (isNil "dzn_gear_gat_table") exitWith {};
 	private _kitTopic = "<font size='16' color='#b7f931'>Kits</font><br />";
 	private _fnc_CheckForItem = {	
 		params ["_arr","_val"];
