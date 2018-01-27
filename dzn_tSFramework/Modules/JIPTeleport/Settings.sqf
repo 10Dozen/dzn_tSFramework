@@ -4,10 +4,11 @@
  *	tSF_JIPTeleport_MaxTime		-	time after JIP
  *	tSF_JIPTeleport_MaxDistance	-	distance from spawn point
  *
-*/ 
+*/
+tSF_JIPTeleport_InitCondition		=	{ true };
+tSF_JIPTeleport_InitTimeout		= 	10;
 tSF_JIPTeleport_MaxTime			=	600;	// seconds (min. 10 seconds)
 tSF_JIPTeleport_MaxDistance		=	75;	// meters
-tSF_JIPTeleport_InitTimeout		= 	10;
 
 //	Relative (from SL position) teleporting position 
 tSF_JIPTeleport_RelativePos		= [10,0,0];
