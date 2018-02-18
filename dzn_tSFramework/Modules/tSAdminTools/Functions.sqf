@@ -28,6 +28,18 @@ dzn_fnc_adminTools_checkIsAdmin = {
 	(serverCommandAvailable "#logout") || !(isMultiplayer) || isServer
 };
 
+tSF_fnc_adminTools_checkIsAdmin = {
+	(serverCommandAvailable "#logout") || !(isMultiplayer) || isServer
+};
+
+
+tSF_fnc_adminTools_checkAndUpdateCurrentAdmin = {
+	if (call tSF_fnc_adminTools_checkIsAdmin) then {
+		tSF_Admin = player;
+		publicVariable "tSF_Admin";
+	};
+};
+
 dzn_fnc_adminTools_addTopic = {	
 	tSF_AdminTools_Topic = "tSF_AdminTools";
 	player createDiarySubject [tSF_AdminTools_Topic,tSF_AdminTools_TopicName];
@@ -471,8 +483,20 @@ tSF_fnc_adminTools_showGSOScreen = {
 tSF_fnc_adminTools_RapidArtillery_showZeusSceen = {
 	if !(tSF_AdminTools_RapidArtillery_Enabled) exitWith {};
 	
-	private _tgtNames = (entities tSF_AdminTools_RapidArtillery_TargetClass) apply { name _x };
-	private _tgtPos = (entities tSF_AdminTools_RapidArtillery_TargetClass) apply { getPosATL _x };
+	private _tgtNames = [];
+	private _tgtPos = [];
+	
+	private _trps = allMapMarkers select { ["TRP", markerText _x, false] call BIS_fnc_inString };
+	private _tgtClassObjects = entities [tSF_AdminTools_RapidArtillery_TargetClass, [], false, false];
+	
+	_tgtNames = _tgtNames + (_tgtClassObjects apply { name _x }) + (_trps apply { markerText _x });
+	_tgtPos = _tgtPos + (_tgtClassObjects apply { getPosATL _x })  + (_trps apply { getMarkerPos _x });
+	
+	
+	
+	// private _trpMarkers = allMapMarkers select { ["TRP", markerText _x, false] call BIS_fnc_inString };
+	// private _tgtNames = (entities [tSF_AdminTools_RapidArtillery_TargetClass, [], false, false]) apply { name _x };
+	// private _tgtPos = (entities [tSF_AdminTools_RapidArtillery_TargetClass, [], false, false]) apply { getPosATL _x };
 	
 	private _gunType = tSF_AdminTools_RapidArtillery_ArtillerySettings apply { _x select 0 };
 	
@@ -655,20 +679,26 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 		[0, "HEADER", "GSO Zeus Screen - Force Respawn"]
 		, [1, "LABEL", format ["Players pending respawn: %1", count _players]]
 		, [2, "LABEL",  format ["<t color='#FFD000' size='0.85'>%1</t>", _playersStr]]
-		, [3, "INPUT"]
 		
-		, [4, "LABEL", ""]		
-		, [4, "BUTTON", "SEND MESSAGE", {
+		, [3, "LABEL", "Instant Messenger"]
+		, [3, "LABEL", "<t align='right'>send to</t>"]
+		, [3, "DROPDOWN", ["All"] + ((call BIS_fnc_listPlayers) apply { name _x }), [objNull] + (call BIS_fnc_listPlayers)]		
+		
+		, [4, "INPUT"]
+		
+		
+		, [5, "LABEL", ""]
+		, [5, "BUTTON", "SEND MESSAGE", {
 			closeDialog 2;
 			{
-				(_this select 0 select 0) remoteExec ["tSF_fnc_adminTools_ForceRespawn_NotifySpectator", _x];
+				["GSO", _this select 0 select 0] remoteExec ["tSF_fnc_adminTools_IM_Notify", _x];
 			} forEach tSF_adminTools_ForceRespawn_List;
 		}]
-		, [4, "LABEL", ""]
-		
-		, [5, "BUTTON", "CLOSE", { closeDialog 2; }]
 		, [5, "LABEL", ""]
-		, [5, "BUTTON", "RESPAWN ALL", {
+		
+		, [6, "BUTTON", "CLOSE", { closeDialog 2; }]
+		, [6, "LABEL", ""]
+		, [6, "BUTTON", "RESPAWN ALL", {
 			closeDialog 2;
 			
 			hint "Respawn in 5 seconds";
@@ -680,7 +710,7 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 };
 
 tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {	
-	"Respawning in 5 seconds" call tSF_fnc_adminTools_ForceRespawn_NotifySpectator;
+	["GSO", "Respawning in 5 seconds"] call tSF_fnc_adminTools_IM_Notify;
 	
 	setPlayerRespawnTime 5;
 	sleep 7;
@@ -688,18 +718,53 @@ tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {
 	
 	[player, player getVariable "dzn_gear", false] spawn dzn_fnc_gear_assignKit;
 };
-publicVariable "tSF_fnc_adminTools_ForceRespawn_RespawnPlayer";
+// publicVariable "tSF_fnc_adminTools_ForceRespawn_RespawnPlayer";
 
-tSF_fnc_adminTools_ForceRespawn_NotifySpectator = {
+/*
+ *	Instant Messenger
+ */
+tSF_fnc_adminTools_IM_showMenu = {
+	[
+		[0,"HEADER","GSO Instant Messenger"]
+		, [1, "LABEL","Write your message to GSO (Admin)"]
+		, [2, "INPUT"]
+		, [3, "LABEL", ""]
+		, [4, "LABEL", ""]		
+		, [4, "LABEL", ""]		
+		, [4, "BUTTON", "SEND MESSAGE", {
+			closeDialog 2;
+			[
+				format ["%1 [<t color='#FFFFFF'>%2 -- %3</t>]", name player, groupId group player, roleDescription player]
+				, _this select 0 select 0
+			] remoteExec ["tSF_fnc_adminTools_IM_Notify", tSF_Admin];
+			
+			/*
+			hintC format [
+				"%1 (%2 - %3): %4"
+				, name player
+				, groupId group player
+				, roleDescription player
+				, (_this select 0 select 0)
+			];
+			*/
+		}]
+
+	] call dzn_fnc_ShowAdvDialog;
+};
+
+tSF_fnc_adminTools_IM_Notify = {
+	params ["_title", "_text"];
+	
 	[
 		[
-			"<t color='#FFD000'>Сообщение от GSO</t>"
-			, format ["<t align='center'>%1</t>", _this]
+			format ["<t color='#FFD000'>Сообщение от %1</t>", _title]
+			, format ["<t align='center'>%1</t>", _text]
 		]
 		, "TOP"
 		, [0,0,0,.75]
-		, 30	
+		, 30 
 	] call dzn_fnc_ShowMessage;
 };
-publicVariable "tSF_fnc_adminTools_ForceRespawn_NotifySpectator";
 
+// publicVariable "tSF_fnc_adminTools_IM_showMenu";
+// publicVariable "tSF_fnc_adminTools_IM_Notify";
