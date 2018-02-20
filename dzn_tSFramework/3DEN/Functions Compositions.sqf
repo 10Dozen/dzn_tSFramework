@@ -21,12 +21,12 @@ dzn_fnc_tSF_3DEN_ShowArtilleryCompositionMenu = {
 	
 	Result = _toolResult;
 	if (count _toolResult == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
-	_toolResult params ["_typeId", "_assetId", "_callsign"];
+	
 	[
 		screenToWorld [0.5,0.5]
-		, (_mortarOptions select _typeId) select 1
-		, _compositions select _assetId
-		, if (typename _callsign == "SCALAR") then { "Steel Rain-1-1" } else { _callsign }
+		, (_mortarOptions select (_toolResult select 0)) select 1
+		, _compositions select (_toolResult select 1)
+		, _toolResult select 2
 	] call dzn_fnc_tSF_3DEN_SetArtilleryComposition;
 	
 	dzn_tSF_3DEN_toolDisplayed = false;
