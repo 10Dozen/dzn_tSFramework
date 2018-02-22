@@ -2,6 +2,9 @@
 if (hasInterface) then {
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Settings.sqf";
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions.sqf";
+	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - GSO Menu.sqf";
+	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - Rapid Artillery Menu.sqf";
+	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - IM and Respawn Menu.sqf";
 	tSF_AdminTools_Rallypoints = [];
 	tSF_AdminTools_TeleportListNeedUpdate = true;
 	tSF_AdminTools_GSO_TeleportPositions = [];
@@ -28,7 +31,7 @@ if (hasInterface) then {
 		tSF_GATList pushBack "";
 		
 		call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf";
-		call dzn_fnc_adminTools_addTopic;
+		call tSF_fnc_adminTools_addTopic;
 		
 		if (tSF_AdminTool_EnableMissionEndings) then { [] spawn dzn_fnc_adminTools_addMissionEndsControls; };			
 		if (tSF_AdminTool_EnableGATTool) then { [] spawn dzn_fnc_adminTools_addGATControls; };
