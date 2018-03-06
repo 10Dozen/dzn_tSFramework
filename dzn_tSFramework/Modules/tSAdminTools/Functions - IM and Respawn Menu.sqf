@@ -24,7 +24,7 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 		
 		, [3, "LABEL", "Instant Messenger"]
 		, [3, "LABEL", "<t align='right'>send to</t>"]
-		, [3, "DROPDOWN", ["All"] + ((call BIS_fnc_listPlayers) apply { name _x }), [objNull] + (call BIS_fnc_listPlayers)]		
+		, [3, "DROPDOWN", ["All", "Spectators"] + ((call BIS_fnc_listPlayers) apply { name _x }), [objNull, tSF_adminTools_ForceRespawn_List] + (call BIS_fnc_listPlayers)]
 		
 		, [4, "INPUT"]
 		
@@ -32,9 +32,28 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 		, [5, "LABEL", ""]
 		, [5, "BUTTON", "SEND MESSAGE", {
 			closeDialog 2;
+			params["_receiverParams","_msgParams"];
+
+			private _msg = _msgParams select 0;
+			private _receiversList = switch (_receiverParams select 0) do {
+				case 0: {
+					// All players
+					(call BIS_fnc_listPlayers)
+				};
+				case 1: {
+					// Spectators
+					tSF_adminTools_ForceRespawn_List
+				};
+				default {
+					// Specific player
+					[_receiverParams select 3]
+				};
+			};
+
 			{
-				["GSO", "GSO", _this select 0 select 0] remoteExec ["tSF_fnc_adminTools_IM_Notify", _x];
-			} forEach tSF_adminTools_ForceRespawn_List;
+				["GSO","GSO",_msg] remoteExec ["tSF_fnc_adminTools_IM_Notify", _x];
+			} forEach _receiversList;
+
 		}]
 		, [5, "LABEL", ""]
 		
@@ -88,6 +107,7 @@ tSF_fnc_adminTools_IM_showMenu = {
 				, _this select 0 select 0
 			] remoteExec ["tSF_fnc_adminTools_IM_Notify", tSF_Admin];
 
+			if (player == tSF_Admin) exitWith {};
 			[name player, name tSF_admin, _this select 0 select 0] call tSF_fnc_adminTools_IM_SaveMsgToDiary;
 			/*
 			hintC format [
@@ -105,11 +125,16 @@ tSF_fnc_adminTools_IM_showMenu = {
 
 tSF_fnc_adminTools_IM_Notify = {
 	params ["_sender", "_title", "_text"];
+
+	private _drawText = _text;
+	if (["execute expression=", _text] call dzn_fnc_inString) then {
+		_drawText = "(Execute Expression attempt)" + _text;
+	};
 	
 	[
 		[
 			format ["<t color='#FFD000'>Сообщение от %1</t>", _title]
-			, format ["<t align='center'>%1</t>", _text]
+			, format ["<t align='center'>%1</t>", _drawText]
 		]
 		, "TOP"
 		, [0,0,0,.75]
@@ -136,11 +161,15 @@ tSF_fnc_adminTools_IM_SaveMsgToDiary = {
 		For 10Dozne:	- "tSF Instant Messenger" -> GSO -> 10Dozen text
 */
 
+	if (["execute expression=", _msg] call dzn_fnc_inString) then {
+		_msg = " -- Illegal hack was deteceted (execute expression=). Admin is reported about u, h4x0r --"
+	};
+
 	player createDiaryRecord [tSF_AdminTools_IM_Topic, [
 		_receiver
 		, format [
 			"<font color='#12C4FF' size='14'>%1 -- %2:</font><br />%3"
-			, [time, "HH:MM:SS"] call BIS_fnc_timeToString
+			, [] call BIS_fnc_timeToString
 			, _sender
 			, _msg
 		]
