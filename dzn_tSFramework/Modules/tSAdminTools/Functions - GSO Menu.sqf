@@ -5,6 +5,8 @@ tSF_fnc_adminTools_showGSOScreen = {
 	#define ADD_GSO_POS(X,Y) 	tSF_AdminTools_GSO_TeleportPositions pushBack (X); tSF_AdminTools_GSO_TeleportSelections pushBack (Y)
 	#define	ADD_PLR_POS(X,Y)	tSF_AdminTools_PLR_TeleportPositions pushBack (X); tSF_AdminTools_PLR_TeleportSelections pushBack (Y)
 
+	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};	
+	
 	if (tSF_AdminTools_TeleportListNeedUpdate) then {
 		tSF_AdminTools_GSO_TeleportPositions = [];
 		tSF_AdminTools_GSO_TeleportSelections = [];

@@ -2,6 +2,7 @@
  *	F6 Rapid Artillery Zeus Screen
  */
 tSF_fnc_adminTools_RapidArtillery_showZeusSceen = {
+	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
 	if !(tSF_AdminTools_RapidArtillery_Enabled) exitWith {};
 
 	private _trps = allMapMarkers select { ["TRP", markerText _x, false] call BIS_fnc_inString };
@@ -10,8 +11,8 @@ tSF_fnc_adminTools_RapidArtillery_showZeusSceen = {
 	private _tgtNames 		= [] + (_tgtClassObjects apply { name _x }) + (_trps apply { markerText _x });
 	private _tgtPos 		= [] + (_tgtClassObjects apply { getPosATL _x })  + (_trps apply { getMarkerPos _x });
 	private _shapes 		= ["CIRCLE", "LINE"];
-    private _directions 	= [["SOUTH-to-NORTH", 0], ["SW-to-NE", 45], ["WEST-to-EAST", 90], ["SE-to-NW", 315]];
-    private _size 			= [["NORMAL / 50m", 50], ["WIDE / 100m", 100], ["EXTRA WIDE / 250m", 250], ["NARROW / 25m", 25]];
+	private _directions		= [["SOUTH-to-NORTH", 0], ["SW-to-NE", 45], ["WEST-to-EAST", 90], ["SE-to-NW", 315]];
+	private _size 		= [["NORMAL / 50m", 50], ["WIDE / 100m", 100], ["EXTRA WIDE / 250m", 250], ["NARROW / 25m", 25]];
 	private _gunType 		= tSF_AdminTools_RapidArtillery_ArtillerySettings apply { _x select 0 };
 	private _countValues 	= [1,3,6,9];
 	private _countTitles 	= _countValues apply { format ["%1 times", _x] };
@@ -37,7 +38,7 @@ tSF_fnc_adminTools_RapidArtillery_showZeusSceen = {
  		,[1, "DROPDOWN", _tgtNames, _tgtPos]
  		,[2, "DROPDOWN", _shapes, []]
  		,[2,"LISTBOX", _directions apply { _x select 0 }, _directions apply { _x select 1 }]
-        ,[2,"LISTBOX", _size apply { _x select 0 }, _size apply { _x select 1 }]
+		,[2,"LISTBOX", _size apply { _x select 0 }, _size apply { _x select 1 }]
 
  		, [3, "LABEL", "Gun"]
  		, [3, "LABEL", "Round"]
@@ -66,8 +67,8 @@ tSF_fnc_adminTools_RapidArtillery_createFiremission = {
 	params ["_grid", "_tgt", "_shape", "_dir", "_size", "_gun", "_round", "_times", "_eta", "_delay"];
 
 	if (count (_grid select 0) > 0 && count (_grid select 0) < 8) exitWith {
-    	hint parseText "<t size='1' color='#FFD000' shadow='1'>Rapid Artillery</t><br /><br />Wrong format of 8-grid";
-    };
+		hint parseText "<t size='1' color='#FFD000' shadow='1'>Rapid Artillery</t><br /><br />Wrong format of 8-grid";
+	};
 
 	private _tgtName = "";
 	private _tgtPos = [];
@@ -115,11 +116,11 @@ tSF_fnc_adminTools_RapidArtillery_createFiremission = {
 	sleep (_eta - 1);
 
 	hint parseText format [
-    	"<t size='1' color='#FFD000' shadow='1'>Rapid Artillery Firemission #%1:</t>
-    	<br /><br /><t size='1.25'>Splash!</t>"
-    	, _firemissionNumber
-    ];
-    sleep 1;
+		"<t size='1' color='#FFD000' shadow='1'>Rapid Artillery Firemission #%1:</t>
+		<br /><br /><t size='1.25'>Splash!</t>"
+		, _firemissionNumber
+	];
+	sleep 1;
 
 	[[_tgtPos, _shape select 1, _dir select 3, _size select 3], _type, 1, _times, 2, _delay] spawn dzn_fnc_StartVirtualFiremission;
 

@@ -2,6 +2,8 @@
  *	F7 Force Respwn Zeus Menu
  */
 tSF_fnc_adminTools_ForceRespawn_showMenu = {
+	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
+	
 	private _players = (call BIS_fnc_listPlayers) select { !alive _x };
 	private _playersStr = (_players apply { name _x }) joinString ", ";
 	
@@ -71,23 +73,26 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 };
 
 tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {	
-	["GSO", "Respawning in 5 seconds"] call tSF_fnc_adminTools_IM_Notify;
+	["GSO", "GSO", "Respawning in 5 seconds"] call tSF_fnc_adminTools_IM_Notify;
 	
 	setPlayerRespawnTime 5;
 	sleep 7;
 	setPlayerRespawnTime 9999999;
 	
-	[player, player getVariable "dzn_gear", false] spawn dzn_fnc_gear_assignKit;
+	if (!isNil { player getVariable "dzn_gear" }) then {
+		[player, player getVariable "dzn_gear", false] spawn dzn_fnc_gear_assignKit;
+	};
 };
-// publicVariable "tSF_fnc_adminTools_ForceRespawn_RespawnPlayer";
 
 /*
  *	Instant Messenger
  */
 tSF_fnc_adminTools_IM_showMenu = {
+	// if (call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
+
  	/*
  	[ Write your message to GSO (Admin)					            ]
- 	[ (input)														]
+ 	[ (input)										]
  	[ 																]
  	[					][					][ Send Message			]
  	*/

@@ -13,7 +13,21 @@ if (hasInterface) then {
 			, viewDistance
 			, getObjectViewDistance select 0
 		];
-
+	};
+	
+	tSF_fnc_noteSettings_setTerrainGrid = {
+		hintSilent parseText format [
+			"<t color='#86CC5E'>Terrain Grid set to </t>%1"
+			, _this
+		];
+	
+		setTerrainGrid (switch (_this) do {
+			case "No grass": { 50 };
+			case "Default": { 25 };
+			case "Normal": { 12.5 };
+			case "High": { 6.25 };
+			case "Very High": { 3.125 };
+		});
 	};
 	
 	#define	ADD_NOTES	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSNotesSettings\NotesSettings.sqf"

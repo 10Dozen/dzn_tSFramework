@@ -21,6 +21,19 @@ if (hasInterface) then {
 	};
 
 	[] spawn {
+		tSF_adminTools_isKeyPressed = false;
+		{
+			_x spawn {
+				waitUntil {!isNull (findDisplay _this)};
+				(findDisplay _this) displayAddEventHandler ["KeyUp",  {call tSF_fnc_adminTools_handleKey}];
+			};
+		} forEach [
+			46, 12249 /* 46 (game) | 12249 (ACE Spectator) */
+		];
+		
+		[] spawn tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay;
+		[] spawn tSF_fnc_adminTools_handleGSOMenuOverSpectator;
+		
 		waitUntil { sleep 15; call tSF_fnc_adminTools_checkIsAdmin };
 		
 		tSF_GATList = (allVariables missionNamespace)  select {  
@@ -36,17 +49,6 @@ if (hasInterface) then {
 		if (tSF_AdminTool_EnableMissionEndings) then { [] spawn dzn_fnc_adminTools_addMissionEndsControls; };			
 		if (tSF_AdminTool_EnableGATTool) then { [] spawn dzn_fnc_adminTools_addGATControls; };
 		[] spawn tSF_Diag_AddDiagTopic;
-		
-		tSF_adminTools_isKeyPressed = false;
-		{
-			_x spawn {
-				waitUntil {!isNull (findDisplay _this)};
-				(findDisplay _this) displayAddEventHandler ["KeyUp",  {call tSF_fnc_adminTools_handleKey}];
-			};
-		} forEach [
-			46, 60492, 12249 /* 46 (game) | 60492 (spectator arma) | 12249 (ACE Spectator) */
-		];			
-		[] spawn tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay;
 		
 		[["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], [-20,-5,150,0.03], [0,0,0,.75], 30] call dzn_fnc_ShowMessage;
 	};

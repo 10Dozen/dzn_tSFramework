@@ -46,6 +46,7 @@ tSF_fnc_adminTools_addTopic = {
 	player createDiarySubject [tSF_AdminTools_Topic,tSF_AdminTools_TopicName];
 };
 
+
 tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay = {
 	if (isNull (findDisplay 312)) then {
 		tSF_adminTools_MenuAddedToZeus = false;
@@ -60,6 +61,19 @@ tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay = {
 	[] spawn tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay;
 };
 
+tSF_fnc_adminTools_handleGSOMenuOverSpectator = {
+	if (isNull (findDisplay 60000)) then {
+		tSF_adminTools_MenuAddedToSpectator = false;
+	} else {
+		if (isNil "tSF_adminTools_MenuAddedToSpectator" || {!tSF_adminTools_MenuAddedToSpectator}) then {
+			(findDisplay 60000) displayAddEventHandler ["KeyUp", {call tSF_fnc_adminTools_handleKey}];
+			tSF_adminTools_MenuAddedToSpectator = true;
+		};
+	};
+	
+	sleep 5;
+	[] spawn tSF_fnc_adminTools_handleGSOMenuOverSpectator;
+};
 
 /*
 	Mission Endings
