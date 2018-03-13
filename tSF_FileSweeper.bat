@@ -30,7 +30,6 @@ echo Removing tSF Helpers >> tSF_FS_log.txt
 del /q /f  init3DEN.sqf
 del /q /f  README.md
 del /q /f  dzn_tSFramework\tS_SettingsOverview.html
-del /q /f  dzn_tSFramework\tS_SettingsOverview.jquery.min.js
 @RD /S /Q dzn_tSFramework\3DEN
 @RD /S /Q dzn_tSFramework\Modules\Briefing\BriefingHelper
 @RD /S /Q dzn_tSFramework\Modules\MissionConditions\EndingsHelper
@@ -53,6 +52,7 @@ call :removeFolder tSF_module_tSNotesSettings tSNotesSettings
 call :removeFolder tSF_module_CCP CCP
 call :removeFolder tSF_module_FARP FARP
 call :removeFolder tSF_module_AirborneSupport AirborneSupport
+call :removeFolder tSF_module_ArtillerySupport ArtillerySupport
 call :removeFolder tSF_module_Interactives Interactives
 call :removeFolder tSF_module_ACEActions ACEActions
 call :removeFolder tSF_module_EditorVehicleCrew EditorVehicleCrew
