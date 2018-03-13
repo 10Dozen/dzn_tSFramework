@@ -219,11 +219,11 @@ tSF_fnc_FARP_showMenu = {
 	private _farpMenuLine = 6;
 	
 	tSF_FARP_Vehicles = vehicles select { 
-		(_x isKindOf "Car" || _x isKindOf "Tank" || _x isKindOf "Air") 
+		(_x isKindOf "Car" || _x isKindOf "Tank" || _x isKindOf "Air" || _x isKindOf "RHS_ZU23_MSV") 
 		&& !(_x in tSF_FARP_Objects)
 		&& alive _x
 		&& { 
-			(getPosATL _x select 2) < 0.4
+			(getPosATL _x select 2) < 3
 			&& speed _x < 5
 			&& [ _x, tSF_FARP_Position, 25] call dzn_fnc_isInArea2d 
 		}		
