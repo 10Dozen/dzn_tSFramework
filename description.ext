@@ -91,19 +91,19 @@ class Params
 	class par_dynai_skillGeneral
 	{
 		title = "          Skill: General (%)";
-		values[] = {60,65,70,75,80,85,90,95,100};
+		values[] = {10,20,30,40,45,50,55,60,65,70,75,80,85,90,95,100};
 		default = 95;
 	};
 	class par_dynai_skillAccuracy
 	{
 		title = "          Skill (Complex): Accuracy (%)";
-		values[] = {40,45,50,55,60,65,70,75,80,85,90,95,100};
+		values[] = {10,20,30,40,45,50,55,60,65,70,75,80,85,90,95,100};
 		default = 80;
 	};
 	class par_dynai_skillAimSpeed
 	{
 		title = "          Skill (Complex): Aiming Speed (%)";
-		values[] = {40,45,50,55,60,65,70,75,80,85,90,95,100};
+		values[] = {10,20,30,40,45,50,55,60,65,70,75,80,85,90,95,100};
 		default = 90;
 	};
 };
