@@ -58,6 +58,7 @@ Admin-enabled ability to:
 - GSO Screen with teleport for GSO and Players
 - Rapid Artillery screen
 - GSO Respawn screen
+- GSO-Players instant messenger
 
 ##### Editor Unit Behavior
 Make editor placed unit to 'Surrender' on player's approach.
