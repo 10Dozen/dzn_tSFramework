@@ -42,4 +42,10 @@ TOPIC("VI. Замечания:")
 "Прочие замечания"
 END
 
+if ((serverCommandAvailable '#logout') || !(isMultiplayer) || isServer) then {
+TOPIC("VII. GSO notes:")
+"-"
+END
+};
+
 ADD_TOPICS
