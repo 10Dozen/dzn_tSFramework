@@ -55,10 +55,10 @@ Client-side settings like View Distance
 Admin-enabled ability to:
 - finish mission by one of the endings (from Diary or via tSF_End function)
 - assign gear kit to remote players
-- GSO Screen with teleport for GSO and Players
-- Rapid Artillery screen
-- GSO Respawn screen
-- GSO-Players instant messenger
+- GSO Screen with teleport for GSO and Players (F5)
+- Rapid Artillery screen (F6)
+- GSO Respawn screen (F7)
+- GSO-Players instant messenger (F8)
 
 ##### Editor Unit Behavior
 Make editor placed unit to 'Surrender' on player's approach.
