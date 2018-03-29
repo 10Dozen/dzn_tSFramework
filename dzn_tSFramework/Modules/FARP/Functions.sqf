@@ -219,7 +219,7 @@ tSF_fnc_FARP_showMenu = {
 	private _farpMenuLine = 6;
 	
 	tSF_FARP_Vehicles = vehicles select { 
-		(_x isKindOf "Car" || _x isKindOf "Tank" || _x isKindOf "Air" || _x isKindOf "RHS_ZU23_MSV") 
+		(_x isKindOf "Car" || _x isKindOf "Tank" || _x isKindOf "Air" || _x isKindOf "StaticWeapon") 
 		&& !(_x in tSF_FARP_Objects)
 		&& alive _x
 		&& { 
@@ -313,7 +313,7 @@ tSF_fnc_FARP_showMenu = {
 	_farpMenu pushBack [_farpMenuLine + 1, "HEADER","<t align='center'>ASSETS DISPENSER</t>"];
 	
 	_farpMenu pushBack [_farpMenuLine + 2, "LABEL","Select asset"];
-	_farpMenu pushBack [_farpMenuLine + 2, "LISTBOX", _assetsNames, _assets];
+	_farpMenu pushBack [_farpMenuLine + 2, "DROPDOWN", _assetsNames, _assets];
 	_farpMenu pushBack [_farpMenuLine + 2, "BUTTON","<t align='center'>REQUEST</t>", { (_this select 0) spawn tSF_fnc_FARP_spawnAssets; closeDialog 2;}];	
 	
 	_farpMenu call dzn_fnc_ShowAdvDialog;
@@ -353,28 +353,37 @@ tSF_fnc_FARP_showServiceMenu = {
 	};
 	
 	if (tSF_FARP_Rearm_Allowed) then {
-		_farpServiceMenu pushBack [_farpMenuLine, "LABEL", "<t align='center' font='PuristaBold'>Ammunition</t>"];
-		_farpMenuLine = _farpMenuLine + 1;
-		
 		tSF_FARP_DialogLines pushBack "AMMO";
-		{
-			private _mag = _x select 0;
-			private _turret = _x select 1;
-			private _curMagCount = _x select 2;
-			private _fullMagCount = _x select 3;		
+		
+		if (tSF_FARP_Rearm_SimpleRearm) then {
+			_farpServiceMenu pushBack [_farpMenuLine,"LABEL","Rearm"];			
+			_farpServiceMenu pushBack [_farpMenuLine,"CHECKBOX"];
+			_farpServiceMenu pushBack [_farpMenuLine,"LABEL",""];
 			
-			_farpServiceMenu pushBack [
-				_farpMenuLine, "LABEL"
-				, format[
-					"<t align='left' size='0.6' color='#999999'>%1 </t>%2"
-					, [_turret, ["ARRAY"]] call dzn_fnc_stringify
-					, _mag call dzn_fnc_getItemDisplayName
-				]
-			];		
-			_farpServiceMenu pushBack [_farpMenuLine, "CHECKBOX"];
-			_farpServiceMenu pushBack [_farpMenuLine, "SLIDER", [0, _fullMagCount, _curMagCount]];
 			_farpMenuLine = _farpMenuLine + 1;
-		} forEach _magazines;
+		} else {
+			_farpServiceMenu pushBack [_farpMenuLine, "LABEL", "<t align='center' font='PuristaBold'>Ammunition</t>"];
+			_farpMenuLine = _farpMenuLine + 1;
+			
+			{
+				private _mag = _x select 0;
+				private _turret = _x select 1;
+				private _curMagCount = _x select 2;
+				private _fullMagCount = _x select 3;		
+				
+				_farpServiceMenu pushBack [
+					_farpMenuLine, "LABEL"
+					, format[
+						"<t align='left' size='0.6' color='#999999'>%1 </t>%2"
+						, [_turret, ["ARRAY"]] call dzn_fnc_stringify
+						, _mag call dzn_fnc_getItemDisplayName
+					]
+				];		
+				_farpServiceMenu pushBack [_farpMenuLine, "CHECKBOX"];
+				_farpServiceMenu pushBack [_farpMenuLine, "SLIDER", [0, _fullMagCount, _curMagCount]];
+				_farpMenuLine = _farpMenuLine + 1;
+			} forEach _magazines;
+		};
 	};
 	
 	_farpServiceMenu pushBack [_farpMenuLine, "LABEL", ""];
@@ -461,7 +470,7 @@ tSF_fnc_FARP_ProcessService = {
 				_fuelLevelRequested = ((_dialogResult select (1 + 2*_forEachIndex)) select 0)/100;
 			};			
 			case (_x == "AMMO"): {
-				_needRearmTotal = true;
+				_needRearmTotal = if (tSF_FARP_Rearm_SimpleRearm) then { (_dialogResult select (0 + 2*_forEachIndex)) select 0 } else { true };
 				_ammoSectionStartId = 2*_forEachIndex;
 			};
 		};
@@ -470,15 +479,17 @@ tSF_fnc_FARP_ProcessService = {
 	private _magazinesList = (_veh getVariable "tSF_FARP_VehicleState") select 2; // [ [@MagazineName, @TurretPath, @CurrFullMags, @FullMags] ... ]
 	private _rearmList = [];	// [ [@MagazineClass, @TurretPath, @NeedRearm, @CurrFullMags, @MagsToRearm] ]
 	
-	{
-		_rearmList pushBack [
-			_x select 0
-			, _x select 1
-			, _dialogResult select (_ammoSectionStartId + 2*_forEachIndex) select 0
-			, _x select 2
-			, _dialogResult select (_ammoSectionStartId + 1 + 2*_forEachIndex) select 0
-		];	
-	} forEach _magazinesList;
+	if !(tSF_FARP_Rearm_SimpleRearm) then {
+		{
+			_rearmList pushBack [
+				_x select 0
+				, _x select 1
+				, _dialogResult select (_ammoSectionStartId + 2*_forEachIndex) select 0
+				, _x select 2
+				, _dialogResult select (_ammoSectionStartId + 1 + 2*_forEachIndex) select 0
+			];	
+		} forEach _magazinesList;
+	};
 	
 	/*
 	 *	Service Starting 
@@ -486,7 +497,6 @@ tSF_fnc_FARP_ProcessService = {
 	_veh setVariable ["tSF_FARP_FuelToLoad", fuel _veh, true];
 	_veh setVelocity [0,0,0];
 	_veh setFuel 0;
-	
 	
 	if (_needRepair) then {	
 		private _hitPointsDamages = getAllHitPointsDamage _veh;
@@ -551,55 +561,60 @@ tSF_fnc_FARP_ProcessService = {
 	};	
 	
 	if (_needRearmTotal) then {
+		if (tSF_FARP_Rearm_SimpleRearm) then {
+			_veh setVehicleAmmo 1;
+			_sleepTime = _sleepTime + tSF_FARP_Rearm_TimeMultiplier;
+		} else {
 		
-		{
-			private _diff = 0;
-			
-			private _mag = _x select 0;
-			private _turret = _x select 1;
-			private _needRearm = _x select 2;
-			private _currentMags = _x select 3;
-			private _requestedMags = _x select 4;
-			
-			if (_needRearm) then {
-				if (_requestedMags > _currentMags) then {
-					_diff = _requestedMags - _currentMags;
-					if (tSF_FARP_Rearm_ResoucesLevel >= 0) then {
-						if (tSF_FARP_Rearm_ResoucesLevel < _diff) then {
-							_diff = tSF_FARP_Rearm_ResoucesLevel;
-							tSF_FARP_Rearm_ResoucesLevel = 0;
-						} else {
-							tSF_FARP_Rearm_ResoucesLevel = tSF_FARP_Rearm_ResoucesLevel - _diff;
+			{
+				private _diff = 0;
+				
+				private _mag = _x select 0;
+				private _turret = _x select 1;
+				private _needRearm = _x select 2;
+				private _currentMags = _x select 3;
+				private _requestedMags = _x select 4;
+				
+				if (_needRearm) then {
+					if (_requestedMags > _currentMags) then {
+						_diff = _requestedMags - _currentMags;
+						if (tSF_FARP_Rearm_ResoucesLevel >= 0) then {
+							if (tSF_FARP_Rearm_ResoucesLevel < _diff) then {
+								_diff = tSF_FARP_Rearm_ResoucesLevel;
+								tSF_FARP_Rearm_ResoucesLevel = 0;
+							} else {
+								tSF_FARP_Rearm_ResoucesLevel = tSF_FARP_Rearm_ResoucesLevel - _diff;
+							};
+						};
+						
+						// Removing all magazines of type (to remove non full magazines too)
+						for "_i" from 0 to (_currentMags+1) do {
+							_veh removeMagazineTurret [_mag, _turret];
+						};
+						
+						// Adding magazines (return full mags and difference between requested and actual)
+						for "_i" from 1 to (_currentMags + _diff) do {
+							_veh addMagazineTurret [_mag, _turret];
+						};
+					} else {			
+						_diff = _currentMags - _requestedMags;
+						
+						if (tSF_FARP_Rearm_ResoucesLevel >= 0) then {
+							tSF_FARP_Rearm_ResoucesLevel = tSF_FARP_Rearm_ResoucesLevel + _diff;
+						};
+						
+						for "_i" from 1 to _diff do {
+							_veh removeMagazineTurret [_mag, _turret];
 						};
 					};
 					
-					// Removing all magazines of type (to remove non full magazines too)
-					for "_i" from 0 to (_currentMags+1) do {
-						_veh removeMagazineTurret [_mag, _turret];
-					};
-					
-					// Adding magazines (return full mags and difference between requested and actual)
-					for "_i" from 1 to (_currentMags + _diff) do {
-						_veh addMagazineTurret [_mag, _turret];
-					};
-				} else {			
-					_diff = _currentMags - _requestedMags;
-					
-					if (tSF_FARP_Rearm_ResoucesLevel >= 0) then {
-						tSF_FARP_Rearm_ResoucesLevel = tSF_FARP_Rearm_ResoucesLevel + _diff;
-					};
-					
-					for "_i" from 1 to _diff do {
-						_veh removeMagazineTurret [_mag, _turret];
-					};
-				};
-				
-				if (tSF_FARP_Rearm_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Rearm_TimeMultiplier * _diff };
-			};	
-		} forEach _rearmList;
-		
-		if (tSF_FARP_Rearm_ResoucesLevel >= 0) then { publicVariable "tSF_FARP_Rearm_ResoucesLevel" };		
-		if !(tSF_FARP_Rearm_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Rearm_TimeMultiplier; }
+					if (tSF_FARP_Rearm_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Rearm_TimeMultiplier * _diff };
+				};	
+			} forEach _rearmList;
+			
+			if (tSF_FARP_Rearm_ResoucesLevel >= 0) then { publicVariable "tSF_FARP_Rearm_ResoucesLevel" };		
+			if !(tSF_FARP_Rearm_ProportionalMode) then { _sleepTime = _sleepTime + tSF_FARP_Rearm_TimeMultiplier; }
+		};
 	};
 	
 	_veh setVariable ["tSF_FARP_ServicingTimeLeft", round(_sleepTime), true];	
