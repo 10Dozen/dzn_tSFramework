@@ -19,7 +19,8 @@ tSF_FARP_Refuel_TimeMultiplier	= 1;
 tSF_FARP_Refuel_ResoucesLevel	= -1; 
 
 // Rearm settings
-tSF_FARP_Rearm_ProportionalMode	= false;	
+tSF_FARP_Rearm_SimpleRearm		= true;
+tSF_FARP_Rearm_ProportionalMode	= false;
 tSF_FARP_Rearm_TimeMultiplier	= 45;
 tSF_FARP_Rearm_ResoucesLevel	= -1; 
 
