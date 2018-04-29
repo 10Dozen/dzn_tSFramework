@@ -56,6 +56,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 	} forEach tSF_Ends;
 
 	private _listPLayers = call BIS_fnc_listPlayers;
+	private _gatList = if (!isNil "tSF_GATList") then { tSF_GATList } else { [] };
 
 	[
 		[0, "HEADER", "GSO Screen"]
@@ -100,7 +101,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 		, [9, "LABEL", ""]
 
 		, [10, "LABEL", "Kit"]
-		, [10, "DROPDOWN", tSF_GATList, tSF_GATList]
+		, [10, "DROPDOWN", _gatList, _gatList]
 		, [10, "INPUT"]
 
 		, [11, "LABEL", ""]
