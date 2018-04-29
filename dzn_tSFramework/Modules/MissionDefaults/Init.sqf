@@ -52,6 +52,7 @@ if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 		if !(tSF_MissionDefaults_EnableCutieCalc) exitWith {};
 		
 		private _markersLast = [];
+		waitUntil { !isNil "PlayerConnectedData" };
 		while { alive player } do {
 			if (time > 0) then { sleep 1; };
 			

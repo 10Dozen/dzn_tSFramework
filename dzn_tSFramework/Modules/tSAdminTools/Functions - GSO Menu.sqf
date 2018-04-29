@@ -10,7 +10,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 	if (tSF_AdminTools_TeleportListNeedUpdate) then {
 		tSF_AdminTools_GSO_TeleportPositions = [];
 		tSF_AdminTools_GSO_TeleportSelections = [];
-		tSF_AdminTools_PLR_TeleportPositions = [getPosATL player];
+		tSF_AdminTools_PLR_TeleportPositions = [player];
 		tSF_AdminTools_PLR_TeleportSelections = ["GSO"];
 
 		{
@@ -26,8 +26,8 @@ tSF_fnc_adminTools_showGSOScreen = {
 			|| ["командир взвода", roleDescription _x] call dzn_fnc_inString
 		};
 		if !(_pl isEqualTo []) then {
-			ADD_GSO_POS(getPosATL (_pl select 0),"PL");
-			ADD_PLR_POS(getPosATL (_pl select 0),"PL");
+			ADD_GSO_POS(_pl select 0,"PL");
+			ADD_PLR_POS(_pl select 0,"PL");
 		};
 
 		if (tSF_module_CCP && {!isNil "tSF_CCP_Position"}) then {
@@ -56,6 +56,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 	} forEach tSF_Ends;
 
 	private _listPLayers = call BIS_fnc_listPlayers;
+	private _gatList = if (!isNil "tSF_GATList") then { tSF_GATList } else { [] };
 
 	[
 		[0, "HEADER", "GSO Screen"]
@@ -100,7 +101,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 		, [9, "LABEL", ""]
 
 		, [10, "LABEL", "Kit"]
-		, [10, "DROPDOWN", tSF_GATList, tSF_GATList]
+		, [10, "DROPDOWN", _gatList, _gatList]
 		, [10, "INPUT"]
 
 		, [11, "LABEL", ""]
@@ -206,6 +207,10 @@ tSF_fnc_adminTools_showGSOScreen = {
 tSF_fnc_adminTools_teleportTo = {
 	params["_pos","_u"];
 	
+	if (typename _pos == "OBJECT") then {
+		_pos = getPosATL _pos;
+	};
+	
 	if !(local _u) exitWith {
 		[_pos, _u] remoteExec ["tSF_fnc_adminTools_teleportTo", _u];
 	};
@@ -214,7 +219,6 @@ tSF_fnc_adminTools_teleportTo = {
 	player allowDamage false;
 	sleep 1;
 
-	//_pos set [2,0];
 	moveOut player;
 	player setVelocity [0,0,0];
 	player setPosATL _pos;
