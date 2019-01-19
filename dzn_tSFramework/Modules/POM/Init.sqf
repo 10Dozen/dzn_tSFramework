@@ -38,7 +38,7 @@ tSF_fnc_POM_DragMarker = {
 };
 
 tSF_fnc_POM_AddTopic = {
-	player createDiarySubject [tSF_POM_TopicName,tSF_POM_TopicName];
+	player createDiarySubject [tSF_POM_TopicName,tSF_POM_TopicDisplayName];
 
 	// Mission Notes
 	private _topic = "";

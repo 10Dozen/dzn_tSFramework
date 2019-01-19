@@ -154,7 +154,7 @@ tSF_fnc_adminTools_IM_SaveMsgToDiary = {
 
 	if (isNil "tSF_AdminTools_IM_Topic") then {
 		tSF_AdminTools_IM_Topic = "tSF Instant Messenger";
-		player createDiarySubject [tSF_AdminTools_IM_Topic, tSF_AdminTools_IM_Topic];
+		player createDiarySubject [tSF_AdminTools_IM_Topic, "Instant Messenger"];
 	};
 
 /*

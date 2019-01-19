@@ -5,6 +5,19 @@
 if (hasInterface) then {
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSNotesSettings\Settings.sqf";
 	
+	tSF_fnc_noteSettings_setViewDistance = {
+		params ["_vd", "_ovd"];
+
+		setViewDistance _vd;
+		setObjectViewDistance _ovd;
+
+		hintSilent parseText format [
+			"<t color='#86CC5E'>View distance:</t> %1 (%2) <t color='#86CC5E'>m</t>"
+			, _vd
+			, _ovd
+		];
+	};
+
 	tSF_fnc_noteSettings_saveViewDistance = {
 		profileNamespace setVariable ["tSF_ViewDistance", [viewDistance, getObjectViewDistance select 0]];
 		

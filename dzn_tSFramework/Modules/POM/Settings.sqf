@@ -23,8 +23,8 @@ tSF_POM_OperationalMarkers = [
 	, ["Vehicle", "Tank", east]
 ];
 
-tSF_POM_TopicName = "tSF Operational Markers";
-
+tSF_POM_TopicName = "tSF_POM";
+tSF_POM_TopicDisplayName = "Operational Markers";
 
 /*
  *	Preferences

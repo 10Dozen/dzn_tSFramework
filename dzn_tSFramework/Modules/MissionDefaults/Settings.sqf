@@ -17,6 +17,34 @@ tSF_MissionDefaults_PutWeaponSafe		= true;
  */
 tSF_MissionDefaults_AddPlayerRating	= true;
 
+/*
+ *  Change diary topic style
+ */
+tSF_MissionDefaults_RestyleDiary = true;
+
+/* 
+ *	Settings to change diary topic style
+ *	In format: [ @Diary Subject name, @Color(RGBA array or []), 2@LeftPicture or "" ]
+ */
+#define C_DEFAULT []
+#define C_DARK [0,0,0,0.2]
+#define P_MMO "dzn_tSFramework\Icons\mmo.jpg"
+#define P_GSO "dzn_tSFramework\Icons\gso.jpg"
+#define P_TS "dzn_tSFramework\Icons\ts.jpg"
+
+tSF_MissionDefaults_DiaryTopicsStyle = [
+	["log", C_DARK, ""]
+	,["CBA_docs", C_DARK, ""]
+	,["radio", C_DARK, ""]
+	,["Diary", C_DEFAULT, P_TS]
+	,["tSF_Notespage", C_DEFAULT, P_TS]
+	,["tSF_NotesSettingsPage", C_DEFAULT, P_TS]
+	,["tSF_POM", C_DEFAULT, P_TS]
+	,["tSF_AdminTools", C_DEFAULT, P_GSO]
+	,["tSF_Diagpage", C_DEFAULT, P_GSO]
+	,["tSF Instant Messenger", C_DEFAULT, P_TS]
+];
+
 /* 
  *	Turns on in-game calculator (via markers like '@12 + 2*4')
  */
@@ -39,3 +67,4 @@ tSF_MissionDefaults_PhoneticAlphabet = [
 	,"Ульяна"	,"Федор"	,"Харитон"	,"Цапля"	,"Чайка"	,"Шура"
 	,"Щука"	,"Эхо"	,"Юрий"	,"Яков"
 ];
+

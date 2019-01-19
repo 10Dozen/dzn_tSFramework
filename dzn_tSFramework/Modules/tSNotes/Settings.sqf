@@ -1,5 +1,5 @@
 
-tSF_note_displayName				= "tS Notes";
+tSF_note_displayName				= "Notes";
 
 tSF_note_enableAdvancedMedicine		= true;
 tSF_note_enableReports			= true;

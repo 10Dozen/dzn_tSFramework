@@ -1,10 +1,46 @@
+if !(hasInterface) exitWith {};
+
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\MissionDefaults\Settings.sqf";
 
 // ********************
 // INITIALIZATION
 // ********************
 enableSaving [false,false];
+
 if (tSF_MissionDefaults_AddPlayerRating) then { player addRating 1000000; };
+
+if (tSF_MissionDefaults_RestyleDiary) then {
+	tSF_diaryOrder = [];
+	tSF_fnc_drawDiaryStyle = {
+		if (!(visibleMap) || {!alive player}) exitWith {};
+
+		private _diary = (uiNamespace getVariable "RscDiary" displayCtrl 1001);
+		private _size = lbSize _diary;
+
+		if (count tSF_diaryOrder != _size) then {
+			// Re-collect cache of styling map
+			tSF_diaryOrder = [];
+			for "_i" from 0 to (_size - 1) do {
+				{
+					if ((_diary lbData _i) == (_x # 0)) exitWith {
+						tSF_diaryOrder pushBack [_i, _forEachIndex];
+					};
+				} forEach tSF_MissionDefaults_DiaryTopicsStyle;
+			};
+		};
+
+		// Use cached map
+		{
+			_x params ["_itemID", "_styleID"];
+			(tSF_MissionDefaults_DiaryTopicsStyle # _styleID) params ["","_color","_pic"];
+
+			if !(_color isEqualTo []) then { _diary lbSetColor [_itemID, _color]; };
+			if !(_pic isEqualTo "") then { _diary lbSetPicture [_itemID, _pic]; };
+		} forEach tSF_diaryOrder;
+	};
+
+	addMissionEventHandler ["EachFrame", { if (!(visibleMap) || {!alive player}) exitWith {}; call tSF_fnc_drawDiaryStyle }];
+};
 
 if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 	[] spawn {
@@ -28,6 +64,7 @@ if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 		disableUserInput false;
 		hintSilent parseText "<t color='#FFE240' font='PuristaLight'>Удачной Игры!</t>";		
 	};
+};
 
 	[] spawn {
 		if !(tSF_MissionDefaults_PutEarplugsOn) exitWith {};
@@ -148,5 +185,4 @@ if (hasInterface && tSF_MissionDefaults_DisableInputOnStart) then {
 			};
 		};
 	};
-};
 

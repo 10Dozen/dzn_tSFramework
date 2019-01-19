@@ -1,7 +1,7 @@
 tSF_Diag_AddDiagTopic = {
 	tSF_Diag_Subject = "tSF_Diagpage";
 	if !(player diarySubjectExists tSF_Diag_Subject) then {
-		player createDiarySubject [tSF_Diag_Subject, "tSF DIAGNOSTICS"];
+		player createDiarySubject [tSF_Diag_Subject, "Diagnostics"];
 	};
 	
 	private _text = "<font size='14' color='#b7f931'>%1</font>";
