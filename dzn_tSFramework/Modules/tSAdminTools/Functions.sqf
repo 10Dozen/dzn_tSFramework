@@ -46,7 +46,6 @@ tSF_fnc_adminTools_addTopic = {
 	player createDiarySubject [tSF_AdminTools_Topic,tSF_AdminTools_TopicName];
 };
 
-
 tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay = {
 	if (isNull (findDisplay 312)) then {
 		tSF_adminTools_MenuAddedToZeus = false;
