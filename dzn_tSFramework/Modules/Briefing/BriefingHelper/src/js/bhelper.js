@@ -1,6 +1,16 @@
 var locale = 0; // 0 - EN, 1 - RU
 var code = "";
 
+var defaultTags = {
+	"SPECOPS": { 		bg: "#8ab62f", text: "whitesmoke" },
+	"INFANTRY": {		bg: "#ba2b2b", text: "whitesmoke" },
+	"COMB.ARMS": {		bg: "#596816", text: "whitesmoke" },
+	"JTAC/CAS": { 		bg: "#6aa29e", text: "whitesmoke" },
+	"ARMOR": { 			bg: "#986f2a", text: "whitesmoke" },
+	"RolePlay":  { 		bg: "#ae33ff", text: "whitesmoke" },
+	"default": { 		bg: "#8374aa", text: "whitesmoke" }
+};
+
 var defaultTopics = [
 	["I. Situation:", "I. Обстановка:", ""]
 	,["A. Enemy Forces:", "А. Враждебные силы:", ""]
@@ -19,6 +29,10 @@ var textAreaSettings = {
 	,"width": "800px"
 }
 
+
+function generateCheckboxes() {
+	
+};
 
 function generateDefaultTopics() {
 	for (var i = 0; i < defaultTopics.length; i++ ) {

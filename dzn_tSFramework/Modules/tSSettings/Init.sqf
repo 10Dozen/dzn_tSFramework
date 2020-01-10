@@ -3,8 +3,21 @@
 // ********************
 
 if (hasInterface) then {
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSNotesSettings\Settings.sqf";
+	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSSettings\Settings.sqf";
 	
+	tSF_fnc_noteSettings_setViewDistance = {
+		params ["_vd", "_ovd"];
+
+		setViewDistance _vd;
+		setObjectViewDistance _ovd;
+
+		hintSilent parseText format [
+			"<t color='#86CC5E'>View distance:</t> %1 (%2) <t color='#86CC5E'>m</t>"
+			, _vd
+			, _ovd
+		];
+	};
+
 	tSF_fnc_noteSettings_saveViewDistance = {
 		profileNamespace setVariable ["tSF_ViewDistance", [viewDistance, getObjectViewDistance select 0]];
 		
@@ -30,7 +43,7 @@ if (hasInterface) then {
 		});
 	};
 	
-	#define	ADD_NOTES	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSNotesSettings\NotesSettings.sqf"
+	#define	ADD_NOTES	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSSettings\NotesSettings.sqf"
 	
 	waitUntil { !isNull findDisplay 52 || getClientState == "BRIEFING SHOWN" || time > 0 };
 	ADD_NOTES;

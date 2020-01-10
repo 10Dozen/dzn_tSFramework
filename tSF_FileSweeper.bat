@@ -48,7 +48,7 @@ call :removeFolder tSF_module_MissionConditions MissionConditions
 call :removeFolder tSF_module_IntroText IntroText
 call :removeFolder tSF_module_Briefing Briefing
 call :removeFolder tSF_module_tSNotes tSNotes
-call :removeFolder tSF_module_tSNotesSettings tSNotesSettings
+call :removeFolder tSF_module_tSSettings tSSettings
 call :removeFolder tSF_module_CCP CCP
 call :removeFolder tSF_module_FARP FARP
 call :removeFolder tSF_module_AirborneSupport AirborneSupport

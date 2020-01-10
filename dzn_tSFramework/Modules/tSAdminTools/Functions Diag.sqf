@@ -1,7 +1,7 @@
 tSF_Diag_AddDiagTopic = {
 	tSF_Diag_Subject = "tSF_Diagpage";
 	if !(player diarySubjectExists tSF_Diag_Subject) then {
-		player createDiarySubject [tSF_Diag_Subject, "tSF DIAGNOSTICS"];
+		player createDiarySubject [tSF_Diag_Subject, "Diagnostics"];
 	};
 	
 	private _text = "<font size='14' color='#b7f931'>%1</font>";
@@ -84,7 +84,7 @@ tSF_Diag_Dynai_CollectData = {
 			[NO CONFIG] Zone2		1
 			[NO ZONE]   Zone3		2
 	*/
-	private _dynaiTopic = "<font size='14' color='#b7f931'>Zones</font><br /";
+	private _dynaiTopic = "<font size='14' color='#b7f931'>Zones</font><br />";
 	
 	waitUntil { !isNil "dzn_dynai_zoneProperties" && !isNil "dzn_dynai_core" };
 	

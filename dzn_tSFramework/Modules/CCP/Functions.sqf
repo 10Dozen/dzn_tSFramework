@@ -187,7 +187,7 @@ tSF_fnc_CCP_doMedicateAction = {
 			,"Acts_LyingWounded_loop2"
 			,"Acts_LyingWounded_loop3"
 		])
-		, "_this getVariable 'tSF_CCP_isHealing'"
+		, "_this getVariable ['tSF_CCP_isHealing', false]"
 		, true
 	] spawn dzn_fnc_playAnimLoop;
 	
@@ -203,7 +203,7 @@ tSF_fnc_CCP_doMedicateAction = {
 	0 cutText ["", "WHITE IN", 1];
 	sleep tSF_CCP_TimeToHeal;
 
-	[player,player] call ace_medical_fnc_treatmentAdvanced_fullHealLocal;
+	[player] call ace_medical_treatment_fnc_fullHealLocal;
 	player setDamage 0;
 
 	sleep tSF_CCP_TimeToHold;
