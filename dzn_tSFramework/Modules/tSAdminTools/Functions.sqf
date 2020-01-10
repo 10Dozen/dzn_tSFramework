@@ -19,7 +19,7 @@ tSF_fnc_adminTools_handleKey = {
 			[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
 			[] spawn tSF_fnc_adminTools_ForceRespawn_showMenu;
 		};
-		// F7
+		// F8
         case 66: {
         	tSF_adminTools_isKeyPressed = true;
         	[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };

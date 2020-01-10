@@ -1,142 +1,147 @@
 /*
  *	[ @DisplayName, @Class, @Units ]
  */ 
+#define LT "Lieutenant"
+#define SGT "Sergeant"
+#define CPL "Corporal"
+#define PVT "Private"
+
 dzn_tSF_3DEN_SquadTypes = [
 	[
 		"NATO 1-4-4", "US Squad",
 		[
-			["%1Squad Leader"		,"Sergeant"]
-			,["RED - FTL"			,"Corporal"]
-			,["Automatic Rifleman"	,"Private"]
-			,["Grenadier"			,"Private"]
-			,["Rifleman"			,"Private"]
-			,["BLUE - FTL"		,"Corporal"]
-			,["Automatic Rifleman"	,"Private"]
-			,["Grenadier"			,"Private"]
-			,["Rifleman"			,"Private"]
+			["Squad Leader", SGT]
+			,["RED - FTL", CPL]
+			,["Automatic Rifleman", PVT]
+			,["Grenadier", PVT]
+			,["Rifleman", PVT]
+			,["BLUE - FTL", CPL]
+			,["Automatic Rifleman", PVT]
+			,["Grenadier", PVT]
+			,["Rifleman", PVT]
 		]
 	]
 	, [
 		"UK 4-4", "UK Section",
 		[
-			["%1Section Leader"		,"Sergeant"]				
-			,["Automatic Rifleman"	,"Private"]
-			,["Grenadier"			,"Private"]
-			,["Rifleman"			,"Private"]
-			,["BLUE - 2IC"		,"Corporal"]
-			,["Automatic Rifleman"	,"Private"]
-			,["Grenadier"			,"Private"]
-			,["Rifleman"			,"Private"]
+			["Section Leader", SGT]
+			,["Automatic Rifleman", PVT]
+			,["Grenadier", PVT]
+			,["Rifleman", PVT]
+			,["BLUE - 2IC", CPL]
+			,["Automatic Rifleman", PVT]
+			,["Grenadier", PVT]
+			,["Rifleman", PVT]
 		]
 	]
 	, [
 		"РФ МСО 1-2-3-3", "MSV Squad",
 		[
-			["%1Командир отделения"			,"Sergeant"]	
-			,["Наводчик-оператор"			,"Corporal"]
-			,["Механик-водитель"				,"Private"]
-			,["Пулеметчик"				,"Private"]
-			,["Стрелок-Гранатометчик"			,"Private"]
-			,["Стрелок, помощник гранатометчика"	,"Private"]
-			,["BLUE - Старший стрелок"			,"Corporal"]
-			,["Стрелок"					,"Private"]
-			,["Стрелок"					,"Private"]
+			["Командир отделения", SGT]
+			,["Наводчик-оператор", CPL]
+			,["Механик-водитель", PVT]
+			,["Пулеметчик", PVT]
+			,["Стрелок-Гранатометчик", PVT]
+			,["Стрелок, помощник гранатометчика", PVT]
+			,["BLUE - Старший стрелок", CPL]
+			,["Стрелок", PVT]
+			,["Стрелок", PVT]
 		]
 	]
 	, [
 		"РФ ВВ 4-3", "ruvv squad",
 		[
-			["%1Командир отделения"			,"Sergeant"]
-			,["Пулеметчик"				,"Private"]
-			,["Стрелок-Гранатометчик"			,"Private"]
-			,["Стрелок, помощник гранатометчика"	,"Private"]
-			,["BLUE - Старший стрелок"			,"Corporal"]
-			,["Стрелок (ГП)"				,"Private"]
-			,["Снайпер"					,"Private"]
+			["%1Командир отделения", SGT]
+			,["Пулеметчик", PVT]
+			,["Стрелок-Гранатометчик", PVT]
+			,["Стрелок, помощник гранатометчика", PVT]
+			,["BLUE - Старший стрелок", CPL]
+			,["Стрелок (ГП)", PVT]
+			,["Снайпер", PVT]
 		]
 	]
 	, [
 		"Platoon Squad", "nato platoon squad",
 		[
-			["%1Platoon Leader"		,"Lieutenant"]
-			,["Platoon Sergeant"		,"Sergeant"]
-			,["JTAC"			,"Corporal"]
-			,["FO"				,"Corporal"]	
+			["%1Platoon Leader", LT]
+			,["Platoon Sergeant", SGT]
+			,["JTAC", CPL]
+			,["FO", CPL]
 		]
 	]
 	, [
 		"Командный отряд", "msv platoon squad",
 		[
-			["%1Командир взвода"		,"Lieutenant"]
-			,["Зам. командира взвода"	,"Sergeant"]
-			,["ПАН"			,"Corporal"]
-			,["КАО"			,"Corporal"]	
+			["%1Командир взвода", LT]
+			,["Зам. командира взвода", SGT]
+			,["ПАН", CPL]
+			,["КАО", CPL]
 		]
 	]
 	, [
 		"NATO Weapon Squad", "us weapon squad",
 		[
-			["%1Squad Leader"		,"Sergeant"]
-			,["Machinegunner"		,"Private"]
-			,["Asst. Machinegunner"	,"Private"]
-			,["Machinegunner"		,"Private"]
-			,["Asst. Machinegunner"	,"Private"]
-			,["Missile Specialist"	,"Private"]
-			,["Missile Specialist"	,"Private"]
+			["Squad Leader", SGT]
+			,["Machinegunner", PVT]
+			,["Asst. Machinegunner", PVT]
+			,["Machinegunner", PVT]
+			,["Asst. Machinegunner", PVT]
+			,["Missile Specialist", PVT]
+			,["Missile Specialist", PVT]
 		]
 	]
 	, [
 		"UK Weapon Section", "uk weapon section",
 		[
-			["%1Section Leader"		,"Sergeant"]
-			,["Machinegunner"		,"Private"]
-			,["Asst. Machinegunner"	,"Private"]
-			,["Machinegunner"		,"Private"]
-			,["Asst. Machinegunner"	,"Private"]
-			,["Missile Specialist"	,"Private"]
-			,["Missile Specialist"	,"Private"]
+			["%1Section Leader", SGT]
+			,["Machinegunner", PVT]
+			,["Asst. Machinegunner", PVT]
+			,["Machinegunner", PVT]
+			,["Asst. Machinegunner", PVT]
+			,["Missile Specialist", PVT]
+			,["Missile Specialist", PVT]
 		]
 	]
 	, [
 		"РФ Отделение усиления", "msv weapon squad",
 		[
-			["%1Командир отделения"			,"Sergeant"]
-			,["Пулеметчик"				,"Private"]
-			,["Стрелок, помощнник пулеметчика"	,"Private"]
-			,["Пулеметчик"				,"Private"]
-			,["Стрелок, помощнник пулеметчика"	,"Private"]
-			,["ПТ-стрелок"			,"Private"]
-			,["Стрелок, помощник ПТ"		,"Private"]
+			["Командир отделения", SGT]
+			,["Пулеметчик", PVT]
+			,["Стрелок, помощнник пулеметчика", PVT]
+			,["Пулеметчик", PVT]
+			,["Стрелок, помощнник пулеметчика", PVT]
+			,["ПТ-стрелок", PVT]
+			,["Стрелок, помощник ПТ", PVT]
 		]
 	]
 	, [
 		"Crew Squad", "nato crew",
 		[
-			["%1Crew Commander"		,"Corporal"]
-			,["Crew Gunner"		,"Private"]
-			,["Crew Driver"		,"Private"]
+			["Crew Commander", CPL]
+			,["Crew Gunner", PVT]
+			,["Crew Driver", PVT]
 		]
 	]
 	, [
 		"Экипаж", "ru crew",
 		[
-			["%1Командир экипажа"	,"Corporal"]
-			,["Наводчик-оператор"	,"Private"]
-			,["Механик-водитель"		,"Private"]
+			["Командир экипажа", CPL]
+			,["Наводчик-оператор", PVT]
+			,["Механик-водитель", PVT]
 		]
 	]
 	, [
 		"Pilots", "nato pilots",
 		[
-			["%1Pilot"	,"Lieutenant"]
-			,["Gunner"	,"Sergeant"]
+			["Pilot", LT]
+			,["Gunner", SGT]
 		]	
 	]
 	, [
 		"Пилоты", "ru pilots",
 		[
-			["%1Пилот"			,"Lieutenant"]
-			,["Наводчик-оператор"	,"Sergeant"]
+			["Пилот", LT]
+			,["Наводчик-оператор", SGT]
 		]
 	]
 ];

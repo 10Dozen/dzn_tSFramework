@@ -173,7 +173,7 @@ tSF_fnc_adminTools_IM_SaveMsgToDiary = {
 	player createDiaryRecord [tSF_AdminTools_IM_Topic, [
 		_receiver
 		, format [
-			"<font color='#12C4FF' size='14'>%1 -- %2:</font><br />%3"
+			"<font color='#12C4FF' size='14'>%1 -- from %2:</font><br />%3"
 			, [] call BIS_fnc_timeToString
 			, _sender
 			, _msg

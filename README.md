@@ -1,6 +1,6 @@
 ![img](http://tacticalshift.ru/tsf_10d.png)
 ------
-##### Version: 2.02
+##### Version: 2.03
 Tactical Shift Framework
 
 ##### Getting Started
@@ -48,7 +48,7 @@ Artillery compositions that can be used for firemissions served by AI.
 ##### tS Notes
 Game and TTP notes for each players
 
-##### tS Notes Settings
+##### tS Settings
 Client-side settings like View Distance
 
 ##### tS Admin Tools

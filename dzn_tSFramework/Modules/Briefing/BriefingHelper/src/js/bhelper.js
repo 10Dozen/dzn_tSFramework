@@ -1,6 +1,16 @@
 var locale = 0; // 0 - EN, 1 - RU
 var code = "";
 
+var defaultTags = {
+	"SPECOPS": { 		hint: "Спецоперация спецоператоров"},
+	"INFANTRY": {		hint: "Легкая пехота (контр инсургенси, патрули, оборона)" },
+	"COMB.ARMS": {		hint: "Общевойсковая операция" },
+	"MOUT": {			hint: "Преимущественно городские бои" },
+	"JTAC/CAS": { 		hint: "Есть CAS/нужен JTAC" },
+	"ARMOR": { 			hint: "Есть тяжелая техника (БМП, танки)" },
+	"RolePlay":  { 		hint: "Есть ролевой элемент" }
+};
+
 var defaultTopics = [
 	["I. Situation:", "I. Обстановка:", ""]
 	,["A. Enemy Forces:", "А. Враждебные силы:", ""]
@@ -19,6 +29,22 @@ var textAreaSettings = {
 	,"width": "800px"
 }
 
+function generateTagsCheckboxes() {
+	let tagsArray = Object.entries(defaultTags);
+	
+	for (let i = 0; i < tagsArray.length; ++i) {
+		let tag = tagsArray[i];
+		let tagName = tag[0];
+		let tagProps = tag[1];
+		
+		$("#tags > ul").append(
+			"<li>" +
+			"<input type='checkbox' id='" + tagName + "'/>" + 
+			"<label for='" + tagName + "'>" + tagName + " (" + tagProps.hint + ")" + "</label>" +
+			"</li>"
+		);
+	}
+};
 
 function generateDefaultTopics() {
 	for (var i = 0; i < defaultTopics.length; i++ ) {
@@ -64,48 +90,54 @@ function escapeQuotes(str) {
 	return ( str.replace(new RegExp('"','g'),'""') );
 };
 
-$( document ).ready(function() {
-	generateDefaultTopics();
-});
-
 function getCode() {
-	var defineBlock = "//     tSF Briefing\n// Do not modify this part"
+	let defineBlock = "//     tSF Briefing\n// Do not modify this part"
 		+ "\n#define BRIEFING		_briefing = [];"
 		+ "\n#define TOPIC(NAME) 	_briefing pushBack [\"Diary\", [ NAME,"
 		+ "\n#define END			]];"
 		+ "\n#define ADD_TOPICS	for \"_i\" from (count _briefing) to 0 step -1 do {player createDiaryRecord (_briefing select _i);};"
-		+ "\n//\n//\n// Briefing goes here"
-		+ "\n\nBRIEFING\n";
-		
-	var topics = "";
-	var topicCount = $( ".topicInput" ).length;
+		+ "\n#define TAGS(X) tSF_MissionTags = X ;"
+		+ "\n//\n//\n// Mission tags";
 	
-	for (var i = 0; i < topicCount; i++) {
-		var text = ( $($( ".topicData" )[i]).val() ).replace(/(\r\n|\n|\r)/g,"<br />");
+	let tags = [];
+	let tagsInputs = $("#tags input");
+	
+	for (let i = 0; i < tagsInputs.length; ++i) {
+		if ($(tagsInputs[i]).prop("checked")) {
+			let tagName = $(tagsInputs[i]).prop("id");
+			tags.push('"' + tagName + '"');
+		}
+	}
+	let tagsBlock = "\nTAGS([" + tags + "])";
+	let preBriefingBlock = 	"\n\n// Briefing goes here" + "\n\nBRIEFING\n";
+	
+	let topics = "";
+	let topicCount = $( ".topicInput" ).length;
+	
+	for (let i = 0; i < topicCount; i++) {
+		let text = ( $($( ".topicData" )[i]).val() ).replace(/(\r\n|\n|\r)/g,"<br />");
 		
 		if (i == topicCount - 1) {
-		topics = topics
-			+ "\nif ((serverCommandAvailable '#logout') || !(isMultiplayer) || isServer) then {"
-			+ "\nTOPIC(\"" + escapeQuotes ( $($( ".topicInput" )[i]).val() ) + "\")"
-			+ "\n\"" +  escapeQuotes(text) + "\""
-			+ "\nEND"
-			+ "\n};\n";
+			topics = topics
+				+ "\nif ((serverCommandAvailable '#logout') || !(isMultiplayer) || isServer) then {"
+				+ "\nTOPIC(\"" + escapeQuotes ( $($( ".topicInput" )[i]).val() ) + "\")"
+				+ "\n\"" +  escapeQuotes(text) + "\""
+				+ "\nEND"
+				+ "\n};\n";
 			
 		} else {
 		
-		topics = topics
-			+ "\nTOPIC(\"" + escapeQuotes ( $($( ".topicInput" )[i]).val() ) + "\")"
-			+ "\n\"" +  escapeQuotes(text) + "\""
-			+ "\nEND\n";
+			topics = topics
+				+ "\nTOPIC(\"" + escapeQuotes ( $($( ".topicInput" )[i]).val() ) + "\")"
+				+ "\n\"" +  escapeQuotes(text) + "\""
+				+ "\nEND\n";
 		}
 	}
 	
+	let endBlock = "\nADD_TOPICS"
 	
-	
-	var endBlock = "\nADD_TOPICS"
-	
-	code = (defineBlock + topics + endBlock)
-	return (defineBlock + topics + endBlock);
+	let code = (defineBlock + tagsBlock + preBriefingBlock + topics + endBlock);
+	return code;
 };
 
 function getCodeToDisplay() {
@@ -125,7 +157,7 @@ function closeCodeDisplay() {
 
 function getCodeToFile() {
 	var a = document.createElement('a');
-	a.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent( getCode() ));
+	a.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(getCode()));
 	a.setAttribute('download', "tSF_briefing.sqf" );
 	a.click();
 }
@@ -147,22 +179,29 @@ function readFile(event) {
         }
 	};
 	reader.readAsText(input.files[0]);
-
 };
 
 function importBriefing(sqfText) {
-	console.log("Import Briefing");
+	console.log("Importing Briefing");
 
 	console.log("#     Parsing SQF");
-	parsedTopics = parseBriefing(sqfText);
+	let parsedTopics = parseBriefing(sqfText);
 	console.log("#     SQF parsed");
 
 	console.log("#     Populating topics");
-	for (var i = 0; i < parsedTopics.length; i++) {
+	for (let i = 0; i < parsedTopics.length; i++) {
 		populateTopic(i*2, parsedTopics[i][0], parsedTopics[i][1]);
 	}
 	console.log("#     Topics populated");
-
+	
+	console.log("#     Parsing tags");
+	let parsedTags = parseTags(sqfText);
+	console.log("#     Tags parsed");
+	
+	console.log("#     Populating tags");
+	populateTags(parsedTags);
+	console.log("#     Tags populated");
+	
 	console.log("#     All done!");
 }
 
@@ -211,21 +250,55 @@ function parseBriefing(rawBriefing) {
 	tempAllTopics.shift(0);
 	/*
 		Make splited lines all together
-
 	*/
-
-
-	RAW = tempAllTopics;
-
 	return tempAllTopics
 }
 
-function populateTopic(id,title,text) {
-	var topics = $('li');
+function parseTags(rawBriefing) {
+	let rawLines = rawBriefing.split("\n");
+	let tags = [];
+	for (let i = 0; i < rawLines.length; i++) {
+		let rawLine = rawLines[i];
+		
+		if (!(rawLine.match(/TAGS\(\[(.*)\]\)/g) === null)) {
+			let tagsString = rawLine.match(/TAGS\(\[(.*)\]\)/)[1];
+			tags = tagsString.replace(/"/g,"").split(",");
+			
+			break;
+		};
+	};
+	
+	return tags;
+};
 
-	var topicTitle = $( $('li')[id] ).find('.topicInput')[0];
-	var topicBody = $( $('li')[id + 1] ).find('.topicData')[0]
+function populateTopic(id,title,text) {
+	let topics = $('#briefing-form > ul > li');
+
+	let topicTitle = $( topics[id] ).find('.topicInput')[0];
+	let topicBody = $( topics[id + 1] ).find('.topicData')[0]
 
 	topicTitle.value = title;
 	topicBody.value = text;
 }
+
+function populateTags(tags) {
+	let tagsInputs = $("#tags input");
+	
+	for (let j = 0; j < tags.length; ++j) {
+		let tag = tags[j];
+	
+		for (let i = 0; i < tagsInputs.length; ++i) {
+			if ($(tagsInputs[i]).prop("id") == tag ) {
+				$(tagsInputs[i]).prop('checked',true);
+				break;
+			}
+		}
+	}
+};
+
+// --- Init
+$( document ).ready(function() {
+	changeLocale();
+	generateDefaultTopics();
+	generateTagsCheckboxes();
+});

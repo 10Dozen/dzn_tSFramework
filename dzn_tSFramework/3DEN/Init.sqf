@@ -43,5 +43,6 @@ Mark To Do item as done - ""Shift"" + ""D""<br />
 <br />
 Show key bindings - ""F8""";
 
+// --- Maybe it is not deleted after preview? Try to not ot add it again and check!
 (findDisplay 313) displayAddEventHandler ["KeyDown", "_this call dzn_tSF_3DEN_onKeyPress"];
 ["tSF 3DEN Tools Activated<br />Press ""F8"" to see keybindings", 0, 30, true] call BIS_fnc_3DENNotification;

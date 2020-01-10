@@ -1,15 +1,23 @@
-tSF_AdminTools_TopicName = "tS Admin Tools";
-
-// List of mission ending and ability to run selected endings
-// Can be also called via function:     call tSF_End
-tSF_AdminTool_EnableMissionEndings = true;
-
-// List of Gear Assignments Table kits and ability to assign selected endings
-tSF_AdminTool_EnableGATTool = true;
-
+tSF_AdminTools_TopicName = "Admin Tools";
 
 /*
- *	Rapid Artillery Screen
+ *	List of mission ending and ability to run selected endings
+ *	Can be also called via function:     call tSF_End
+ */
+tSF_AdminTool_EnableMissionEndings = true;
+
+/*
+ *	List of Gear Assignments Table kits and ability to assign selected endings
+ */
+tSF_AdminTool_EnableGATTool = true;
+
+/*
+ *	List of Dynai zones and ability to control them
+ */
+tSF_AdminTools_EnableDynaiControl = true; 
+
+/*
+ *	Rapid Artillery settings
  */
 tSF_AdminTools_RapidArtillery_Enabled = true;
 

@@ -73,7 +73,6 @@ dzn_fnc_tSF_3DEN_AddSquadUnits = {
 	// [ "Raven 1'1", 0 (west), "US Squad"]
 	params["_callsign", "_side", "_type", "_basicPos"];
 	
-	if (_callsign != "") then { _callsign = format["%1 ", _callsign] };
 	private _infantryClass = switch (_side) do {
 		case 0: { "B_Soldier_F" };
 		case 1: { "O_Soldier_F" };
@@ -93,7 +92,8 @@ dzn_fnc_tSF_3DEN_AddSquadUnits = {
 	call dzn_fnc_tSF_3DEN_createUnitLayer;
 	
 	{
-		// _x = ["RED - FTL","Corporal"]
+		_x params ["_role", "_rank"];
+		
 		if (_forEachIndex > 0) then {
 			_unit = _grp create3DENEntity [
 				"Object"
@@ -104,12 +104,17 @@ dzn_fnc_tSF_3DEN_AddSquadUnits = {
 					, 0
 				]
 			];
+		} else {
+			// First unit of the squad - add CBA group name
+			if (_callsign != "") then {
+				_role = format ["%1 %2@%3", _callsign, _role, _callsign];
+			};
 		};
 		
 		set3DENAttributes [
-			[[_unit], 	"description", 	format [_x select 0, _callsign]]
-			,[[_unit], 	"rank", 		_x select 1]
-			,[[_unit], 	"ControlMP",	 	true]
+			[[_unit], 	"description", 	_role]
+			,[[_unit], 	"rank", 		_rank]
+			,[[_unit], 	"ControlMP",	true]
 		];
 	} forEach _squadSettings;
 	

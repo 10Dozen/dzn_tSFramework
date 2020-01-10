@@ -164,23 +164,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 			hint format ["%1 healed", name _u];
 		}]
 
-		, [14, "BUTTON", "DEPLOY TACTICAL PIPE", {
-			if (!isNil "tSF_WaterPipe") then {
-				{ deleteVehicle _x; } forEach tSF_WaterPipe;
-			};
-			private _h = getPosATL player select 2;
-			tSF_WaterPipe = [ player, [
-				["Land_Water_pipe_EP1",73.3514,1.536,0,_h,false,{},true]
-				,["Land_ChairPlastic_F",116.533,1.172,274.331,_h + 0.024,false,{},true]
-				,["Land_ChairPlastic_F",79.6645,2.365,195.455,_h + 0.024,false,{},true]
-				,["Land_Carpet_2_EP1",29.6481,1.748,62.135,_h,false,{},true]
-			]] call dzn_fnc_setComposition;
-
-			publicVariable "tSF_WaterPipe";
-			{
-				(tSF_WaterPipe select 0) call tSF_fnc_adminTools_addWaterPipeAction
-			} remoteExec ["bis_fnc_call", 0];
-		}]
+		, [14, "BUTTON", "DEPLOY TACTICAL PIPE", { call tSF_fnc_adminTools_deployTacticalPipe; }]
 		, [14, "BUTTON", "NVG TO ALL PLAYERS", {
 			[] spawn {
 				hint "All players NVG assignment started";
@@ -233,31 +217,94 @@ tSF_fnc_adminTools_heal = {
 		_this remoteExec ["tSF_fnc_adminTools_heal",_this];
 	};
 	
-	[_this,_this] call ace_medical_fnc_treatmentAdvanced_fullHealLocal;
+	[player] call ace_medical_treatment_fnc_fullHealLocal;
 };
 
+tSF_fnc_adminTools_deployTacticalPipe = {
+	if (!isNil {cursorTarget} && { cursorTarget isKindOf "LandVehicle" }) exitWith {
+		cursorTarget remoteExec ["tSF_fnc_adminTools_addWaterPipeAction", 0];
+		hint "Тактический Кальян развернут!";
+	};
+
+	if (!isNil "tSF_WaterPipe") then {
+		{ deleteVehicle _x; } forEach tSF_WaterPipe;
+	};
+
+	private _h = getPosATL player select 2;
+	tSF_WaterPipe = [ player, [
+		["Land_Water_pipe_EP1",73.3514,1.536,0,_h,false,{},true]
+		,["Land_ChairPlastic_F",116.533,1.172,274.331,_h + 0.024,false,{},true]
+		,["Land_ChairPlastic_F",79.6645,2.365,195.455,_h + 0.024,false,{},true]
+		,["Land_Carpet_2_EP1",29.6481,1.748,62.135,_h,false,{},true]
+	]] call dzn_fnc_setComposition;
+
+	publicVariable "tSF_WaterPipe";
+	(tSF_WaterPipe select 0) remoteExec ["tSF_fnc_adminTools_addWaterPipeAction", allPlayers];
+};
 
 tSF_fnc_adminTools_addWaterPipeAction = {
-	_this addAction [
-		"Use Pipe"
-		, {			
-			PP_eff = ppEffectCreate ["WetDistortion",300];
-			PP_eff ppEffectEnable true;
-			PP_eff ppEffectForceInNVG true;
-			PP_eff ppEffectAdjust [5,0,2,0,0,0,0,0,0,0,0,0,0,0,0];
-			PP_eff ppEffectCommit 30;
-			
-			sleep 45;
-			
-			PP_eff ppEffectAdjust [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-			PP_eff ppEffectCommit 15;
-			
-			sleep 20;
-			
-			ppEffectDestroy PP_eff;
-		}				
-	];
+	[
+		_this
+		, "Пыхнуть"
+		, {	1 spawn tSF_fnc_adminTools_doWaterPipeAction }
+		, 8
+	] call dzn_fnc_addAction;
+	[
+		_this
+		, "Затянуться"
+		, {	2 spawn tSF_fnc_adminTools_doWaterPipeAction }
+		, 8
+	] call dzn_fnc_addAction;
 };
+
+tSF_fnc_adminTools_doWaterPipeAction = {
+	params ["_type"];
+	private _time1 = 45;
+	private _time2 = 20;
+
+	if (_type == 2) then {
+		_time1 = 240;
+		_time2 = 60;
+	};
+
+	if (!isNil "tSF_Pipe_PP_eff") then { 
+		ppEffectDestroy tSF_Pipe_PP_eff; 
+		tSF_Pipe_PP_eff = nil;
+		sleep 0.5;
+	};
+
+	for "_i" from 1 to 20 do { 
+		drop [
+			["\A3\data_f\ParticleEffects\Universal\Universal", 16, 7, 48],
+			"",	"Billboard",0, 9.5 + random 0.5,
+			[0, 0.75,  -0.15 + (player modelToWorld (player selectionPosition "head")) # 2],
+			[0,0,0.2], 1, 0.05, 0.04, 0, [0.25, 0.25 + random 1],
+			[[1,1,1,0.1],[1,1,1,0.03],[1,1,1,0.01],[1,1,1,0.003],[1,1,1,0.001],[1,1,1,0.2]],
+			[1],0.1,
+			0.1, "", "", player,	random 360,	true, 0.1
+		];
+	}; 
+
+	tSF_Pipe_PP_eff = ppEffectCreate ["WetDistortion",300];
+	tSF_Pipe_PP_eff ppEffectEnable true;
+	tSF_Pipe_PP_eff ppEffectForceInNVG true;
+	tSF_Pipe_PP_eff ppEffectAdjust [5,0,2,0,0,0,0,0,0,0,0,0,0,0,0];
+	tSF_Pipe_PP_eff ppEffectCommit 30;
+
+	private _timer = time;
+	waitUntil { (time - _timer) > _time1 || isNil "tSF_Pipe_PP_eff"};
+	if (isNil "tSF_Pipe_PP_eff") exitWith {};
+
+	tSF_Pipe_PP_eff ppEffectAdjust [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	tSF_Pipe_PP_eff ppEffectCommit 15;
+
+	private _timer = time;
+	waitUntil { (time - _timer) > _time2 || isNil "tSF_Pipe_PP_eff"};
+	if (isNil "tSF_Pipe_PP_eff") exitWith {};
+
+	ppEffectDestroy tSF_Pipe_PP_eff;
+}; 
+
 
 tSF_fnc_adminTools_createTeleportRP = {
 	uiSleep 0.05;

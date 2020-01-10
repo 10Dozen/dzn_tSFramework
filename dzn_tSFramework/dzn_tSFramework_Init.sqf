@@ -3,7 +3,7 @@
 // 	DZN TS FRAMEWORK
 //
 // **************************
-tSF_Version = "v2.02";
+tSF_Version = "v2.03";
 
 // **************************
 //  MODULES
@@ -15,7 +15,7 @@ tSF_module_MissionConditions = true;
 tSF_module_IntroText = true;
 tSF_module_Briefing = true;
 tSF_module_tSNotes = true;
-tSF_module_tSNotesSettings = true;
+tSF_module_tSSettings = true;
 
 tSF_module_CCP = true;
 tSF_module_FARP = true;
@@ -44,7 +44,7 @@ tSF_module_Conversations = false;
 	, "IntroText"
 	, "Briefing"
 	, "tSNotes"
-	, "tSNotesSettings"
+	, "tSSettings"
 	, "POM"
 	
 	, "CCP"

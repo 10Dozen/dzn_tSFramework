@@ -5,6 +5,8 @@ if (hasInterface) then {
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - GSO Menu.sqf";
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - Rapid Artillery Menu.sqf";
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - IM and Respawn Menu.sqf";
+	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - Dynai Control.sqf";
+	
 	tSF_AdminTools_Rallypoints = [];
 	tSF_AdminTools_TeleportListNeedUpdate = true;
 	tSF_AdminTools_GSO_TeleportPositions = [];
@@ -28,7 +30,7 @@ if (hasInterface) then {
 				(findDisplay _this) displayAddEventHandler ["KeyUp",  {call tSF_fnc_adminTools_handleKey}];
 			};
 		} forEach [
-			46, 12249 /* 46 (game) | 12249 (ACE Spectator) */
+			46,  60492, 12249 /* 46 (game) |  60492 (EGSpectator, A3) | 12249 (ACE Spectator) */
 		];
 		
 		[] spawn tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay;
@@ -41,6 +43,7 @@ if (hasInterface) then {
 			&& !(["lkit_", _x, false] call BIS_fnc_inString)
 			&& !(["cba_xeh", _x, false] call BIS_fnc_inString)
 		};
+		tSF_GATList sort true;
 		tSF_GATList pushBack "";
 		
 		call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf";
@@ -51,6 +54,10 @@ if (hasInterface) then {
 		[] spawn tSF_Diag_AddDiagTopic;
 		
 		[["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], [-20,-5,150,0.032], [0,0,0,.75], 30] call dzn_fnc_ShowMessage;
+		
+		// Start DynAI Control Panel
+		waitUntil { sleep 1; !isNil "dzn_dynai_zoneProperties" && !isNil "dzn_dynai_core" };
+		call tSF_adminTools_DC_addDynaiControlPage;
 	};
 };
 

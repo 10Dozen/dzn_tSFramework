@@ -12,8 +12,23 @@ disabledAI = 1;
 respawn = 3;
 respawnDelay = 9999999; 
 
+#define OVERVIEW(N,X) class overview_line##N { title = X ; values[] = {0}; texts[] = {""}; }
 class Params
 {   
+	
+	// Детальный обзор и описание не-стандартных ролей. Укажите всю важную для слоттинга информацию!
+	/*
+	OVERVIEW(0, "Обзор:");
+	OVERVIEW(1, "Рейд KSK в тыл боевиков. Цели: Уничтожить ПВО, артиллерию и навести авиаудар по танкам противника");
+	OVERVIEW(2, "Описание ролей:");
+	OVERVIEW(3, "Zugführer - командир взвода. Gruppenführer - командир отделения. Truppführer - командир команды.");
+	*/
+	
+	class overview_line_break
+	{
+		title = "---- Настройки ------------------"; 
+		values[] = {0}; texts[] = {""};
+	};
 	class par_daytime
 	{
 	    title = "Время суток";
