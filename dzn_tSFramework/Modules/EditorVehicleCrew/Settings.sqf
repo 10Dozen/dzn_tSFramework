@@ -1,6 +1,6 @@
 // Delay before initializations
-tSF_EVC_initTimeout	= 20;
-tSF_EVC_initCondition = { !isNil "test_dzn" };
+tSF_EVC_initTimeout	= 1;
+tSF_EVC_initCondition = { true };
 
 tSF_EVC_OPFOR_CrewSkill		= 0.75;
 tSF_EVC_OPFOR_CrewKit		= "";

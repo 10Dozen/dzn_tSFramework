@@ -267,8 +267,11 @@ tSF_fnc_adminTools_doWaterPipeAction = {
 		_time2 = 60;
 	};
 
-	if (!isNil "PP_eff") then {	ppEffectDestroy PP_eff; };
-	sleep 0.05;
+	if (!isNil "tSF_Pipe_PP_eff") then { 
+		ppEffectDestroy tSF_Pipe_PP_eff; 
+		tSF_Pipe_PP_eff = nil;
+		sleep 0.5;
+	};
 
 	for "_i" from 1 to 20 do { 
 		drop [
@@ -282,20 +285,24 @@ tSF_fnc_adminTools_doWaterPipeAction = {
 		];
 	}; 
 
-	PP_eff = ppEffectCreate ["WetDistortion",300];
-	PP_eff ppEffectEnable true;
-	PP_eff ppEffectForceInNVG true;
-	PP_eff ppEffectAdjust [5,0,2,0,0,0,0,0,0,0,0,0,0,0,0];
-	PP_eff ppEffectCommit 30;
+	tSF_Pipe_PP_eff = ppEffectCreate ["WetDistortion",300];
+	tSF_Pipe_PP_eff ppEffectEnable true;
+	tSF_Pipe_PP_eff ppEffectForceInNVG true;
+	tSF_Pipe_PP_eff ppEffectAdjust [5,0,2,0,0,0,0,0,0,0,0,0,0,0,0];
+	tSF_Pipe_PP_eff ppEffectCommit 30;
 
-	sleep _time1;
+	private _timer = time;
+	waitUntil { (time - _timer) > _time1 || isNil "tSF_Pipe_PP_eff"};
+	if (isNil "tSF_Pipe_PP_eff") exitWith {};
 
-	PP_eff ppEffectAdjust [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	PP_eff ppEffectCommit 15;
+	tSF_Pipe_PP_eff ppEffectAdjust [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	tSF_Pipe_PP_eff ppEffectCommit 15;
 
-	sleep _time2;
+	private _timer = time;
+	waitUntil { (time - _timer) > _time2 || isNil "tSF_Pipe_PP_eff"};
+	if (isNil "tSF_Pipe_PP_eff") exitWith {};
 
-	ppEffectDestroy PP_eff;
+	ppEffectDestroy tSF_Pipe_PP_eff;
 }; 
 
 

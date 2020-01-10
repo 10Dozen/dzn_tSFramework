@@ -30,7 +30,7 @@ if (hasInterface) then {
 				(findDisplay _this) displayAddEventHandler ["KeyUp",  {call tSF_fnc_adminTools_handleKey}];
 			};
 		} forEach [
-			46, 12249 /* 46 (game) | 12249 (ACE Spectator) */
+			46,  60492, 12249 /* 46 (game) |  60492 (EGSpectator, A3) | 12249 (ACE Spectator) */
 		];
 		
 		[] spawn tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay;

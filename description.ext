@@ -24,7 +24,7 @@ class Params
 	OVERVIEW(3, "Zugführer - командир взвода. Gruppenführer - командир отделения. Truppführer - командир команды.");
 	*/
 	
-	class overview_line_break: overview_line
+	class overview_line_break
 	{
 		title = "---- Настройки ------------------"; 
 		values[] = {0}; texts[] = {""};
