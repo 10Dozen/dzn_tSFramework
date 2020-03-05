@@ -13,13 +13,13 @@ item8[] = {"Report_Not_In_Ra",2,250,250.000000,-950.000000,350.000000,-900.00000
 item9[] = {"true",4,218,400.000000,-1075.000000,500.000000,-1025.000000,0.000000,"true"};
 item10[] = {"Report_Invalid_TGT",2,250,250.000000,-1075.000000,350.000000,-1025.000000,0.000000,"Report" \n "Invalid TGT POS"};
 item11[] = {"",7,210,446.000000,-929.000000,454.000000,-921.000000,0.000000,""};
-item12[] = {"Aborted",4,4314,100.000000,-600.000000,200.000000,-550.000000,1.000000,"Aborted"};
+item12[] = {"Aborted",4,218,100.000000,-600.000000,200.000000,-550.000000,1.000000,"Aborted"};
 item13[] = {"Waiting_Correcti",4,218,-200.000000,-600.000000,-100.000000,-550.000000,0.000000,"Waiting" \n "Correction"};
 item14[] = {"Report_Aborted",2,250,250.000000,-600.000000,350.000000,-550.000000,0.000000,"Report" \n "Aborted"};
 item15[] = {"",7,210,446.000000,-579.000000,454.000000,-571.000000,0.000000,""};
 item16[] = {"Correction",2,250,-325.000000,-600.000000,-225.000000,-550.000000,0.000000,"Correction"};
 item17[] = {"Waiting_FFE",4,218,-75.000000,-500.000000,25.000000,-450.000000,0.000000,"Waiting" \n "FFE"};
-item18[] = {"Fire_For_Effect",2,250,-75.000000,-400.000000,25.000000,-350.000000,0.000000,"Fire For Effect"};
+item18[] = {"Fire_For_Effect",2,4346,-75.000000,-400.000000,25.000000,-350.000000,0.000000,"Fire For Effect"};
 item19[] = {"Corrected_TGT_POS",4,218,-325.000000,-500.000000,-225.000000,-450.000000,1.000000,"Corrected" \n "TGT POS" \n "not in range"};
 item20[] = {"Corrected_TGT_POS_1",4,218,-325.000000,-750.000000,-225.000000,-700.000000,0.000000,"Corrected" \n "TGT POS" \n "in range"};
 item21[] = {"true",4,218,-75.000000,-675.000000,25.000000,-625.000000,0.000000,"true"};
@@ -74,8 +74,8 @@ link36[] = {29,30};
 link37[] = {30,31};
 link38[] = {31,18};
 link39[] = {32,14};
-globals[] = {0.000000,0,0,0,0,640,480,1,306,6316128,1,-115.577904,374.440186,-212.341827,-884.582764,519,712,1};
-window[] = {0,-1,-1,-1,-1,1033,150,1371,150,1,537};
+globals[] = {0.000000,0,0,0,0,640,480,1,306,6316128,1,-358.443237,475.446838,119.454712,-1024.535522,663,712,1};
+window[] = {2,-1,-1,-32000,-32000,1010,189,1727,127,1,681};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -100,10 +100,16 @@ class FSM
                          "	, ""_debug""" \n
                          "];" \n
                          "" \n
+                         "_battery params [""_logic"",""_callsign"",""_name"",""_guns"",""_isVirtual""];" \n
+                         "" \n
                          "if (_debug) then { systemChat ""[FM] Init""; };" \n
                          "if (_debug) then { diag_log ""[FM] Init""; };" \n
                          "" \n
-                         "private _grp = [_battery, true] call tSF_fnc_ArtillerySupport_AddCrew;" \n
+                         "private _grp = grpNull;" \n
+                         "if (!_isVirtual) then {" \n
+                         "	_grp = [_battery, true] call tSF_fnc_ArtillerySupport_AddCrew;" \n
+                         "};" \n
+                         "" \n
                          "private _correctedPos = [] + _pos;" \n
                          "private _timer = time + tSF_ArtillerySupport_FiremissionPreparationTimeout;" \n
                          "" \n
@@ -163,6 +169,8 @@ class FSM
                         name = "Calculate_initial";
                         itemno = 4;
                         init = /*%FSM<STATEINIT""">*/"" \n
+                         "private _distance = _logic distance2d _pos;" \n
+                         "" \n
                          "if (_debug) then { systemChat format [""[FM] Position calculated: %1"", _pos]; };" \n
                          "if (_debug) then { diag_log format [""[FM] Position calculated: %1"", _pos]; };" \n
                          "" \n
@@ -177,7 +185,13 @@ class FSM
                                         priority = 1.000000;
                                         to="Report_Not_In_Ra";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
-                                        condition=/*%FSM<CONDITION""">*/"!(_pos inRangeOfArtillery [ _battery select 3, _type])"/*%FSM</CONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(!_isVirtual && !(_pos inRangeOfArtillery [ _battery select 3, _type]))" \n
+                                         "||" \n
+                                         "(" \n
+                                         "  _isVirtual " \n
+                                         "  && (_logic getVariable ""tSF_ArtillerySupport_MaxRange"") < _distance" \n
+                                         "  && (_logic getVariable ""tSF_ArtillerySupport_MinRange"") > _distance " \n
+                                         ")"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/
@@ -214,8 +228,23 @@ class FSM
                         init = /*%FSM<STATEINIT""">*/"[_battery, ""State"", ""Searching Fire""] call tSF_fnc_ArtillerySupport_SetStatus;" \n
                          "" \n
                          "private _pos = [] + _correctedPos;" \n
-                         "private _lead = leader _grp;" \n
-                         "private _ETA = (vehicle _lead) getArtilleryETA [_pos, _type];" \n
+                         "" \n
+                         "private _lead = objNull;" \n
+                         "private _ETA = 0;" \n
+                         "" \n
+                         "if (!_isVirtual) then {" \n
+                         "	_lead = leader _grp;" \n
+                         "	_ETA = (vehicle _lead) getArtilleryETA [_pos, _type];" \n
+                         "} else {" \n
+                         "	_ETA = linearConversion [" \n
+                         "		600" \n
+                         "		, 7000" \n
+                         "		, _distance" \n
+                         "		, tSF_ArtillerySupport_VirtualFiremissionsMinETA" \n
+                         "		, tSF_ArtillerySupport_VirtualFiremissionsMaxETA" \n
+                         "		, false" \n
+                         "	];" \n
+                         "};" \n
                          "" \n
                          "[" \n
                          "	_battery" \n
@@ -226,16 +255,19 @@ class FSM
                          "if (_debug) then { systemChat format [""[FM] ETA %1 sec"", _ETA]; };" \n
                          "if (_debug) then { diag_log format [""[FM] ETA %1 sec"", _ETA]; };" \n
                          "" \n
-                         "_lead setVehicleAmmo 1;" \n
-                         "_lead commandArtilleryFire [_pos, _type, 1];" \n
-                         "_lead setVehicleAmmo 1;" \n
+                         "if (!_isVirtual) then {" \n
+                         "	_lead setVehicleAmmo 1;" \n
+                         "	_lead commandArtilleryFire [_pos, _type, 1];" \n
+                         "	_lead setVehicleAmmo 1;" \n
+                         "} else {" \n
+                         "	[_type,_pos,_ETA] call tSF_fnc_ArtillerySupport_FireAdjustFiremissionVirtual;" \n
+                         "};" \n
                          "" \n
                          "[_battery, _ETA] spawn {" \n
                          "	sleep ((_this select 1) - 3);" \n
                          "" \n
-                         "	[_this select 0, ""SPLASH!"", ""Searching fire""] call tSF_fnc_ArtillerySupport_showHint;	" \n
+                         "	[_this select 0, ""SPLASH!"", ""Searching fire""] call tSF_fnc_ArtillerySupport_showHint;" \n
                          "};" \n
-                         "" \n
                          ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
@@ -361,6 +393,8 @@ class FSM
                          "	, (_pos select 1) + parseNumber(_corrections select 0) - parseNumber(_corrections select 3)" \n
                          "	, _pos select 2 " \n
                          "];" \n
+                         "" \n
+                         "_distance = _logic distance2d _correctedPos;" \n
                          ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
@@ -372,7 +406,13 @@ class FSM
                                         priority = 1.000000;
                                         to="Report_Wrong_Cor";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
-                                        condition=/*%FSM<CONDITION""">*/"!(_correctedPos inRangeOfArtillery [ _battery select 3, _type])"/*%FSM</CONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(!_isVirtual && !(_correctedPos inRangeOfArtillery [ _battery select 3, _type]))" \n
+                                         "||" \n
+                                         "(" \n
+                                         "  _isVirtual " \n
+                                         "  && (_logic getVariable ""tSF_ArtillerySupport_MaxRange"") < _distance" \n
+                                         "  && (_logic getVariable ""tSF_ArtillerySupport_MinRange"") > _distance " \n
+                                         ")"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/
@@ -398,8 +438,23 @@ class FSM
                         init = /*%FSM<STATEINIT""">*/"[_battery, ""State"", ""Fire For Effect""] call tSF_fnc_ArtillerySupport_SetStatus;" \n
                          "" \n
                          "private _pos = [] + _correctedPos;" \n
-                         "private _lead = leader _grp;" \n
-                         "private _ETA = (vehicle _lead) getArtilleryETA [_pos, _type];" \n
+                         "" \n
+                         "private _lead = objNull;" \n
+                         "private _ETA = 0;" \n
+                         "" \n
+                         "if (!_isVirtual) then {" \n
+                         "	_lead = leader _grp;" \n
+                         "	_ETA = (vehicle _lead) getArtilleryETA [_pos, _type];" \n
+                         "} else {" \n
+                         "	_ETA = linearConversion [" \n
+                         "		600" \n
+                         "		, 7000" \n
+                         "		, _distance" \n
+                         "		, tSF_ArtillerySupport_VirtualFiremissionsMinETA" \n
+                         "		, tSF_ArtillerySupport_VirtualFiremissionsMaxETA" \n
+                         "		, false" \n
+                         "	];" \n
+                         "};" \n
                          "" \n
                          "[" \n
                          "	_battery" \n
@@ -410,45 +465,45 @@ class FSM
                          "if (_debug) then { systemChat format [""[FM] FOE: ETA %1 sec"", _ETA]; };" \n
                          "if (_debug) then { diag_log format [""[FM] FOE: ETA %1 sec"", _ETA]; };" \n
                          "" \n
-                         "private _roundPerGun = [_number, count units _grp] call tSF_fnc_ArtillerySupport_getRoundsPerGun;" \n
-                         "private _tgtsPerGun = [" \n
-                         "	[_pos, _shape, _size, _dir, _number] call tSF_fnc_ArtillerySupport_GetTargerts" \n
-                         "	, count units _grp" \n
-                         "] call tSF_fnc_ArtillerySupport_getTgtPerGun;" \n
-                         "" \n
                          "private _timeout = 0;" \n
                          "" \n
-                         "{" \n
+                         "if (!_isVirtual) then {" \n
+                         "	private _roundPerGun = [_number, count units _grp] call tSF_fnc_ArtillerySupport_getRoundsPerGun;" \n
+                         "	private _tgtsPerGun = [" \n
+                         "		[_pos, _shape, _size, _dir, _number] call tSF_fnc_ArtillerySupport_GetTargerts" \n
+                         "		, count units _grp" \n
+                         "	] call tSF_fnc_ArtillerySupport_getTgtPerGun;" \n
+                         "" \n
+                         "	{" \n
+                         "		[" \n
+                         "			_x" \n
+                         "			, _type" \n
+                         "			, _roundPerGun select _forEachIndex" \n
+                         "			, _tgtsPerGun select _forEachIndex" \n
+                         "			, _delay" \n
+                         "			, _timeout" \n
+                         "			, _battery" \n
+                         "		] spawn tSF_fnc_ArtillerySupport_Fire;" \n
+                         "" \n
+                         "		_timeout = _timeout + ((_roundPerGun select _forEachIndex))*_delay;" \n
+                         "	} forEach (units _grp);" \n
+                         "" \n
+                         "	if (_timeout == 0) then {" \n
+                         "		_timeout = (_roundPerGun select 0)*6;" \n
+                         "	};" \n
+                         "	" \n
+                         "} else {" \n
+                         "  _timeout = _ETA;" \n
+                         "" \n
                          "	[" \n
-                         "		_x" \n
-                         "		, _type" \n
-                         "		, _roundPerGun select _forEachIndex" \n
-                         "		, _tgtsPerGun select _forEachIndex" \n
+                         "		_type" \n
+                         "		, _number" \n
+                         "		, [_pos, _shape, _dir, _size]" \n
                          "		, _delay" \n
                          "		, _timeout" \n
                          "		, _battery" \n
-                         "	] spawn tSF_fnc_ArtillerySupport_Fire;" \n
-                         "" \n
-                         "	_timeout = _timeout + ((_roundPerGun select _forEachIndex))*_delay;" \n
-                         "} forEach (units _grp);" \n
-                         "" \n
-                         "if (_timeout == 0) then {" \n
-                         "	_timeout = (_roundPerGun select 0)*6;" \n
+                         "	] spawn tSF_fnc_ArtillerySupport_FireForEffectVirtual;" \n
                          "};" \n
-                         "" \n
-                         "/*" \n
-                         "	Delay = 5 sec" \n
-                         "	RoundsPerGun = 3" \n
-                         "" \n
-                         "	Gun 0 Rounds 3:	Timeout = 0 " \n
-                         "							will be shot in 15 seconds" \n
-                         "							Timeout = 0 + (3 + 1)*5 = 20" \n
-                         "	Gun 1 Rounds 2:	Timeout = 0" \n
-                         "							first round in 20 seconds and end at 35 seconds" \n
-                         "							Timeout = 20 + (2+1)*5 = 20+15 = 35" \n
-                         "	Gun 2 Rounds 2: 	Timeout = Timeout +  5 * (2 + 1) = 20 + 5*3 = 20 + 15 = 35	" \n
-                         "							first round in 35 seconds" \n
-                         "*/" \n
                          "" \n
                          "[" \n
                          "	_battery" \n
@@ -503,7 +558,6 @@ class FSM
                         itemno = 22;
                         init = /*%FSM<STATEINIT""">*/"[_battery, ""State"", ""Waiting Correction""] call tSF_fnc_ArtillerySupport_SetStatus;" \n
                          "_timeout = time + tSF_ArtillerySupport_AdjustFireExpirationTimeout;" \n
-                         "" \n
                          "" \n
                          "if (_debug) then { systemChat ""[FM] Waiting for Corrections""; };" \n
                          "if (_debug) then { diag_log ""[FM] Waiting for Corrections"";  };" \n
