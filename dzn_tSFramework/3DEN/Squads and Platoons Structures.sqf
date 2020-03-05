@@ -51,7 +51,7 @@ dzn_tSF_3DEN_SquadTypes = [
 	, [
 		"РФ ВВ 4-3", "ruvv squad",
 		[
-			["%1Командир отделения", SGT]
+			["Командир отделения", SGT]
 			,["Пулеметчик", PVT]
 			,["Стрелок-Гранатометчик", PVT]
 			,["Стрелок, помощник гранатометчика", PVT]
@@ -63,7 +63,7 @@ dzn_tSF_3DEN_SquadTypes = [
 	, [
 		"Platoon Squad", "nato platoon squad",
 		[
-			["%1Platoon Leader", LT]
+			["Platoon Leader", LT]
 			,["Platoon Sergeant", SGT]
 			,["JTAC", CPL]
 			,["FO", CPL]
@@ -72,7 +72,7 @@ dzn_tSF_3DEN_SquadTypes = [
 	, [
 		"Командный отряд", "msv platoon squad",
 		[
-			["%1Командир взвода", LT]
+			["Командир взвода", LT]
 			,["Зам. командира взвода", SGT]
 			,["ПАН", CPL]
 			,["КАО", CPL]
@@ -93,7 +93,7 @@ dzn_tSF_3DEN_SquadTypes = [
 	, [
 		"UK Weapon Section", "uk weapon section",
 		[
-			["%1Section Leader", SGT]
+			["Section Leader", SGT]
 			,["Machinegunner", PVT]
 			,["Asst. Machinegunner", PVT]
 			,["Machinegunner", PVT]
