@@ -76,6 +76,7 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[tSF] Add FARP"				, { "FARP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
 		,["[Support] Add Artillery Composition"		, { call dzn_fnc_tSF_3DEN_ShowArtilleryCompositionMenu }]
 		,["Add To Do List"				, { call dzn_fnc_tSF_3DEN_addToDoList }]
+		,["Show Permission menu"			, { closeDialog 2;[] spawn dzn_fnc_tSF_3DEN_ShowPermissionsMenu }]
 		,[" "						, { }]
 
 	];
@@ -88,7 +89,6 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		"tSF Tool"
 		, [["Select action", _optionList]]
 	] call dzn_fnc_3DEN_ShowChooseDialog;
-	Result = _toolResult;
 	if (count _toolResult == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 
 	call ((_options select (_toolResult select 0)) select 1);
@@ -257,45 +257,47 @@ http://www.online-decoder.com/ru
 	// copyToClipboard _names;
 };
 
-dzn_fnc_tSF_3DEN_GetGAT = {
-	private _playableUnits = (get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer) select { groupId _x != "" };
 
+dzn_fnc_tSF_3DEN_GetPlayableRoles = {
+	[] call dzn_fnc_tSF_3DEN_ResetVariables;
+	private _playableUnits = (get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer) select { groupId _x != "" };
 	private _listOfRoles = [];
-	private _gat = ""; // "// Decode cyrillic chars with http://www.online-decoder.com/ru" + L_BRK + L_BRK;
-	private _firstCommaSkipped = false;
 	{
 		private _units = units _x;
 		{
 			private _role = (_x get3DENAttribute "description") select 0;
-			if (!isNil "_role" && { !(_role in _listOfRoles) }) then {
-				_listOfRoles pushBack _role;
-
-				private _tabs = "";
-				_tabs = switch (true) do {
-					case (count _role < 8): { "					" };
-					case (count _role < 16): { "				" };
-					case (count _role < 24): { "			" };
-					case (count _role > 23): { "		" };
-				};
-
-				_gat = format[
-					"%1%2%4A ""%3""%5TO ""kit_name"" KIT"
-					, _gat
-					, L_BRK
-					, _role
-					, if !(_firstCommaSkipped) then { "" } else { ", " }
-					, _tabs
-				];
-
-				if !(_firstCommaSkipped) then { _firstCommaSkipped = true; };
-			};
+			if (!isNil "_role") then { _listOfRoles pushBackUnique _role; };
 		} forEach _units;
 	} forEach _playableUnits;
 
-	["Gear Assignment table", _gat] call dzn_fnc_3DEN_ShowCopyDialog;
+	_listOfRoles
+};
 
-	// [parseText "<t shadow='2'color='#e6c300' align='center' font='PuristaBold' size='1.1'>GAT was copied!</t>", [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
-	// copyToClipboard _gat;
+dzn_fnc_tSF_3DEN_GetGAT = {
+	private _listOfRoles = [] call dzn_fnc_tSF_3DEN_GetPlayableRoles;
+	private _gat = "";
+	{
+		private _role = _x;
+		private _tabs = "";
+		_tabs = switch (true) do {
+			case (count _role < 8): { "					" };
+			case (count _role < 16): { "				" };
+			case (count _role < 24): { "			" };
+			case (count _role > 23): { "		" };
+		};
+
+		_gat = format[
+			"%1%2%4A ""%3""%5TO ""kit_name"" KIT"
+			, _gat
+			, L_BRK
+			, _role
+			, if (_forEachIndex == 0) then { "" } else { ", " }
+			, _tabs
+		];
+
+	} forEach _listOfRoles;
+
+	["Gear Assignment table", _gat] call dzn_fnc_3DEN_ShowCopyDialog;
 };
 
 dzn_fnc_tSF_3DEN_GetCargoSeats = {
@@ -329,21 +331,82 @@ dzn_fnc_tSF_3DEN_GetCargoSeats = {
 	];
 
 	[_msg, [0,.7,1,1], nil, 7, 0.2, 0] spawn BIS_fnc_textTiles;
-	
+
 	if (count dzn_tSF_3DEN_SelectedUnits == 1) then {
 		private _class = typeof (dzn_tSF_3DEN_SelectedUnits # 0);
 		private _name = getText (configFile >> "CfgVehicles" >> _class >> "displayName");
-		
+
 		private _infoData = [];
 		if (_drivers > 0) then { _infoData pushBack _drivers; };
 		if (_gunners > 0) then { _infoData pushBack _gunners; };
 		if (_seats > 0) then { _infoData pushBack _seats; };
-		
+
 		_infoText = format ["%1 - %2", _name, _infoData joinString "+"];
 	};
 	copyToClipboard _infoText;
 };
 
+dzn_fnc_tSF_3DEN_ShowPermissionsMenu = {
+	if (dzn_tSF_3DEN_toolDisplayed) exitWith {};
+	dzn_tSF_3DEN_toolDisplayed = true;
+
+	// Permission options
+	private _resolveOption = {};
+	private _options = [
+		["NONE", "[ARTILLERY_NO,AIRBORNE_NO,POM_NO]"]
+		,["ALL ALLOWED [PL]", "[ALL_ALLOWED]"]
+		,["ARTILLERY & AIRBORNE [SL]", "[ARTY_AND_AIRBORNE_ALLOWED]"]
+		,["ARTILLERY ONLY [FO]", "[ARTILLERY_ONLY_ALLOWED]"]
+		,["AIRBORNE ONLY", "[ARTILLERY_NO,AIRBORNE_ALLOWED,POM_NO]"]
+		,["POM ONLY", "[ARTILLERY_NO,AIRBORNE_NO,POM_ALLOWED]"]
+		,["ARTILLERY & POM", "[ARTILLERY_ALLOWED,AIRBORNE_NO,POM_ALLOWED]"]
+		,["AIRBORNE & POM", "[ARTILLERY_NO,AIRBORNE_ALLOWED,POM_ALLOWED]"]
+	];
+	private _optionList = [];
+	{ _optionList pushBack (_x select 0); } forEach _options;
+
+	// Roles names
+	[] call dzn_fnc_tSF_3DEN_ResetVariables;
+	private _expectedRoles = [
+		"Platoon Leader"
+		,"Platoon Sergeant"
+		,"Командир взвода"
+		,"Зам. командира взвода"
+		,"ПАН"
+		,"JTAC"
+		,"FO"
+		,"КАО"
+		,"Squad Leader"
+		,"Командир отделения"
+	];
+
+	private _listOfAllRoles = [] call dzn_fnc_tSF_3DEN_GetPlayableRoles;
+	private _filteredRoles = [];
+	{
+		private _role = _x;
+		private _isExpected = _expectedRoles findIf { [_x, _role, false] call BIS_fnc_inString } > -1;
+		if (_isExpected) then { _filteredRoles pushBackUnique _role; };
+	} forEach _listOfAllRoles;
+
+	private _controls = [];
+	{
+		_controls pushBack [_x, _optionList];
+	} forEach _filteredRoles;
+
+	private _toolResult = ["tSF Authorization permissions", _controls] call dzn_fnc_3DEN_ShowChooseDialog;
+	if (count _toolResult == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
+	dzn_tSF_3DEN_toolDisplayed = false;
+
+	private _infoText = "";
+	{
+		_infoText = _infoText
+			+ L_BRK
+			+ (if (_forEachIndex == 0) then { "" } else { ", " })
+			+ "ROLE """ + _x + """ HAS " + (_options # (_toolResult # _forEachIndex) # 1) + " PERMISSIONS";
+	} forEach _filteredRoles;
+
+	["Permissions", _infoText] call dzn_fnc_3DEN_ShowCopyDialog;
+};
 
 dzn_fnc_tSF_3DEN_snapToSurface = {
 	do3DENAction "LevelWithSurface";
@@ -438,7 +501,7 @@ dzn_fnc_tSF_3DEN_togleToDoListItem = {
 #define BG_X			(1 * GUI_GRID_W + GUI_GRID_X)
 #define BG_Y			(1 * GUI_GRID_H + GUI_GRID_Y)
 #define BG_WIDTH		(38.5 * GUI_GRID_W)
-#define TITLE_WIDTH		(14 * GUI_GRID_W)
+#define TITLE_WIDTH		(36 * GUI_GRID_W)
 #define TITLE_HEIGHT		(1.5 * GUI_GRID_H)
 #define LABEL_COLUMN_X		(2 * GUI_GRID_W + GUI_GRID_X)
 #define LABEL_WIDTH		(14 * GUI_GRID_W)
@@ -484,17 +547,15 @@ dzn_fnc_3DEN_ShowCopyDialog = {
 	private _controlCount = 2;
 
 	private _titleRowHeight = 0;
-	if (_title != "") then {
-		// Create the label
-		private _labelControl = _dialog ctrlCreate ["RscText", BASE_IDC + _controlCount];
-		_labelControl ctrlSetPosition [LABEL_COLUMN_X, _yCoord, TITLE_WIDTH, TITLE_HEIGHT];
-		_labelControl ctrlSetFont "PuristaBold";
-		_labelControl ctrlCommit 0;
-		_labelControl ctrlSetText _title;
-		_yCoord = _yCoord + TOTAL_ROW_HEIGHT;
-		_controlCount = _controlCount + 1;
-		_titleRowHeight = TITLE_HEIGHT;
-	};
+	// Create the label
+	private _labelControl = _dialog ctrlCreate ["RscText", BASE_IDC + _controlCount];
+	_labelControl ctrlSetPosition [LABEL_COLUMN_X, _yCoord, TITLE_WIDTH, TITLE_HEIGHT];
+	_labelControl ctrlSetFont "PuristaBold";
+	_labelControl ctrlCommit 0;
+	_labelControl ctrlSetText (_title + " (Ctrl + A -> Ctrl + C)");
+	_yCoord = _yCoord + TOTAL_ROW_HEIGHT;
+	_controlCount = _controlCount + 1;
+	_titleRowHeight = TITLE_HEIGHT;
 
 	// Copy-paste field
 	private _fieldCtrl = _dialog ctrlCreate ["RscEditMultiReadOnly", BASE_IDC + _controlCount];
