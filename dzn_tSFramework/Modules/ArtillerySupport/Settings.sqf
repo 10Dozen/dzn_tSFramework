@@ -1,27 +1,10 @@
 ﻿/*
  *	Dependency:
+ *		- Modules/Authorization
  *		- Modules/ACEActions
  */
- 
- /*
- *	List of Authorized users:
- *		"Admin"			- game admin
- *		@RoleDescription	- all players with appropriate role description
- *		"Any"			- any player
- *
- */
-tSF_ArtillerySupport_AuthorizedUsers = [
-	"Admin"
-	,"Platoon Leader"
-	,"Platoon Sergeant"
-	,"Командир взвода"
-	,"Зам. командира взвода"
-	,"FO"
-	,"КАО"
-];
 
-
-tSF_ArtillerySupport_initTimeout 				= 0;
+tSF_ArtillerySupport_initTimeout 			= 0;
 
 tSF_ArtillerySupport_FiremissionPreparationTimeout	= 15;		// Timeout before any shot will be mae\de
 tSF_ArtillerySupport_BatteryReloadTime 			= 30*60;	// Timeout for reloading all firemissions

@@ -4,16 +4,8 @@
 
 tSF_fnc_AirborneSupport_isAuthorizedUser = {
 	// Player call tSF_fnc_AirborneSupport_isAuthorizedUser
-	private _role = toLower(roleDescription _this);
-	private _listOfAuthorizedUsers = tSF_AirborneSupport_AuthorizedUsers apply { toLower(_x) };
-
-	if ("any" in _listOfAuthorizedUsers) exitWith { true };
 	
-	if ("admin" in _listOfAuthorizedUsers && ((serverCommandAvailable "#logout") || !(isMultiplayer) || isServer)) exitWith {
-		true
-	};
-	
-	( { [_x, _role, false] call BIS_fnc_inString } count _listOfAuthorizedUsers ) > 0	
+	[_this, "AIRBORNE"] call tSF_fnc_Authorization_checkPlayerAuthorized
 };
 
 tSF_fnc_AirborneSupport_GetProvider = {

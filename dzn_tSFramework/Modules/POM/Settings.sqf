@@ -2,15 +2,10 @@
  *	Platoon Operational Markers (POM)
  *
  *	Local opartional markers (squads) for Platoon Leaders for additional mission control. 
+ *
+ *	Dependency:
+ *		- Modules/Authorization
  */
-
-tSF_POM_AuthorizedUsers		= [
-						"1'6 Platoon Leader"						
-						,"1'6 Командир взвода"
-						
-						,"Platoon Sergeant"
-						,"Зам. командира взвода"						
-];
 
 tSF_POM_GenerateMarkersFromGroups	= true;
 tSF_POM_OperationalMarkers = [
@@ -24,7 +19,6 @@ tSF_POM_OperationalMarkers = [
 ];
 
 tSF_POM_TopicName = "tSF Operational Markers";
-
 
 /*
  *	Preferences
