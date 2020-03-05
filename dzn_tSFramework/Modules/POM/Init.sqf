@@ -5,6 +5,8 @@ call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\POM\Settings.sqf
 // ********************
 
 if !(hasInterface) exitWith {};
+
+waitUntil { !isNil "tSF_Authorization_Initialized" };
 if (isMultiplayer && !([player, "POM"] call tSF_fnc_Authorization_checkPlayerAuthorized)) exitWith {};
 
 waitUntil { time > 5 };

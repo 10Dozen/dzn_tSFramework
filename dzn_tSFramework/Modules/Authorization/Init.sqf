@@ -10,3 +10,5 @@ tSF_Authorization_List apply {
 
 	[toLower (_x # 0), _x # 1]
 };
+
+tSF_Authorization_Initialized = true;

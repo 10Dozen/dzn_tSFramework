@@ -1,3 +1,5 @@
+waitUntil { !isNil "tSF_Authorization_Initialized" };
+
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\Settings.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\Functions.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\AirborneSupport\Functions Request.sqf";
