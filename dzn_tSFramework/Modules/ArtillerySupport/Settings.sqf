@@ -1,20 +1,21 @@
 ﻿/*
-	TODO:
-	-- Delay between rounds for virtual firemission is not working
-
-*/
-
-/*
  *	Dependency:
  *		- Modules/Authorization
  *		- Modules/ACEActions
  */
-tSF_ArtillerySupport_initTimeout 			= 0;
+tSF_ArtillerySupport_initTimeout   = 0;
+tSF_ArtillerySupport_initCondition = { true }; // Overall condition of module init
 
-tSF_ArtillerySupport_FiremissionPreparationTimeout	= 15;		// Timeout before any shot will be mae\de
-tSF_ArtillerySupport_BatteryReloadTime 			= 30*60;	// Timeout for reloading all firemissions
-
+tSF_ArtillerySupport_FiremissionPreparationTimeout	= 15; // Timeout before any shot will be mae\de
+tSF_ArtillerySupport_BatteryReloadTime 			= 30*60; // Timeout for reloading all firemissions
 tSF_ArtillerySupport_AdjustFireExpirationTimeout	= 5*30;	// Expirtation Timeout of firemission request during Adjust Fire phase
+
+/*
+ *	AI Crew
+ */ 
+tSF_ArtillerySupport_CrewClassname 	= "B_Soldier_unarmed_F";
+tSF_ArtillerySupport_CrewKitname 	= "";
+
 /*
  *	Firemissions properties 
  *	[ @DisplayName, @NumberAvailable, @RoundClassnames ]
@@ -36,8 +37,16 @@ tSF_ArtillerySupport_FiremissionsProperties = [
 
 /*
  *	Virtual artillery rounds by type, in format:
- *	[@Artillery Battery confign name, [@MinRangge,@MaxRange], [ @DisplayName, @NumberAvailable, @RoundClassnames ]]
+ *	[
+ *		@Artillery Battery confign name
+ *		, [ @DisplayName, @NumberAvailable, @RoundClassnames ] // Magazines map
+ *		, [ @MinRange, @MaxRange ] // Range limits
+ *		, [ @MinRangeETA, @MaxRangeETA ] // ETA min and max
+ *		, @NumberOfGuns // Number of guns in battery
+ *		, @ShotReloadTime // Time between shots, seconds
+ *	]
  *
+ *	Magazines map:
  *	@NumberAvailable = -1 means not avaialble and no reloading needed
  */
 #define HE_RNDS(X,Y) ["HE",X,Y]
@@ -45,21 +54,37 @@ tSF_ArtillerySupport_FiremissionsProperties = [
 #define ILLUM_RNDS(X,Y) ["ILLUM",X,Y]
 
 tSF_ArtillerySupport_VirtualFiremissionsProperties = [
-	["82mm Mortar", [300, 4000], [HE_RNDS(2,"8Rnd_82mm_Mo_shells"), SMK_RNDS(9,"8Rnd_82mm_Mo_Smoke_white"), ILLUM_RNDS(9,"8Rnd_82mm_Mo_Flare_white")]]
-	,["155mm Howitzer", [400, 24000], [HE_RNDS(6,"32Rnd_155mm_Mo_shells"), SMK_RNDS(9,"6Rnd_155mm_Mo_smoke"), ILLUM_RNDS(-1,"")]]
-	,["MRLS", [700, 24000],[HE_RNDS(6,"12Rnd_230mm_rockets"), SMK_RNDS(-1,""), ILLUM_RNDS(-1,"")]]
-	,["105mm Howitzer", [200, 12000],[]]
+	[
+		"82mm Mortar"
+		, [HE_RNDS(2,"8Rnd_82mm_Mo_shells"), SMK_RNDS(9,"8Rnd_82mm_Mo_Smoke_white"), ILLUM_RNDS(9,"8Rnd_82mm_Mo_Flare_white")]
+		, [300, 4000]
+		, [25, 50]
+		, 3
+		, 6
+	]
+	,[
+		"155mm Howitzer"
+		, [HE_RNDS(6,"32Rnd_155mm_Mo_shells"), SMK_RNDS(9,"6Rnd_155mm_Mo_smoke"), ILLUM_RNDS(-1,"")]
+		, [400, 24000]
+		, [25, 120]
+		, 3
+		, 6
+	]
+	,[
+		"MRLS"
+		,[HE_RNDS(6,"12Rnd_230mm_rockets"), SMK_RNDS(-1,""), ILLUM_RNDS(-1,"")]
+		, [700, 24000]
+		, [25, 80]
+		, 1
+		, 1
+	]
+	,[
+		"105mm Howitzer"
+		, [HE_RNDS(2,"8Rnd_82mm_Mo_shells"), SMK_RNDS(9,"8Rnd_82mm_Mo_Smoke_white"), ILLUM_RNDS(9,"8Rnd_82mm_Mo_Flare_white")]
+		, [300, 12000]
+		, [25, 60]
+		, 3
+		, 6
+	]
 ];
 
-// Default ETA in seconds for min range (~300m) and max range (4000)
-tSF_ArtillerySupport_VirtualFiremissionsMinETA = 25;
-tSF_ArtillerySupport_VirtualFiremissionsMaxETA = 50;
-
-// Guns per battery
-tSF_ArtillerySupport_VirtualFiremissionsGunsCount = 1;
-
-/*
- *	AI Crew
- */ 
-tSF_ArtillerySupport_CrewClassname 	= "B_Soldier_unarmed_F";
-tSF_ArtillerySupport_CrewKitname 	= "";

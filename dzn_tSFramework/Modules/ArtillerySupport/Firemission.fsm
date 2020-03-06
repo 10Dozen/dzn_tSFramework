@@ -74,8 +74,8 @@ link36[] = {29,30};
 link37[] = {30,31};
 link38[] = {31,18};
 link39[] = {32,14};
-globals[] = {0.000000,0,0,0,0,640,480,1,306,6316128,1,-358.443237,475.446838,119.454712,-1024.535522,663,712,1};
-window[] = {2,-1,-1,-32000,-32000,1010,189,1727,127,1,681};
+globals[] = {0.000000,0,0,0,0,640,480,1,306,6316128,1,-444.503296,389.386597,-340.287354,-1215.723999,843,885,1};
+window[] = {2,-1,-1,-32000,-32000,1083,200,1738,200,3,861};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -236,14 +236,7 @@ class FSM
                          "	_lead = leader _grp;" \n
                          "	_ETA = (vehicle _lead) getArtilleryETA [_pos, _type];" \n
                          "} else {" \n
-                         "	_ETA = linearConversion [" \n
-                         "		600" \n
-                         "		, 7000" \n
-                         "		, _distance" \n
-                         "		, tSF_ArtillerySupport_VirtualFiremissionsMinETA" \n
-                         "		, tSF_ArtillerySupport_VirtualFiremissionsMaxETA" \n
-                         "		, false" \n
-                         "	];" \n
+                         "	_ETA = [_logic, _distance] call tSF_fnc_ArtillerySupport_GetVirtualFiremissionETA;" \n
                          "};" \n
                          "" \n
                          "[" \n
@@ -260,7 +253,7 @@ class FSM
                          "	_lead commandArtilleryFire [_pos, _type, 1];" \n
                          "	_lead setVehicleAmmo 1;" \n
                          "} else {" \n
-                         "	[_type,_pos,_ETA] call tSF_fnc_ArtillerySupport_FireAdjustFiremissionVirtual;" \n
+                         "	[_type, _pos, _ETA] call tSF_fnc_ArtillerySupport_FireAdjustFiremissionVirtual;" \n
                          "};" \n
                          "" \n
                          "[_battery, _ETA] spawn {" \n
@@ -446,14 +439,7 @@ class FSM
                          "	_lead = leader _grp;" \n
                          "	_ETA = (vehicle _lead) getArtilleryETA [_pos, _type];" \n
                          "} else {" \n
-                         "	_ETA = linearConversion [" \n
-                         "		600" \n
-                         "		, 7000" \n
-                         "		, _distance" \n
-                         "		, tSF_ArtillerySupport_VirtualFiremissionsMinETA" \n
-                         "		, tSF_ArtillerySupport_VirtualFiremissionsMaxETA" \n
-                         "		, false" \n
-                         "	];" \n
+                         "	_ETA = [_logic, _distance] call tSF_fnc_ArtillerySupport_GetVirtualFiremissionETA;" \n
                          "};" \n
                          "" \n
                          "[" \n
@@ -493,16 +479,16 @@ class FSM
                          "	};" \n
                          "	" \n
                          "} else {" \n
-                         "  _timeout = _ETA;" \n
-                         "" \n
+                         "	" \n
                          "	[" \n
                          "		_type" \n
                          "		, _number" \n
                          "		, [_pos, _shape, _dir, _size]" \n
                          "		, _delay" \n
-                         "		, _timeout" \n
                          "		, _battery" \n
                          "	] spawn tSF_fnc_ArtillerySupport_FireForEffectVirtual;" \n
+                         "" \n
+                         "	_timeout = _ETA + (_delay max (_logic getVariable ""tSF_ArtillerySupport_ROF"")) * _number;" \n
                          "};" \n
                          "" \n
                          "[" \n

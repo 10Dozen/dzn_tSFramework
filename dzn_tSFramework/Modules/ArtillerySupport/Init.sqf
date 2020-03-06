@@ -4,6 +4,8 @@ call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Functions.sqf";
 call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Functions Request.sqf";
 
+waitUntil tSF_ArtillerySupport_initCondition;
+
 if (hasInterface) then {
 	[] spawn {
 		waitUntil { !isNil "tSF_fnc_ACEActions_processActionList" };
@@ -11,14 +13,21 @@ if (hasInterface) then {
 
 		private _actionList = [ ["SELF", "Radio (Artillery)", "tsf_radio_artillery_support", "", { }, { player call tSF_fnc_ArtillerySupport_isAuthorizedUser }] ];
 		{
+			_x params ["_logic","_callsign","_name","_gunsObjects","_isVirtual","_condition"];
+			
+			private _conditionCode = "player call tSF_fnc_ArtillerySupport_isAuthorizedUser"
+			if (_condition != "") then {
+				_conditionCode = _conditionCode + " && {" + _condition + "}";
+			};
+		
 			// [ @Logic, @Callsign, @VehicleDisplayName, @Vehicles ]
 			_actionList pushBack [
 				"SELF"
-				, format ["%1 (%2)", _x select 1, _x select 2]
+				, format ["%1 (%2)", _callsign, _name]
 				, format ["tsf_radio_artillery_support_%1", _forEachIndex]
 				, "tsf_radio_artillery_support"
-				, compile format ["'%1' call tSF_fnc_ArtillerySupport_ShowMenu;", _x select 1]
-				, { player call tSF_fnc_ArtillerySupport_isAuthorizedUser }
+				, compile format ["'%1' call tSF_fnc_ArtillerySupport_ShowMenu;", _callsign]
+				, compile _conditionCode
 			];
 		} forEach tSF_ArtillerySupport_Batteries;
 
@@ -31,6 +40,6 @@ if (isServer) then {
 
 	tSF_ArtillerySupport_Batteries = [];
 	tSF_ArtillerySupport_BatteriesRequestedReload = [];
-	call tSF_fnc_ArtillerySupport_processLogics;
+	[] call tSF_fnc_ArtillerySupport_processLogics;
 	publicVariable "tSF_ArtillerySupport_Batteries";
 };

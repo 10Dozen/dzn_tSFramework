@@ -17,10 +17,11 @@ tSF_fnc_ArtillerySupport_processLogics = {
 			// [ @Logic, @Callsign, @VehicleDisplayName, @Vehicles ]
 			private _guns = synchronizedObjects _logic;
 			private _isVirtual = _guns isEqualTo [];
-			private _name =_logic getVariable ["tSF_ArtillerySupport_Label", ""];
+			private _name = _logic getVariable ["tSF_ArtillerySupport_Label", ""];
 			if (!_isVirtual) then {
 				_name = (typeOf ((synchronizedObjects _logic) select 0)) call dzn_fnc_getVehicleDisplayName;
 			};
+			private _condition = _logic getVariable ["tSF_ArtillerySupport_Condition", ""];
 
 			private _battery = [
 				_logic
@@ -28,17 +29,34 @@ tSF_fnc_ArtillerySupport_processLogics = {
 				, _name
 				, _guns
 				, _isVirtual
+				, _condition
 			];
 
 			private _firemissionsList = [];
-			private _ranges = [-1,-1];
 			if (_isVirtual) then {
 				private _idx = tSF_ArtillerySupport_VirtualFiremissionsProperties findIf { _x # 0 == _name };
 				if (_idx > -1) then {
-					_firemissionsList = (tSF_ArtillerySupport_VirtualFiremissionsProperties # _idx) # 2;
-					_ranges = (tSF_ArtillerySupport_VirtualFiremissionsProperties # _idx) # 1;
+					(tSF_ArtillerySupport_VirtualFiremissionsProperties # _idx) params [
+						""
+						,"_firemissionsLoadout"
+						,"_ranges"
+						,"_ETAs"
+						,"_numOfGuns"
+						,"_shotReloadTime"
+					];
+					
+					_firemissionsList = _firemissionsLoadout;
+					
+					[_logic, [
+						 ["tSF_ArtillerySupport_MinRange", _ranges # 0, true]
+						,["tSF_ArtillerySupport_MaxRange", _ranges # 1, true]
+						,["tSF_ArtillerySupport_MinETA", _ETAs # 0, true]
+						,["tSF_ArtillerySupport_MaxETA", _ETAs # 1, true]
+						,["tSF_ArtillerySupport_NumberOfGuns", _numOfGuns, true]
+						,["tSF_ArtillerySupport_ROF", _shotReloadTime, true]
+					]] call dzn_fnc_setVars;
 				} else {
-					["No ammo config for Virtual Battery [" + _name + "]"] call BIS_fnc_error;
+					["No config for Virtual Battery [" + _name + "]"] call BIS_fnc_error;
 				};
 			} else {
 				private _ammo = getArtilleryAmmo [synchronizedObjects _logic select 0];
@@ -59,8 +77,6 @@ tSF_fnc_ArtillerySupport_processLogics = {
 			_logic setVariable ["tSF_ArtillerySupport_State", "Waiting", true];
 			_logic setVariable ["tSF_ArtillerySupport_AvailableFiremissions", _firemissionsList, true];
 			_logic setVariable ["tSF_ArtillerySupport_MaxFiremissions", +_firemissionsList, true];
-			_logic setVariable ["tSF_ArtillerySupport_MinRange", _ranges # 0, true];
-			_logic setVariable ["tSF_ArtillerySupport_MaxRange", _ranges # 1, true];
 			tSF_ArtillerySupport_Batteries pushBack _battery;
 
 			// [_battery] spawn tSF_fnc_ArtillerySupport_HandleBatteryReload;
@@ -160,7 +176,7 @@ tSF_fnc_ArtillerySupport_SetStatus = {
 };
 
 tSF_fnc_ArtillerySupport_GetStatus = {
-	// [@Battery/@Callsign, @State, @AssertValue] call tSF_fnc_ArtillerySupport_GetkStatus
+	// [@Battery/@Callsign, @State] call tSF_fnc_ArtillerySupport_GetStatus
 	params["_callsign","_state"];
 
 	private _battery = if (typename _callsign == "ARRAY") then { _callsign } else { _callsign call tSF_fnc_ArtillerySupport_GetBattery };
@@ -183,6 +199,12 @@ tSF_fnc_ArtillerySupport_GetStatus = {
 		};
 		case "CREW": {
 			(_battery select 0) getVariable ["tSF_ArtillerySupport_Crew", grpNull];
+		};
+		case "VIRTUAL_GUNS_COUNT": {
+			(_battery # 0) getVariable ["tSF_ArtillerySupport_NumberOfGuns", 0];
+		};
+		case "VIRTUAL_ROF": {
+			(_battery # 0) getVariable ["tSF_ArtillerySupport_ROF", 0];
 		};
 	}
 };
@@ -262,6 +284,19 @@ tSF_fnc_ArtillerySupport_AddCrew = {
 	};
 
 	_crewGrp
+};
+
+tSF_fnc_ArtillerySupport_GetVirtualFiremissionETA = {
+	params ["_logic","_distance"];
+
+	ceil linearConversion [
+		_logic getVariable "tSF_ArtillerySupport_MinRange"
+		, _logic getVariable "tSF_ArtillerySupport_MaxRange"
+		, _distance
+		, _logic getVariable "tSF_ArtillerySupport_MinETA"
+		, _logic getVariable "tSF_ArtillerySupport_MaxETA"
+		, false
+	]
 };
 
 tSF_fnc_ArtillerySupport_showHint = {
@@ -468,29 +503,26 @@ tSF_fnc_ArtillerySupport_Fire = {
 	};
 };
 
-
 tSF_fnc_ArtillerySupport_FireAdjustFiremissionVirtual = {
 	params ["_type","_tgt","_delay"];
 	
 	private _ammo = getText (configFile >> "CfgMagazines" >> _type >> "ammo");
 
 	[
-		{ _this spawn  dzn_fnc_StartVirtualFiremission }
+		{ _this spawn dzn_fnc_StartVirtualFiremission }
 		, [[_tgt,"CIRCLE",0,1], _ammo, 1, 1]
 		, _delay
 	] call CBA_fnc_waitAndExecute;
 };
 
 tSF_fnc_ArtillerySupport_FireForEffectVirtual = {
-	params ["_type", "_rounds", "_tgtInfo", "_delay", "_timeout", "_battery"];
-	
+	params ["_type", "_rounds", "_tgtInfo", "_delay", "_battery"];
+
+	private _rofDelay = [_battery, "VIRTUAL_ROF"] call tSF_fnc_ArtillerySupport_GetStatus;
+	private _guns = [_battery, "VIRTUAL_GUNS_COUNT"] call tSF_fnc_ArtillerySupport_GetStatus;
+	private _salvos = [_rounds, _guns] call tSF_fnc_ArtillerySupport_getRoundsPerGun;
 	private _ammo = getText (configFile >> "CfgMagazines" >> _type >> "ammo");
-	private _salvos = [_rounds, tSF_ArtillerySupport_VirtualFiremissionsGunsCount] call tSF_fnc_ArtillerySupport_getRoundsPerGun;
-	
-	for "_i" from 0 to _timeout do {
-		sleep 1;
-		if ([_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_AssertStatus) exitWith { _i = 999; };
-	};
+	_delay = _delay max _rofDelay;
 
 	for "_i" from 0 to (count _salvos - 1) do {
 		if ([_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_AssertStatus) exitWith { _i = 999; };
@@ -505,6 +537,6 @@ tSF_fnc_ArtillerySupport_FireForEffectVirtual = {
 		] spawn dzn_fnc_StartVirtualFiremission;
 
 		if (_delay > 40) then { [_battery, "Shot fired", "Fire for Effect"] call tSF_fnc_ArtillerySupport_showHint; };
-		sleep (_delay max 6);
+		sleep _delay;
 	};
 };
