@@ -44,9 +44,9 @@ tSF_fnc_ArtillerySupport_processLogics = {
 						,"_numOfGuns"
 						,"_shotReloadTime"
 					];
-					
+
 					_firemissionsList = _firemissionsLoadout;
-					
+
 					[_logic, [
 						 ["tSF_ArtillerySupport_MinRange", _ranges # 0, true]
 						,["tSF_ArtillerySupport_MaxRange", _ranges # 1, true]
@@ -235,7 +235,13 @@ tSF_fnc_ArtillerySupport_GetBatteryMissionsAvailable = {
 		};
 
 		if (_forEachIndex > 0) then { _line = _line + " | "; };
-		_line = _line + format ["%1: %2", (_x select 0),  (_x select 1)];
+		private _roundsLabel = switch (true) do {
+			case (_x # 1 < 0): { "N/A" };
+			case (_x # 1 == 0): { "(reloading)" };
+			default { str (_x # 1) };
+		};
+
+		_line = _line + format ["%1: %2", (_x # 0), _roundsLabel];
 		_totalRounds pushBack (_x select 1);
 	} forEach _fm;
 
@@ -505,7 +511,7 @@ tSF_fnc_ArtillerySupport_Fire = {
 
 tSF_fnc_ArtillerySupport_FireAdjustFiremissionVirtual = {
 	params ["_type","_tgt","_delay"];
-	
+
 	private _ammo = getText (configFile >> "CfgMagazines" >> _type >> "ammo");
 
 	[
@@ -516,17 +522,28 @@ tSF_fnc_ArtillerySupport_FireAdjustFiremissionVirtual = {
 };
 
 tSF_fnc_ArtillerySupport_FireForEffectVirtual = {
-	params ["_type", "_rounds", "_tgtInfo", "_delay", "_battery"];
+	params ["_type", "_rounds", "_tgtInfo", "_delay", "_ETA", "_battery"];
 
 	private _rofDelay = [_battery, "VIRTUAL_ROF"] call tSF_fnc_ArtillerySupport_GetStatus;
 	private _guns = [_battery, "VIRTUAL_GUNS_COUNT"] call tSF_fnc_ArtillerySupport_GetStatus;
-	private _salvos = [_rounds, _guns] call tSF_fnc_ArtillerySupport_getRoundsPerGun;
 	private _ammo = getText (configFile >> "CfgMagazines" >> _type >> "ammo");
-	_delay = _delay max _rofDelay;
 
+	private _salvos = [];
+	if (_delay == 0) then {
+		_salvos = [_rounds, _guns] call tSF_fnc_ArtillerySupport_getRoundsPerGun;
+	} else {
+		for "_i" from 1 to _rounds do { _salvos pushBack 1 };
+	};
+
+	for "_i" from 0 to _ETA do {
+		sleep 1;
+		if ([_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_AssertStatus) exitWith { _i = 999; };
+	};
+
+	_delay = _delay max _rofDelay;
 	for "_i" from 0 to (count _salvos - 1) do {
 		if ([_battery, "State", "Waiting"] call tSF_fnc_ArtillerySupport_AssertStatus) exitWith { _i = 999; };
-		
+
 		[
 			_tgtInfo
 			, _ammo

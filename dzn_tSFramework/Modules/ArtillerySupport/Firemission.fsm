@@ -74,8 +74,8 @@ link36[] = {29,30};
 link37[] = {30,31};
 link38[] = {31,18};
 link39[] = {32,14};
-globals[] = {0.000000,0,0,0,0,640,480,1,306,6316128,1,-444.503296,389.386597,-340.287354,-1215.723999,843,885,1};
-window[] = {2,-1,-1,-32000,-32000,1083,200,1738,200,3,861};
+globals[] = {0.000000,0,0,0,0,640,480,1,306,6316128,1,-181.378265,652.511719,-49.463806,-924.900208,843,869,1};
+window[] = {2,-1,-1,-32000,-32000,964,1945,3483,81,3,861};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -117,7 +117,7 @@ class FSM
                          "[" \n
                          "	_battery" \n
                          "	, ""Firemission Requested""" \n
-                         "	, ""Wait for a searching fire!""" \n
+                         "	, ""Preparing firemission...""" \n
                          "] call tSF_fnc_ArtillerySupport_showHint;" \n
                          ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
@@ -485,10 +485,11 @@ class FSM
                          "		, _number" \n
                          "		, [_pos, _shape, _dir, _size]" \n
                          "		, _delay" \n
+                         "		, _ETA" \n
                          "		, _battery" \n
                          "	] spawn tSF_fnc_ArtillerySupport_FireForEffectVirtual;" \n
                          "" \n
-                         "	_timeout = _ETA + (_delay max (_logic getVariable ""tSF_ArtillerySupport_ROF"")) * _number;" \n
+                         "	_timeout = (_delay max (_logic getVariable ""tSF_ArtillerySupport_ROF"")) * _number;" \n
                          "};" \n
                          "" \n
                          "[" \n

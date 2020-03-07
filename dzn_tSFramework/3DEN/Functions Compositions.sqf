@@ -23,8 +23,8 @@ dzn_fnc_tSF_3DEN_ShowArtilleryCompositionMenu = {
 
 	if (count _toolResult == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	_toolResult params ["_typeId", "_assetId", "_callsign","_condition"];
-	private _label = "";
 
+	private _label = "";
 	if ((_mortarOptions # _typeId) # 1 == "") then {
 		private _virtualArtilleryLabels = ["82mm Mortar", "105mm Howitzer", "155mm Howitzer"];
 		private _toolResult2 = [
@@ -76,7 +76,7 @@ dzn_fnc_tSF_3DEN_SetArtilleryComposition = {
 			, _label
 		];
 
-		if (typename _condition == STRING && {_condition != ""}) then {
+		if (typename _condition == "STRING" && {_condition != ""}) then {
 			_initCode = _initCode + " this setVariable ['tSF_ArtillerySupport_Condition', '" + _condition + "'];";
 		};
 

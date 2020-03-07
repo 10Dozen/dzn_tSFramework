@@ -39,7 +39,7 @@ tSF_ArtillerySupport_FiremissionsProperties = [
  *	Virtual artillery rounds by type, in format:
  *	[
  *		@Artillery Battery confign name
- *		, [ @DisplayName, @NumberAvailable, @RoundClassnames ] // Magazines map
+ *		, [ @DisplayName, @NumberAvailable, @RoundClassname ] // Magazines map
  *		, [ @MinRange, @MaxRange ] // Range limits
  *		, [ @MinRangeETA, @MaxRangeETA ] // ETA min and max
  *		, @NumberOfGuns // Number of guns in battery
@@ -47,7 +47,9 @@ tSF_ArtillerySupport_FiremissionsProperties = [
  *	]
  *
  *	Magazines map:
- *	@NumberAvailable = -1 means not avaialble and no reloading needed
+ *		@DisplayName -- name displayed in Request Firemission screen <STRING>
+ *		@NumberAvailable -- number of firemissions available, -1 means not avaialble and no reloading needed <NUMBER>
+ *		@RoundClassnames -- classname of round magazine <STRING>
  */
 #define HE_RNDS(X,Y) ["HE",X,Y]
 #define SMK_RNDS(X,Y) ["SMK",X,Y]
@@ -72,10 +74,10 @@ tSF_ArtillerySupport_VirtualFiremissionsProperties = [
 	]
 	,[
 		"MRLS"
-		,[HE_RNDS(6,"12Rnd_230mm_rockets"), SMK_RNDS(-1,""), ILLUM_RNDS(-1,"")]
+		,[HE_RNDS(6,"12Rnd_230mm_rockets"), ["CLUSTER",2,"12Rnd_230mm_rockets"], ILLUM_RNDS(-1,"")]
 		, [700, 24000]
 		, [25, 80]
-		, 1
+		, 3
 		, 1
 	]
 	,[
@@ -87,4 +89,3 @@ tSF_ArtillerySupport_VirtualFiremissionsProperties = [
 		, 6
 	]
 ];
-

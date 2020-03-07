@@ -15,7 +15,7 @@ if (hasInterface) then {
 		{
 			_x params ["_logic","_callsign","_name","_gunsObjects","_isVirtual","_condition"];
 			
-			private _conditionCode = "player call tSF_fnc_ArtillerySupport_isAuthorizedUser"
+			private _conditionCode = "player call tSF_fnc_ArtillerySupport_isAuthorizedUser";
 			if (_condition != "") then {
 				_conditionCode = _conditionCode + " && {" + _condition + "}";
 			};
