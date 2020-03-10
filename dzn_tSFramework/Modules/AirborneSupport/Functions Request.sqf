@@ -151,6 +151,56 @@ tSF_fnc_AirborneSupport_showHint = {
 /*
  *	Pick Up
  */
+tSF_fnc_AirborneSupport_PathDrawer = {
+	params ["_mode", "_payload"];
+	switch (toUpper _mode) do {
+		case "ADD": {
+			if (isNil "tSF_fnc_AirborneSupport_OnMapPath") then {
+				tSF_fnc_AirborneSupport_OnMapPath = [_payload];
+			} else {
+				tSF_fnc_AirborneSupport_OnMapPath pushBack _payload;
+			};
+			if (isNil "tSF_AirborneSupport_PathDrawerEH") then { ["START"] call tSF_fnc_AirborneSupport_PathDrawer; };
+		};
+		case "ICON": {
+			tSF_fnc_AirborneSupport_OnMapIcon = switch (toUpper _payload) do {
+				case "INGRESS": { ["\A3\ui_f\data\map\markers\military\marker_CA.paa", [1,0.2,0.2,1], "Ingress"] };
+				case "EGRESS": { ["\A3\ui_f\data\map\markers\military\marker_CA.paa", [1,0.2,0.2,1], "Engress"] };
+				case "PICKUP": { ["\A3\ui_f\data\map\markers\military\pickup_CA.paa", [1,0.5,0.5,1], "Pick up"] };
+			};
+		};
+		case "START": {
+			tSF_AirborneSupport_PathDrawerEH = (findDisplay 12 displayCtrl 51) ctrlAddEventHandler [
+				"Draw",
+				{
+					private _mousePos = ((_this # 0) ctrlMapScreenToWorld getMousePosition);
+					private _nodes = +tSF_fnc_AirborneSupport_OnMapPath;
+					_nodes pushBack _mousePos;
+
+					for "_i" from 0 to (count _nodes)-2 do {
+						(_this # 0) drawLine [_nodes # _i, _nodes # (_i + 1), [0,0,1,1]];
+					};
+
+					if (!isNil "tSF_fnc_AirborneSupport_OnMapIcon") then {
+						(_this # 0) drawIcon [
+							tSF_fnc_AirborneSupport_OnMapIcon # 0,
+							tSF_fnc_AirborneSupport_OnMapIcon # 1,
+							_mousePos, 32, 32, 0,
+							tSF_fnc_AirborneSupport_OnMapIcon # 2,
+							true
+						];
+					};
+				}
+			];
+		};
+		case "STOP": {
+			(findDisplay 12 displayCtrl 51) ctrlRemoveEventHandler ["Draw", tSF_AirborneSupport_PathDrawerEH];
+			tSF_AirborneSupport_PathDrawerEH = nil;
+			tSF_fnc_AirborneSupport_OnMapPath = nil;
+			tSF_fnc_AirborneSupport_OnMapIcon = nil;
+		};
+	};
+};
 
 tSF_fnc_AirborneSupport_Pickup_Action = {
 	private _veh = (_this call tSF_fnc_AirborneSupport_GetProvider) select 0;
@@ -159,32 +209,31 @@ tSF_fnc_AirborneSupport_Pickup_Action = {
 	[
 		_veh
 		, "Pickup Requested"
-		, "<t size='0.8'>(Step 1 of 2)</t> <br />Select INGRESS waypoint!"
+		, "<t size='0.8'>(Step 1 of 2)</t> Select INGRESS waypoint!"
 		, true
 	] call tSF_fnc_AirborneSupport_showHint;
 
-	["tSF_AirborneSupport_clickForPickup", "onMapSingleClick", {
-		params ["_id","_pos","_alt","_shifr", "_veh"];
+	tSF_fnc_AirborneSupport_OnMapPath = [ getPos _veh ];
+	["ADD", getPos _veh] call tSF_fnc_AirborneSupport_PathDrawer;
+	["ICON", "INGRESS"] call tSF_fnc_AirborneSupport_PathDrawer;
 
+	["tSF_AirborneSupport_clickForPickup", "onMapSingleClick", {
 		["tSF_AirborneSupport_clickForPickup", "onMapSingleClick"] call BIS_fnc_removeStackedEventHandler;
+		
+		params ["_id","_pos","_alt","_shifr", "_veh"];
 		tSF_Ingress_Mrk = ["tSF_Ingress", _pos, "mil_marker", "ColorCIV", "Ingress", true] call dzn_fnc_createMarkerIcon;
+		["ADD", _pos] call tSF_fnc_AirborneSupport_PathDrawer;
+		["ICON", "PICKUP"] call tSF_fnc_AirborneSupport_PathDrawer;
 
 		if (!visibleMap) then { openMap [true,false]; };
-
-		[
-			_veh
-			, "Pickup Requested"
-			, "<t size='0.8'>(Step 2 of 2)</t><br />Select LZ!"
-			, true
-		] call tSF_fnc_AirborneSupport_showHint;
+		[_veh, "Pickup Requested", "<t size='0.8'>(Step 2 of 2)</t> Select LZ!", true] call tSF_fnc_AirborneSupport_showHint;
 
 		["tSF_AirborneSupport_clickForPickupLZ", "onMapSingleClick", {
 			params ["_id","_pos","_alt","_shifr","_veh","_ingressPos"];
 			if (_pos call dzn_fnc_isInWater) exitWith { hint "Landing Zone should not be in water!"; };
-			
+
 			private _nearSafePos = [_pos, 0, 20, 10] call BIS_fnc_findSafePos;
 			if (_pos distance2d _nearSafePos > 20) exitWith { hint "Position is not available for landing!"; };
-
 			openMap [false,false];
 
 			[_veh, [
@@ -195,15 +244,12 @@ tSF_fnc_AirborneSupport_Pickup_Action = {
 				, ["IN PROGRESS", true]
 			]] call tSF_fnc_AirborneSupport_SetStatus;
 
-			[
-				_veh
-				, "Pickup Requested"
-				, "Approaching to AO!"
-			] call tSF_fnc_AirborneSupport_showHint;
+			[_veh, "Pickup Requested", "Approaching to AO!"] call tSF_fnc_AirborneSupport_showHint;
 			[_veh, "Leaving base and approaching to AO!"] call tSF_fnc_AirborneSupport_showMsg;
 
 			deleteMarker tSF_Ingress_Mrk;
 
+			["STOP"] call tSF_fnc_AirborneSupport_PathDrawer;
 			["tSF_AirborneSupport_clickForPickupLZ", "onMapSingleClick"] call BIS_fnc_removeStackedEventHandler;
 		}, [_veh,_pos]] call BIS_fnc_addStackedEventHandler;
 	}, [_veh]] call BIS_fnc_addStackedEventHandler;

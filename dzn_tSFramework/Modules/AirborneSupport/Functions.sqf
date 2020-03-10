@@ -112,56 +112,64 @@ tSF_fnc_AirborneSupport_Diag = {
  */
 
 tSF_fnc_AirborneSupport_processLogics = {
+	private _vehicles = [];
+	private _returnPoints = [];
 	{
 		private _logic = _x;
-
-		if !(isNil {_logic getVariable "tSF_AirborneSupport"}) then {
-			tSF_AirborneSupport_Vehicles pushBack [
-				(synchronizedObjects _logic) select 0
-				, _logic getVariable "tSF_AirborneSupport"
-			];
+		if (!isNil {_logic getVariable "tSF_AirborneSupport_ReturnPoint"}) then {
+			{ _returnPoints pushBack (getPosATL _x); } forEach (synchronizedObjects _logic);
 		};
-
-		if !(isNil {_logic getVariable "tSF_AirborneSupport_ReturnPoint"}) then {
-			{
-				tSF_AirborneSupport_ReturnPoints pushBack (getPosATL _x);
-			} forEach (synchronizedObjects _logic);
+		if (!isNil {_logic getVariable "tSF_AirborneSupport"}) then {
+			_vehicles pushBack [(synchronizedObjects _logic) # 0, _logic getVariable "tSF_AirborneSupport"];
 		};
 	} forEach (entities "Logic");
 
-	if (count tSF_AirborneSupport_Vehicles > count tSF_AirborneSupport_ReturnPoints) then {
-		diag_log "tSF :: Support :: There are not enough Return points for vehicles";
-		["tSF :: Support :: There are not enough Return points for vehicles"] call BIS_fnc_error;
+	tSF_AirborneSupport_ReturnPoints = _returnPoints;
+	tSF_AirborneSupport_Vehicles = _vehicles;
+	
+	if (count _vehicles > count _returnPoints) then {
+		diag_log "tSF :: Support :: There is not enough Return points for vehicles";
+		["tSF :: Support :: There is not enough Return points for vehicles"] call BIS_fnc_error;
 	};
 
-	tSF_AirborneSupport_ReturnPointsList = [] + tSF_AirborneSupport_ReturnPoints;
+	[_vehicles, +_returnPoints] call tSF_fnc_AirborneSupport_processVehicleServer;
 };
 
 tSF_fnc_AirborneSupport_processVehicleServer = {
-	params ["_veh","_name"];
-
-	[_veh, "CALLSIGN", _name] call tSF_fnc_AirborneSupport_SetStatus;
-	private _type = (typeOf _veh) call dzn_fnc_getVehicleDisplayName;
-	[_veh, "NAME", if (_name == "") then { _type } else { format ["%1 (%2)", _name, _type] }] call tSF_fnc_AirborneSupport_SetStatus;
-
-	private _pos = getPosATL _veh;
-	private _point = [0,0,0];
+	params ["_vehicles","_points"];
 	{
-		if (_pos distance _x < _pos distance _point) then { _point = _x; };
-	} forEach tSF_AirborneSupport_ReturnPoints;
-	tSF_AirborneSupport_ReturnPoints = tSF_AirborneSupport_ReturnPoints - _point;
+		_x params ["_veh","_callsign"];
 
-	[_veh, "RTB POINT", _point] call tSF_fnc_AirborneSupport_SetStatus;
-	[_veh, "IN PROGRESS", false] call tSF_fnc_AirborneSupport_SetStatus;
-	[_veh, "STATE", "Waiting"] call tSF_fnc_AirborneSupport_SetStatus;
+		private _type = (typeOf _veh) call dzn_fnc_getVehicleDisplayName;
+		private _name = if (_callsign == "") then { _type } else { format ["%1 (%2)", _callsign, _type] };
+		private _pos = getPosATL _veh;
+		
+		private _point = [0,0,0];
+		private _max = -log 0;
+		private _idx = -1;
+		{
+			if (_pos distanceSqr _x < _max) then {
+				_point = _x;
+				_idx = _forEachIndex;
+			};
+		} forEach _points;
+		_points deleteAt _idx;
+		
+		_veh allowDamage false;
+		_veh setPosATL _point;
+		_veh allowDamage true;
 
-	_veh allowDamage false;
-	_veh setPosATL _point;
-	_veh allowDamage true;
-
-	[_veh, false] execFSM "dzn_tSFramework\Modules\AirborneSupport\Support.fsm";
+		[_veh, [
+			["CALLSIGN", _callsign]
+			,["NAME", _name]
+			, ["IN PROGRESS", false]
+			, ["STATE", "Waiting"]
+			, ["RTB POINT", _point]
+		]] call tSF_fnc_AirborneSupport_SetStatus;
+		
+		[_veh, false] execFSM "dzn_tSFramework\Modules\AirborneSupport\Support.fsm";
+	} forEach _vehicles;
 };
-
 
 /*
  *	Control functions
@@ -296,17 +304,17 @@ tSF_fnc_AirborneSupport_PreciseLanding = {
 				_veh land "GET IN";
 				_veh flyInHeight 0;
 			};
-			
+
 			if (_interval > 0.99) exitWith {
 				[_handle] call CBA_fnc_removePerFrameHandler;
-				
-				
+
+
 			};
-			
+
 			private _dir = _veh getDir _toPos;
 			private _vectorDir = [sin _dir, cos _dir, 0];
 
-			_veh setVelocityTransformation [ 
+			_veh setVelocityTransformation [
 				_fromPos, _toPos,
 				[0,0,0], [0,0,0],
 				vectorDirVisual _veh, _vectorDir,
@@ -356,7 +364,7 @@ tSF_fnc_AirborneSupport_doTeleport = {
 	params["_unit","_dest"];
 
 	private _pos = if ("base" == toLower(_dest)) then {
-		selectRandom tSF_AirborneSupport_ReturnPointsList
+		selectRandom tSF_AirborneSupport_ReturnPoints
 	} else {
 		getPosATL ( selectRandom (units (group _unit)) )
 	};

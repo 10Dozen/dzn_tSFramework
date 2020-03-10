@@ -8,9 +8,14 @@ tSF_AirborneSupport_initTimeout		= 5;
 tSF_AirborneSupport_initCondition = { true }; // Overall condition of module init
 
 /*
+ *	Requires LR radio
+ */
+tSF_AirborneSupport_RequiredLRRadio = true;
+
+/*
  *	Allow authorized units to teleport from tSF_AirborneSupport_ReturnPoint to their Squad
  */
-tSF_AirborneSupport_Teleport		= true;
+tSF_AirborneSupport_AllowTeleport		= true;
 
 /*
  *	Available actions
@@ -25,13 +30,11 @@ tSF_AirborneSupport_Handler_CheckTimeout = 3; // seconds
 /*
  *	Vehicle availabness options
  */
-
 tSF_AirborneSupport_DamageLimit		= 0.75;
 tSF_AirborneSupport_FuelLimit		= 0.15;
 
 /*
  *	AI Pilot
  */
-
 tSF_AirborneSupport_PilotClass 		= "B_helipilot_F";
 tSF_AirborneSupport_PilotKit		= "";
