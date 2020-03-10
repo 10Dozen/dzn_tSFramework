@@ -1,13 +1,13 @@
-/*%FSM<COMPILE "scriptedFSM.cfg, Support">*/
+/*%FSM<COMPILE "E:\GMZ\STEAM\steamapps\common\Arma 3 Tools\FSMEditor\scriptedFSM.cfg, Support">*/
 /*%FSM<HEAD>*/
 /*
 item0[] = {"Start",0,250,-50.000000,-1125.000000,50.000000,-1075.000000,0.000000,"Start"};
 item1[] = {"true",4,218,-50.000000,-1050.000000,50.000000,-1000.000000,0.000000,"true"};
 item2[] = {"Reset",2,250,-50.000000,-975.000000,50.000000,-925.000000,0.000000,"Reset"};
 item3[] = {"Pick_Up_Requeste",4,218,-300.000000,-900.000000,-200.000000,-850.000000,0.000000,"Pick Up" \n "Requested"};
-item4[] = {"Pickup_Started_Move",2,4346,-300.000000,-825.000000,-200.000000,-775.000000,0.000000,"Pickup Started" \n "Move to Ingress"};
+item4[] = {"Pickup_Started_Move",2,250,-300.000000,-825.000000,-200.000000,-775.000000,0.000000,"Pickup Started" \n "Move to Ingress"};
 item5[] = {"Reaching_Ingress",4,218,-300.000000,-750.000000,-200.000000,-700.000000,0.000000,"Reaching" \n "Ingress"};
-item6[] = {"Move_to_Landing",2,250,-300.000000,-675.000000,-200.000000,-625.000000,0.000000,"Move to" \n "Landing Zone"};
+item6[] = {"Move_to_Landing",2,4346,-300.000000,-675.000000,-200.000000,-625.000000,0.000000,"Move to" \n "Landing Zone"};
 item7[] = {"Reaching_LZ",4,218,-300.000000,-600.000000,-200.000000,-550.000000,0.000000,"Reaching" \n "LZ"};
 item8[] = {"Land_at_LZ",2,250,-300.000000,-525.000000,-200.000000,-475.000000,0.000000,"Land at LZ"};
 item9[] = {"Sequence_Finishe",4,218,-50.000000,-400.000000,50.000000,-350.000000,0.000000,"Sequence" \n "Finished"};
@@ -87,8 +87,8 @@ link43[] = {36,16};
 link44[] = {36,37};
 link45[] = {37,3};
 link46[] = {38,10};
-globals[] = {0.000000,0,0,0,0,640,480,1,380,6316128,1,-660.400513,423.755310,-216.507690,-1187.639282,988,885,1};
-window[] = {2,-1,-1,-1,-1,864,50,1265,50,3,1006};
+globals[] = {0.000000,0,0,0,0,640,480,1,380,6316128,1,-388.062256,295.223663,-6.320923,-1085.913330,523,643,1};
+window[] = {0,-1,-1,-1,-1,887,612,1827,73,1,541};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -102,7 +102,7 @@ class FSM
                         itemno = 0;
                         init = /*%FSM<STATEINIT""">*/"params[" \n
                          "	""_veh""" \n
-                         "	, [""_debug"", false]" \n
+                         "	, [""_debug"", true]" \n
                          "];" \n
                          "" \n
                          "if (_debug) then { systemChat ""[AS] Init""; };" \n
@@ -179,19 +179,29 @@ class FSM
                          "" \n
                          "_ingressPoint = [_veh, ""INGRESS POINT""] call tSF_fnc_AirborneSupport_GetStatus;" \n
                          "_landingPoint = [_veh, ""LANDING POINT""] call tSF_fnc_AirborneSupport_GetStatus;" \n
+                         "/*" \n
+                         "private _pos = ([" \n
+                         "	_landingPoint" \n
+                         "	, 0" \n
+                         "	, 150" \n
+                         "	, 5" \n
+                         "] call BIS_fnc_findSafePos) + [0];" \n
                          "" \n
-                         "private _pos = _landingPoint findEmptyPosition [0, 75, typeOf _veh];" \n
+                         "if (_landingPoint distance2d _pos > 150) then { hint ""Failed to found position""; };" \n
+                         "*/" \n
+                         "/*_landingPoint findEmptyPosition [5, 75, ""B_Heli_Transport_03_F""];" \n
                          "" \n
                          "if (_pos isEqualTo []) then {" \n
-                         "	 _pos = _landingPoint findEmptyPosition [0, 175, typeOf _veh];" \n
+                         "	 _pos = _landingPoint findEmptyPosition [75, 500, ""B_Heli_Transport_03_F""];" \n
                          "};" \n
+                         "*/" \n
                          "" \n
-                         "_helipad = [_veh, _pos, _ingressPoint getDir _landingPoint] call tSF_fnc_AirborneSupport_SetLandingPad;" \n
+                         "_helipad = [_veh, _landingPoint, _ingressPoint getDir _landingPoint] call tSF_fnc_AirborneSupport_SetLandingPad;" \n
                          "" \n
                          "if (_debug) then { systemChat ""Pickup: LZ created""; };" \n
                          "" \n
                          "_pilot = _veh call tSF_fnc_AirborneSupport_AddPilot;" \n
-                         "[_pilot, _ingressPoint, 400] call tSF_fnc_AirborneSupport_MoveToPosition;" \n
+                         "[_pilot, _ingressPoint, 300] call tSF_fnc_AirborneSupport_MoveToPosition;" \n
                          ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
@@ -216,10 +226,10 @@ class FSM
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
                                         condition=/*%FSM<CONDITION""">*/"systemChat format [" \n
                                          "   ""Pickup: Check Ingress point reached -- %1""" \n
-                                         "   , _veh distance _ingressPoint < 400" \n
+                                         "   , _veh distance _ingressPoint < 350" \n
                                          "];" \n
                                          "" \n
-                                         "(_veh distance2d _ingressPoint < 400)"/*%FSM</CONDITION""">*/;
+                                         "(_veh distance2d _ingressPoint < 350)"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/
@@ -231,8 +241,15 @@ class FSM
                 {
                         name = "Move_to_Landing";
                         itemno = 6;
-                        init = /*%FSM<STATEINIT""">*/"[_pilot, _landingPoint] call tSF_fnc_AirborneSupport_MoveToPosition;" \n
-                         "	"/*%FSM</STATEINIT""">*/;
+                        init = /*%FSM<STATEINIT""">*/"[" \n
+                         "	_pilot," \n
+                         "	_landingPoint getPos [100, _veh getDir _landingPoint]," \n
+                         "	50" \n
+                         "] call tSF_fnc_AirborneSupport_MoveToPosition;" \n
+                         "	" \n
+                         "" \n
+                         "systemChat ""Pickup: Ingress point reached"";" \n
+                         ""/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
@@ -254,8 +271,8 @@ class FSM
                                         priority = 0.000000;
                                         to="Land_at_LZ";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
-                                        condition=/*%FSM<CONDITION""">*/"(_veh distance2d _landingPoint < 200)" \n
-                                         "&& " \n
+                                        condition=/*%FSM<CONDITION""">*/"(_veh distance2d _landingPoint < 50)" \n
+                                         "||" \n
                                          "(currentWaypoint (group _pilot) > 0)"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
@@ -270,7 +287,9 @@ class FSM
                         itemno = 8;
                         init = /*%FSM<STATEINIT""">*/"if (_debug) then { systemChat ""Pickup: Landing""; };" \n
                          "" \n
-                         "[_veh, ""GET IN""] spawn tSF_fnc_AirborneSupport_Land;"/*%FSM</STATEINIT""">*/;
+                         "systemChat ""Pickup: Landing point reached, landing..."";" \n
+                         "" \n
+                         "[_veh, ""GET IN"", _helipad, _veh getDir _landingPoint] spawn tSF_fnc_AirborneSupport_Land;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {
@@ -292,7 +311,7 @@ class FSM
                                         priority = 0.000000;
                                         to="Reset";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
-                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"systemChat ""Airborne Sequence Finished""; true"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/
@@ -405,7 +424,7 @@ class FSM
                                         priority = 0.000000;
                                         to="Reset";
                                         precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
-                                        condition=/*%FSM<CONDITION""">*/""/*%FSM</CONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"systemChat ""Airborne Sequence Finished""; true"/*%FSM</CONDITION""">*/;
                                         action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
                                 };
                                 /*%FSM</LINK>*/
