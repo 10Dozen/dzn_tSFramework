@@ -1,3 +1,5 @@
+#include "Modules\script_component_macro.hpp"
+
 // **************************
 //
 // 	DZN TS FRAMEWORK
@@ -24,8 +26,8 @@ tSF_module_Interactives = false;
 tSF_module_ACEActions = true;
 
 tSF_module_Authorization = true;
-tSF_module_AirborneSupport = false;
-tSF_module_ArtillerySupport = false;
+tSF_module_AirborneSupport = true;
+tSF_module_ArtillerySupport = true;
 tSF_module_POM = true;
 
 tSF_module_EditorVehicleCrew = false;
@@ -53,17 +55,21 @@ tSF_module_Conversations = false;
 	, "CCP"
 	, "FARP"
 	, "Authorization"
-	, "AirborneSupport"
+	/*, "AirborneSupport"*/
 	, "ArtillerySupport"
 	, "Interactives"
 	, "ACEActions"
 	
 	, "EditorVehicleCrew"
 	, "EditorUnitBehavior"
-	, "EditorRadioSettings"	
+	, "EditorRadioSettings"
 	, "tSAdminTools"
 	
 	, "Conversations"
 ] apply {	
 	call compile format ["if (tSF_module_%1) then { [] execVM 'dzn_tSFramework\Modules\%1\Init.sqf' }", _x]
 };
+
+
+RUN_MODULE(AirborneSupport);
+

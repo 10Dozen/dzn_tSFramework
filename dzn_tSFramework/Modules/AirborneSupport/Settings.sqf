@@ -1,40 +1,36 @@
-/*
- *	Dependency:
- *		- Modules/Authorization
- *		- Modules/ACEActions
+#include "data\script_component.hpp"
+
+/* Dependency:
+ *    - Modules/Authorization
+ *    - Modules/ACEActions
  */
 
-tSF_AirborneSupport_initTimeout		= 5;
-tSF_AirborneSupport_initCondition = { true }; // Overall condition of module init
+GVAR(initTimeout) = 5;
+GVAR(initCondition) = { true }; // Overall condition of module init
 
-/*
- *	Requires LR radio
+/* Allow authorized units to teleport from tSF_AirborneSupport_ReturnPoint to their Squad
  */
-tSF_AirborneSupport_RequiredLRRadio = true;
+GVAR(AllowTeleport) = true;
 
-/*
- *	Allow authorized units to teleport from tSF_AirborneSupport_ReturnPoint to their Squad
+/* Available actions
  */
-tSF_AirborneSupport_AllowTeleport		= true;
+GVAR(ReturnToBase) = true;
+GVAR(CallIn) = true;
+GVAR(RequestPickup) = true;
 
-/*
- *	Available actions
+GVAR(CallIn_MinDistance) = 100; // meters
+GVAR(Handler_CheckTimeout) = 3; // seconds
+
+/* Vehicle availabness options
  */
-tSF_AirborneSupport_ReturnToBase		= true;
-tSF_AirborneSupport_CallIn			= true;
-tSF_AirborneSupport_RequestPickup		= true;
+GVAR(DamageLimit) = 0.75;
+GVAR(FuelLimit) = 0.15;
 
-tSF_AirborneSupport_CallIn_MinDistance = 300; // meters
-tSF_AirborneSupport_Handler_CheckTimeout = 3; // seconds
-
-/*
- *	Vehicle availabness options
+/* Requires LR radio
  */
-tSF_AirborneSupport_DamageLimit		= 0.75;
-tSF_AirborneSupport_FuelLimit		= 0.15;
+GVAR(RequiredLRRadio) = true;
 
-/*
- *	AI Pilot
+/* AI Pilot
  */
-tSF_AirborneSupport_PilotClass 		= "B_helipilot_F";
-tSF_AirborneSupport_PilotKit		= "";
+GVAR(PilotClass) = "B_helipilot_F";
+GVAR(PilotKit) = "";
