@@ -21,12 +21,13 @@ FUNC(assertStatus) = {
 	private _veh = if (typename _callsign == "OBJECT") then [{ _callsign }, { (_callsign call FUNC(GetProvider)) # 0 }];
 
 	switch (toUpper(_state)) do {
-		case "STATE":		{ toUpper(_veh getVariable [QGVAR(State), "Undefined"]) == toUpper(_assertValue) };
-		case "REQUESTER":		{ (_veh getVariable [QGVAR(Requester), objNull]) == _assertValue };
-		case "CREW":		{ (_veh getVariable [QGVAR(Crew), grpNull]) == _assertValue };
-		case "RTB POINT":		{ (_veh getVariable [QGVAR(RTBPoint), [0,0,0]]) isEqualTo _assertValue };
-		case "CALLSIGN":		{ toUpper(_veh getVariable [QGVAR(Callsign), "Undefined"]) == toUpper(_assertValue) };
-		case "NAME": 		{ toUpper(_veh getVariable [QGVAR(Name), "Undefined"]) == toUpper(_assertValue) };
+		case "STATE":       { toUpper(_veh getVariable [QGVAR(State), "Undefined"]) == toUpper(_assertValue) };
+		case "REQUESTER":   { (_veh getVariable [QGVAR(Requester), objNull]) == _assertValue };
+		case "CREW":        { (_veh getVariable [QGVAR(Crew), grpNull]) == _assertValue };
+		case "RTB POINT":   { (_veh getVariable [QGVAR(RTBPoint), [0,0,0]]) isEqualTo _assertValue };
+		case "CALLSIGN":    { toUpper(_veh getVariable [QGVAR(Callsign), "Undefined"]) == toUpper(_assertValue) };
+		case "NAME":        { toUpper(_veh getVariable [QGVAR(Name), "Undefined"]) == toUpper(_assertValue) };
+		case "LAND MODE":   { toUpper(_veh getVariable [QGVAR(LandMode), "LAND"]) == toUpper(_assertValue) };
 	}
 };
 
@@ -47,18 +48,19 @@ FUNC(setStatus) = {
 	params["_callsign","_state","_value"];
 
 	switch (toUpper(_state)) do {
-		case "CALLSIGN":		{ _veh setVariable [QGVAR(Callsign), _value, true]; };
-		case "NAME":		{ _veh setVariable [QGVAR(Name), _value, true]; };
-		case "STATE":		{ _veh setVariable [QGVAR(State), _value, true]; };
-		case "REQUESTER":		{ _veh setVariable [QGVAR(Requester), _value, true]; };
-		case "CREW":		{ _veh setVariable [QGVAR(Crew), _value, true]; };
-		case "RTB POINT":		{ _veh setVariable [QGVAR(RTBPoint), _value, true]; };
-		case "IN PROGRESS":	{ _veh setVariable [QGVAR(InProgress), _value, true]; };
-		case "SIDE":		{ _veh setVariable [QGVAR(Side), _value, true]; };
-		case "LANDING POINT":	{ _veh setVariable [QGVAR(LandingPoint), _value, true]; };
-		case "INGRESS POINT":	{ _veh setVariable [QGVAR(IngressPoint), _value, true]; };
-		case "EGRESS POINT":	{ _veh setVariable [QGVAR(EgressPoint), _value, true]; };
-		case "LANDING PAD":	{ _veh setVariable [QGVAR(LandingPad), _value, true ]; };
+		case "CALLSIGN":       { _veh setVariable [QGVAR(Callsign), _value, true]; };
+		case "NAME":           { _veh setVariable [QGVAR(Name), _value, true]; };
+		case "STATE":          { _veh setVariable [QGVAR(State), _value, true]; };
+		case "REQUESTER":      { _veh setVariable [QGVAR(Requester), _value, true]; };
+		case "CREW":           { _veh setVariable [QGVAR(Crew), _value, true]; };
+		case "RTB POINT":      { _veh setVariable [QGVAR(RTBPoint), _value, true]; };
+		case "IN PROGRESS":    { _veh setVariable [QGVAR(InProgress), _value, true]; };
+		case "SIDE":           { _veh setVariable [QGVAR(Side), _value, true]; };
+		case "LANDING POINT":  { _veh setVariable [QGVAR(LandingPoint), _value, true]; };
+		case "INGRESS POINT":  { _veh setVariable [QGVAR(IngressPoint), _value, true]; };
+		case "EGRESS POINT":   { _veh setVariable [QGVAR(EgressPoint), _value, true]; };
+		case "LANDING PAD":    { _veh setVariable [QGVAR(LandingPad), _value, true ]; };
+		case "LAND MODE":      { _veh setVariable [QGVAR(LandMode), _value, true ]; };
 	}
 };
 
@@ -81,6 +83,7 @@ FUNC(getStatus) = {
 		case "INGRESS POINT":     { _veh getVariable [QGVAR(IngressPoint), [0,0,0]]; };
 		case "EGRESS POINT":      { _veh getVariable [QGVAR(EgressPoint), [0,0,0]]; };
 		case "LANDING PAD":       { _veh getVariable [QGVAR(LandingPad), objNull]; };
+		case "LAND MODE":         { _veh getVariable [QGVAR(LandMode), "LAND"]; };
 	}
 };
 
@@ -155,6 +158,7 @@ FUNC(processVehicleServer) = {
 		private _idx = -1;
 		{
 			if (_pos distanceSqr _x < _max) then {
+				_max = _pos distanceSqr _x;
 				_point = _x;
 				_idx = _forEachIndex;
 			};
@@ -274,31 +278,38 @@ FUNC(moveToPosition) = {
 FUNC(land) = {
 	params ["_veh","_mode","_helipad", "_approachDirection"];
 
-	if (toLower(_mode) == "land") then {
-		_veh land _mode;
-		private _landingPoint = [_veh, "RTB POINT"] call FUNC(GetStatus);
+	switch (toUpper _mode) do {
+		case "LAND": {
+			_veh land _mode;
+			private _landingPoint = [_veh, "RTB POINT"] call FUNC(GetStatus);
 
-		[{ (_this # 0) distance (_this # 1) < 10 },{
-			params ["_veh", "_point"];
+			[{ (_this # 0) distance (_this # 1) < 10 },{
+				params ["_veh", "_point"];
 
-			_veh allowDamage false;
-			private _pilot = driver _veh;
-			private _grp = group _pilot;
-			moveOut _pilot;
-			deleteVehicle _pilot;
-			deleteGroup _grp;
+				_veh allowDamage false;
+				private _pilot = driver _veh;
+				private _grp = group _pilot;
+				moveOut _pilot;
+				deleteVehicle _pilot;
+				deleteGroup _grp;
 
-			_veh engineOn false;
-			_veh setVelocity [0,0,0];
-			_veh setPos _landingPoint;
+				_veh engineOn false;
+				_veh setVelocity [0,0,0];
+				_veh setPos _landingPoint;
 
-			[{ (getPosATL _this # 2) < 10}, {
-				_this allowDamage true;
-			}, _veh, 5] call CBA_fnc_waitUntilAndExecute;
-		}, [_veh, _landingPoint], 5] call CBA_fnc_waitUntilAndExecute;
-	} else {
-		[_veh, _helipad, _approachDirection] call FUNC(PreciseLanding);
-	};
+				[{ (getPosATL _this # 2) < 10}, {
+					_this allowDamage true;
+				}, _veh, 5] call CBA_fnc_waitUntilAndExecute;
+			}, [_veh, _landingPoint], 5] call CBA_fnc_waitUntilAndExecute;
+		};
+		case "GET IN": {
+			[_veh, _helipad, _approachDirection] call FUNC(PreciseLanding);
+		};
+		case "HOVER": {
+			systemChat "HOVERING";
+			[_veh, _helipad] call FUNC(preciseHovering);
+		};
+	}
 };
 
 FUNC(preciseLanding) = {
@@ -324,12 +335,7 @@ FUNC(preciseLanding) = {
 				_veh land "GET IN";
 				_veh flyInHeight 0;
 			};
-
-			if (_interval > 0.99) exitWith {
-				[_handle] call CBA_fnc_removePerFrameHandler;
-
-
-			};
+			if (_interval > 0.99) exitWith { [_handle] call CBA_fnc_removePerFrameHandler; };
 
 			private _dir = _veh getDir _toPos;
 			private _vectorDir = [sin _dir, cos _dir, 0];
@@ -344,6 +350,53 @@ FUNC(preciseLanding) = {
 		},
 		0,
 		[_veh, _pad, _fromPos, _toPos, _timeFrom, _timeTo]
+	] call CBA_fnc_addPerFrameHandler;
+};
+
+FUNC(preciseHovering) = {
+	params ["_veh","_pad", ["_time",7]];
+	if (!local _veh) exitWith {
+		_this remoteExec [QFUNC(preciseHovering), _veh];
+	};
+
+	private _fromPos = getPosASL _veh;
+	private _toPos = getPosASL _pad;
+	_toPos set [2, (_toPos # 2) + 20];
+
+	private _timeFrom = time;
+	private _timeTo = _timeFrom + (_time min (_fromPos distance2d _toPos)/2);
+
+	[
+		{
+			params ["_args","_handle"];
+			_args params ["_veh","_fromPos","_toPos","_timeFrom","_timeTo"];
+
+			private _interval = linearConversion [_timeFrom, _timeTo, time, 0, 1, true];
+			private _dir = _veh getDir _toPos;
+			private _vectorDir = [sin _dir, cos _dir, 0];
+
+			if (_interval < 1) then {
+				_veh setVelocityTransformation [
+					_fromPos, _toPos,
+					[0,0,0], [0,0,0],
+					vectorDirVisual _veh, _vectorDir,
+					vectorUpVisual _veh, [0,0,1],
+					_interval
+				];
+			} else {
+				if (getPosATL _veh # 2 > 25) then {
+					_veh setVelocity [0,0,-0.5];
+				} else {
+					_veh setVelocity [0,0,0];
+				};
+			};
+
+			if (!([_veh, "STATE", "Waiting"] call FUNC(assertStatus))) exitWith {
+				[_handle] call CBA_fnc_removePerFrameHandler; 
+			};
+		},
+		0,
+		[_veh, _fromPos, _toPos, _timeFrom, _timeTo]
 	] call CBA_fnc_addPerFrameHandler;
 };
 

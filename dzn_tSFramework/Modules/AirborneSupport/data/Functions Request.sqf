@@ -99,15 +99,38 @@ FUNC(ShowRequestMenu) = {
 
 	private _i = 5;
 	if (_inProgress) then {
+		private _landType = ([_veh, "LAND MODE"] call FUNC(getStatus));
+		if (_landType != "") then {
+			if (_landType == "GET IN") then { _landType = "LAND"; };
+			_landType = format ["/ %1 ", _landType];
+		};
+
 		_menu pushBack [_i, "HEADER", format [
-			"<t font='PuristaBold' align='center'>MISSION IN PROGRESS</t><t align='center'> [ %1 ]</t>"
+			"<t font='PuristaBold' align='center'>MISSION IN PROGRESS</t><t align='center'> [ %1 %2]</t>"
 			, [_veh, "STATE"] call FUNC(getStatus)
+			, _landType
 		]];
-		_menu pushBack [_i + 1, "BUTTON", "<t align='center'>ABORT CURRENT MISSION</t>", {
+		_i = _i + 1;
+		
+		if ([_veh, "STATE", "Pickup"] call FUNC(assertStatus)) then {
+			_menu pushBack [_i, "BUTTON", "<t align='center'>LAND ON LZ</t>", {
+				closeDialog 2;
+				[_args, "LAND"] call FUNC(requestLandMode);
+			}, _callsign];
+			_i = _i + 1;
+
+			_menu pushBack [_i, "BUTTON", "<t align='center'>HOVER ON LZ</t>", {
+				closeDialog 2;
+				[_args, "HOVER"] call FUNC(requestLandMode);
+			}, _callsign];
+			_i = _i + 1;
+		};
+		
+		_menu pushBack [_i, "BUTTON", "<t align='center'>ABORT CURRENT MISSION</t>", {
 			closeDialog 2;
 			_args call FUNC(RequestAbortMission);
 		}, _callsign];
-		_i = _i + 2;
+		_i = _i + 1;
 	} else {
 		_menu pushBack [_i, "HEADER", "<t font='PuristaBold' align='center'>READY FOR MISSION</t>"];
 		_i = _i + 1;
@@ -236,6 +259,7 @@ FUNC(requestPickup) = {
 				, ["LANDING POINT", _pos]
 				, ["INGRESS POINT", _ingressPos]
 				, ["IN PROGRESS", true]
+				, ["LAND MODE", "GET IN"]
 			]] call FUNC(setStatus);
 
 			[_veh, "Pickup Requested", "Approaching to AO!"] call FUNC(showHint);
@@ -249,6 +273,19 @@ FUNC(requestPickup) = {
 			[QGVAR(clickForPickupLZEH), "onMapSingleClick"] call BIS_fnc_removeStackedEventHandler;
 		}, [_veh,_pos]] call BIS_fnc_addStackedEventHandler;
 	}, [_veh]] call BIS_fnc_addStackedEventHandler;
+};
+
+FUNC(requestLandMode) = {
+	params ["_callsign","_mode"];
+	private _veh = (_callsign call FUNC(getProvider)) # 0;
+
+	private _msg = switch (toUpper _mode) do {
+		case "LAND": { "Landing on LZ, confirmed!" };
+		case "HOVER": { "Roger-dodger, no landing, hovering over LZ!" };
+	};
+
+	[_veh, "LAND MODE", _mode] call FUNC(setStatus);
+	[_veh, _msg] call FUNC(showMsg);
 };
 
 FUNC(requestRTB) = {
@@ -276,6 +313,7 @@ FUNC(requestRTB) = {
 			, ["SIDE", side player]
 			, ["STATE", "RTB"]
 			, ["IN PROGRESS", true]
+			, ["LAND MODE", "LAND"]
 		]] call FUNC(setStatus);
 
 		[
@@ -303,6 +341,7 @@ FUNC(requestCallIn) = {
 			["SIDE", side player]
 			, ["STATE", "Call In Instant"]
 			, ["IN PROGRESS", true]
+			, ["LAND MODE", ""]
 		]] call FUNC(setStatus);
 
 		[player, _veh] call FUNC(AssignToCallInHelicopter);
