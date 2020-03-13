@@ -42,25 +42,26 @@ echo Removing DynAI Helpers >> tSF_FS_log.txt
 echo Removing unused tSF Modules
 echo Removing unused tSF Modules >> tSF_FS_log.txt
 
-call :removeFolder tSF_module_MissionDefaults MissionDefaults
-call :removeFolder tSF_module_JIPTeleport JIPTeleport
-call :removeFolder tSF_module_MissionConditions MissionConditions
-call :removeFolder tSF_module_IntroText IntroText
-call :removeFolder tSF_module_Briefing Briefing
-call :removeFolder tSF_module_tSNotes tSNotes
-call :removeFolder tSF_module_tSSettings tSSettings
-call :removeFolder tSF_module_CCP CCP
-call :removeFolder tSF_module_FARP FARP
+call :removeFolder tSF_module_ACEActions ACEActions
 call :removeFolder tSF_module_AirborneSupport AirborneSupport
 call :removeFolder tSF_module_ArtillerySupport ArtillerySupport
-call :removeFolder tSF_module_Interactives Interactives
-call :removeFolder tSF_module_ACEActions ACEActions
-call :removeFolder tSF_module_EditorVehicleCrew EditorVehicleCrew
-call :removeFolder tSF_module_EditorUnitBehavior EditorUnitBehavior
-call :removeFolder tSF_module_EditorRadioSettings EditorRadioSettings
-call :removeFolder tSF_module_tSAdminTools tSAdminTools
-call :removeFolder tSF_module_POM POM
+call :removeFolder tSF_module_Authorization Authorization
+call :removeFolder tSF_module_Briefing Briefing
+call :removeFolder tSF_module_CCP CCP
 call :removeFolder tSF_module_Conversations Conversations
+call :removeFolder tSF_module_EditorRadioSettings EditorRadioSettings
+call :removeFolder tSF_module_EditorUnitBehavior EditorUnitBehavior
+call :removeFolder tSF_module_EditorVehicleCrew EditorVehicleCrew
+call :removeFolder tSF_module_FARP FARP
+call :removeFolder tSF_module_Interactives Interactives
+call :removeFolder tSF_module_IntroText IntroText
+call :removeFolder tSF_module_JIPTeleport JIPTeleport
+call :removeFolder tSF_module_MissionConditions MissionConditions
+call :removeFolder tSF_module_MissionDefaults MissionDefaults
+call :removeFolder tSF_module_POM POM
+call :removeFolder tSF_module_tSAdminTools tSAdminTools
+call :removeFolder tSF_module_tSNotes tSNotes
+call :removeFolder tSF_module_tSSettings tSSettings
 
 echo #####################################################################
 echo #                                                                   #
