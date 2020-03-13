@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 [
-	GVAR(initCondition)
+	{ time > GVAR(initTimeout) && GVAR(initCondition) }
 	, {
 		LOG("Server init started");
 		GVAR(Vehicles) = []; // [@Vehicle, @Name]
@@ -13,6 +13,4 @@
 
 		LOG("Server initialized");
 	}
-	, []
-	, GVAR(initTimeout)
 ] call CBA_fnc_waitUntilAndExecute;

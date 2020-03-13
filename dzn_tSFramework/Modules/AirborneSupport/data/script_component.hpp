@@ -1,4 +1,4 @@
-#include "..\..\script_component_macro.hpp"
+#include "..\..\script_macro.hpp"
 
 #define COMPONENT AirborneSupport
 

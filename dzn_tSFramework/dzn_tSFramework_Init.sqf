@@ -50,11 +50,11 @@ tSF_module_Conversations = false;
 	, "Briefing"
 	, "tSNotes"
 	, "tSSettings"
-	, "POM"
+	/*, "POM"*/
 	
 	, "CCP"
 	, "FARP"
-	, "Authorization"
+	/*, "Authorization"*/
 	/*, "AirborneSupport"*/
 	, "ArtillerySupport"
 	, "Interactives"
@@ -70,6 +70,7 @@ tSF_module_Conversations = false;
 	call compile format ["if (tSF_module_%1) then { [] execVM 'dzn_tSFramework\Modules\%1\Init.sqf' }", _x]
 };
 
-
+RUN_MODULE(Authorization);
 RUN_MODULE(IntroText);
 RUN_MODULE(AirborneSupport);
+RUN_MODULE(POM);

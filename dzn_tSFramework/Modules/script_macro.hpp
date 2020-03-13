@@ -22,7 +22,17 @@
 #define QQEGVAR(var1,var2) QUOTE(QEGVAR(var1,var2))
 
 #define FUNC(var1) TRIPLES(MODULE_COMPONENT,fnc,var1)
+#define FUNCMAIN(var1) TRIPLES(PREFIX,fnc,var1)
+#define FUNC_INNER(var1,var2) TRIPLES(DOUBLES(PREFIX,var1),fnc,var2)
+#define EFUNC(var1,var2) FUNC_INNER(var1,var2)
 #define QFUNC(var1) QUOTE(FUNC(var1))
+#define QFUNCMAIN(var1) QUOTE(FUNCMAIN(var1))
+#define QFUNC_INNER(var1,var2) QUOTE(FUNC_INNER(var1,var2))
+#define QEFUNC(var1,var2) QUOTE(EFUNC(var1,var2))
+#define QQFUNC(var1) QUOTE(QFUNC(var1))
+#define QQFUNCMAIN(var1) QUOTE(QFUNCMAIN(var1))
+#define QQFUNC_INNER(var1,var2) QUOTE(QFUNC_INNER(var1,var2))
+#define QQEFUNC(var1,var2) QUOTE(QEFUNC(var1,var2))
 
 // -- Module and file execution
 #define COMPONENT_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\FILE

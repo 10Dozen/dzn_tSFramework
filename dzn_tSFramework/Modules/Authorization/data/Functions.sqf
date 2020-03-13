@@ -1,4 +1,6 @@
-tSF_fnc_Authorization_checkPlayerAuthorized = {
+#include "script_component.hpp"
+
+FUNC(checkPlayerAuthorized) = {
 	/*
 		Returns authorization status of player according to it's role.
 
@@ -11,13 +13,13 @@ tSF_fnc_Authorization_checkPlayerAuthorized = {
 	*/
 
 	params ["_unit","_authorizationType"];
-	private _authTypeIdx = ["ARTILLERY", "AIRBORNE", "POM"] find toUpper(_authorizationType);
+	private _authTypeIdx = AUTHORIZATION_TYPES find toUpper(_authorizationType);
 
-	// Return true if sauthorized for everyone
+	// Return true if authorized for everyone
 	if (tSF_Authorization_CommonPermissions # _authTypeIdx) exitWith { true };
 
 	// Return Admin permissions if player is admin and there are admin permissions defined
-	private _perms = ["Admin"] call tSF_fnc_Authorization_getRolePermissions;
+	private _perms = ["Admin"] call FUNC(getRolePermissions);
 	if (
 		(serverCommandAvailable "#logout" || !isMultiplayer || isServer)
 		&& { !(_perms isEqualTo []) }
@@ -25,19 +27,23 @@ tSF_fnc_Authorization_checkPlayerAuthorized = {
 		_perms # _authTypeIdx
 	};
 
-	// Return player's role permissions or false, if no any permissions defined for role
-	_perms = [roleDescription _unit] call tSF_fnc_Authorization_getRolePermissions;
+	// Return player's role permissions if found and true 
+	_perms = [roleDescription _unit] call FUNC(getRolePermissions);
+	if (!(_perms isEqualTo []) && {_perms # _authTypeIdx}) exitWith { true };
+
+	// Returns "Any" role permissions if found and true, or return false
+	_perms = ["Any"] call FUNC(getRolePermissions);
 	if (_perms isEqualTo []) exitWith { false };
 
 	_perms # _authTypeIdx
 };
 
-tSF_fnc_Authorization_getRolePermissions = {
+FUNC(getRolePermissions) = {
 	params ["_rolename"];
 	_rolename = toLower (_rolename);
 
-	private _foundByName = tSF_Authorization_List findIf { [_x # 0, _rolename, false] call  BIS_fnc_inString };
+	private _foundByName = GVAR(RuleList) findIf { [_x # 0, _rolename, false] call  BIS_fnc_inString };
 	if (_foundByName < 0) exitWith { [] };
 
-	(tSF_Authorization_List # _foundByName) # 1
+	(GVAR(RuleList) # _foundByName) # 1
 };

@@ -6,7 +6,7 @@
 FUNC(isAuthorizedUser) = {
 	// Player call tSF_fnc_AirborneSupport_isAuthorizedUser
 
-	[_this, "AIRBORNE"] call tSF_fnc_Authorization_checkPlayerAuthorized
+	[_this, "AIRBORNE"] call EFUNC(Authorization,checkPlayerAuthorized);
 };
 
 FUNC(getProvider) = {
