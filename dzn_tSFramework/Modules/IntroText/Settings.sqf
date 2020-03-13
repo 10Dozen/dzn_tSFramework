@@ -1,18 +1,24 @@
+#include "data\script_component.hpp"
 
-tSF_Intro_ShowCurrentTime   = true;
+/* Dependency: No
+ */
+GVAR(initTimeout) = 15;
+GVAR(initCondition) = { true };  // Overall condition of module init
+
 
 // 1st line -- Date in format DD/MM/YYYY. Use "%1/%2/%3" to use MissionDate.
-tSF_Intro_LineText1	= "%1/%2/%3";
-tSF_Intro_LineStyle1	= "<t align = 'right' shadow = '1' size = '0.7' font='PuristaBold'><br />%1</t>";
+GVAR(LineText1)	= "%1/%2/%3";
+GVAR(LineStyle1) = "<t align = 'right' shadow = '1' size = '0.7' font='PuristaBold'><br />%1</t>";
 
 // 2nd line
-tSF_Intro_LineText2	= "Район Н, Страна Н, Регион Н";
-tSF_Intro_LineStyle2	= "<t align = 'right' shadow = '1' size = '0.7' font='PuristaBold'><br />%1</t>";
+GVAR(LineText2)	= "Район Н, Страна Н, Регион Н";
+GVAR(LineStyle2) = "<t align = 'right' shadow = '1' size = '0.7' font='PuristaBold'><br />%1</t>";
 
 // 3rd line
-tSF_Intro_LineText3	= "Операция 'Без имени'";
-tSF_Intro_LineStyle3	= "<t align = 'right' shadow = '1' size = '0.9' font='PuristaBold'><br />%1</t>";
+GVAR(LineText3) = "Операция 'Без имени'";
+GVAR(LineStyle3) = "<t align = 'right' shadow = '1' size = '0.9' font='PuristaBold'><br />%1</t>";
 
 // Other settings
-tSF_Intro_ShowTime	= 15;
-tSF_Intro_TextPosition	= [0.2, 0.7];
+GVAR(ShowCurrentTime) = true; // show current time in intro text
+GVAR(DisplayTime) = 15; // sec
+GVAR(TextPosition) = [0.2, 0.7]; // right low corner

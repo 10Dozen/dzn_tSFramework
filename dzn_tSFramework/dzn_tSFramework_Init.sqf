@@ -1,4 +1,4 @@
-#include "Modules\script_component_macro.hpp"
+#include "Modules\script_macro.hpp"
 
 // **************************
 //
@@ -46,7 +46,7 @@ tSF_module_Conversations = false;
 	, "JIPTeleport"
 	, "MissionConditions"
 	
-	, "IntroText"
+	/*, "IntroText"*/
 	, "Briefing"
 	, "tSNotes"
 	, "tSSettings"
@@ -71,5 +71,5 @@ tSF_module_Conversations = false;
 };
 
 
+RUN_MODULE(IntroText);
 RUN_MODULE(AirborneSupport);
-
