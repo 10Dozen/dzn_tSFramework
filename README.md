@@ -1,6 +1,6 @@
 ![img](http://tacticalshift.ru/tsf_10d.png)
 ------
-##### Version: 2.03
+##### Version: 2.04
 Tactical Shift Framework
 
 ##### Getting Started
@@ -36,6 +36,9 @@ Some default mission pre-sets (like player score).
 - Player rating
 - Calculator (via marker started with @, e.g. '@4000/5.5' -> 727.27')
 - Phonetic Alphabet Markers (e.g. auto-replace of 'Obj A!' -> 'Obj Alpha', 'КП З!' - 'КП Зоя'
+
+##### Authorization
+Provide permissions to access Airborne and Artillery support, POM modules.
 
 ##### Airborne Support
 Airborne vehicles pickup and return to base by AI or player pilots.
