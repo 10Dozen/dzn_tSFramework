@@ -2,7 +2,7 @@
 
 tSF_fnc_ArtillerySupport_isAuthorizedUser = {
 	// Player call tSF_fnc_ArtillerySupport_isAuthorizedUser
-	[_this, "ARTILLERY"] call tSF_fnc_Authorization_checkPlayerAuthorized
+	[_this, "ARTILLERY"] call tSF_Authorization_fnc_checkPlayerAuthorized
 };
 
 /*
