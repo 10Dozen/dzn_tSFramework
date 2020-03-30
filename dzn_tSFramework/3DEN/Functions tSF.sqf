@@ -7,7 +7,7 @@ dzn_fnc_tSF_3DEN_AddGearLogic = {
 	if (_units isEqualTo []) exitWith {
 		"tSF Tools - Gear: Kit logic - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
-	
+
 	disableSerialization;
 	private _result = [
 		"Set Kit logic"
@@ -17,14 +17,14 @@ dzn_fnc_tSF_3DEN_AddGearLogic = {
 		]
 	] call dzn_fnc_3DEN_ShowChooseDialog;
 	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
-	
+
 	dzn_tSF_3DEN_Parameter = _result;
-	
+
 	collect3DENHistory {
 		private _result = dzn_tSF_3DEN_Parameter;
 		private _type = if (_result select 0 == 0) then { "dzn_gear" } else { "dzn_gear_cargo" };
 		private _kit = if (typename (_result select 1) == "STRING") then { _result select 1 } else { "KitName" };
-		
+
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute [
 			"Init"
@@ -34,11 +34,11 @@ dzn_fnc_tSF_3DEN_AddGearLogic = {
 				, _kit
 			]
 		];
-		
+
 		call dzn_fnc_tSF_3DEN_createGearLayer;
 		_logic set3DENLayer dzn_tSF_3DEN_GearLayer;
-		
-		add3DENConnection ["Sync", _units, _logic];	
+
+		add3DENConnection ["Sync", _units, _logic];
 		(format ["tSF Tools - Gear: ""%1"" Kit logic was assigned", _kit]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
@@ -48,7 +48,7 @@ dzn_fnc_tSF_3DEN_ResolveUnitBehavior = {
 	if (_units isEqualTo []) exitWith {
 		"tSF Tools - Unit Behavior: No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
-	
+
 	disableSerialization;
 	private _result = [
 		"Set Unit Behavior"
@@ -66,9 +66,9 @@ dzn_fnc_tSF_3DEN_ResolveUnitBehavior = {
 			]
 		]
 	] call dzn_fnc_3DEN_ShowChooseDialog;
-	
+
 	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
-	
+
 	switch (_result select 0) do {
 		case 0: {
 			/* DYNAI CQB */
@@ -90,7 +90,7 @@ dzn_fnc_tSF_3DEN_ResolveUnitBehavior = {
 		};
 		case 5: {
 			"vehicle 90 hold" call dzn_fnc_tSF_3DEN_AddVehicleHoldLogic;
-		};		
+		};
 	};
 };
 
@@ -100,14 +100,14 @@ dzn_fnc_tSF_3DEN_AddCQBLogic = {
 		if (_units isEqualTo []) exitWith {
 			"tSF Tools - DynAI: CQB - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
-		
+
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
-		_logic set3DENAttribute ["Init", "this setVariable ['dzn_dynai_setBehavior', 'indoor'];"];	
-		
+		_logic set3DENAttribute ["Init", "this setVariable ['dzn_dynai_setBehavior', 'indoor'];"];
+
 		call dzn_fnc_tSF_3DEN_createDynaiLayer;
 		_logic set3DENLayer dzn_tSF_3DEN_DynaiLayer;
 		add3DENConnection ["Sync", _units, _logic];
-		
+
 		"tSF Tools - DynAI: CQB behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
@@ -119,7 +119,7 @@ dzn_fnc_tSF_3DEN_AddVehicleHoldLogic = {
 		if (_units isEqualTo []) exitWith {
 			"tSF Tools - DynAI: Vehicle Hold - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
-		
+
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute [
 			"Init"
@@ -127,48 +127,48 @@ dzn_fnc_tSF_3DEN_AddVehicleHoldLogic = {
 				"this setVariable ['dzn_dynai_setBehavior', '%1'];"
 				, dzn_tSF_3DEN_Parameter
 			]
-		];	
-		
+		];
+
 		call dzn_fnc_tSF_3DEN_createDynaiLayer;
 		_logic set3DENLayer dzn_tSF_3DEN_DynaiLayer;
 		add3DENConnection ["Sync", _units, _logic];
-		
+
 		"tSF Tools - DynAI: Vehicle Hold behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
 dzn_fnc_tSF_3DEN_AddGroupResponseLogic = {
-	collect3DENHistory {		
+	collect3DENHistory {
 		private _units = dzn_tSF_3DEN_SelectedUnits;
 		if (_units isEqualTo []) exitWith {
 			"tSF Tools - DynAI: Response - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
-		
+
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
-		_logic set3DENAttribute ["Init", "this setVariable ['dzn_dynai_canSupport', true];"];	
-		
+		_logic set3DENAttribute ["Init", "this setVariable ['dzn_dynai_canSupport', true];"];
+
 		call dzn_fnc_tSF_3DEN_createDynaiLayer;
-		_logic set3DENLayer dzn_tSF_3DEN_DynaiLayer;		
+		_logic set3DENLayer dzn_tSF_3DEN_DynaiLayer;
 		add3DENConnection ["Sync", _units, _logic];
-		
+
 		"tSF Tools - DynAI: Response behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
 dzn_fnc_tSF_3DEN_Add_EUBSurrender_Logic = {
-	collect3DENHistory {	
+	collect3DENHistory {
 		private _units = dzn_tSF_3DEN_SelectedUnits;
 		if (_units isEqualTo []) exitWith {
 			"tSF Tools - Unit Behavior: Surrender - No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 		};
-		
+
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
-		_logic set3DENAttribute ["Init", "this setVariable ['tSF_EUB', 'Surrender'];"];	
-		
+		_logic set3DENAttribute ["Init", "this setVariable ['tSF_EUB', 'Surrender'];"];
+
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
-		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;		
+		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;
 		add3DENConnection ["Sync", _units, _logic];
-		
+
 		"tSF Tools - Unit Behavior: Surrender behaviour was assigned" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
@@ -178,16 +178,16 @@ dzn_fnc_tSF_3DEN_AddEVCLogic = {
 	if (_units isEqualTo []) exitWith {
 		"tSF Tools - Vehicle Crew: No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
-	
+
 	disableSerialization;
 	private _result = [
 		"Set Crew Logic"
 		,[
 			["Crew Config Name", [
 				"OPFOR - 3 - VC, GNR, DRV"
-				,"OPFOR - 2 - VC, DRV"	
+				,"OPFOR - 2 - VC, DRV"
 				,"OPFOR - 2 - GNR, DRV"
-				,"OPFOR - 2 - VC, GNR"		
+				,"OPFOR - 2 - VC, GNR"
 				,"OPFOR - 1 - VC"
 				,"OPFOR - 1 - GNR"
 				,"OPFOR - 1 - DRV"
@@ -195,18 +195,18 @@ dzn_fnc_tSF_3DEN_AddEVCLogic = {
 			,["Custom Config Name", []]
 		]
 	] call dzn_fnc_3DEN_ShowChooseDialog;
-	
+
 	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
-	
+
 	dzn_tSF_3DEN_Parameter = _result;
-	
+
 	collect3DENHistory {
 		private _units = dzn_tSF_3DEN_SelectedUnits;
 		private _result = dzn_tSF_3DEN_Parameter;
 		private _configName = "";
-		
+
 		if (typename (_result select 1) == "STRING") then {
-			_configName = _result select 1;	
+			_configName = _result select 1;
 		} else {
 			_configName = switch (_result select 0) do {
 				case 0: { "OPFOR VC, GNR, DRV" };
@@ -218,7 +218,7 @@ dzn_fnc_tSF_3DEN_AddEVCLogic = {
 				case 6: { "OPFOR DRV" };
 			};
 		};
-		
+
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute [
 			"Init"
@@ -227,11 +227,11 @@ dzn_fnc_tSF_3DEN_AddEVCLogic = {
 				, _configName
 			]
 		];
-		
+
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
 		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;
-		
-		add3DENConnection ["Sync", _units, _logic];	
+
+		add3DENConnection ["Sync", _units, _logic];
 		(format ["tSF Tools - Vehicle Crew: ""%1"" config was assigned", _configName]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
@@ -241,7 +241,7 @@ dzn_fnc_tSF_3DEN_AddERSLogic = {
 	if (_units isEqualTo []) exitWith {
 		"tSF Tools - Vehicle Radio: No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
-	
+
 	disableSerialization;
 	private _result = [
 		"Set LR Radio Logic"
@@ -250,18 +250,18 @@ dzn_fnc_tSF_3DEN_AddERSLogic = {
 			,["Radio Custom Config", []]
 		]
 	] call dzn_fnc_3DEN_ShowChooseDialog;
-	
+
 	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
-	
+
 	dzn_tSF_3DEN_Parameter = _result;
-	
+
 	collect3DENHistory {
 		private _units = dzn_tSF_3DEN_SelectedUnits;
 		private _result = dzn_tSF_3DEN_Parameter;
-		
+
 		private _configName = "";
 		if (typename (_result select 1) == "STRING") then {
-			_configName = _result select 1;	
+			_configName = _result select 1;
 		} else {
 			switch (_result select 0) do {
 				case 0: { _configName = "BLUFOR" };
@@ -269,7 +269,7 @@ dzn_fnc_tSF_3DEN_AddERSLogic = {
 				case 2: { _configName = "INDEP" };
 			};
 		};
-		
+
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute [
 			"Init"
@@ -278,57 +278,63 @@ dzn_fnc_tSF_3DEN_AddERSLogic = {
 				, _configName
 			]
 		];
-		
+
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
 		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;
-		
-		add3DENConnection ["Sync", _units, _logic];	
+
+		add3DENConnection ["Sync", _units, _logic];
 		(format ["tSF Tools - Vehicle Radio: ""%1"" config logic was assigned", _configName]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
 
 dzn_fnc_tSF_3DEN_AddAsSupporter = {
 	private _units = dzn_tSF_3DEN_SelectedUnits;
-	
+
 	if (_units isEqualTo []) exitWith {
 		"tSF Tools - Support: No units selected" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
 	if (count _units > 1) exitWith {
 		"tSF Tools - Support: Only 1 unit should be selected!" call dzn_fnc_tSF_3DEN_ShowWarn;
 	};
-	
+
 	disableSerialization;
 	private _result = [
 		"Assign Vehicle as Support"
 		,[
-			["Callsign", []]
+			["Callsign", []],
+			["Condition", []]
 		]
 	] call dzn_fnc_3DEN_ShowChooseDialog;
-	
+
 	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
-	
+
 	dzn_tSF_3DEN_Parameter = _result;
-	
+
 	collect3DENHistory {
 		private _unit = dzn_tSF_3DEN_SelectedUnits select 0;
-		private _result = dzn_tSF_3DEN_Parameter;		
-		private _callsign = _result select 0;		
+		private _result = dzn_tSF_3DEN_Parameter;
+		private _callsign = _result select 0;
+		private _condition = _result select 1;
+		private _initCode =  format [
+			"this setVariable ['tSF_AirborneSupport_Callsign', '%1'];"
+			, _callsign
+		];
+		if (typename _condition == "STRING" && { _condition != "" }) then {
+			_initCode = _initCode + format [
+				"this setVariable ['tSF_AirborneSupport_Condition', '%1'];"
+				, _condition
+			];
+		};
 		
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
-		_logic set3DENAttribute [
-			"Init"
-			, format [
-				"this setVariable ['tSF_AirborneSupport', '%1'];"
-				, _callsign
-			]
-		];
-		_unit set3DENAttribute ["description",  _callsign];
-		
-		call dzn_fnc_tSF_3DEN_createSupporterLayer;		
+		_logic set3DENAttribute ["Init", _initCode];
+		_unit set3DENAttribute ["description", _callsign];
+
+		call dzn_fnc_tSF_3DEN_createSupporterLayer;
 		_unit set3DENLayer dzn_tSF_3DEN_SupporterLayer;
 		_logic set3DENLayer dzn_tSF_3DEN_SupporterLayer;
-		
-		add3DENConnection ["Sync", [_unit], _logic];	
+
+		add3DENConnection ["Sync", [_unit], _logic];
 		(format ["tSF Tools - Support: ""%1"" config logic was assigned", _callsign]) call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
@@ -336,29 +342,29 @@ dzn_fnc_tSF_3DEN_AddAsSupporter = {
 dzn_fnc_tSF_3DEN_AddSupportReturnPointCore = {
 	collect3DENHistory {
 		dzn_tSF_3DEN_SupportReturnPointCore = create3DENEntity ["Logic","Logic",screenToWorld [0.25,0.5]];
-		
+
 		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute ["name", "tSF_AirborneSupport_ReturnPointCore"];
 		dzn_tSF_3DEN_SupportReturnPointCore set3DENAttribute [
 			"Init"
 			, "this setVariable ['tSF_AirborneSupport_ReturnPoint', 'true'];"
 		];
-		
+
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
 		dzn_tSF_3DEN_SupportReturnPointCore set3DENLayer dzn_tSF_3DEN_MiscLayer;
 	};
-}; 
+};
 
 dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
 	disableSerialization;
-	
+
 	if (isNull dzn_tSF_3DEN_SupportReturnPointCore) then {
 		call dzn_fnc_tSF_3DEN_AddSupportReturnPointCore;
 	};
-	
+
 	private _result = [
 		"Add Support Return point"
 		,[
-			["Type", 
+			["Type",
 				[
 					"Helipad (Invisible)"
 					, "Helipad"
@@ -368,10 +374,10 @@ dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
 			]
 		]
 	] call dzn_fnc_3DEN_ShowChooseDialog;
-	
-	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };	
+
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
 	dzn_tSF_3DEN_Parameter = _result;
-		
+
 	collect3DENHistory {
 		private _result = dzn_tSF_3DEN_Parameter;
 
@@ -381,13 +387,13 @@ dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
 			, "Land_HelipadSquare_F"
 			, "Land_HelipadCivil_F"
 		] select (_result select 0);
-		
+
 		private _point = create3DENEntity ["Object",_objectClass, screenToWorld [0.5,0.5]];
-	
+
 		call dzn_fnc_tSF_3DEN_createMiscLayer;
 		_point set3DENLayer dzn_tSF_3DEN_MiscLayer;
-		
-		add3DENConnection ["Sync", [_point], dzn_tSF_3DEN_SupportReturnPointCore];	
+
+		add3DENConnection ["Sync", [_point], dzn_tSF_3DEN_SupportReturnPointCore];
 		"tSF Tools - Support: Return point was added" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };

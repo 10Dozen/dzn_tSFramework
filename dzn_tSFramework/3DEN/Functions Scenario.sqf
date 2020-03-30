@@ -108,8 +108,8 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 	private _form = [
 		["Title", []]			
 		, ["Summary", []]
-		, ["Author (def: TS)",[]]
-		, ["Picture (def: overview.jpg)",[]]			
+		, ["Author",[]]
+		, ["Picture",[]]			
 		, ["Max Players", []]
 	];
 	private _scenarioData = ["", "", "Tactical Shift", "overview.jpg", ""];
@@ -118,8 +118,8 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 		_scenarioData = [
 			"Scenario" get3DENMissionAttribute "IntelBriefingName"
 			, "Multiplayer" get3DENMissionAttribute "IntelOverviewText"
-			, if ("Scenario" get3DENMissionAttribute "Author" == "") then { _scenarioData select 2 } else { "Scenario" get3DENMissionAttribute "Author" }
-			, if ("Scenario" get3DENMissionAttribute "OverviewPicture"== "") then { _scenarioData select 3 } else { "Scenario" get3DENMissionAttribute "OverviewPicture" }
+			, if ("Scenario" get3DENMissionAttribute "Author" == "") then { _scenarioData # 2 } else { "Scenario" get3DENMissionAttribute "Author" }
+			, if ("Scenario" get3DENMissionAttribute "OverviewPicture"== "") then { _scenarioData # 3 } else { "Scenario" get3DENMissionAttribute "OverviewPicture" }
 			, str("Multiplayer" get3DENMissionAttribute "MaxPlayers")
 		];
 		
@@ -139,7 +139,7 @@ dzn_fnc_tSF_3DEN_ConfigureScenario = {
 	collect3DENHistory {
 		private _result = dzn_tSF_3DEN_Parameter;
 		
-		#define	RESOLVE_IF_NONE(X)	if (typename (_result select X) == "SCALAR") then { _scenarioData select X } else { _result select X }
+		#define	RESOLVE_IF_NONE(X) [_scenarioData select X, _result select X] select (typename (_result select X) == "STRING" && {(_result select X) != ""})
 		private _title = RESOLVE_IF_NONE(0);
 		private _summary = RESOLVE_IF_NONE(1);
 		private _author = RESOLVE_IF_NONE(2);

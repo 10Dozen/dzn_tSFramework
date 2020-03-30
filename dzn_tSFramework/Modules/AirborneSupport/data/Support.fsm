@@ -1,0 +1,541 @@
+/*%FSM<COMPILE "E:\GMZ\STEAM\steamapps\common\Arma 3 Tools\FSMEditor\scriptedFSM.cfg, Support">*/
+/*%FSM<HEAD>*/
+/*
+item0[] = {"Start",0,250,-50.000000,-1125.000000,50.000000,-1075.000000,0.000000,"Start"};
+item1[] = {"true",4,218,-50.000000,-1050.000000,50.000000,-1000.000000,0.000000,"true"};
+item2[] = {"Reset",2,250,-50.000000,-975.000000,50.000000,-925.000000,0.000000,"Reset"};
+item3[] = {"Pick_Up_Requeste",4,218,-400.000000,-900.000000,-300.000000,-850.000000,0.000000,"Pick Up" \n "Requested"};
+item4[] = {"Pickup_Started_Move",2,250,-400.000000,-825.000000,-300.000000,-775.000000,0.000000,"Pickup Started" \n "Move to Ingress"};
+item5[] = {"Reaching_Ingress",4,218,-400.000000,-750.000000,-300.000000,-700.000000,0.000000,"Reaching" \n "Ingress"};
+item6[] = {"Move_to_Landing",2,250,-400.000000,-675.000000,-300.000000,-625.000000,0.000000,"Move to" \n "Landing Zone"};
+item7[] = {"Reaching_LZ",4,218,-400.000000,-600.000000,-300.000000,-550.000000,0.000000,"Reaching" \n "LZ"};
+item8[] = {"Land_at_LZ",2,250,-400.000000,-525.000000,-300.000000,-475.000000,0.000000,"Land at LZ"};
+item9[] = {"Sequence_Finishe",4,218,-50.000000,-400.000000,50.000000,-350.000000,0.000000,"Sequence" \n "Finished"};
+item10[] = {"RTB_Request",4,218,75.000000,-900.000000,175.000000,-850.000000,0.000000,"RTB" \n "Request"};
+item11[] = {"RTB_Started_Move",2,250,75.000000,-825.000000,175.000000,-775.000000,0.000000,"RTB Started" \n "Move to Egress"};
+item12[] = {"Reaching_Egress",4,218,75.000000,-750.000000,175.000000,-700.000000,0.000000,"Reaching" \n "Egress"};
+item13[] = {"Move_to_RTB",2,250,75.000000,-675.000000,175.000000,-625.000000,0.000000,"Move to" \n "RTB"};
+item14[] = {"Reaching_RTB",4,218,75.000000,-600.000000,175.000000,-550.000000,0.000000,"Reaching" \n "RTB"};
+item15[] = {"Land_at_Base",2,4346,75.000000,-525.000000,175.000000,-475.000000,0.000000,"Land at Base"};
+item16[] = {"Call_In_Requeste",4,218,-250.000000,-900.000000,-150.000000,-850.000000,0.000000,"Call In" \n "Requested"};
+item17[] = {"Call_In_Started",2,250,-250.000000,-825.000000,-150.000000,-775.000000,0.000000,"Call In Started"};
+item18[] = {"Waiting_Engine_S",4,218,-250.000000,-750.000000,-150.000000,-700.000000,0.000000,"Waiting" \n "Engine Started"};
+item19[] = {"Move_Vehicle_to",2,250,-250.000000,-675.000000,-150.000000,-625.000000,0.000000,"Move Vehicle" \n "to Ingress"};
+item20[] = {"Wait_for_Player",4,218,-250.000000,-600.000000,-150.000000,-550.000000,0.000000,"Wait for" \n "Player-driver"};
+item21[] = {"Empty",2,250,-250.000000,-525.000000,-150.000000,-475.000000,0.000000,"Empty"};
+item22[] = {"Wait_for_Driver",4,218,-250.000000,-450.000000,-150.000000,-400.000000,0.000000,"Wait for" \n "Driver empty"};
+item23[] = {"Aborted",4,218,50.000000,-350.000000,150.000000,-300.000000,0.000000,"Aborted"};
+item24[] = {"",7,210,96.000000,-429.000000,104.000000,-421.000000,0.000000,""};
+item25[] = {"",7,210,-4.000008,-429.000000,4.000008,-421.000000,0.000000,""};
+item26[] = {"",7,210,121.000000,-379.000000,129.000000,-371.000000,0.000000,""};
+item27[] = {"",7,210,-354.000000,-379.000000,-346.000031,-371.000000,0.000000,""};
+item28[] = {"",7,210,-429.000000,-804.000000,-421.000000,-796.000000,0.000000,""};
+item29[] = {"",7,210,-429.000031,-654.000000,-421.000000,-646.000000,0.000000,""};
+item30[] = {"",7,210,-429.000000,-504.000000,-421.000000,-496.000000,0.000000,""};
+item31[] = {"",7,210,-429.000000,-329.000000,-421.000000,-321.000000,0.000000,""};
+item32[] = {"",7,210,196.000000,-804.000000,204.000000,-796.000000,0.000000,""};
+item33[] = {"",7,210,196.000000,-654.000000,204.000000,-646.000000,0.000000,""};
+item34[] = {"",7,210,196.000000,-504.000000,204.000000,-496.000000,0.000000,""};
+item35[] = {"",7,210,196.000000,-329.000000,204.000000,-321.000000,0.000000,""};
+item36[] = {"",7,210,-204.000000,-953.999939,-196.000000,-946.000061,0.000000,""};
+item37[] = {"",7,210,-354.000000,-954.000000,-346.000000,-946.000000,0.000000,""};
+item38[] = {"",7,210,121.000000,-954.000000,129.000000,-946.000000,0.000000,""};
+item39[] = {"Call_In_Instant",4,218,-125.000000,-900.000000,-25.000000,-850.000000,0.000000,"Call In" \n "Instant"};
+item40[] = {"Remove_driver",2,250,-125.000000,-600.000000,-25.000000,-550.000000,0.000000,"Remove driver"};
+link0[] = {0,1};
+link1[] = {1,2};
+link2[] = {2,36};
+link3[] = {2,38};
+link4[] = {3,4};
+link5[] = {4,5};
+link6[] = {4,28};
+link7[] = {5,6};
+link8[] = {6,7};
+link9[] = {6,29};
+link10[] = {7,8};
+link11[] = {8,27};
+link12[] = {8,30};
+link13[] = {9,25};
+link14[] = {10,11};
+link15[] = {11,12};
+link16[] = {11,32};
+link17[] = {12,13};
+link18[] = {13,14};
+link19[] = {13,33};
+link20[] = {14,15};
+link21[] = {15,26};
+link22[] = {15,34};
+link23[] = {16,17};
+link24[] = {17,18};
+link25[] = {18,19};
+link26[] = {19,20};
+link27[] = {20,21};
+link28[] = {21,22};
+link29[] = {22,25};
+link30[] = {23,24};
+link31[] = {24,25};
+link32[] = {25,2};
+link33[] = {26,9};
+link34[] = {27,9};
+link35[] = {28,29};
+link36[] = {29,30};
+link37[] = {30,31};
+link38[] = {31,23};
+link39[] = {32,33};
+link40[] = {33,34};
+link41[] = {34,35};
+link42[] = {35,23};
+link43[] = {36,16};
+link44[] = {36,37};
+link45[] = {36,39};
+link46[] = {37,3};
+link47[] = {38,10};
+link48[] = {39,40};
+link49[] = {40,20};
+globals[] = {0.000000,0,0,0,0,640,480,1,382,6316128,1,-506.080109,55.693665,20.227173,-958.091797,499,869,1};
+window[] = {2,-1,-1,-1,-1,1020,1908,3188,206,3,517};
+*//*%FSM</HEAD>*/
+class FSM
+{
+        fsmName = "Support";
+        class States
+        {
+                /*%FSM<STATE "Start">*/
+                class Start
+                {
+                        name = "Start";
+                        itemno = 0;
+                        init = /*%FSM<STATEINIT""">*/"params[" \n
+                         "	""_veh""" \n
+                         "	, [""_debug"", false]" \n
+                         "];" \n
+                         "" \n
+                         "if (_debug) then { systemChat ""[AS] Init""; };" \n
+                         "" \n
+                         ""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "true">*/
+                                class true
+                                {
+                                        itemno = 1;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"true"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Reset">*/
+                class Reset
+                {
+                        name = "Reset";
+                        itemno = 2;
+                        init = /*%FSM<STATEINIT""">*/"_veh call tSF_AirborneSupport_fnc_resetVehicleVars;	"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Call_In_Instant">*/
+                                class Call_In_Instant
+                                {
+                                        itemno = 39;
+                                        priority = 0.000000;
+                                        to="Remove_driver";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""Call In Instant""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Pick_Up_Requeste">*/
+                                class Pick_Up_Requeste
+                                {
+                                        itemno = 3;
+                                        priority = 0.000000;
+                                        to="Pickup_Started_Move";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""Pickup""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "RTB_Request">*/
+                                class RTB_Request
+                                {
+                                        itemno = 10;
+                                        priority = 0.000000;
+                                        to="RTB_Started_Move";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""RTB""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Call_In_Requeste">*/
+                                class Call_In_Requeste
+                                {
+                                        itemno = 16;
+                                        priority = 0.000000;
+                                        to="Call_In_Started";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""Call In""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Pickup_Started_Move">*/
+                class Pickup_Started_Move
+                {
+                        name = "Pickup_Started_Move";
+                        itemno = 4;
+                        init = /*%FSM<STATEINIT""">*/"_veh engineOn true;" \n
+                         "" \n
+                         "_ingressPoint = [_veh, ""INGRESS POINT""] call tSF_AirborneSupport_fnc_getStatus;" \n
+                         "_landingPoint = [_veh, ""LANDING POINT""] call tSF_AirborneSupport_fnc_getStatus;" \n
+                         "" \n
+                         "_helipad = [_veh, _landingPoint, _ingressPoint getDir _landingPoint] call tSF_AirborneSupport_fnc_setLandingPad;" \n
+                         "" \n
+                         "if (_debug) then { systemChat ""Pickup: LZ created""; };" \n
+                         "" \n
+                         "_pilot = _veh call tSF_AirborneSupport_fnc_addPilot;" \n
+                         "[_pilot, _ingressPoint, 300] call tSF_AirborneSupport_fnc_moveToPosition;" \n
+                         ""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Aborted">*/
+                                class Aborted
+                                {
+                                        itemno = 23;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""ABORTED""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Reaching_Ingress">*/
+                                class Reaching_Ingress
+                                {
+                                        itemno = 5;
+                                        priority = 0.000000;
+                                        to="Move_to_Landing";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_veh distance2d _ingressPoint < 350)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Move_to_Landing">*/
+                class Move_to_Landing
+                {
+                        name = "Move_to_Landing";
+                        itemno = 6;
+                        init = /*%FSM<STATEINIT""">*/"[" \n
+                         "	_pilot," \n
+                         "	_landingPoint getPos [100, _veh getDir _landingPoint]," \n
+                         "	50" \n
+                         "] call tSF_AirborneSupport_fnc_moveToPosition;" \n
+                         ""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Aborted">*/
+                                class Aborted
+                                {
+                                        itemno = 23;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""ABORTED""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Reaching_LZ">*/
+                                class Reaching_LZ
+                                {
+                                        itemno = 7;
+                                        priority = 0.000000;
+                                        to="Land_at_LZ";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_veh distance2d _landingPoint < 50)" \n
+                                         "||" \n
+                                         "(currentWaypoint (group _pilot) > 0)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Land_at_LZ">*/
+                class Land_at_LZ
+                {
+                        name = "Land_at_LZ";
+                        itemno = 8;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { systemChat ""Pickup: Landing""; };" \n
+                         "" \n
+                         "[" \n
+                         "	_veh, " \n
+                         "	[_veh, ""LAND MODE""] call tSF_AirborneSupport_fnc_getStatus," \n
+                         "	_helipad," \n
+                         "	_veh getDir _landingPoint" \n
+                         "] spawn tSF_AirborneSupport_fnc_land;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Aborted">*/
+                                class Aborted
+                                {
+                                        itemno = 23;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""ABORTED""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Sequence_Finishe">*/
+                                class Sequence_Finishe
+                                {
+                                        itemno = 9;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"true"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "RTB_Started_Move">*/
+                class RTB_Started_Move
+                {
+                        name = "RTB_Started_Move";
+                        itemno = 11;
+                        init = /*%FSM<STATEINIT""">*/"_veh engineOn true;" \n
+                         "" \n
+                         "_egressPoint = [_veh, ""EGRESS POINT""] call tSF_AirborneSupport_fnc_getStatus;" \n
+                         "_rtbPoint = [_veh, ""RTB POINT""] call tSF_AirborneSupport_fnc_getStatus;" \n
+                         "" \n
+                         "_pilot = _veh call tSF_AirborneSupport_fnc_addPilot;" \n
+                         "" \n
+                         "// Give some time to jump out" \n
+                         "[{ _this call tSF_AirborneSupport_fnc_moveToPosition; }, [_pilot, _egressPoint, 400], 5] call CBA_fnc_waitAndExecute;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Aborted">*/
+                                class Aborted
+                                {
+                                        itemno = 23;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""ABORTED""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Reaching_Egress">*/
+                                class Reaching_Egress
+                                {
+                                        itemno = 12;
+                                        priority = 0.000000;
+                                        to="Move_to_RTB";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_veh distance _egressPoint < 400)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Move_to_RTB">*/
+                class Move_to_RTB
+                {
+                        name = "Move_to_RTB";
+                        itemno = 13;
+                        init = /*%FSM<STATEINIT""">*/"[_pilot, _rtbPoint] call tSF_AirborneSupport_fnc_moveToPosition;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Aborted">*/
+                                class Aborted
+                                {
+                                        itemno = 23;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""ABORTED""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Reaching_RTB">*/
+                                class Reaching_RTB
+                                {
+                                        itemno = 14;
+                                        priority = 0.000000;
+                                        to="Land_at_Base";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"(_veh distance _rtbPoint < 200)" \n
+                                         "&& " \n
+                                         "(currentWaypoint (group _pilot) > 0)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Land_at_Base">*/
+                class Land_at_Base
+                {
+                        name = "Land_at_Base";
+                        itemno = 15;
+                        init = /*%FSM<STATEINIT""">*/"if (_debug) then { systemChat ""RTB: Landing""; };" \n
+                         "" \n
+                         "[_veh, ""LAND""] spawn tSF_AirborneSupport_fnc_land;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Aborted">*/
+                                class Aborted
+                                {
+                                        itemno = 23;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"[_veh, ""STATE"", ""ABORTED""] call tSF_AirborneSupport_fnc_assertStatus"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                                /*%FSM<LINK "Sequence_Finishe">*/
+                                class Sequence_Finishe
+                                {
+                                        itemno = 9;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"true"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Call_In_Started">*/
+                class Call_In_Started
+                {
+                        name = "Call_In_Started";
+                        itemno = 17;
+                        init = /*%FSM<STATEINIT""">*/"_veh engineOn true;" \n
+                         "" \n
+                         "_ingressPoint = [_veh, ""INGRESS POINT""] call tSF_AirborneSupport_fnc_getStatus;" \n
+                         "_ingressPoint set [2,100];" \n
+                         "" \n
+                         "_timeout = time + 15;"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Waiting_Engine_S">*/
+                                class Waiting_Engine_S
+                                {
+                                        itemno = 18;
+                                        priority = 0.000000;
+                                        to="Move_Vehicle_to";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"time > _timeout"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Move_Vehicle_to">*/
+                class Move_Vehicle_to
+                {
+                        name = "Move_Vehicle_to";
+                        itemno = 19;
+                        init = /*%FSM<STATEINIT""">*/"_veh setPosATL _ingressPoint;" \n
+                         "_veh setDir (_veh getDir _ingressPoint);" \n
+                         "[_veh, [0,20,25]] call KK_fnc_setVelocityModelSpaceVisual;" \n
+                         "" \n
+                         "_veh call tSF_AirborneSupport_fnc_removePilot;" \n
+                         "" \n
+                         "_veh setVariable [""tSF_AirborneSupport_CallInReady"", true, true];"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Wait_for_Player">*/
+                                class Wait_for_Player
+                                {
+                                        itemno = 20;
+                                        priority = 0.000000;
+                                        to="Empty";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"!isNull (driver _veh)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Empty">*/
+                class Empty
+                {
+                        name = "Empty";
+                        itemno = 21;
+                        init = /*%FSM<STATEINIT""">*/""/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Wait_for_Driver">*/
+                                class Wait_for_Driver
+                                {
+                                        itemno = 22;
+                                        priority = 0.000000;
+                                        to="Reset";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"isNull (driver _veh)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+                /*%FSM<STATE "Remove_driver">*/
+                class Remove_driver
+                {
+                        name = "Remove_driver";
+                        itemno = 40;
+                        init = /*%FSM<STATEINIT""">*/"_veh call tSF_AirborneSupport_fnc_removePilot;" \n
+                         "" \n
+                         "_veh setVariable [""tSF_AirborneSupport_CallInReady"", true, true];"/*%FSM</STATEINIT""">*/;
+                        precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+                        class Links
+                        {
+                                /*%FSM<LINK "Wait_for_Player">*/
+                                class Wait_for_Player
+                                {
+                                        itemno = 20;
+                                        priority = 0.000000;
+                                        to="Empty";
+                                        precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+                                        condition=/*%FSM<CONDITION""">*/"!isNull (driver _veh)"/*%FSM</CONDITION""">*/;
+                                        action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+                                };
+                                /*%FSM</LINK>*/
+                        };
+                };
+                /*%FSM</STATE>*/
+        };
+        initState="Start";
+        finalStates[] =
+        {
+        };
+};
+/*%FSM</COMPILE>*/

@@ -10,12 +10,12 @@
 enableDebugConsole = 1;
 disabledAI = 1;
 respawn = 3;
-respawnDelay = 9999999; 
+respawnDelay = 9999999;
 
 #define OVERVIEW(N,X) class overview_line##N { title = X ; values[] = {0}; texts[] = {""}; }
 class Params
-{   
-	
+{
+
 	// Детальный обзор и описание не-стандартных ролей. Укажите всю важную для слоттинга информацию!
 	/*
 	OVERVIEW(0, "Обзор:");
@@ -23,32 +23,27 @@ class Params
 	OVERVIEW(2, "Описание ролей:");
 	OVERVIEW(3, "Zugführer - командир взвода. Gruppenführer - командир отделения. Truppführer - командир команды.");
 	*/
-	
+
 	class overview_line_break
 	{
-		title = "---- Настройки ------------------"; 
+		title = "---- Настройки ------------------";
 		values[] = {0}; texts[] = {""};
 	};
 	class par_daytime
 	{
-	    title = "Время суток";
-	    values[] = {0,1,2};
-	    default = 0;
-	    texts[] = {"День","Ночь", "Случайно"};
+		title = "Время суток";
+		default = 0;
+		values[] = {0,1,2};
+		texts[] = {"День","Ночь","Случайно"};
+		// values[] = {0,1,2,3,4,5,6};
+		// texts[] = {"День","Ночь","Утро","Полдень","Вечер","Полночь","Случайно"};
 	};
 	class par_weather
 	{
-	    title = "Погода";
-	    values[] = {0,1,2,3,4,5};       
-	    texts[] = {
-		"Случайно"
-		,"Ясно"
-		,"Облачно"
-		,"Пасмурно"
-		,"Дождь"
-		,"Гроза"
-	    };
-	    default = 0;
+		title = "Погода";
+		values[] = {0,1,2,3,4,5};
+		texts[] = {"Случайно","Ясно","Облачно","Пасмурно","Дождь","Гроза"};
+		default = 0;
 	};
 	class dzn_brv_enabled
 	{
@@ -57,10 +52,10 @@ class Params
 		texts[] = {"Disabled","Enabled"};
 		default = 1;
 	};
-	
+
 		class par_dynai_delimeter
 	{
-		title = "---- dzn DynAI Settings ---------"; 
+		title = "---- dzn DynAI Settings ---------";
 		values[] = {0};
 		texts[] = {""};
 	};
@@ -122,5 +117,3 @@ class Params
 		default = 90;
 	};
 };
-
-

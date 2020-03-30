@@ -1,4 +1,4 @@
-
+#include "data\script_component.hpp"
 
 /*
 	# See activation condition of the zone
@@ -10,6 +10,14 @@
 	# Able to evaluate activation condition
 	Execute clickable at note page that checks activation condition on server
 */
+FUNC(DC_RequestDynaiData) = {
+	LOG("Requesting Dynai data from server");
+	[clientOwner, "dzn_dynai_zoneProperties"] remoteExec ["publicVariableClient", dzn_dynai_owner];
+	
+	[{ !isNil "dzn_dynai_zoneProperties" }, {
+		LOG("Dynai Zone Properties required");
+	}, [], 5] call CBA_fnc_waitUntilAndExecute;
+};
 
 tSF_adminTools_DC_getDynaiData = {
 	/*

@@ -1,3 +1,4 @@
+#include "data\script_component.hpp"
 
 if (hasInterface) then {
 	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Settings.sqf";
@@ -56,7 +57,8 @@ if (hasInterface) then {
 		[["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], [-20,-5,150,0.032], [0,0,0,.75], 30] call dzn_fnc_ShowMessage;
 		
 		// Start DynAI Control Panel
-		waitUntil { sleep 1; !isNil "dzn_dynai_zoneProperties" && !isNil "dzn_dynai_core" };
+		waitUntil { sleep 5; !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } }
+		call FUNC(DC_RequestDynaiData);
 		call tSF_adminTools_DC_addDynaiControlPage;
 	};
 };
@@ -70,4 +72,11 @@ if (isServer) then {
 	};
 	
 	[] spawn tSF_fnc_adminTools_getFps;
+
+	if (hasInterface) then {
+		[{
+			call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\data\Functions - Test.sqf";
+			[] call FUNC(testEntities);
+		},[],10] call CBA_fnc_waitAndExecute;
+	}
 };
