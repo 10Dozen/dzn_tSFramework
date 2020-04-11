@@ -1,6 +1,6 @@
 #include "script_component.hpp"
 
-if (isMultiplayer && !([player, "POM"] call FUNC(isAuthorizedUser))) exitWith {};
+if (isMultiplayer && !(player call FUNC(isAuthorizedUser))) exitWith {};
 LOG("Client init started - authorized");
 
 GVAR(CurrentMrk) = "";
