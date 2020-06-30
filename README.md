@@ -1,4 +1,4 @@
-![img](http://tacticalshift.ru/tsf_10d.png)
+![img](http://tacticalshift.ru/src/img/ts_logo_site_black_s.png)
 ------
 ##### Version: 2.04
 Tactical Shift Framework
