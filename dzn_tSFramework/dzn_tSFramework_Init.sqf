@@ -5,7 +5,7 @@
 // 	DZN TS FRAMEWORK
 //
 // **************************
-tSF_Version = "v2.04";
+tSF_Version = "v2.05";
 
 // **************************
 //  MODULES
