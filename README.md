@@ -1,6 +1,6 @@
-![img](https://raw.githubusercontent.com/10Dozen/dzn_tSFramework/master/overview.jpg)
+![img](https://tacticalshift.github.io/src/img/ts_logo_site_black_s.png)
 ------
-##### Version: 2.04
+##### Version: 2.05
 Tactical Shift Framework
 
 ##### Getting Started

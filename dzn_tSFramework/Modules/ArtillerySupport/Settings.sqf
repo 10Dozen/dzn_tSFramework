@@ -10,31 +10,26 @@ tSF_ArtillerySupport_FiremissionPreparationTimeout	= 15; // Timeout before any s
 tSF_ArtillerySupport_BatteryReloadTime 			= 30*60; // Timeout for reloading all firemissions
 tSF_ArtillerySupport_AdjustFireExpirationTimeout	= 5*30;	// Expirtation Timeout of firemission request during Adjust Fire phase
 
+
+// ARTILLERY
 /*
  *	AI Crew
- */ 
+ */
 tSF_ArtillerySupport_CrewClassname 	= "B_Soldier_unarmed_F";
 tSF_ArtillerySupport_CrewKitname 	= "";
 
 /*
- *	Firemissions properties 
+ *	Firemissions properties
  *	[ @DisplayName, @NumberAvailable, @RoundClassnames ]
  */
 tSF_ArtillerySupport_FiremissionsProperties = [
-	["HE", 2, ["8Rnd_82mm_Mo_shells", "rhs_mag_3vo18_10"]]
-	, ["SMK", 9, ["8Rnd_82mm_Mo_Smoke_white", "rhs_mag_d832du_10"]]
-	, ["ILLUM", 9, ["8Rnd_82mm_Mo_Flare_white", "rhs_mag_3vs25m_10"]]
+	["HE", 6, ["8Rnd_82mm_Mo_shells", "rhs_mag_3vo18_10"]]
+	, ["SMK", 12, ["8Rnd_82mm_Mo_Smoke_white", "rhs_mag_d832du_10"]]
+	, ["ILLUM", 12, ["8Rnd_82mm_Mo_Flare_white", "rhs_mag_3vs25m_10"]]
 ];
 
-/*
-	Sholef: 
-		"32Rnd_155mm_Mo_shells","4Rnd_155mm_Mo_guided","6Rnd_155mm_Mo_mine","2Rnd_155mm_Mo_Cluster","6Rnd_155mm_Mo_smoke","2Rnd_155mm_Mo_LG","6Rnd_155mm_Mo_AT_mine"
-	2S9 Sochor: 
-		"32Rnd_155mm_Mo_shells_O","2Rnd_155mm_Mo_guided_O","6Rnd_155mm_Mo_mine_O","2Rnd_155mm_Mo_Cluster_O","6Rnd_155mm_Mo_smoke_O","4Rnd_155mm_Mo_LG_O","6Rnd_155mm_Mo_AT_mine_O"
-	MRLS Seara, KAMAZ MRLS:
-		"12Rnd_230mm_rockets"
-*/
 
+// 	VIRTUAL ARTILLERY
 /*
  *	Virtual artillery rounds by type, in format:
  *	[
@@ -89,3 +84,15 @@ tSF_ArtillerySupport_VirtualFiremissionsProperties = [
 		, 6
 	]
 ];
+
+
+
+/*
+	Ammo classes for different guns:
+	Sholef:
+		"32Rnd_155mm_Mo_shells","4Rnd_155mm_Mo_guided","6Rnd_155mm_Mo_mine","2Rnd_155mm_Mo_Cluster","6Rnd_155mm_Mo_smoke","2Rnd_155mm_Mo_LG","6Rnd_155mm_Mo_AT_mine"
+	2S9 Sochor:
+		"32Rnd_155mm_Mo_shells_O","2Rnd_155mm_Mo_guided_O","6Rnd_155mm_Mo_mine_O","2Rnd_155mm_Mo_Cluster_O","6Rnd_155mm_Mo_smoke_O","4Rnd_155mm_Mo_LG_O","6Rnd_155mm_Mo_AT_mine_O"
+	MRLS Seara, KAMAZ MRLS:
+		"12Rnd_230mm_rockets"
+*/
