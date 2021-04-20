@@ -73,11 +73,11 @@ tSF_FARP_Compositions = [
 		,[
 			["B_Truck_01_Repair_F",350.416,11.996,1.063,-0.003,false,{},true]
 			,["B_Truck_01_fuel_F",100.487,6.197,184.683,-0.01,false,{},true]
-			,["B_Truck_01_ammo_F",331.526,13.62,0,-0.01,false,{},true]			
-			,["Box_NATO_Equip_F",13.3591,8.006,94.157,0.024,false,{ EQUIP_BOX_CODE },true]				
-			,["Land_CampingChair_V1_F",359.283,9.082,354.818,0.027,false,{},true]		
+			,["B_Truck_01_ammo_F",331.526,13.62,0,-0.01,false,{},true]
+			,["Box_NATO_Equip_F",13.3591,8.006,94.157,0.024,false,{ EQUIP_BOX_CODE },true]
+			,["Land_CampingChair_V1_F",359.283,9.082,354.818,0.027,false,{},true]
 			,["Land_CampingTable_F",2.11435,7.865,0.001,0.024,false,{},true]
-			,["Land_CampingTable_F",357.762,11.841,90.9,0.033,false,{},true]		
+			,["Land_CampingTable_F",357.762,11.841,90.9,0.033,false,{},true]
 			,["Land_CanisterPlastic_F",349.918,7.13,1.505,0.024,false,{},true]
 			,["Land_Pallet_MilBoxes_F",309.6,10.198,0,0,false,{},true]
 			,["Land_WeldingTrolley_01_F",359.241,10.462,0.009,0.024,false,{},true]
@@ -89,11 +89,11 @@ tSF_FARP_Compositions = [
 			,["RoadCone_F",97.5375,3.592,359.999,0.024,false,{},true]
 			,["RoadCone_F",47.4087,5.395,359.999,0.024,false,{},true]
 		]
-	]	
+	]
 	, [
 		"NATO HEMTT FA"
 		, [
-		
+
 			["Land_CanisterPlastic_F",346.494,7.422,1.475,0,false,{},true]
 			,["Land_RedWhitePole_F",303.15,10.97,0,0,false,{},true]
 			,["Land_RedWhitePole_F",328.896,7.361,0,0,false,{},true]
@@ -150,7 +150,7 @@ tSF_FARP_Compositions = [
 			,["Box_NATO_Equip_F",25.1266,5.924,94.157,0,false,{ EQUIP_BOX_CODE },true]
 			,["rhsusf_M978A4_usarmy_wd",130.976,6.815,178.038,0,false,{},true]
 		]
-	]	
+	]
 	, [
 		"NATO HEMTT Desert RFA"
 		, [
@@ -193,7 +193,7 @@ tSF_FARP_Compositions = [
 		]
 	]
 	, [
-		"USA MTVR Desert RFA"		
+		"USA MTVR Desert RFA"
 		, [
 			["Land_RedWhitePole_F",300.555,10.151,0,0,false,{},true]
 			,["Land_Pallet_MilBoxes_F",306.562,9.836,0,0,false,{},true]
@@ -234,7 +234,7 @@ tSF_FARP_Compositions = [
 		]
 	]
 	, [
-		"USA MTVR Woodland RFA"		
+		"USA MTVR Woodland RFA"
 		, [
 			["Land_RedWhitePole_F",300.555,10.151,0,0,false,{},true]
 			,["Land_Pallet_MilBoxes_F",306.562,9.836,0,0,false,{},true]
@@ -333,7 +333,7 @@ tSF_FARP_Compositions = [
 			,["rhsusf_M978A4_usarmy_d",116.87,6.187,179.959,0,false,{},true]
 			,["rhsusf_M1083A1P2_B_M2_d_MHQ_fmtv_usarmy",346.473,12.016,358.918,0,false,{},true]
 		]
-	]	
+	]
 	, [
 		"USA HMMWV Desert FA"
 		, [
@@ -389,7 +389,7 @@ tSF_FARP_Compositions = [
 			,["AmmoCrates_NoInteractive_Medium",316.031,7.928,1.849,1.014,false,{},true]
 			,["AmmoCrates_NoInteractive_Medium",331.993,6.076,196.902,1.014,false,{},true]
 		]
-	]	
+	]
 	, [
 		"RU Trucks RFA"
 		, [
@@ -430,7 +430,7 @@ tSF_FARP_Compositions = [
 			,["RHS_Ural_Fuel_VV_01",130.744,7.505,186.828,0,false,{},true]
 			,["rhs_gaz66_ammo_vv",321.694,7.813,271.227,0,false,{},true]
 		]
-	]	
+	]
 	, [
 		"ChDKZ URAL RFA"
 		, [
@@ -553,7 +553,7 @@ tSF_FARP_Compositions = [
 			,["CUP_O_Ural_Reammo_RU",325.424,9.267,268.628,0,false,{},true]
 			,["CUP_O_Ural_Refuel_RU",117.887,5.751,182.105,0,false,{},true]
 		]
-	]	
+	]
 	, [
 		"Taki Praga RFA"
 		, [
@@ -594,7 +594,7 @@ tSF_FARP_Compositions = [
 			,["CUP_O_V3S_Refuel_TKM",121.224,6.082,182.461,0,false,{},true]
 			,["CUP_O_V3S_Covered_TKM",321.259,9.136,270.81,0,false,{},true]
 		]
-	]	
+	]
 	, [
 		"Praga RFA"
 		, [
@@ -635,8 +635,8 @@ tSF_FARP_Compositions = [
 			,["CUP_I_V3S_Refuel_TKG",121.224,6.082,182.461,0,false,{},true]
 			,["CUP_I_V3S_Covered_TKG",321.259,9.136,270.81,0,false,{},true]
 		]
-	]	
-		
+	]
+
 	, [
 		"CSAT Typhoon FA"
 		, [
@@ -720,7 +720,7 @@ tSF_FARP_Compositions = [
 			,["O_T_Truck_03_repair_ghex_F",342.492,9.944,0,0,false,{},true]
 			,["O_T_Truck_03_fuel_ghex_F",133.842,7.661,182.858,0,false,{},true]
 		]
-	]	
+	]
 	, [
 		"CSAT KAMAZ FA"
 		, [
@@ -802,7 +802,7 @@ tSF_FARP_Compositions = [
 			,["I_Truck_02_fuel_F",128.584,7.229,183.896,0,false,{},true]
 			,["I_Truck_02_box_F",337.915,8.216,0,0,false,{},true]
 		]
-	]	
+	]
 	, [
 		"Civil RFA"
 		, [
@@ -861,7 +861,7 @@ tSF_FARP_Compositions = [
 			,["Land_RedWhitePole_F",36.4515,5.563,0,0,false,{},true]
 			,["Box_NATO_Equip_F",7.31673,6.082,94.157,0,false,{ EQUIP_BOX_CODE },true]
 		]
-	]	
+	]
 	, [
 		"Taki Mi-6"
 		, [
@@ -891,7 +891,7 @@ tSF_FARP_Compositions = [
 			,["Land_CampingTable_F",24.0541,6.933,360,0.024,false,{},true]
 			,["Box_NATO_Equip_F",11.1028,6.41,94.17,0.024,false,{ EQUIP_BOX_CODE },true]
 		]
-	]	
+	]
 	, [
 		"NATO CH-47"
 		, [
@@ -921,9 +921,19 @@ tSF_FARP_Compositions = [
 			,["rhsusf_CH53E_USMC",50.712,10.142,355.815,0,false,{},true]
 		]
 	]
-	
-	
-	
+
+	, [
+		"UN Mi-8"
+		, [
+			["Land_runway_edgelight",97.3866,15.055,14.804,0,false,{},true]
+			,["CUP_I_Mi17_UN",33.2506,12.633,359.866,0.001,false,{},true]
+			,["Land_RedWhitePole_F",36.2738,5.463,359.954,0.024,false,{},true]
+			,["Land_CampingChair_V1_F",17.7797,7.932,354.812,0.027,false,{},true]
+			,["Land_CampingTable_F",24.0541,6.933,360,0.024,false,{},true]
+			,["Box_NATO_Equip_F",11.1028,6.41,94.17,0.024,false,{ EQUIP_BOX_CODE },true]
+		]
+	]
+
 	, [
 		"Ru Tiger"
 		, [
@@ -1027,6 +1037,5 @@ tSF_FARP_Compositions = [
 			,["Box_NATO_Equip_F",280.354,1.141,1.02,0.024,false,{ EQUIP_BOX_CODE },true]
 			,["Land_CampingTable_F",167.693,0.648,359.997,0.024,false,{},true]
 		]
-	]	
+	]
 ];
-
