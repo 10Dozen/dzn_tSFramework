@@ -1,22 +1,29 @@
+#include "data\script_component.hpp"
+
+/* Dependency: No
+ */
+
 // Delay before initializations
-tSF_EVC_initTimeout	= 1;
-tSF_EVC_initCondition = { true };
+GVAR(initTimeout)     = 1;
+GVAR(initCondition)   = { true };
 
-tSF_EVC_OPFOR_CrewSkill		= 0.75;
-tSF_EVC_OPFOR_CrewKit		= "";
-tSF_EVC_OPFOR_HoldType		= "full frontal";
+// Default settings
+GVAR(OPFOR_Side)      = east; // west, east, resistance, civilian
+GVAR(OPFOR_CrewSkill) = 0.75;
+GVAR(OPFOR_CrewKit)   = "";
+GVAR(OPFOR_HoldType)  = "full frontal";
 
 
-#define	CREW_CONFIG_TABLE tSF_EVC_CrewConfig = [
+#define	CREW_CONFIG_TABLE GVAR(CrewConfig) = [
 #define	CREW_CONFIG_TABLE_END ];
-#define OPFOR_CREW_CONFIG_DEFAULT east,tSF_EVC_OPFOR_CrewSkill,tSF_EVC_OPFOR_CrewKit,tSF_EVC_OPFOR_HoldType
+#define OPFOR_CREW_CONFIG_DEFAULT GVAR(OPFOR_Side),GVAR(OPFOR_CrewSkill),GVAR(OPFOR_CrewKit),GVAR(OPFOR_HoldType)
 
 /*
  *	Sync editor placed vehicles with GameLogics and add var with config name: this setVariable ["tSF_EVC", "Ins DSHK Gunner"]
  *	For all synched vehicles -- crew will be spawned.
  *
  *	List of Configs in format
- *		[ 
+ *		[
  *			@ConfigName		- string, e.g. "Ins DSHK Gunner"
  *			, [
  *				@Roles 		- e.g. ["driver", "gunner", "commander","cargo"] or "gunner"
@@ -42,20 +49,19 @@ CREW_CONFIG_TABLE
 	,["OPFOR VC"			,[["commander"], OPFOR_CREW_CONFIG_DEFAULT]]
 	,["OPFOR GNR"			,[["gunner"], OPFOR_CREW_CONFIG_DEFAULT]]
 	,["OPFOR DRV"			,[["driver"], OPFOR_CREW_CONFIG_DEFAULT]]
-	
+
 	/*
 	Example of custom config:
-	[ 
+	[
 		"NATO MRAP Crew" // Config Name
-		, [ 
+		, [
 			"driver"			// Roles
 			, west				// Side
 			, 0.7				// Skill
-			, "kit_nato_r"		// dzn_gear kit name 
-			, "frontal"			// dzn_dynai behavior 
+			, "_kit_nato_r"		// dzn_gear kit name
+			, "frontal"			// dzn_dynai behavior
 			, "B_Soldier_F"		// Crew classname
-		] 
+		]
 	]
 	*/
 CREW_CONFIG_TABLE_END
-

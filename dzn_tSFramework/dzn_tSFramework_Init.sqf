@@ -45,13 +45,13 @@ tSF_module_Conversations = false;
 	"MissionDefaults"
 	, "JIPTeleport"
 	, "MissionConditions"
-	
+
 	/*, "IntroText"*/
 	, "Briefing"
 	, "tSNotes"
 	, "tSSettings"
 	/*, "POM"*/
-	
+
 	, "CCP"
 	, "FARP"
 	/*, "Authorization"*/
@@ -59,18 +59,19 @@ tSF_module_Conversations = false;
 	, "ArtillerySupport"
 	, "Interactives"
 	, "ACEActions"
-	
-	, "EditorVehicleCrew"
+
+	/*, "EditorVehicleCrew"*/
 	, "EditorUnitBehavior"
 	, "EditorRadioSettings"
 	, "tSAdminTools"
-	
+
 	, "Conversations"
-] apply {	
+] apply {
 	call compile format ["if (tSF_module_%1) then { [] execVM 'dzn_tSFramework\Modules\%1\Init.sqf' }", _x]
 };
 
 RUN_MODULE(Authorization);
 RUN_MODULE(IntroText);
 RUN_MODULE(AirborneSupport);
+RUN_MODULE(EditorVehicleCrew);
 RUN_MODULE(POM);
