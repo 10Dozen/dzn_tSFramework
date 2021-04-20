@@ -31,15 +31,15 @@ var textAreaSettings = {
 
 function generateTagsCheckboxes() {
 	let tagsArray = Object.entries(defaultTags);
-	
+
 	for (let i = 0; i < tagsArray.length; ++i) {
 		let tag = tagsArray[i];
 		let tagName = tag[0];
 		let tagProps = tag[1];
-		
+
 		$("#tags > ul").append(
 			"<li>" +
-			"<input type='checkbox' id='" + tagName + "'/>" + 
+			"<input type='checkbox' id='" + tagName + "'/>" +
 			"<label for='" + tagName + "'>" + tagName + " (" + tagProps.hint + ")" + "</label>" +
 			"</li>"
 		);
@@ -57,10 +57,10 @@ function generateDefaultTopics() {
 			+ "<textarea class='topicData' cols='" + textAreaSettings.cols
 			+ "' rows='" + textAreaSettings.rows + "'>"
 			+ defaultTopics[i][2] + "</textarea>"
-			+ "</div></li><hr />"	
+			+ "</div></li><hr />"
 		);
 	};
-	
+
 	$( ".dl-3 > textarea" ).css( "width", textAreaSettings.width );
 }
 
@@ -70,9 +70,9 @@ function changeTopicLocale() {
 		$( this ).attr({
 			"value": defaultTopics[id][locale],
 			"placeholder": defaultTopics[id][locale]
-		});		
+		});
 	} );
-	
+
 };
 
 function changeLocale() {
@@ -82,7 +82,7 @@ function changeLocale() {
 	locale = l;
 	$( "#locale" ).attr( "locale", l);
 	$( "#locale" ).html( label );
-	
+
 	changeTopicLocale();
 }
 
@@ -96,27 +96,27 @@ function getCode() {
 		+ "\n#define TOPIC(NAME) 	_briefing pushBack [\"Diary\", [ NAME,"
 		+ "\n#define END			]];"
 		+ "\n#define ADD_TOPICS	for \"_i\" from (count _briefing) to 0 step -1 do {player createDiaryRecord (_briefing select _i);};"
-		+ "\n#define TAGS(X) tSF_MissionTags = X ;"
+		+ "\n#define TAGS tSF_MissionTags = "
 		+ "\n//\n//\n// Mission tags";
-	
+
 	let tags = [];
 	let tagsInputs = $("#tags input");
-	
+
 	for (let i = 0; i < tagsInputs.length; ++i) {
 		if ($(tagsInputs[i]).prop("checked")) {
 			let tagName = $(tagsInputs[i]).prop("id");
 			tags.push('"' + tagName + '"');
 		}
 	}
-	let tagsBlock = "\nTAGS([" + tags + "])";
+	let tagsBlock = "\nTAGS([" + tags + "]);";
 	let preBriefingBlock = 	"\n\n// Briefing goes here" + "\n\nBRIEFING\n";
-	
+
 	let topics = "";
 	let topicCount = $( ".topicInput" ).length;
-	
+
 	for (let i = 0; i < topicCount; i++) {
 		let text = ( $($( ".topicData" )[i]).val() ).replace(/(\r\n|\n|\r)/g,"<br />");
-		
+
 		if (i == topicCount - 1) {
 			topics = topics
 				+ "\nif ((serverCommandAvailable '#logout') || !(isMultiplayer) || isServer) then {"
@@ -124,18 +124,18 @@ function getCode() {
 				+ "\n\"" +  escapeQuotes(text) + "\""
 				+ "\nEND"
 				+ "\n};\n";
-			
+
 		} else {
-		
+
 			topics = topics
 				+ "\nTOPIC(\"" + escapeQuotes ( $($( ".topicInput" )[i]).val() ) + "\")"
 				+ "\n\"" +  escapeQuotes(text) + "\""
 				+ "\nEND\n";
 		}
 	}
-	
+
 	let endBlock = "\nADD_TOPICS"
-	
+
 	let code = (defineBlock + tagsBlock + preBriefingBlock + topics + endBlock);
 	return code;
 };
@@ -146,7 +146,7 @@ function getCodeToDisplay() {
 	code = code.replace(/</g, "&lt;");
 	code = code.replace(/>/g, "&gt;");
 	code = code.replace(/(\r\n|\n|\r)/g,"<br />");
-	
+
 	$( "#result-tab" ).css( "top", "15%" );
 	$( "#result-tab-data" ).html( code );
 }
@@ -193,15 +193,15 @@ function importBriefing(sqfText) {
 		populateTopic(i*2, parsedTopics[i][0], parsedTopics[i][1]);
 	}
 	console.log("#     Topics populated");
-	
+
 	console.log("#     Parsing tags");
 	let parsedTags = parseTags(sqfText);
 	console.log("#     Tags parsed");
-	
+
 	console.log("#     Populating tags");
 	populateTags(parsedTags);
 	console.log("#     Tags populated");
-	
+
 	console.log("#     All done!");
 }
 
@@ -259,15 +259,15 @@ function parseTags(rawBriefing) {
 	let tags = [];
 	for (let i = 0; i < rawLines.length; i++) {
 		let rawLine = rawLines[i];
-		
+
 		if (!(rawLine.match(/TAGS\(\[(.*)\]\)/g) === null)) {
 			let tagsString = rawLine.match(/TAGS\(\[(.*)\]\)/)[1];
 			tags = tagsString.replace(/"/g,"").split(",");
-			
+
 			break;
 		};
 	};
-	
+
 	return tags;
 };
 
@@ -283,10 +283,10 @@ function populateTopic(id,title,text) {
 
 function populateTags(tags) {
 	let tagsInputs = $("#tags input");
-	
+
 	for (let j = 0; j < tags.length; ++j) {
 		let tag = tags[j];
-	
+
 		for (let i = 0; i < tagsInputs.length; ++i) {
 			if ($(tagsInputs[i]).prop("id") == tag ) {
 				$(tagsInputs[i]).prop('checked',true);

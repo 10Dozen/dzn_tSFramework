@@ -4,11 +4,11 @@
 #define TOPIC(NAME) 	_briefing pushBack ["Diary", [ NAME,
 #define END			]];
 #define ADD_TOPICS	for "_i" from (count _briefing) to 0 step -1 do {player createDiaryRecord (_briefing select _i);};
-#define TAGS(X) tSF_MissionTags = X ;
+#define TAGS tSF_MissionTags =
 //
 //
 // Mission tags
-TAGS([])
+TAGS(["SPECOPS","INFANTRY","JTAC/CAS","RolePlay"]);
 
 // Briefing goes here
 
