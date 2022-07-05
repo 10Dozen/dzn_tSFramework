@@ -1,3 +1,9 @@
+// Common macro
+#define __SERVER_ONLY__ if (!isServer) exitWith {};
+#define __CLIENT_ONLY__ if (!hasInterface) exitWith {};
+
+
+
 // Credits: CBA Team (https://github.com/CBATeam/CBA_A3/blob/master/addons/main/script_macros_common.hpp)
 #define DEBUG true
 

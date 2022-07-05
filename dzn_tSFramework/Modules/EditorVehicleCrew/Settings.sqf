@@ -13,13 +13,8 @@ GVAR(OPFOR_CrewSkill) = 0.75;
 GVAR(OPFOR_CrewKit)   = "";
 GVAR(OPFOR_HoldType)  = "full frontal";
 
-
-#define	CREW_CONFIG_TABLE GVAR(CrewConfig) = [
-#define	CREW_CONFIG_TABLE_END ];
-#define OPFOR_CREW_CONFIG_DEFAULT GVAR(OPFOR_Side),GVAR(OPFOR_CrewSkill),GVAR(OPFOR_CrewKit),GVAR(OPFOR_HoldType)
-
 /*
- *	Sync editor placed vehicles with GameLogics and add var with config name: this setVariable ["tSF_EVC", "Ins DSHK Gunner"]
+ *	Sync editor placed vehicles with GameLogics and add var with config name: this setVariable ["tSF_EVC", "NATO MRAP Crew"]
  *	For all synched vehicles -- crew will be spawned.
  *
  *	List of Configs in format
@@ -58,7 +53,7 @@ CREW_CONFIG_TABLE
 			"driver"			// Roles
 			, west				// Side
 			, 0.7				// Skill
-			, "_kit_nato_r"		// dzn_gear kit name
+			, "kit_nato_r"		// dzn_gear kit name
 			, "frontal"			// dzn_dynai behavior
 			, "B_Soldier_F"		// Crew classname
 		]

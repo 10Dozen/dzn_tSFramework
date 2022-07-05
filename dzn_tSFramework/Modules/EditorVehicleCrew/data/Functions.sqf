@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 FUNC(processEVCLogics) = {
-	private ["_logic","_logicConfig"];
+	private ["_logic","_logicConfigName"];
 
 	{
 		_logic = _x;
@@ -9,7 +9,7 @@ FUNC(processEVCLogics) = {
 
 		if !(isNil {_logicConfigName}) then {
 			{
-				[_x, _logicConfigName] spawn FUNC(assignCrew);
+				[_x, _logicConfigName] call FUNC(assignCrew);
 			} forEach (synchronizedObjects _logic);
 		};
 	} forEach (entities "Logic");
@@ -34,8 +34,8 @@ FUNC(assignCrew) = {
 
 	params["_veh","_configName"];
 
-	private _config = [GVAR(CrewConfig), _configName] call dzn_fnc_getValueByKey;
-	if (typename _config == "BOOL") exitWith {
+	private _config = GVAR(CrewConfig) get _configName;
+	if (isNil "_config") exitWith {
 		[format ["tSF - EVC :: There is no %1 config!", _configName]] call BIS_fnc_error;
 	};
 
@@ -49,19 +49,32 @@ FUNC(assignCrew) = {
 	];
 
 	if (typename _roles != "ARRAY") then { _roles = [_roles]; };
-	if (!(_kit isEqualTo "") && isNil "dzn_gear_serverInitDone") then {
-		waitUntil { sleep 1; !isNil "dzn_gear_serverInitDone" };
+
+	if (_kit isNotEqualTo "" && isNil "dzn_gear_serverInitDone") then {
+		[
+			{ !isNil "dzn_gear_serverInitDone" },
+			{ _this call FUNC(assignCrew) },
+			_this
+		] call CBA_fnc_waitUntilAndExecute;
 	};
 
-	[_veh, _side, _roles, if (_kit == "") then { nil } else { _kit }, _skill, _crewClass] call dzn_fnc_createVehicleCrew;
+	private _crew = [_veh, _side, _roles, _kit, _skill, _crewClass] call dzn_fnc_createVehicleCrew;
 
 	if (_behavior isEqualTo "") exitWith {}; // No behaviour assigned
-	private _vehicleHoldAspect = switch (toLower(_config select 4)) do {
+	private _vehicleBehaviour = switch (toLower(_config # 4)) do {
 		case "hold": { "vehicle hold" };
 		case "frontal": { "vehicle 45 hold" };
 		case "full frontal": { "vehicle 90 hold" };
 	};
+	private _behaviourParams = [_veh, _vehicleBehaviour];
 
-	waitUntil { !isNil "dzn_dynai_initialized" && !isNil "dzn_fnc_dynai_addUnitBehavior" };
-	[_veh, _vehicleHoldAspect] call dzn_fnc_dynai_addUnitBehavior;
+	if (isNil "dzn_dynai_initialized" && isNil "dzn_fnc_dynai_addUnitBehavior") exitWith {
+		[
+			{ !isNil "dzn_dynai_initialized" && !isNil "dzn_fnc_dynai_addUnitBehavior"},
+			{ _this call dzn_fnc_dynai_addUnitBehavior; },
+			_behaviourParams
+		] call CBA_fnc_waitUntilAndExecute;
+	};
+
+	_behaviourParams call dzn_fnc_dynai_addUnitBehavior
 };
