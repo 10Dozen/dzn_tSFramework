@@ -19,8 +19,8 @@ tSF_module_MissionDefaults = true;
 tSF_module_JIPTeleport = true;
 tSF_module_MissionConditions = true;
 
-tSF_module_CCP = true;
-tSF_module_FARP = true;
+tSF_module_CCP = false;
+tSF_module_FARP = false;
 
 tSF_module_Interactives = false;
 tSF_module_ACEActions = true;
@@ -30,13 +30,14 @@ tSF_module_AirborneSupport = false;
 tSF_module_ArtillerySupport = false;
 tSF_module_POM = false;
 
-tSF_module_EditorVehicleCrew = false;
+tSF_module_EditorVehicleCrew = true;
 tSF_module_EditorUnitBehavior = false;
-tSF_module_EditorRadioSettings = false;
+tSF_module_EditorRadioSettings = true;
 
 tSF_module_tSAdminTools = true;
 
 tSF_module_Conversations = false;
+
 
 // **************************
 //  INIT
@@ -62,7 +63,7 @@ tSF_module_Conversations = false;
 
 	/*, "EditorVehicleCrew"*/
 	, "EditorUnitBehavior"
-	, "EditorRadioSettings"
+	/* , "EditorRadioSettings" */
 	, "tSAdminTools"
 
 	, "Conversations"
@@ -70,8 +71,10 @@ tSF_module_Conversations = false;
 	call compile format ["if (tSF_module_%1) then { [] execVM 'dzn_tSFramework\Modules\%1\Init.sqf' }", _x]
 };
 
+INCLUDE_MODULE(tSFDiag);
 RUN_MODULE(Authorization);
 RUN_MODULE(IntroText);
 RUN_MODULE(AirborneSupport);
 RUN_MODULE(EditorVehicleCrew);
+RUN_MODULE(EditorRadioSettings);
 RUN_MODULE(POM);
