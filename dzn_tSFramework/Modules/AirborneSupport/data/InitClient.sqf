@@ -17,7 +17,7 @@ LOG("Client pre-init started");
 		GVAR(TeleportMenu) = [];
 
 		private _condition = { true };
-		if (GVAR(RequiredLRRadio)) then {
+		if (GVAR(RequiresLRRadio)) then {
 			// Check for LR; if functions are not defined - return true
 			_condition = {
 				(!isNil "TFAR_fnc_haveLRRadio" && !isNil "TFAR_fnc_hasVehicleRadio"

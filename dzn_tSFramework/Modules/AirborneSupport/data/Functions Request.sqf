@@ -11,7 +11,7 @@ FUNC(checkVehicleAvailable) = {
 
 	if !(alive _veh) exitWith { false };
 	private _result = true;
-	
+
 	if (["fuel","state","all"] findIf {_x == _type} > -1) then {
 		_result = ((fuel _veh) >= GVAR(FuelLimit));
 	};
@@ -45,6 +45,8 @@ FUNC(checkVehicleFree) = {
 FUNC(showHint) = {
 	params["_veh","_title","_subtitle",["_subtitleAsScreenText",false]];
 
+	[] call FUNC(clearHint);
+
 	private _callsign = [_veh, "CALLSIGN"] call FUNC(getStatus);
 	private _type = (typeof _veh) call dzn_fnc_getVehicleDisplayName;
 
@@ -66,6 +68,15 @@ FUNC(showHint) = {
 
 	hint parseText _text;
 };
+
+FUNC(clearHint) = {
+	hintSilent "";
+	// Cleans up WLSmoothText buffer and deletes on screen message
+	private _wlSmoothTextID = [BIS_onScreenMessageID - 1, 999] select (BIS_onScreenMessageID == 0);
+	ctrlDelete (findDisplay 46 displayCtrl (9990000 + _wlSmoothTextID));
+	BIS_onScreenMessagesBuffer = []
+};
+
 FUNC(showMsg) = {
 	params ["_veh","_message"];
 	[(driver _veh), _message] remoteExec ["sideChat", group player];
@@ -111,7 +122,7 @@ FUNC(ShowRequestMenu) = {
 			, _landType
 		]];
 		_i = _i + 1;
-		
+
 		if ([_veh, "STATE", "Pickup"] call FUNC(assertStatus)) then {
 			_menu pushBack [_i, "BUTTON", "<t align='center'>LAND ON LZ</t>", {
 				closeDialog 2;
@@ -125,7 +136,7 @@ FUNC(ShowRequestMenu) = {
 			}, _callsign];
 			_i = _i + 1;
 		};
-		
+
 		_menu pushBack [_i, "BUTTON", "<t align='center'>ABORT CURRENT MISSION</t>", {
 			closeDialog 2;
 			_args call FUNC(RequestAbortMission);
@@ -171,6 +182,7 @@ FUNC(ShowRequestMenu) = {
  */
 FUNC(pathDrawer) = {
 	params ["_mode", "_payload"];
+	private _result = nil;
 	switch (toUpper _mode) do {
 		case "ADD": {
 			if (isNil QGVAR(OnMapPath)) then {
@@ -179,6 +191,9 @@ FUNC(pathDrawer) = {
 				GVAR(OnMapPath) pushBack _payload;
 			};
 			if (isNil QGVAR(PathDrawerEH)) then { ["START"] call FUNC(pathDrawer); };
+		};
+		case "PATH": {
+			_result = GVAR(OnMapPath);
 		};
 		case "ICON": {
 			GVAR(OnMapIcon) = switch (toUpper _payload) do {
@@ -218,11 +233,13 @@ FUNC(pathDrawer) = {
 			GVAR(OnMapIcon) = nil;
 		};
 	};
+
+	_result
 };
 
 FUNC(requestPickup) = {
 	private _veh = (_this call FUNC(getProvider)) select 0;
-	if (!visibleMap) then { openMap [true,false]; };
+	if (!visibleMap) then { openMap [true, false]; };
 
 	[
 		_veh
@@ -234,45 +251,64 @@ FUNC(requestPickup) = {
 	["ADD", getPos _veh] call FUNC(pathDrawer);
 	["ICON", "INGRESS"] call FUNC(pathDrawer);
 
-	[QGVAR(clickForPickupEH), "onMapSingleClick", {
-		[QGVAR(clickForPickupEH), "onMapSingleClick"] call BIS_fnc_removeStackedEventHandler;
+	GVAR(mapClosedHandler) = addMissionEventHandler ["Map", {
+		params ["_mapIsOpened", "_mapIsForced"];
 
-		params ["_id","_pos","_alt","_shifr", "_veh"];
-		GVAR(Ingress_Mrk) = ["tSF_Ingress", _pos, "mil_marker", "ColorCIV", "Ingress", true] call dzn_fnc_createMarkerIcon;
-		["ADD", _pos] call FUNC(pathDrawer);
-		["ICON", "PICKUP"] call FUNC(pathDrawer);
-
-		if (!visibleMap) then { openMap [true,false]; };
-		[_veh, "Requesting Pickup", "(Step 2 of 2) Select LZ!", true] call FUNC(showHint);
-
-		[QGVAR(clickForPickupLZEH), "onMapSingleClick", {
-			params ["_id","_pos","_alt","_shifr","_veh","_ingressPos"];
-			if (_pos call dzn_fnc_isInWater) exitWith { hint "Landing Zone should not be in water!"; };
-
-			private _nearSafePos = [_pos, 0, 20, 10] call BIS_fnc_findSafePos;
-			if (_pos distance2d _nearSafePos > 20) exitWith { hint "Position is not available for landing!"; };
-			openMap [false,false];
-
-			[_veh, [
-				["STATE", "Pickup"]
-				, ["SIDE", side player]
-				, ["LANDING POINT", _pos]
-				, ["INGRESS POINT", _ingressPos]
-				, ["IN PROGRESS", true]
-				, ["LAND MODE", "GET IN"]
-			]] call FUNC(setStatus);
-
-			[_veh, "Pickup Requested", "Approaching to AO!"] call FUNC(showHint);
-			if (!isNull driver _veh) then {
-				[_veh, "10-4, moving to AO!"] call FUNC(showMsg);
+		if (!_mapIsOpened) exitWith {
+			[] call FUNC(clearHint);
+			if (!isNil QGVAR(Ingress_Mrk)) then {
+				deleteMarker GVAR(Ingress_Mrk);
 			};
-
-			deleteMarker GVAR(Ingress_Mrk);
-
 			["STOP"] call FUNC(pathDrawer);
-			[QGVAR(clickForPickupLZEH), "onMapSingleClick"] call BIS_fnc_removeStackedEventHandler;
-		}, [_veh,_pos]] call BIS_fnc_addStackedEventHandler;
-	}, [_veh]] call BIS_fnc_addStackedEventHandler;
+
+			removeMissionEventHandler ["MapSingleClick", GVAR(positionSelectHandler)];
+			removeMissionEventHandler [_thisEvent, _thisEventHandler];
+		};
+	}];
+
+	GVAR(positionSelectHandler) = addMissionEventHandler ["MapSingleClick", {
+		params ["", "_pos", "", ""];
+		_thisArgs params ["_veh"];
+
+		private _pathSize = count (["PATH"] call FUNC(pathDrawer));
+		switch _pathSize do {
+			case 1: {
+				GVAR(Ingress_Mrk) = ["tSF_Ingress", _pos, "mil_marker", "ColorCIV", "Ingress", true] call dzn_fnc_createMarkerIcon;
+				["ADD", _pos] call FUNC(pathDrawer);
+				["ICON", "PICKUP"] call FUNC(pathDrawer);
+
+				[_veh, "Requesting Pickup", "(Step 2 of 2) Select LZ!", true] call FUNC(showHint);
+			};
+			case 2: {
+				if (_pos call dzn_fnc_isInWater) exitWith { hint "Landing Zone should not be in water!"; };
+				private _nearSafePos = [_pos, 0, 20, 10] call BIS_fnc_findSafePos;
+				if (_pos distance2d _nearSafePos > 20) exitWith { hint "Position is not available for landing!"; };
+
+				private _ingressPos = (["PATH"] call FUNC(pathDrawer)) # 1;
+				[{
+					params ["_veh", "_pos", "_ingressPos"];
+					["Ingress", _ingressPos, "mil_marker", "ColorCIV", "Ingress", true] call dzn_fnc_createMarkerIcon;
+					["Ingress2", _pos, "mil_marker", "ColorCIV", "LZ", true] call dzn_fnc_createMarkerIcon;
+
+					[_veh, [
+						["STATE", "Pickup"]
+						, ["SIDE", side player]
+						, ["LANDING POINT", _pos]
+						, ["INGRESS POINT", _ingressPos]
+						, ["IN PROGRESS", true]
+						, ["LAND MODE", "GET IN"]
+					]] call FUNC(setStatus);
+
+					[_veh, "Pickup Requested", "Approaching to AO!"] call FUNC(showHint);
+					if (!isNull driver _veh) then {
+						[_veh, "10-4, moving to AO!"] call FUNC(showMsg);
+					};
+				}, [_veh, _pos, _ingressPos]] call CBA_fnc_execNextFrame;
+
+				openMap [false, false];
+			};
+		};
+	}, [_veh]];
 };
 
 FUNC(requestLandMode) = {
@@ -289,7 +325,7 @@ FUNC(requestLandMode) = {
 };
 
 FUNC(requestRTB) = {
-	private _veh =(_this call FUNC(getProvider)) select 0;
+	private _veh = (_this call FUNC(getProvider)) select 0;
 	if (!visibleMap) then { openMap [true,false]; };
 
 	["ADD", getPos _veh] call FUNC(pathDrawer);
@@ -301,34 +337,47 @@ FUNC(requestRTB) = {
 		, true
 	] call FUNC(showHint);
 
-	[QGVAR(clickForRTBEH), "onMapSingleClick", {
-		[QGVAR(clickForRTBEH), "onMapSingleClick"] call BIS_fnc_removeStackedEventHandler;
-		["STOP"] call FUNC(pathDrawer);
+	GVAR(MapClosedHandler) = addMissionEventHandler ["Map", {
+		params ["_mapIsOpened", "_mapIsForced"];
+
+		if (!_mapIsOpened) exitWith {
+			[] call FUNC(clearHint);
+			["STOP"] call FUNC(pathDrawer);
+			removeMissionEventHandler ["MapSingleClick", GVAR(clickForRTBHandler)];
+			removeMissionEventHandler [_thisEvent, _thisEventHandler];
+		};
+	}];
+	GVAR(clickForRTBHandler) = addMissionEventHandler ["MapSingleClick", {
+		params ["", "_pos", "", ""];
+		_thisArgs params ["_veh"];
 		openMap [false, false];
+		[{
+			params ["_veh", "_pos"];
 
-		private _veh =_this select 4;
-		_veh engineOn true;
-		[_veh, [
-			["EGRESS POINT", _pos]
-			, ["SIDE", side player]
-			, ["STATE", "RTB"]
-			, ["IN PROGRESS", true]
-			, ["LAND MODE", "LAND"]
-		]] call FUNC(setStatus);
+			_veh engineOn true;
 
-		[
-			_veh
-			, "Returning to base"
-			, "Leaving AO!"
-		] call FUNC(showHint);
+			[_veh, [
+				["EGRESS POINT", _pos]
+				, ["SIDE", side player]
+				, ["STATE", "RTB"]
+				, ["IN PROGRESS", true]
+				, ["LAND MODE", "LAND"]
+			]] call FUNC(setStatus);
 
-		[_veh, "Leaving in 5 seconds and returning to base!"] call FUNC(showMsg);
-	}, [_veh]] call BIS_fnc_addStackedEventHandler;
+			[
+				_veh
+				, "Returning to base"
+				, "Leaving AO!"
+			] call FUNC(showHint);
+
+			[_veh, "Leaving in 5 seconds and returning to base!"] call FUNC(showMsg);
+		}, [_veh, _pos]] call CBA_fnc_execNextFrame;
+	}, [_veh]];
 };
 
 FUNC(requestCallIn) = {
 	private _veh = (_this call FUNC(getProvider)) select 0;
-	
+
 	// Helicopter in air - instant switch
 	if (isEngineOn _veh && getPosATL _veh # 2 > 10) exitWith {
 		[
@@ -336,7 +385,7 @@ FUNC(requestCallIn) = {
 			, "Approaching AO"
 			, "Assuming direct control..."
 		] call FUNC(showHint);
-	
+
 		[_veh, [
 			["SIDE", side player]
 			, ["STATE", "Call In Instant"]

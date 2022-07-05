@@ -5,7 +5,7 @@
  *    - Modules/ACEActions
  */
 
-GVAR(initTimeout) = 5;
+GVAR(initTimeout) = 2;
 GVAR(initCondition) = { true }; // Overall condition of module init
 
 /* Allow authorized units to teleport from tSF_AirborneSupport_ReturnPoint to their Squad
@@ -28,7 +28,7 @@ GVAR(FuelLimit) = 0.15;
 
 /* Requires LR radio
  */
-GVAR(RequiredLRRadio) = true;
+GVAR(RequiresLRRadio) = true;
 
 /* AI Pilot
  */
