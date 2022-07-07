@@ -18,6 +18,7 @@
 #define TSF_ERROR_TYPE__NO_CONFIG "Config not found"
 #define TSF_ERROR_TYPE__NO_MARKER "Marker not found"
 #define TSF_ERROR_TYPE__MISCONFIGURED "Misconfigured"
+#define TSF_ERROR_TYPE__MISSING_ENTITY "Missing Entity"
 
 // Credits: CBA Team (https://github.com/CBATeam/CBA_A3/blob/master/addons/main/script_macros_common.hpp)
 #define DEBUG true

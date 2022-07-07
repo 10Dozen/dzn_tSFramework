@@ -26,13 +26,13 @@ tSF_module_Interactives = false;
 tSF_module_ACEActions = true;
 
 tSF_module_Authorization = true;
-tSF_module_AirborneSupport = false;
+tSF_module_AirborneSupport = true;
 tSF_module_ArtillerySupport = false;
 tSF_module_POM = false;
 
-tSF_module_EditorVehicleCrew = true;
+tSF_module_EditorVehicleCrew = false;
 tSF_module_EditorUnitBehavior = false;
-tSF_module_EditorRadioSettings = true;
+tSF_module_EditorRadioSettings = false;
 
 tSF_module_tSAdminTools = true;
 
@@ -47,23 +47,17 @@ tSF_module_Conversations = false;
 	, "JIPTeleport"
 	, "MissionConditions"
 
-	/*, "IntroText"*/
 	, "Briefing"
 	, "tSNotes"
 	, "tSSettings"
-	/*, "POM"*/
 
 	, "CCP"
 	, "FARP"
-	/*, "Authorization"*/
-	/*, "AirborneSupport"*/
 	, "ArtillerySupport"
 	, "Interactives"
 	, "ACEActions"
 
-	/*, "EditorVehicleCrew"*/
 	, "EditorUnitBehavior"
-	/* , "EditorRadioSettings" */
 	, "tSAdminTools"
 
 	, "Conversations"
@@ -72,6 +66,7 @@ tSF_module_Conversations = false;
 };
 
 INCLUDE_MODULE(tSFDiag);
+INCLUDE_MODULE(Chatter);
 RUN_MODULE(Authorization);
 RUN_MODULE(IntroText);
 RUN_MODULE(AirborneSupport);
