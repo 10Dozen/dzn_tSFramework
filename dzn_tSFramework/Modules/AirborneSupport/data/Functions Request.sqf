@@ -77,11 +77,6 @@ FUNC(clearHint) = {
 	BIS_onScreenMessagesBuffer = []
 };
 
-FUNC(showMsg) = {
-	params ["_veh","_message"];
-	[(driver _veh), _message] remoteExec ["sideChat", group player];
-};
-
 FUNC(ShowRequestMenu) = {
 	params["_callsign"];
 
@@ -200,6 +195,7 @@ FUNC(pathDrawer) = {
 				case "INGRESS": { ["\A3\ui_f\data\map\markers\military\marker_CA.paa", [1,0.2,0.2,1], "Ingress"] };
 				case "EGRESS": { ["\A3\ui_f\data\map\markers\military\marker_CA.paa", [1,0.2,0.2,1], "Engress"] };
 				case "PICKUP": { ["\A3\ui_f\data\map\markers\military\pickup_CA.paa", [1,0.5,0.5,1], "Pick up"] };
+				case "APPROACH": { ["\A3\ui_f\data\map\markers\military\arrow2_CA.paa", [1,0.2,0.2,1], "Ingress", true] };
 			};
 		};
 		case "START": {
@@ -215,11 +211,15 @@ FUNC(pathDrawer) = {
 					};
 
 					if (!isNil QGVAR(OnMapIcon)) then {
+						GVAR(OnMapIcon) params ["_img", "_color", "_text", ["_doRotate", false]];
 						(_this # 0) drawIcon [
-							GVAR(OnMapIcon) # 0,
-							GVAR(OnMapIcon) # 1,
-							_mousePos, 32, 32, 0,
-							GVAR(OnMapIcon) # 2,
+							_img,
+							_color,
+							_mousePos,
+							MRK_ICON_SIZE,
+							MRK_ICON_SIZE,
+							[0, _mousePos getDir player] select _doRotate,
+							_text,
 							true
 						];
 					};
@@ -263,6 +263,8 @@ FUNC(requestPickup) = {
 
 			removeMissionEventHandler ["MapSingleClick", GVAR(positionSelectHandler)];
 			removeMissionEventHandler [_thisEvent, _thisEventHandler];
+			GVAR(mapClosedHandler) = nil;
+			GVAR(positionSelectHandler) = nil;
 		};
 	}];
 
@@ -285,27 +287,38 @@ FUNC(requestPickup) = {
 				if (_pos distance2d _nearSafePos > 20) exitWith { hint "Position is not available for landing!"; };
 
 				private _ingressPos = (["PATH"] call FUNC(pathDrawer)) # 1;
-				[{
-					params ["_veh", "_pos", "_ingressPos"];
-					["Ingress", _ingressPos, "mil_marker", "ColorCIV", "Ingress", true] call dzn_fnc_createMarkerIcon;
-					["Ingress2", _pos, "mil_marker", "ColorCIV", "LZ", true] call dzn_fnc_createMarkerIcon;
 
-					[_veh, [
-						["STATE", "Pickup"]
-						, ["SIDE", side player]
-						, ["LANDING POINT", _pos]
-						, ["INGRESS POINT", _ingressPos]
-						, ["IN PROGRESS", true]
-						, ["LAND MODE", "GET IN"]
-					]] call FUNC(setStatus);
+				[_veh, [
+					["STATE", "Pickup"]
+					, ["SIDE", side player]
+					, ["LANDING POINT", _pos]
+					, ["INGRESS POINT", _ingressPos]
+					, ["IN PROGRESS", true]
+					, ["LAND MODE", "GET IN"]
+				]] call FUNC(setStatus);
 
-					[_veh, "Pickup Requested", "Approaching to AO!"] call FUNC(showHint);
-					if (!isNull driver _veh) then {
-						[_veh, "10-4, moving to AO!"] call FUNC(showMsg);
-					};
-				}, [_veh, _pos, _ingressPos]] call CBA_fnc_execNextFrame;
-
+				[_veh, "Pickup Requested", "Approaching to AO!"] call FUNC(showHint);
 				openMap [false, false];
+
+				// Skip chatter if position is nearby (possibly asking from hovering to land)...
+				if (_veh distance2d _pos < 75 && _veh distance2d _ingressPos < 75) exitWith {
+					[
+						{ !isNull driver (_this # 0) }
+						, {
+							params ["_veh","_pos"];
+							[CHATTER_LAND_ON_LZ, _veh, player] call FUNC(playChatter);
+						}
+						, [_veh, _pos]
+					] call CBA_fnc_waitUntilAndExecute;
+				};
+				[
+					{ !isNull driver (_this # 0) }
+					, {
+						params ["_veh","_pos"];
+						[CHATTER_PICKUP, _veh, player, [_pos]] call FUNC(playChatter);
+					}
+					, [_veh, _pos]
+				] call CBA_fnc_waitUntilAndExecute;
 			};
 		};
 	}, [_veh]];
@@ -314,14 +327,16 @@ FUNC(requestPickup) = {
 FUNC(requestLandMode) = {
 	params ["_callsign","_mode"];
 	private _veh = (_callsign call FUNC(getProvider)) # 0;
-
-	private _msg = switch (toUpper _mode) do {
-		case "LAND": { "Landing on LZ, confirmed!" };
-		case "HOVER": { "Roger-dodger, no landing, hovering over LZ!" };
-	};
-
 	[_veh, "LAND MODE", _mode] call FUNC(setStatus);
-	[_veh, _msg] call FUNC(showMsg);
+
+	switch (toUpper _mode) do {
+		case "LAND": {
+			[CHATTER_LAND_ON_LZ, _veh, player] call FUNC(playChatter);
+		};
+		case "HOVER": {
+			[CHATTER_HOVER_OVER_LZ, _veh, player] call FUNC(playChatter);
+		};
+	};
 };
 
 FUNC(requestRTB) = {
@@ -337,7 +352,7 @@ FUNC(requestRTB) = {
 		, true
 	] call FUNC(showHint);
 
-	GVAR(MapClosedHandler) = addMissionEventHandler ["Map", {
+	GVAR(mapClosedHandler) = addMissionEventHandler ["Map", {
 		params ["_mapIsOpened", "_mapIsForced"];
 
 		if (!_mapIsOpened) exitWith {
@@ -345,6 +360,9 @@ FUNC(requestRTB) = {
 			["STOP"] call FUNC(pathDrawer);
 			removeMissionEventHandler ["MapSingleClick", GVAR(clickForRTBHandler)];
 			removeMissionEventHandler [_thisEvent, _thisEventHandler];
+
+			GVAR(mapClosedHandler) = nil;
+			GVAR(clickForRTBHandler) = nil;
 		};
 	}];
 	GVAR(clickForRTBHandler) = addMissionEventHandler ["MapSingleClick", {
@@ -370,7 +388,7 @@ FUNC(requestRTB) = {
 				, "Leaving AO!"
 			] call FUNC(showHint);
 
-			[_veh, "Leaving in 5 seconds and returning to base!"] call FUNC(showMsg);
+			[CHATTER_RTB, _veh, player] call FUNC(playChatter);
 		}, [_veh, _pos]] call CBA_fnc_execNextFrame;
 	}, [_veh]];
 };
@@ -397,9 +415,9 @@ FUNC(requestCallIn) = {
 	};
 
 	if (!visibleMap) then { openMap [true,false]; };
-	"SHOW" call FUNC(displayRestrictedAreaMarker);
+	"SHOW" call FUNC(handleRestrictedAreaMarker);
 	["ADD", getPos _veh] call FUNC(pathDrawer);
-	["ICON", "INGRESS"] call FUNC(pathDrawer);
+	["ICON", "APPROACH"] call FUNC(pathDrawer);
 
 	[
 		_veh
@@ -408,32 +426,43 @@ FUNC(requestCallIn) = {
 		, true
 	] call FUNC(showHint);
 
-	[QGVAR(clickForCallInEH), "onMapSingleClick", {
-		[QGVAR(clickForCallInEH), "onMapSingleClick"] call BIS_fnc_removeStackedEventHandler;
-		openMap [false, false];
-		"HIDE" call FUNC(displayRestrictedAreaMarker);
-		["STOP"] call FUNC(pathDrawer);
+	GVAR(mapClosedHandler) = addMissionEventHandler ["Map", {
+		params ["_mapIsOpened", "_mapIsForced"];
+		if (!_mapIsOpened) exitWith {
+			[] call FUNC(clearHint);
+			["STOP"] call FUNC(pathDrawer);
 
-		private _ingress = _pos;
-		private _veh = _this select 4;
+			removeMissionEventHandler ["MapSingleClick", GVAR(positionSelectHandler)];
+			removeMissionEventHandler [_thisEvent, _thisEventHandler];
+			GVAR(mapClosedHandler) = nil;
+			GVAR(positionSelectHandler) = nil;
+		};
+	}];
+
+	GVAR(positionSelectHandler) = addMissionEventHandler ["MapSingleClick", {
+		params ["", "_ingress", "", ""];
+		_thisArgs params ["_veh"];
+
+		"HIDE" call FUNC(handleRestrictedAreaMarker);
 
 		[
 			_veh
 			, "Approaching AO"
 			, "Assuming direct control in 15 seconds..."
 		] call FUNC(showHint);
-		[_veh, "Approaching to AO!"] call FUNC(showMsg);
+		[CHATTER_CALLIN, _veh, player, [_ingress]] call FUNC(playChatter);
 
-		_veh engineOn true;
-		[_veh, [
+		 [_veh, [
 			["INGRESS POINT", _ingress]
 			, ["SIDE", side player]
 			, ["STATE", "Call In"]
 			, ["IN PROGRESS", true]
 		]] call FUNC(setStatus);
-
 		[player, _veh] call FUNC(AssignToCallInHelicopter);
-	}, [_veh]] call BIS_fnc_addStackedEventHandler;
+
+		[_veh, true] remoteExec ["engineOn", _veh];
+		openMap [false, false];
+	}, [_veh]];
 };
 
 FUNC(requestAbortMission) = {
@@ -450,7 +479,7 @@ FUNC(requestAbortMission) = {
 
 	[_veh, "STATE", "Aborted"] call FUNC(setStatus);
 	[_veh, "Mission Aborted", "Waiting for orders!"] call FUNC(showHint);
-	[_veh, "Mission aborted. Waiting for orders!"] call FUNC(showMsg);
+	[CHATTER_ABORT, _veh, player] call FUNC(playChatter);
 
 	[{ [_this, "STATE", "Waiting"] call FUNC(assertStatus) }, {
 		_this call FUNC(ShowRequestMenu)
@@ -505,8 +534,8 @@ FUNC(showInfo) = {
 	},[_iconDrawerEH, _iconDrawer3DEHs],10] call CBA_fnc_waitAndExecute;
 };
 
-FUNC(displayRestrictedAreaMarker) = {
-	if (toLower(_this) == "show") then {
+FUNC(handleRestrictedAreaMarker) = {
+	if (toUpper _this == "SHOW") then {
 		createMarkerLocal [QGVAR(CloseAreaMrk), getPosASL player];
 		QGVAR(CloseAreaMrk) setMarkerShapeLocal "ELLIPSE";
 		QGVAR(CloseAreaMrk) setMarkerSizeLocal [GVAR(CallIn_MinDistance),GVAR(CallIn_MinDistance)];

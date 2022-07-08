@@ -109,6 +109,78 @@ FUNC(diag) = {
 	_txt joinString " | "
 };
 
+FUNC(playChatter) = {
+	/*
+		Plays the request-response chatter.
+
+		Params:
+		_chatterMode - (string) chatter to play.
+		_veh - (object) provider vehicle.
+		_caller - (object) caller (player). Optional.
+		_args - (array) list of arguments. Optional.
+
+		Return: nothing
+
+		Example:
+		["PICKUP", _veh, player. [_grid]] call tSF_AirborneSupport_fnc_playChatter;
+		// Shows pickup request and response
+	*/
+	params ["_chatterMode", "_veh", "_caller", "_args"];
+
+	private _pilot = driver _veh;
+	private _providerCallsign = [_veh, "CALLSIGN"] call FUNC(getStatus);
+	private _callerCallsign = if (!isNil "_caller") then { groupId group _caller } else { "" };
+	private ["_request", "_response"];
+
+	switch (toUpper _chatterMode) do {
+		case CHATTER_PICKUP: {
+			_args params ["_pos"];
+
+			private _grid = GRID_AT(_pos);
+
+			_request = [_caller,  RADIO_CHATTER_ON_PICKUP_REQUEST(_callerCallsign, _providerCallsign, _grid)];
+			_response = [_pilot, RADIO_CHATTER_ON_PICKUP_RESPONSE(_callerCallsign, _providerCallsign, _grid)];
+		};
+		case CHATTER_LAND_ON_LZ : {
+			 _request = [_caller, RADIO_CHATTER_ON_LAND_REQUEST(_callerCallsign, _providerCallsign)];
+			 _response = [_pilot, RADIO_CHATTER_ON_LAND_RESPONSE(_callerCallsign, _providerCallsign)];
+		};
+		case CHATTER_HOVER_OVER_LZ: {
+			_request = [_caller, RADIO_CHATTER_ON_HOVER_REQUEST(_callerCallsign, _providerCallsign)];
+			_response = [_pilot, RADIO_CHATTER_ON_HOVER_RESPONSE(_callerCallsign, _providerCallsign)];
+		};
+		case CHATTER_RTB: {
+		   _request = [_caller, RADIO_CHATTER_ON_RTB_REQUEST(_providerCallsign)];
+		   _response = [_pilot, RADIO_CHATTER_ON_RTB_RESPONSE(_callerCallsign, _providerCallsign)];
+		};
+		case CHATTER_CALLIN: {
+			_args params ["_ingress"];
+
+			private _ingressPoint = GRID_AT(_ingress);
+
+			_request = [_caller, RADIO_CHATTER_ON_CALLIN_REQUEST(_callerCallsign, _providerCallsign, _ingressPoint)];
+			_response = [_pilot, RADIO_CHATTER_ON_CALLIN_RESPONSE(_callerCallsign, _providerCallsign)];
+		};
+		case CHATTER_ABORT: {
+			_request = [_caller, RADIO_CHATTER_ON_ABORT_REQUEST(_callerCallsign, _providerCallsign)];
+			_response = [_pilot, RADIO_CHATTER_ON_ABORT_RESPONSE(_callerCallsign, _providerCallsign)];
+		};
+		case CHATTER_APPROACHING_LZ: {
+			_request = [_pilot, RADIO_CHATTER_ON_APPROACHING_LZ(_providerCallsign)];
+		};
+		case CHATTER_LANDED: {
+			_request = [_pilot, RADIO_CHATTER_ON_LANDED(_providerCallsign)];
+		};
+		case CHATTER_HOVERING: {
+			_request = [_pilot, RADIO_CHATTER_ON_HOVERING(_providerCallsign)];
+		};
+	};
+
+	_request call EFUNC(Chatter,SendMessageOverLRRadio);
+	if (isNil "_response") exitWith {};
+	[{ _this call EFUNC(Chatter,SendMessageOverLRRadio); }, _response, CHATTER_TIMEOUT_SEC] call CBA_fnc_waitAndExecute;
+};
+
 /*
  *	Initialization
  */
@@ -130,15 +202,14 @@ FUNC(processLogics) = {
 				_veh setVariable [QGVAR(Condition), compile (_logic getVariable QGVAR(Condition))];
 			};
 		};
-		
+
 	} forEach (entities "Logic");
 
 	GVAR(ReturnPoints) = _returnPoints;
 	GVAR(Vehicles) = _vehicles;
 
 	if (count _vehicles > count _returnPoints) then {
-		LOG("[ERROR] There is not enough Return points for vehicles");
-		["tSF :: Support :: There is not enough Return points for vehicles"] call BIS_fnc_error;
+		TSF_ERROR_2(TSF_ERROR_TYPE__MISCONFIGURED, "Not enough Return points (%1) to fit all support vehicles (%2)!", count _returnPoints, count _vehicles);
 	};
 
 	[_vehicles, +_returnPoints] call FUNC(processVehicleServer);
@@ -215,16 +286,15 @@ FUNC(addPilot) = {
 
 	if !(_aiPilotExists) then {
 		_aiPilot = units ([
-			_veh, [_veh, "SIDE"] call FUNC(GetStatus), ["driver"], GVAR(PilotKit), 0
+			_veh, [_veh, "SIDE"] call FUNC(GetStatus), ["driver"], GVAR(PilotKit), 1, GVAR(PilotClass)
 		] call dzn_fnc_createVehicleCrew) # 0;
 	};
 
 	// (group _aiPilot) setBehaviour "CARELESS";
 	(group _aiPilot) setCombatMode "BLUE";
 	{ _aiPilot disableAI _x; } forEach ["TARGET","AUTOTARGET","SUPPRESSION","AIMINGERROR","COVER","AUTOCOMBAT"];
-	_aiPilot setSkill 1;
 	_aiPilot setSkill ["courage", 1];
-	
+
 	(group _aiPilot) setGroupId [[_veh, "CALLSIGN"] call FUNC(getStatus)];
 
 	_veh engineOn true;
@@ -233,7 +303,7 @@ FUNC(addPilot) = {
 
 FUNC(removePilot) = {
 	params ["_veh"];
-	
+
 	private _pilot = driver _veh;
 	if (!isPlayer _pilot) then {
 		moveOut _pilot;
@@ -318,6 +388,8 @@ FUNC(preciseLanding) = {
 		_this remoteExec [QFUNC(preciseLanding), _veh];
 	};
 
+	[{ isTouchingGround _this }, { [CHATTER_LANDED, _this] call FUNC(playChatter); }, _veh, 30] call CBA_fnc_waitUntilAndExecute;
+
 	private _fromPos = getPosASL _veh;
 	private _toPos = AGLtoASL (_pad getPos [10, _approachDirection - 180]);
 	_toPos set [2, (_toPos # 2) + 35];
@@ -335,7 +407,9 @@ FUNC(preciseLanding) = {
 				_veh land "GET IN";
 				_veh flyInHeight 0;
 			};
-			if (_interval > 0.99) exitWith { [_handle] call CBA_fnc_removePerFrameHandler; };
+			if (_interval > 0.99) exitWith {
+				[_handle] call CBA_fnc_removePerFrameHandler;
+			};
 
 			private _dir = _veh getDir _toPos;
 			private _vectorDir = [sin _dir, cos _dir, 0];
@@ -358,6 +432,8 @@ FUNC(preciseHovering) = {
 	if (!local _veh) exitWith {
 		_this remoteExec [QFUNC(preciseHovering), _veh];
 	};
+
+	[{ velocity _this isEqualTo [0,0,0] }, { [CHATTER_HOVERING, _this] call FUNC(playChatter); }, _veh, 30] call CBA_fnc_waitUntilAndExecute;
 
 	private _fromPos = getPosASL _veh;
 	private _toPos = getPosASL _pad;
@@ -392,7 +468,7 @@ FUNC(preciseHovering) = {
 			};
 
 			if (!([_veh, "STATE", "Waiting"] call FUNC(assertStatus))) exitWith {
-				[_handle] call CBA_fnc_removePerFrameHandler; 
+				[_handle] call CBA_fnc_removePerFrameHandler;
 			};
 		},
 		0,
@@ -402,11 +478,11 @@ FUNC(preciseHovering) = {
 
 FUNC(assignToCallInHelicopter) = {
 	// params ["_unit","_veh"];
-	
+
 	[{ (_this # 1) getVariable [QGVAR(CallInReady),false] },{
 		params ["","_veh"];
 		private _driver = driver _veh;
-		
+
 		if (!isNull _driver && { isPlayer _driver }) exitWith { /* some message */ };
 		_veh call FUNC(removePilot);
 

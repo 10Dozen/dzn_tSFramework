@@ -16,7 +16,7 @@ item11[] = {"RTB_Started_Move",2,250,75.000000,-825.000000,175.000000,-775.00000
 item12[] = {"Reaching_Egress",4,218,75.000000,-750.000000,175.000000,-700.000000,0.000000,"Reaching" \n "Egress"};
 item13[] = {"Move_to_RTB",2,250,75.000000,-675.000000,175.000000,-625.000000,0.000000,"Move to" \n "RTB"};
 item14[] = {"Reaching_RTB",4,218,75.000000,-600.000000,175.000000,-550.000000,0.000000,"Reaching" \n "RTB"};
-item15[] = {"Land_at_Base",2,4346,75.000000,-525.000000,175.000000,-475.000000,0.000000,"Land at Base"};
+item15[] = {"Land_at_Base",2,250,75.000000,-525.000000,175.000000,-475.000000,0.000000,"Land at Base"};
 item16[] = {"Call_In_Requeste",4,218,-250.000000,-900.000000,-150.000000,-850.000000,0.000000,"Call In" \n "Requested"};
 item17[] = {"Call_In_Started",2,250,-250.000000,-825.000000,-150.000000,-775.000000,0.000000,"Call In Started"};
 item18[] = {"Waiting_Engine_S",4,218,-250.000000,-750.000000,-150.000000,-700.000000,0.000000,"Waiting" \n "Engine Started"};
@@ -92,8 +92,8 @@ link46[] = {37,3};
 link47[] = {38,10};
 link48[] = {39,40};
 link49[] = {40,20};
-globals[] = {0.000000,0,0,0,0,640,480,1,382,6316128,1,-506.080109,55.693665,20.227173,-958.091797,499,869,1};
-window[] = {2,-1,-1,-1,-1,1020,1908,3188,206,3,517};
+globals[] = {0.000000,0,0,0,0,640,480,1,382,6316128,1,-583.597534,511.140564,-257.912231,-1300.685059,1264,1204,1};
+window[] = {2,-1,-1,-32000,-32000,846,32,1312,32,3,1286};
 *//*%FSM</HEAD>*/
 class FSM
 {
@@ -241,7 +241,27 @@ class FSM
                          "	_landingPoint getPos [100, _veh getDir _landingPoint]," \n
                          "	50" \n
                          "] call tSF_AirborneSupport_fnc_moveToPosition;" \n
-                         ""/*%FSM</STATEINIT""">*/;
+                         "" \n
+                         "" \n
+                         "private _approachDistance = 300 min (0.25 * (_veh distance2d _landingPoint));" \n
+                         "" \n
+                         "" \n
+                         "[" \n
+                         "	{" \n
+                         " 		params [""_veh"", ""_approachDistance"", ""_landingPoint""];" \n
+                         "" \n
+                         "		(_veh distance2d _landingPoint < _approachDistance)" \n
+                         "		||" \n
+                         "		[_veh, ""STATE""] call tSF_AirborneSupport_fnc_getStatus != ""Pickup""" \n
+                         "	}, " \n
+                         "	{" \n
+                         "		params [""_veh"", """", """"];" \n
+                         "		if ([_veh, ""STATE""] call tSF_AirborneSupport_fnc_getStatus != ""Pickup"") exitWith {};" \n
+                         "" \n
+                         "		[""APPROACHING_LZ"", _veh] call tSF_AirborneSupport_fnc_playChatter;" \n
+                         "	}, " \n
+                         "	[_veh, _approachDistance, _landingPoint]" \n
+                         "] call CBA_fnc_waitUntilAndExecute;"/*%FSM</STATEINIT""">*/;
                         precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
                         class Links
                         {

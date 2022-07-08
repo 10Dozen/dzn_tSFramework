@@ -17,7 +17,7 @@ FUNC(SendMessageOverLRRadio) = {
 		Example:
 		[player, "Get into da choppa!"] call tSF_Chatter_fnc_SendMessageOverLRRadio;
 	*/
-	params ["_unitIdentity", "_message", ["_distance", nil]];
+	params ["_unitIdentity", "_message", ["_distance", -1]];
 	[_unitIdentity, _message, "LR", _distance] call FUNC(sendMessageOverRadio);
 };
 
@@ -37,7 +37,7 @@ FUNC(SendMessageOverSWRadio) = {
 		Example:
 		[player, "Get into da choppa!"] call tSF_Chatter_fnc_SendMessageOverSWRadio;
 	*/
-	params ["_unitIdentity", "_message", ["_distance", nil]];
+	params ["_unitIdentity", "_message", ["_distance", -1]];
 	[_unitIdentity, _message, "SW", _distance] call FUNC(sendMessageOverRadio);
 };
 
@@ -77,11 +77,11 @@ FUNC(sendMessageOverRadio) = {
 	} else {
 		// User identity is actual unit
 		 _unit = _unitIdentity;
-		_lrRange = _maxDistance;
-		_swRange = _maxDistance;
+		_lrRange = _distance;
+		_swRange = _distance;
 	};
 
-	if (isNull _unit) exitWith {};
+	if (isNull _unit || { !alive _unit }) exitWith {};
 
 	private _func = "";
 	private _comsRange = -1;
@@ -100,7 +100,8 @@ FUNC(sendMessageOverRadio) = {
 	[_unit, _message, _comsRange] remoteExec [_func, 0];
 
 	if (!_sayLocal) exitWith {};
-	[_unit, _message, nil, 10] call FUNC(Say);
+	private _name = format ["[%1] %2", groupId group _unit, name _unit];
+	[_unit, _message, _name, 10] call FUNC(Say);
 };
 
 FUNC(Say) = {
@@ -122,6 +123,8 @@ FUNC(Say) = {
 	*/
 
 	params ["_unit", "_message", ["_name", name (_this # 0)], ["_distance", 20]];
+
+	if (!alive _unit) exitWith {};
 
 	[_unit, _message, _name, _distance] remoteExec [QFUNC(showMessageLocally), 0];
 };
@@ -225,72 +228,42 @@ FUNC(showMessageLocally) = {
 	*/
 	if !(hasInterface) exitWith {};
 	params ["_unit", "_message", "_name", "_maxDistance"];
+
+	private _vehListener = vehicle player;
+	private _vehSpeaker = vehicle _unit;
+
+	// Unit in the same vehicle or have unlimited distance of speech
+	if (_vehListener == _vehSpeaker) then { _maxDistance = -1; };
+	if (_maxDistance < 0) exitWith {
+		[_name, _message] spawn BIS_fnc_showSubtitle;
+	};
+
 	private _distance = player distance _unit;
 
 	// Player is too far to hear anything
 	if (_distance > _maxDistance) exitWith {};
 
-	private _veh = vehicle player;
-	if (_veh != player) then {
-		private _vehicleIsolationCoef = _veh getVariable QGVAR(isolatedCoef);
-		if (isNil "_vehicleIsolationCoef") then {
-			_vehicleIsolationCoef = 1 - ([typeOf _veh, "tf_isolatedAmount", 0.3] call TFAR_fnc_getConfigProperty);
-			_veh setVariable [QGVAR(isolatedCoef), _vehicleIsolationCoef];
-		};
-		_vehicleIsolationCoef = [_vehicleIsolationCoef, 1] select (isTurnedOut player);
-
-		private _heavyEngineCoef = [1, 0.3] select (_veh isKindOf "Tank" || _veh isKindOf "Plane" || _veh isKindOf "Helicopter");
-		private _engineCoef = [1, 0.7 * _heavyEngineCoef] select (isEngineOn _veh);
-
-		_maxDistance = 3 max (_maxDistance *_vehicleIsolationCoef * _engineCoef);
+	// Player or unit is in the vehicle - max distance is affected by isolation and engine work
+	private _vehListenerIsolationCoef = 1;
+	private _vehSpeakerIsolationCoef = 1;
+	if (_vehListener != player) then {
+		_vehListenerIsolationCoef = [player, _vehListener] call FUNC(getInVehicleIsolationCoef);
 	};
+	if (_vehSpeaker != _unit) then {
+		_vehSpeakerIsolationCoef = [_unit, _vehSpeaker] call FUNC(getInVehicleIsolationCoef);
+	};
+
+	_maxDistance = 3 max (_maxDistance * _vehListenerIsolationCoef * _vehSpeakerIsolationCoef);
 
 	// Recheck again, after effects of the vehicle
 	if (_distance > _maxDistance) exitWith {};
 
-	// Player is in max range, but can't hear all
+	// Player is in range, but can't hear all
 	if (_distance > GVAR(DistanceVocalNoiseCoef) * _maxDistance) then {
 		_message = [_message] call FUNC(addNoise);
 	};
 
 	[_name, _message] spawn BIS_fnc_showSubtitle;
-};
-
-FUNC(addNoise) = {
-	/*
-		Adds noise to the message, by replacing some symbols with dots.
-		Non-public function
-
-		Params:
-		_message - (string) message.
-
-		Return:
-		_noisedMessage - (string) message with added noise.
-	*/
-
-	params ["_message"];
-
-	 private _symbols = _message splitString "";
-	 private _length = count _symbols - 1;
-	 if (_length < 5) exitWith { _message };
-
-	 private _noiseOffset = random (10 min _length);
-	 private _noiseStep = random [1, 7, 20];
-	 if (_noiseStep < _length) then {
-		 _noiseStep = _length / 2;
-	 };
-	 private _noiseLenght = random [2, 4, 6];
-
-	 for "_i" from _noiseOffset to _length step (_noiseStep + _noiseLenght) do {
-		 for "_j" from 0 to _noiseLenght do {
-			 private _idx = _i + _j;
-			 if (_idx <= _length) then {
-				 _symbols set [_idx, "."];
-			 };
-		 };
-	 };
-
-	 (_symbols joinString "")
 };
 
 // Utils
@@ -393,13 +366,9 @@ FUNC(getRadioTalkerByCallsign) = {
 	};
 
 	_talkerEntity params ["_grp", "_lrRange", "_swRange"];
+	if (isNull _grp || count units _grp == 0) exitWith { [] };
 
-	private _unit = (units _grp) # 0;
-	if (!alive _unit) exitWith {
-		[]
-	};
-
-	[_unit, _lrRange, _swRange]
+	[(units _grp) # 0, _lrRange, _swRange]
 };
 
 FUNC(createDummy) = {
@@ -434,4 +403,69 @@ FUNC(createDummy) = {
 	_unit setVariable ["IWB_Disable", true, true];
 
 	_grp
+};
+
+FUNC(getInVehicleIsolationCoef) = {
+	/*
+		Return isolation coeficient of vehicle. Higher value means better hearable.
+		Affected by: TFAR's isolation config property, engine state, type of vehicle and
+		position of the playr (for tanks - turned in or out)
+
+		Params:
+		_unit - (object) crew unit.
+		_veh - (object) vehicle to check.
+
+		Return:
+		_isolationCoef - (number) coef in 0...1 range.
+	*/
+	params ["_unit", "_veh"];
+
+	private _vehicleIsolationCoef = _veh getVariable QGVAR(isolatedCoef);
+	if (isNil "_vehicleIsolationCoef") then {
+		_vehicleIsolationCoef = 1 - ([typeOf _veh, "tf_isolatedAmount", 0.3] call TFAR_fnc_getConfigProperty);
+		_veh setVariable [QGVAR(isolatedCoef), _vehicleIsolationCoef];
+	};
+	_vehicleIsolationCoef = [_vehicleIsolationCoef, 1] select (isTurnedOut _unit);
+
+	private _heavyEngineCoef = [1, 0.3] select (_veh isKindOf "Tank" || _veh isKindOf "Plane" || _veh isKindOf "Helicopter");
+	private _engineCoef = [1, 0.7 * _heavyEngineCoef] select (isEngineOn _veh);
+
+	(_vehicleIsolationCoef * _engineCoef)
+};
+
+FUNC(addNoise) = {
+	/*
+		Adds noise to the message, by replacing some symbols with dots.
+		Non-public function
+
+		Params:
+		_message - (string) message.
+
+		Return:
+		_noisedMessage - (string) message with added noise.
+	*/
+
+	params ["_message"];
+
+	 private _symbols = _message splitString "";
+	 private _length = count _symbols - 1;
+	 if (_length < 5) exitWith { _message };
+
+	 private _noiseOffset = random (10 min _length);
+	 private _noiseStep = random [1, 7, 20];
+	 if (_noiseStep < _length) then {
+		 _noiseStep = _length / 2;
+	 };
+	 private _noiseLenght = random [2, 4, 6];
+
+	 for "_i" from _noiseOffset to _length step (_noiseStep + _noiseLenght) do {
+		 for "_j" from 0 to _noiseLenght do {
+			 private _idx = _i + _j;
+			 if (_idx <= _length) then {
+				 _symbols set [_idx, "."];
+			 };
+		 };
+	 };
+
+	 (_symbols joinString "")
 };
