@@ -1,6 +1,6 @@
 #include "script_component.hpp"
 
-if (!hasInterface) exitWith {};
+__CLIENT_ONLY__
 LOG("Pre-Initialization started");
 
 INIT_SETTING;

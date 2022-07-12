@@ -5,7 +5,7 @@
 // 	DZN TS FRAMEWORK
 //
 // **************************
-tSF_Version = "v2.05";
+tSF_Version = "v2.6";
 
 // **************************
 //  MODULES
@@ -19,7 +19,7 @@ tSF_module_MissionDefaults = true;
 tSF_module_JIPTeleport = true;
 tSF_module_MissionConditions = true;
 
-tSF_module_CCP = false;
+tSF_module_CCP = true;
 tSF_module_FARP = false;
 
 tSF_module_Interactives = false;
@@ -51,7 +51,6 @@ tSF_module_Conversations = false;
 	, "tSNotes"
 	, "tSSettings"
 
-	, "CCP"
 	, "FARP"
 	, "ArtillerySupport"
 	, "Interactives"
@@ -67,8 +66,10 @@ tSF_module_Conversations = false;
 
 INCLUDE_MODULE(tSFDiag);
 INCLUDE_MODULE(Chatter);
-RUN_MODULE(Authorization);
+
+RUN_MODULE(CCP);
 RUN_MODULE(IntroText);
+RUN_MODULE(Authorization);
 RUN_MODULE(AirborneSupport);
 RUN_MODULE(EditorVehicleCrew);
 RUN_MODULE(EditorRadioSettings);

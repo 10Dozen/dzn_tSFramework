@@ -186,8 +186,7 @@ dzn_fnc_tSF_3DEN_ResetVariables = {
 
 
 
-/*
-	SubFunctions
+/* SubFunctions
 */
 
 #define	L_BRK		(toString [13,10])
@@ -215,9 +214,9 @@ dzn_fnc_tSF_3DEN_GetDynaiZoneNames = {
 };
 
 dzn_fnc_tSF_3DEN_GetUnitNames = {
-/*
-http://www.online-decoder.com/ru
-*/
+    /*
+    http://www.online-decoder.com/ru
+    */
 
 	private _playableUnits = [];
 	private _supporters = [];
@@ -484,12 +483,8 @@ dzn_fnc_tSF_3DEN_togleToDoListItem = {
 };
 
 
-/*
- *	Dialog Function
+/* Dialog Function
  */
-
-
-
 
 // Define some constants for us to use when laying things out.
 #define GUI_GRID_X	(0)

@@ -97,7 +97,7 @@ FUNC(sendMessageOverRadio) = {
 		};
 	};
 
-	[_unit, _message, _comsRange] remoteExec [_func, 0];
+	[_unit, _message, _comsRange] remoteExec [_func];
 
 	if (!_sayLocal) exitWith {};
 	private _name = format ["[%1] %2", groupId group _unit, name _unit];
@@ -126,7 +126,7 @@ FUNC(Say) = {
 
 	if (!alive _unit) exitWith {};
 
-	[_unit, _message, _name, _distance] remoteExec [QFUNC(showMessageLocally), 0];
+	[_unit, _message, _name, _distance] remoteExec [QFUNC(showMessageLocally)];
 };
 FUNC(Shout) = {
 	/*
@@ -189,7 +189,8 @@ FUNC(showMessageOverRadio) = {
 	// Skip for players that doesn't have SW radio
 	if !(_haveRadio) exitWith {};
 
-	if (_maxDistance > 0) then {
+	// Apply distnace effects (or skip if caller is the local player or distance unlimited)
+	if (player != _unit && _maxDistance > 0) then {
 		private _distance = player distance _unit;
 
 		// Player is too far to hear anything
@@ -206,9 +207,13 @@ FUNC(showMessageOverRadio) = {
 		};
 	};
 
-	switch _mode do {
-		case "LR": { _unit commandChat _message };
-		case "SW": { _unit sideChat _message };
+	switch toUpper _mode do {
+		case "LR": {
+			_unit commandChat _message;
+		};
+		case "SW": {
+			_unit sideChat _message;
+		};
 	};
 };
 
