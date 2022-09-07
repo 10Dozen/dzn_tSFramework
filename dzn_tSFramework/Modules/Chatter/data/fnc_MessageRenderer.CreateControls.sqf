@@ -37,8 +37,14 @@ _ctrlLabel ctrlSetPosition [0, 0, TYPE_W, TYPE_H];
 _ctrlLabel ctrlCommit 0;
 
 private _ctrlTitle  = _display ctrlCreate ["RscStructuredText", -1, _ctrlGroup];
-_ctrlTitle setVariable ["text", _title];
-_ctrlTitle ctrlSetStructuredText _title;
+private _titleText = parseText format [
+    "<t align='left'>%1</t><t align='right'>%2 @ %3</t>",
+    _title,
+    _type,
+    [dayTime] call BIS_fnc_timeToString
+];
+_ctrlTitle setVariable ["text", _titleText];
+_ctrlTitle ctrlSetStructuredText _titleText;
 _ctrlTitle ctrlSetBackgroundColor _bgColor;
 _ctrlTitle ctrlSetPosition [TITLE_X, TITLE_Y, 0, TITLE_H];
 _ctrlTitle ctrlCommit 0;

@@ -13,7 +13,9 @@
 
     Return: nothing
 */
-if !(hasInterface) exitWith {};
+
+__CLIENT_ONLY__
+
 params ["_unit", "_message", "_name", "_maxDistance"];
 
 private _vehListener = vehicle player;
@@ -46,7 +48,7 @@ _maxDistance = 3 max (_maxDistance * _vehListenerIsolationCoef * _vehSpeakerIsol
 if (_distance > _maxDistance) exitWith {};
 
 // Player is in the range, but can't hear all
-if (_distance > GVAR(DistanceVocalNoiseCoef) * _maxDistance) then {
+if (_distance > (GET_ "Direct", "NoiseDistanceCoef" _SETTING) * _maxDistance) then {
     _message = [_message] call FUNC(addNoise);
 };
 

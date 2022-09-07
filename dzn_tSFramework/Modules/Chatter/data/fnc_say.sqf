@@ -17,7 +17,12 @@
     // Will show 'Get into da choppa' message from 'Dutch' for all players within 30 meters from player.
 */
 
-params ["_unit", "_message", ["_name", name (_this # 0)], ["_distance", 20]];
+params [
+    "_unit",
+    "_message",
+    ["_name", name (_this # 0)],
+    ["_distance", GET_ "Direct", "Range", "Say" _SETTING]
+];
 
 if (!alive _unit) exitWith {};
 

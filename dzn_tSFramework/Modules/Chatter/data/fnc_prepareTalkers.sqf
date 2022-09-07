@@ -1,25 +1,25 @@
 #include "script_component.hpp"
 
 /*
-    Reads Radio Talkers table and creates talkers
+    Reads Radio Talkers table and defines missing parameters:
+        - callsign
+        - unit or objNull
+        - LR range or default Radio > Range > LR
+        - SW range or default Radio > Range > SW
     Params: none
     Return: none
 */
 
-{
-    _x params ["_side", "_callsign", ["_unit", objNull], ["_range", [-1,-1]]];
+private _defaultLR = GET_ "Radio", "Range", "LR" _SETTING;
+private _defaultSW = GET_ "Radio", "Range", "SW" _SETTING;
 
-    if (isNull _unit) then {
-        [_side, _callsign] call FUNC(createVirtualRadioTalker);
-    } else {
-        if (_unit isKindOf "Logic") then {
-            // GameLogic as Virtual talker
-            [_side, _callsign, getPos _unit, _range] call FUNC(createVirtualRadioTalker);
-        } else {
-            // Unit-talker
-            [_unit, _callsign, _range] call FUNC(registerUnitAsRadioTalker);
-        };
-    };
-} forEach GVAR(TalkersTable);
+{
+    private _callsign = _x get "callsign";
+    private _unit = _x getOrDefault ["unit", objNull];
+    private _lrRange = _x getOrDefault ["LR", _defaultLR];
+    private _swRange = _x getOrDefault ["SW", _defaultSW];
+
+    [_callsign, _unit, _lrRange, _swRange, false] call FUNC(createRadioTalker);
+} forEach (GET_ "Talkers" _SETTING);
 
 publicVariable QGVAR(RadioTalkers);

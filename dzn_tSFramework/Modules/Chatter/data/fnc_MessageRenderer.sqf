@@ -16,13 +16,11 @@
 
     - Hide
       Marks all messages as expired and hide it from the screen.
-      Params:
-       _type - (string) type of the messages to hide ('LR' or 'SW')
+      Params: none
 
     - Clear
       Hides all displayed messages and empties message queues.
       Params:
-       _type - (string) type fo the queue to clear ('LR' or 'SW'). Optional, if none given - clears both.
        _immediate - (boolean) if true - drops queue and removes controls in the same frame, otherwise - only marks all messages in queue to be deleted by main loop.
 
     Params:
@@ -38,7 +36,7 @@
 
 #include "MessageRenderer.h"
 
-params ["_method", "_params"];
+params ["_method", ["_params", []]];
 
 DEBUG_1("Params: %1", _this);
 
@@ -62,7 +60,6 @@ SELF = createHashMapFromArray [
     , self_PREP(hide)
     , self_PREP(clear)
     , self_PREP(createControls)
-    , self_PREP(getQueue)
     , self_PREP(addToQueue)
     , self_PREP(removeFromQueue)
     , self_PREP(handleMainLoop)
@@ -72,8 +69,7 @@ SELF = createHashMapFromArray [
     , self_PREP(animateBlur)
 
     , [toUpper "ID", 0]
-    , [toUpper "Queue LR", []]
-    , [toUpper "Queue SW", []]
+    , [toUpper "Queue", []]
 
     , [toUpper "PFH", [{ [] call self_FUNC(handleMainLoop) }, nil, PFH_DELAY] call CBA_fnc_addPerFrameHandler]
     , [toUpper "MissionEndHandler", addMissionEventHandler ["Ended", {

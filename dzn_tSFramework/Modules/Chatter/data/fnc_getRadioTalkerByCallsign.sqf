@@ -15,12 +15,10 @@
 
 params ["_callsign"];
 private _talkerEntity = GVAR(RadioTalkers) get _callsign;
+
 if (isNil "_talkerEntity") exitWith {
     TSF_ERROR_1(TSF_ERROR_TYPE__MISSING_ENTITY, "Failed to find '%1' radio talker! Please, create one before use!", _callsign);
     []
 };
 
-_talkerEntity params ["_grp", "_lrRange", "_swRange"];
-if (isNull _grp || count units _grp == 0) exitWith { [] };
-
-[(units _grp) # 0, _lrRange, _swRange]
+_talkerEntity

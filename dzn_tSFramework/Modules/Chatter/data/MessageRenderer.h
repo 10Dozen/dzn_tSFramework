@@ -10,12 +10,8 @@
 #define self_SET(PAR,VALUE) (SELF set [toUpper 'PAR', VALUE])
 
 
-
 // MessageRenderer
 #define PFH_DELAY 0.2
-
-#define QUEUE_LR "LR"
-#define QUEUE_SW "SW"
 
 #define STATE_NEW "NEW"
 #define STATE_BLUR1 "BLUR1"
@@ -30,9 +26,10 @@
 #define STATE_BLURRING "BLURRING"
 
 #define QE_ID 0
-#define QE_CONTROLS 1
-#define QE_STATE 2
-#define QE_TTL 3
+#define QE_TYPE 1
+#define QE_CONTROLS 2
+#define QE_STATE 3
+#define QE_TTL 4
 
 #define ANIM_DUR_APPEAR 0.3
 #define ANIM_DUR_APPEAR_TEXT (ANIM_DUR_APPEAR * 0.75)
@@ -65,7 +62,7 @@
 #define MSG_H (TYPE_H - TITLE_H)
 
 #define BOX_INIT_X safezoneX
-#define BOX_INIT_LR_Y (safezoneY + safezoneH * 0.35)
-#define BOX_INIT_SW_Y (safezoneY + safezoneH * 0.6)
+// #define BOX_INIT_LR_Y (safezoneY + safezoneH * 0.35)
+#define BOX_INIT_Y (safezoneY + safezoneH * 0.6)
 #define BOX_W (TYPE_W + TITLE_W)
 #define BOX_BLUR_OFFSET_Y TYPE_H * 1.05

@@ -24,7 +24,6 @@ DEBUG_1("(Renderer.transitToState) Params: %1", _this);
 [{
     params ["_qe", "_fromState", "_toState"];
     DEBUG_1("(Renderer.transitToState:onDelayReached) Params: %1", _this);
-
     DEBUG_2("(Renderer.transitToState:onDelayReached) Expected state [%1] vs current [%2]", _fromState, _qe # QE_STATE);
 
     if (_qe # QE_STATE != _fromState) exitWith {

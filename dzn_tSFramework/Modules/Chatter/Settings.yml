@@ -1,0 +1,40 @@
+# Chatter
+#
+# Module shows Radio and direct messages via UI and subtitles.
+# It also provides API for other modules (e.g. Airborne Support) for radio chatter.
+#
+# Dependency: No
+
+Radio:
+    # Distance coef from where noise start to affect the messages.
+    # E.g. for LR range 10000 and coef 0.8 - noise starts from 8000m (0.8 * 10000) to 10000m
+    NoiseDistanceCoef: 0.8
+    # Maximum distance coef where message may be received as statics only.
+    # E.g. for LR range 10000 and coef 1.2 - statics will be received from 10000m to 12000m (1.2 * 10000)
+    StaticsDistanceCoef: 1.2
+    # Default ranges of the LR and SW radios, in meters
+    Range:
+        LR: 25000
+        SW: 3000
+
+Direct:
+    # Distance coef from where noise start to affect hearing of the direct speech.
+    # E.g. for normal talk (20m) it will be affected from 15m (0.75 * 20).
+    NoiseDistanceCoef: 0.75
+    # Default ranges of direct speach
+    Range:
+        Say: 30
+        Whisper: 7
+        Shout: 75
+
+# Talkers
+# Description of radio talkers (e.g. HQ or some NPC for radio chatter)
+
+Talkers:
+    # Example
+    # - callsign: "PAPA BEAR" # Display name of the talker
+    #   unit: <papabear> # (Optional) Talker's unit placed in mission.
+    #                    # If set - LR/SW transmition ranges and direct speech will be applied for talker.
+    #                    # May be a GameLogic (direct speeach will not work on it, but transmition ranges will be counted).
+    #   LR: 50000 # (Optional) LR radio transmition range, in meters. If not set - value for Radio > Range > LR will be used.
+    #   SW: 1500 # (Optional) SW radio transmition range, in meters. If not set - value for Radio > Range > SW will be used.

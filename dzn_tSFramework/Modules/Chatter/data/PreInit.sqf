@@ -5,7 +5,7 @@ LOG("Pre-Initialization started");
 // Clearing controls that may be left from previous game...
 { ctrlDelete _x } forEach (uiNamespace getVariable QGVAR(ControlsBuffer));
 
-INIT_SETTING;
+INIT_SETTINGS_FILE;
 INIT_FUNCTIONS;
 
 __SERVER_ONLY__

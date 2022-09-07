@@ -15,9 +15,7 @@ PREP(showMessageLocally);
 // Utils
 PREP(MessageRenderer);
 PREP(prepareTalkers);
-PREP(createVirtualRadioTalker);
-PREP(registerUnitAsRadioTalker);
+PREP(createRadioTalker);
 PREP(getRadioTalkerByCallsign);
-PREP(createDummy);
 PREP(getInVehicleIsolationCoef);
 PREP(addNoise);

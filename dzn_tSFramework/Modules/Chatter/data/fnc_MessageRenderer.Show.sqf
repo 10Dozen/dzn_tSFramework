@@ -20,21 +20,15 @@
 params ["_type", "_title", "_message", ["_ttl", TTL_SHOW]];
 DEBUG_2("(Renderer.Show) Params: %1. TTL: %2", _this, _ttl);
 
-private _yPosInit = 0;
-private _bgColor = [0,0,0,0];
-switch toUpper _type do {
-    case "LR": {
-        _yPosInit = BOX_INIT_LR_Y;
-        _bgColor = [BG_COLOR_LR, BG_ALPHA_ACTIVE];
-    };
-    case "SW": {
-        _yPosInit = BOX_INIT_SW_Y;
-        _bgColor = [BG_COLOR_SW, BG_ALPHA_ACTIVE];
-    };
-};
-DEBUG_2("(Renderer.Show) yPosInit: %1. bgColor: %2", _yPosInit, _bgColor);
+_type = toUpper _type;
 
-private _ctrls = [_title, _message, _yPosInit, _bgColor] call self_FUNC(CreateControls);
+private _bgColor = switch _type do {
+    case "LR": { [BG_COLOR_LR, BG_ALPHA_ACTIVE] };
+    case "SW": { [BG_COLOR_SW, BG_ALPHA_ACTIVE] };
+};
+DEBUG_1("(Renderer.Show) bgColor: %1", _bgColor);
+
+private _ctrls = [_title, _message, BOX_INIT_Y, _bgColor] call self_FUNC(CreateControls);
 DEBUG_2("(Renderer.Show) Controls created: %1. Adding to queue", count(_ctrls));
 
 [_type, _ctrls, _ttl] call self_FUNC(AddToQueue);

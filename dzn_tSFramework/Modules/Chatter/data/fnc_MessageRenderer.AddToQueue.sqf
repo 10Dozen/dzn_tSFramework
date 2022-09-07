@@ -6,9 +6,10 @@
 
     Adds message to the queue as entity of format:
         0: _id - (number) unique ID of the entity
-        1: _controls - (array) list of controls
-        2: _state - (string) see MessageRenderer.h for states enumiration
-        3: _ttl (number) - time to live for entity
+        1: _type - (string) message type ("LR" or "SW")
+        2: _controls - (array) list of controls
+        3: _state - (string) see MessageRenderer.h for states enumiration
+        4: _ttl (number) - time to live for entity
 
     Params:
     _type - (string) type fo the queue to clear ('LR' or 'SW'). Optional, if none given - clears both.
@@ -24,7 +25,7 @@
 params ["_type", "_ctrls", "_ttl"];
 DEBUG_1("(Renderer.addToQueue) Params: %1", _this);
 
-private _queue = [_type] call self_FUNC(getQueue);
+private _queue = self_GET(Queue);
 DEBUG_1("(Renderer.addToQueue) Queue: %1", _queue);
 
 private _qsize = count _queue;
@@ -62,6 +63,6 @@ self_SET(ID,_id);
 
 DEBUG_1("(Renderer.addToQueue) Assigning ID: %1", _id);
 
-_queue pushBack [_id, _ctrls, STATE_NEW, time + _ttl];
+_queue pushBack [_id, _type, _ctrls, STATE_NEW, time + _ttl];
 
 DEBUG_2("(Renderer.addToQueue) Added %1. Queue size now is %2", _queue # (count _queue - 1), count _queue);
