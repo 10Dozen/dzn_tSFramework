@@ -1,67 +1,101 @@
 #include "script_component.hpp"
 
 FUNC(processEVCLogics) = {
-	private ["_logic","_logicConfig"];
+    /*
+        Checks mission's GameLogics and execute EVC scripts on
+        logics with non empty 'tSF_EVC' variables
+        Params: none
+        Return: none
+    */
+    private ["_logic","_logicConfigName"];
 
-	{
-		_logic = _x;
-		_logicConfigName = _logic getVariable "tSF_EVC";
+    private _logicsCount = 0;
+    private _assignementsSuccessCount = 0;
 
-		if !(isNil {_logicConfigName}) then {
-			{
-				[_x, _logicConfigName] spawn FUNC(assignCrew);
-			} forEach (synchronizedObjects _logic);
-		};
-	} forEach (entities "Logic");
+    {
+        private _logic = _x;
+        private _logicConfigName = _logic getVariable EVC_GAMELOGIC_FLAG;
+
+        if !(isNil {_logicConfigName}) then {
+            {
+                private _result = [_x, _logicConfigName] call FUNC(assignCrew);
+                _assignementsSuccessCount = _assignementsSuccessCount + ([0, 1] select _result);
+            } forEach (synchronizedObjects _logic);
+            _logicsCount = _logicsCount + 1;
+        };
+    } forEach (entities "Logic");
+
+    [_logicsCount, _assignementsSuccessCount]
 };
 
 
 FUNC(assignCrew) = {
-	/*
-	 	Assigns crew to given vehicle using given configuration
+    /*
+         Assigns crew to given vehicle using given configuration
 
-		Params:
-		_veh - (object) vehicle to process
-		_configName - (string) config nmae to apply
+        Params:
+        _veh - (object) vehicle to process
+        _configName - (string) config nmae to apply
 
-		Return:
-		nothing
+        Return:
+        nothing
 
-		Example:
-		[_veh, "OPFOR GNR"] spawn tSF_fnc_EVC_assignCrew
-		// creates OPFOR GNR" crew (gunner with default settings)
-	*/
+        Example:
+        [_veh, "OPFOR GNR"] spawn tSF_fnc_EVC_assignCrew
+        // creates OPFOR GNR" crew (gunner with default settings)
+    */
 
-	params["_veh","_configName"];
+    params["_veh","_configName"];
 
-	private _config = [GVAR(CrewConfig), _configName] call dzn_fnc_getValueByKey;
-	if (typename _config == "BOOL") exitWith {
-		[format ["tSF - EVC :: There is no %1 config!", _configName]] call BIS_fnc_error;
-	};
+    private _config = GVAR(CrewConfig) get _configName;
+    if (isNil "_config") exitWith {
+        TSF_ERROR_1(TSF_ERROR_TYPE__NO_CONFIG, "Failed to find config '%1'", _configName);
+        false
+    };
 
-	_config params [
-		"_roles"
-		,"_side"
-		,"_skill"
-		,["_kit",""]
-		,["_behavior",""]
-		,["_crewClass",""]
-	];
+    _config params [
+        "_roles"
+        ,"_side"
+        ,"_skill"
+        ,["_kit",""]
+        ,["_behavior",""]
+        ,["_crewClass",""]
+    ];
 
-	if (typename _roles != "ARRAY") then { _roles = [_roles]; };
-	if (!(_kit isEqualTo "") && isNil "dzn_gear_serverInitDone") then {
-		waitUntil { sleep 1; !isNil "dzn_gear_serverInitDone" };
-	};
+    if (typename _roles != "ARRAY") then { _roles = [_roles]; };
 
-	[_veh, _side, _roles, if (_kit == "") then { nil } else { _kit }, _skill, _crewClass] call dzn_fnc_createVehicleCrew;
+    if (_kit isNotEqualTo "" && !DZN_GEAR_RUNNING) exitWith {
+        [
+            { DZN_GEAR_RUNNING },
+            { _this call FUNC(assignCrew) },
+            _this
+        ] call CBA_fnc_waitUntilAndExecute;
+        true
+    };
 
-	if (_behavior isEqualTo "") exitWith {}; // No behaviour assigned
-	private _vehicleHoldAspect = switch (toLower(_config select 4)) do {
-		case "hold": { "vehicle hold" };
-		case "frontal": { "vehicle 45 hold" };
-		case "full frontal": { "vehicle 90 hold" };
-	};
+    private _crew = [_veh, _side, _roles, _kit, _skill, _crewClass] call dzn_fnc_createVehicleCrew;
 
-	waitUntil { !isNil "dzn_dynai_initialized" && !isNil "dzn_fnc_dynai_addUnitBehavior" };
-	[_veh, _vehicleHoldAspect] call dzn_fnc_dynai_addUnitBehavior;
+    if (units _crew findIf {isNull objectParent _x} > -1) then {
+        TSF_ERROR_4(TSF_ERROR_TYPE__MISCONFIGURED, "Crew does not fit vehicle %1. Config '%2' with %3 roles used - but actual mounted crew number is %4.", typeof _veh, _configName, _roles, count crew _veh);
+    };
+
+    if (_behavior isEqualTo "") exitWith {}; // No behaviour assigned
+    private _vehicleBehaviour = switch (toLower(_config # 4)) do {
+        case "hold": { "vehicle hold" };
+        case "frontal": { "vehicle 45 hold" };
+        case "full frontal": { "vehicle 90 hold" };
+    };
+    private _behaviourParams = [_veh, _vehicleBehaviour];
+
+    if (!DZN_DYNAI_RUNNING_SERVER_SIDE && isNil "dzn_fnc_dynai_addUnitBehavior") exitWith {
+        [
+            { DZN_DYNAI_RUNNING_SERVER_SIDE && !isNil "dzn_fnc_dynai_addUnitBehavior"},
+            { _this call dzn_fnc_dynai_addUnitBehavior; },
+            _behaviourParams
+        ] call CBA_fnc_waitUntilAndExecute;
+        true
+    };
+
+    _behaviourParams call dzn_fnc_dynai_addUnitBehavior;
+    true
 };

@@ -1,3 +1,38 @@
+// Common macro
+#define __SERVER_ONLY__ if (!isServer) exitWith {};
+#define __CLIENT_ONLY__ if (!hasInterface) exitWith {};
+#define __HEADLESS_OR_SERVER__ if ( \
+        (isNil "HC" && !isServer) || \
+        (!isNil "HC" && (hasInterface || isServer)) \
+    ) exitWith {};
+
+
+#define MISSION_STARTED time > 0
+
+// tSF Error reporting
+#define TSF_ERROR_FUNC tSF_tSFDiag_fnc_ReportFrameworkError
+#define TSF_ERROR(REASON,MSG) [QUOTE(COMPONENT), REASON, MSG] call TSF_ERROR_FUNC;
+#define TSF_ERROR_1(REASON,MSG,ARG1) [QUOTE(COMPONENT), REASON,FORMAT_1(MSG,ARG1)] call TSF_ERROR_FUNC;
+#define TSF_ERROR_2(REASON,MSG,ARG1,ARG2) [QUOTE(COMPONENT), REASON, FORMAT_2(MSG,ARG1,ARG2)] call TSF_ERROR_FUNC;
+#define TSF_ERROR_3(REASON,MSG,ARG1,ARG2,ARG3) [QUOTE(COMPONENT), REASON, FORMAT_3(MSG,ARG1,ARG2,ARG3)] call TSF_ERROR_FUNC;
+#define TSF_ERROR_4(REASON,MSG,ARG1,ARG2,ARG3,ARG4) [QUOTE(COMPONENT), REASON, FORMAT_4(MSG,ARG1,ARG2,ARG3,ARG4)] call TSF_ERROR_FUNC;
+#define TSF_ERROR_5(REASON,MSG,ARG1,ARG2,ARG3,ARG4,ARG5) [QUOTE(COMPONENT), REASON, FORMAT_5(MSG,ARG1,ARG2,ARG3,ARG4,ARG5)] call TSF_ERROR_FUNC;
+#define TSF_ERROR_6(REASON,MSG,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6) [QUOTE(COMPONENT), REASON, FORMAT_6(MSG,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6)] call TSF_ERROR_FUNC;
+#define TSF_ERROR_7(REASON,MSG,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7) [QUOTE(COMPONENT), REASON, FORMAT_7(MSG,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7)] call TSF_ERROR_FUNC;
+#define TSF_ERROR_8(REASON,MSG,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8) [QUOTE(COMPONENT), REASON, FORMAT_8(MSG,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8)] call TSF_ERROR_FUNC;
+
+#define TSF_ERROR_TYPE__NO_CONFIG "Config not found"
+#define TSF_ERROR_TYPE__NO_MARKER "Marker not found"
+#define TSF_ERROR_TYPE__MISCONFIGURED "Misconfigured"
+#define TSF_ERROR_TYPE__MISSING_ENTITY "Missing Entity"
+
+// Dynai
+#define DZN_DYNAI_RUNNING (!isNil "dzn_dynai_initialized")
+#define DZN_DYNAI_RUNNING_SERVER_SIDE (!isNil "dzn_dynai_initialized" && {dzn_dynai_initialized })
+
+#define DZN_GEAR_RUNNING (!isNil "dzn_gear_serverInitDone")
+
+
 // Credits: CBA Team (https://github.com/CBATeam/CBA_A3/blob/master/addons/main/script_macros_common.hpp)
 #define DEBUG true
 

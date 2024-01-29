@@ -3,11 +3,11 @@
 [
 	{ time > GVAR(initTimeout) && GVAR(initCondition) }
 	, {
-		LOG("Server init started");
+		LOG("Server/Headless init started");
 
 		[] call FUNC(processEVCLogics);
 
-		LOG("Server initialized");
+		LOG("Server/Headless initialized");
 	}
 	, []
 ] call CBA_fnc_waitUntilAndExecute;
