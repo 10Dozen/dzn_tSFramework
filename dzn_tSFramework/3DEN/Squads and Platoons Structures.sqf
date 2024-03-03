@@ -1,6 +1,6 @@
 /*
  *	[ @DisplayName, @Class, @Units ]
- */ 
+ */
 #define LT "Lieutenant"
 #define SGT "Sergeant"
 #define CPL "Corporal"
@@ -12,13 +12,13 @@ dzn_tSF_3DEN_SquadTypes = [
 		[
 			["Squad Leader", SGT]
 			,["RED - FTL", CPL]
-			,["Automatic Rifleman", PVT]
-			,["Grenadier", PVT]
-			,["Rifleman", PVT]
+			,["RED - Automatic Rifleman", PVT]
+			,["RED - Grenadier", PVT]
+			,["RED - Rifleman", PVT]
 			,["BLUE - FTL", CPL]
-			,["Automatic Rifleman", PVT]
-			,["Grenadier", PVT]
-			,["Rifleman", PVT]
+			,["BLUE - Automatic Rifleman", PVT]
+			,["BLUE - Grenadier", PVT]
+			,["BLUE - Rifleman", PVT]
 		]
 	]
 	, [
@@ -29,9 +29,9 @@ dzn_tSF_3DEN_SquadTypes = [
 			,["Grenadier", PVT]
 			,["Rifleman", PVT]
 			,["BLUE - 2IC", CPL]
-			,["Automatic Rifleman", PVT]
-			,["Grenadier", PVT]
-			,["Rifleman", PVT]
+			,["BLUE - Automatic Rifleman", PVT]
+			,["BLUE - Grenadier", PVT]
+			,["BLUE - Rifleman", PVT]
 		]
 	]
 	, [
@@ -44,8 +44,8 @@ dzn_tSF_3DEN_SquadTypes = [
 			,["Стрелок-Гранатометчик", PVT]
 			,["Стрелок, помощник гранатометчика", PVT]
 			,["BLUE - Старший стрелок", CPL]
-			,["Стрелок", PVT]
-			,["Стрелок", PVT]
+			,["BLUE - Стрелок", PVT]
+			,["BLUE - Стрелок", PVT]
 		]
 	]
 	, [
@@ -56,8 +56,8 @@ dzn_tSF_3DEN_SquadTypes = [
 			,["Стрелок-Гранатометчик", PVT]
 			,["Стрелок, помощник гранатометчика", PVT]
 			,["BLUE - Старший стрелок", CPL]
-			,["Стрелок (ГП)", PVT]
-			,["Снайпер", PVT]
+			,["BLUE - Стрелок (ГП)", PVT]
+			,["BLUE - Снайпер", PVT]
 		]
 	]
 	, [
@@ -135,7 +135,7 @@ dzn_tSF_3DEN_SquadTypes = [
 		[
 			["Pilot", LT]
 			,["Gunner", SGT]
-		]	
+		]
 	]
 	, [
 		"Пилоты", "ru pilots",
@@ -148,54 +148,54 @@ dzn_tSF_3DEN_SquadTypes = [
 
 /*
  *	[ @DisplayName, @Class, @Squads ]
- */ 
+ */
 dzn_tSF_3DEN_PlatoonTypes = [
 	[
 		"US Light Infantry"
 		, "us infantry"
-		, [	
+		, [
 			"%1'%2"
 			, [1, "US Squad"]
 			, [2, "US Squad"]
 			, [3, "US Squad"]
 			, [4, "US Weapon Squad"]
-			, [6, "NATO Platoon Squad"]		
+			, [6, "NATO Platoon Squad"]
 		]
 	]
 	,[
 		"British Light Infantry"
 		, "baf infantry"
-		, [	
+		, [
 			"%1'%2"
 			, [1, "UK Section"]
 			, [2, "UK Section"]
 			, [3, "UK Section"]
 			, [4, "UK Weapon Section"]
-			, [0, "NATO Platoon Squad"]		
+			, [0, "NATO Platoon Squad"]
 		]
 	]
 	,[
 		"РФ МСВ"
 		, "ru infantry"
-		, [	
+		, [
 			"%1'%2"
 			, [1, "MSV Squad"]
 			, [2, "MSV Squad"]
 			, [3, "MSV Squad"]
 			, [4, "MSV Weapon Squad"]
-			, [0, "MSV Platoon Squad"]		
+			, [0, "MSV Platoon Squad"]
 		]
 	]
 	,[
 		"РФ ВВ"
 		, "ru vv infantry"
-		, [	
+		, [
 			"%1'%2"
 			, [1, "ruvv squad"]
 			, [2, "ruvv squad"]
 			, [3, "ruvv squad"]
 			, [4, "MSV Weapon Squad"]
-			, [0, "MSV Platoon Squad"]		
+			, [0, "MSV Platoon Squad"]
 		]
 	]
 
@@ -209,7 +209,7 @@ dzn_fnc_tSF_3DEN_getSquadAttributes = {
 		0		- by id
 		"us squad"	- by tag
 		"List Names"	= return all list
-	*/	
+	*/
 	private _result = [];
 	if (typename _this == "STRING") then {
 		// Callsign
@@ -226,7 +226,7 @@ dzn_fnc_tSF_3DEN_getSquadAttributes = {
 		// ID
 		_result = (dzn_tSF_3DEN_SquadTypes select _this) select 2;
 	};
-	
+
 	_result
 };
 
@@ -235,7 +235,7 @@ dzn_fnc_tSF_3DEN_getPlatoonAttributes = {
 		0		- by id
 		"us squad"	- by tag
 		"List Names"	= return all list
-	*/	
+	*/
 	private _result = [];
 	if (typename _this == "STRING") then {
 		// Callsign
@@ -252,8 +252,6 @@ dzn_fnc_tSF_3DEN_getPlatoonAttributes = {
 		// ID
 		_result = (dzn_tSF_3DEN_PlatoonTypes select _this) select 2;
 	};
-	
+
 	_result
 };
-
-
