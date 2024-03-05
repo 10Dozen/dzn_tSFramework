@@ -3,49 +3,49 @@ tSF_Diag_AddDiagTopic = {
 	if !(player diarySubjectExists tSF_Diag_Subject) then {
 		player createDiarySubject [tSF_Diag_Subject, "Diagnostics"];
 	};
-	
+
 	private _text = "<font size='14' color='#b7f931'>%1</font>";
 	private _texts = [];
 	{
 		if (!isNil (_x select 1)) then {
 			_texts pushBack format [
-				"<font color='#ffffff'>%2</font>        %1"
-				, _x select 0
-				, if (_forEachIndex == 3) then { call compile ("call " + (_x select 1)) } else { call compile (_x select 1) }
+				"%1 - <font color='#ffffff'>%2</font>"
+				, _x # 0
+				, _x # 1
 			];
 		};
 	} forEach [
-		["tS Framework", "tSF_Version"]
-		, ["dzn_Gear", "dzn_gear_version"]
-		, ["dzn_Dynai", "dzn_dynai_version"]
-		, ["dzn_CommonFunctions", "dzn_fnc_getVersion"]
+		["tS Framework", tSF_Version]
+		, ["dzn_Gear", dzn_gear_version]
+		, ["dzn_Dynai", dzn_dynai_version]
+		, ["dzn_CommonFunctions", [] call dzn_fnc_getVersion]
 	];
-	
+
 	player createDiaryRecord ["tSF_Diagpage", ["Overview", format [_text, _texts joinString "<br />"]]];
 
 	call tSF_Diag_Gear_CollectKitData;
 	call tSF_Diag_Gear_CollectTotalData;
-	call tSF_Diag_TSF_CollectTotalData;	
+	call tSF_Diag_TSF_CollectTotalData;
 	call tSF_Diag_Dynai_CollectData;
 };
 
-tSF_Diag_TSF_CollectTotalData = {		
+tSF_Diag_TSF_CollectTotalData = {
 	private _formatDate = {
 		#define	STR_DATE(X)		if (count str(X) == 1) then { "0" + str(X) } else { str(X) }
 		format["%1/%2/%3", STR_DATE(MissionDate select 2), STR_DATE(MissionDate select 1), MissionDate select 0]
 	};
-	
+
 	private _topicHead = format[
-		"<font %1>Scenario name:</font><br/>        %2<br /><br /><font %1>Date:</font><br />        %3<br />"		
+		"<font %1>Scenario name:</font><br/>        %2<br /><br /><font %1>Date:</font><br />        %3<br />"
 		, "size='14' color='#b7f931'"
 		, missionName
 		, call _formatDate
 	];
-	
+
 	private _topicModules = format["<font %1>Modules:</font><br />", "size='14' color='#b7f931'"];
 	{
 		private _show = if (isNil {call compile (_x select 0)}) then { false } else {  call compile (_x select 0) };
-		
+
 		_topicModules = format [
 			"%1<br /><font size='12'>[%2]</font>%3   <font color='%4'>%5</font>"
 			, _topicModules
@@ -55,28 +55,28 @@ tSF_Diag_TSF_CollectTotalData = {
 			, _x select 1
 		];
 	} forEach [
-		["tSF_module_MissionDefaults","Mission Defaults"]
-		,["tSF_module_MissionConditions","Mission Conditions"]
-		,["tSF_module_IntroText","Intro Text"]
-		,["tSF_module_Briefing","Briefing"]
-		,["tSF_module_JIPTeleport","JIP Teleport"]		
-		,["tSF_module_tSNotes","tS Notes"]
-		,["tSF_module_tSSettings","tS Settings"]		
-		,["tSF_module_CCP","CCP"]
-		,["tSF_module_FARP","FARP"]
-		,["tSF_module_Authorization","Authorization"]		
-		,["tSF_module_ArtillerySupport","Artillery Support"]		
-		,["tSF_module_AirborneSupport","Airborne Support"]		
-		,["tSF_module_POM","POM"]		
-		,["tSF_module_Interactives","Interactives"]
-		,["tSF_module_ACEActions","ACE Actions"]		
-		,["tSF_module_EditorVehicleCrew","Editor Vehicle Crew"]
-		,["tSF_module_EditorUnitBehavior","Editor Unit Behavior"]
-		,["tSF_module_EditorRadioSettings","Editor Radio Settings"]		
-		,["tSF_module_Conversations","Conversations"]
-		,["tSF_module_tSAdminTools","tS Admin Tools"]
+        ["tSF_module_ACEActions","ACE Actions"],
+        ["tSF_module_AirborneSupport","Airborne Support"],
+        ["tSF_module_ArtillerySupport","Artillery Support"],
+        ["tSF_module_Authorization","Authorization"],
+        ["tSF_module_Briefing","Briefing"],
+        ["tSF_module_CCP","CCP"],
+        ["tSF_module_Conversations","Conversations"],
+        ["tSF_module_EditorRadioSettings","Editor Radio Settings"],
+        ["tSF_module_EditorUnitBehavior","Editor Unit Behavior"],
+        ["tSF_module_EditorVehicleCrew","Editor Vehicle Crew"],
+        ["tSF_module_FARP","FARP"],
+        ["tSF_module_Interactives","Interactives"],
+        ["tSF_module_IntroText","Intro Text"],
+        ["tSF_module_JIPTeleport","JIP Teleport"],
+        ["tSF_module_MissionConditions","Mission Conditions"],
+        ["tSF_module_MissionDefaults","Mission Defaults"],
+        ["tSF_module_POM","POM"],
+        ["tSF_module_tSAdminTools","tS Admin Tools"],
+        ["tSF_module_tSNotes","tS Notes"],
+        ["tSF_module_tSSettings","tS Settings"]
 	];
-	
+
 	player createDiaryRecord ["tSF_Diagpage", ["tSF - Totals", format ["%1<br />%2", _topicHead, _topicModules]]];
 };
 
@@ -84,36 +84,36 @@ tSF_Diag_Dynai_CollectData = {
 	/*
 		Dynai:
 			Config Zone vs Real zones
-			
+
 			[OK]        Zone1		0
 			[NO CONFIG] Zone2		1
 			[NO ZONE]   Zone3		2
 	*/
 	private _dynaiTopic = "<font size='14' color='#b7f931'>Zones</font><br />";
-	
+
 	waitUntil { !isNil "dzn_dynai_zoneProperties" && !isNil "dzn_dynai_core" };
-	
+
 	private _zonesItems = [];
-	
+
 	private _zones = synchronizedObjects dzn_dynai_core;
 	private _usedZones = [];
 	{
 		private _zonename = _x select 0;
 		private _zone = objNull;
-		
-		if (!isNil (compile _zonename) && { (call compile _zonename) in _zones }) then { 
+
+		if (!isNil (compile _zonename) && { (call compile _zonename) in _zones }) then {
 			_usedZones pushBack (call compile _zonename);
 			_zonesItems pushBack [_zonename, 0];
 		} else {
 			_zonesItems pushBack [_zonename, 2];
-		};		
+		};
 	} forEach dzn_dynai_zoneProperties;
-	
+
 	private _unusedZones = _zones - _usedZones;
-	if !(_unusedZones isEqualTo []) then {		
+	if !(_unusedZones isEqualTo []) then {
 		{ _zonesItems pushBack [str(_x), 1]; } forEach _unusedZones;
 	};
-	
+
 	{
 		_dynaiTopic = format [
 			"%1<br />%2 %3"
@@ -126,7 +126,7 @@ tSF_Diag_Dynai_CollectData = {
 			, _x select 0
 		];
 	} forEach _zonesItems;
-	
+
 	player createDiaryRecord ["tSF_Diagpage", ["dzn Dynai - Totals", _dynaiTopic]];
 };
 
@@ -136,32 +136,32 @@ tSF_Diag_Gear_CollectTotalData = {
 	 */
 	if (isNil "dzn_gear_gat_table") exitWith {};
 	private _gatTopic = "<font size='14' color='#b7f931'>Gear Assignment Table</font><br />";
-	
+
 	private _allKits = [];
 	private _allKitsColors = [];
-	
+
 	private _fnc_generateKitColor = {
 		private _color = "#";
 		for "_i" from 1 to 6 do {_color = format ["%1%2",_color, selectRandom [4,5,6,7,8,9,"A","B","C","D","E","F"]];};
 		_color
 	};
-	
+
 	{
 		private _role = _x select 0;
 		private _kit = _x select 1;
 		private _exist = !(isNil (compile _kit));
 		private _kitColor = "";
-		
+
 		if (_kit in _allKits) then {
 			_kitColor = _allKitsColors select (_allKits find _kit);
 		} else {
 			_kitColor = call _fnc_generateKitColor;
 			while { _kitColor in _allKitsColors } do {_kitColor = call _fnc_generateKitColor;};
-			
+
 			_allKits pushBack _kit;
 			_allKitsColors pushBack _kitColor;
 		};
-		
+
 		_gatTopic = format [
 			"%1<br /><font size='12'>[%2]</font> %3 | <font color='%5'>%4</font>"
 			, _gatTopic
@@ -169,9 +169,9 @@ tSF_Diag_Gear_CollectTotalData = {
 			, _role
 			, _kit
 			, _kitColor
-		];		
+		];
 	} forEach dzn_gear_gat_table;
-	
+
 	player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Totals", _gatTopic]];
 };
 
@@ -181,24 +181,24 @@ tSF_Diag_Gear_CollectKitData = {
 	 */
 	if (isNil "dzn_gear_gat_table") exitWith {};
 	private _kitTopic = "<font size='16' color='#b7f931'>Kits</font><br />";
-	private _fnc_CheckForItem = {	
+	private _fnc_CheckForItem = {
 		params ["_arr","_val"];
 		private _result = false;
 		{if (typename _x == "ARRAY") then { if (_val in _x) exitWith { _result = true }; };} forEach _arr;
 
 		_result
 	};
-	
-	private _kits = [];	
-	
+
+	private _kits = [];
+
 	{
 		if !( (_x select 1) in _kits ) then {
-		
+
 		_kits pushBack (_x select 1);
-		
-		private _role = _x select 0;		
+
+		private _role = _x select 0;
 		private _exist = !(isNil (compile (_x select 1)));
-		
+
 		if (_exist) then {
 			private _kitname = _x select 1;
 			private _kit = call compile _kitname;
@@ -206,15 +206,15 @@ tSF_Diag_Gear_CollectKitData = {
 
 
 			private _hasMaptools = [_kitArray, "ACE_MapTools"] call _fnc_CheckForItem;
-			private _hasIfak = ([_kitArray, "ACE_tourniquet"] call _fnc_CheckForItem) 
+			private _hasIfak = ([_kitArray, "ACE_tourniquet"] call _fnc_CheckForItem)
 				&& (
-					[_kitArray, "ACE_fieldDressing"] call _fnc_CheckForItem 
-					|| [_kitArray, "ACE_packingBandage"] call _fnc_CheckForItem 
-					|| [_kitArray, "ACE_elasticBandage"] call _fnc_CheckForItem 
-					|| [_kitArray, "ACE_quikclot"] call _fnc_CheckForItem 
+					[_kitArray, "ACE_fieldDressing"] call _fnc_CheckForItem
+					|| [_kitArray, "ACE_packingBandage"] call _fnc_CheckForItem
+					|| [_kitArray, "ACE_elasticBandage"] call _fnc_CheckForItem
+					|| [_kitArray, "ACE_quikclot"] call _fnc_CheckForItem
 				);
 			private _hasBinocular = [_kitArray, "Binocular"] call _fnc_CheckForItem || [_kitArray, "ACE_Vector"] call _fnc_CheckForItem;
-		
+
 			_kitTopic = format [
 				"%1<br /><font color='#b7f931'>%2</font><br />   Has IFAK -- %3<br />   Has Maptools -- <font color='#5b9aff'>%4</font><br />   Has Binocular/Vector -- <font color='#5b9aff'>%5</font>"
 				, _kitTopic
@@ -222,12 +222,12 @@ tSF_Diag_Gear_CollectKitData = {
 				, if (_hasIfak) then { "<font color='#b7f931'>Yes</font>" } else { "<font color='#f95631'>No</font>" }
 				, if (_hasMaptools) then { "Yes" } else { "No" }
 				, if (_hasBinocular) then { "Yes" } else { "No" }
-				
+
 			];
 		};
-		
-		};		
+
+		};
 	} forEach dzn_gear_gat_table;
-	
+
 	player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Kits", _kitTopic]];
 };
