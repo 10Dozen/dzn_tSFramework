@@ -1,12 +1,12 @@
 #include "data\script_component.hpp"
 
 if (hasInterface) then {
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Settings.sqf";
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions.sqf";
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - GSO Menu.sqf";
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - Rapid Artillery Menu.sqf";
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - IM and Respawn Menu.sqf";
-	call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions - Dynai Control.sqf";
+	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Settings.sqf"];
+	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions.sqf"];
+	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - GSO Menu.sqf"];
+	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - Rapid Artillery Menu.sqf"];
+	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - IM and Respawn Menu.sqf"];
+	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - Dynai Control.sqf"];
 
 	tSF_AdminTools_Rallypoints = [];
 	tSF_AdminTools_TeleportListNeedUpdate = true;
@@ -15,6 +15,9 @@ if (hasInterface) then {
 	tSF_AdminTools_PLR_TeleportPositions = [];
 	tSF_AdminTools_PLR_TeleportSelections = [];
 	tSF_AdminTools_RapidArtillery_FiremissionCount = 0;
+
+    tSF_AdminTools_Timers = createHashMap;
+    [tSF_fnc_adminTools_timers_handleTimers, 1] call CBA_fnc_addPerFrameHandler;
 
 	[] spawn {
 		while { true } do {
@@ -47,11 +50,13 @@ if (hasInterface) then {
 		tSF_GATList sort true;
 		tSF_GATList pushBack "";
 
-		call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf";
+		call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf"];
 		call tSF_fnc_adminTools_addTopic;
 
 		if (tSF_AdminTool_EnableMissionEndings) then { [] spawn dzn_fnc_adminTools_addMissionEndsControls; };
 		if (tSF_AdminTool_EnableGATTool) then { [] spawn dzn_fnc_adminTools_addGATControls; };
+        [] call tSF_fnc_adminTools_addTimerControls;
+        
 		[] spawn tSF_Diag_AddDiagTopic;
 
 		[["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], [-20,-5,150,0.032], [0,0,0,.75], 30] call dzn_fnc_ShowMessage;
@@ -76,7 +81,7 @@ if (isServer) then {
 	if (hasInterface) then {
 		["CBA_loadingScreenDone", {
 			[{
-				call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\tSAdminTools\data\Functions - Test.sqf";
+				call compileScript ["dzn_tSFramework\Modules\tSAdminTools\data\Functions - Test.sqf"];
 				[] call FUNC(testEntities);
 			},[],5] call CBA_fnc_waitAndExecute;
 		}] call CBA_fnc_addEventHandler;
