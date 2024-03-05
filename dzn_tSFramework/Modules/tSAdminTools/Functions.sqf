@@ -214,20 +214,20 @@ tSF_fnc_adminTools_addTimerControls = {
          "[<font color='#A0DB65'><execute expression='[] call tSF_fnc_adminTools_timers_showEditMenu;'>Редактировать</execute></font>] ",
          "<br />---",
          "<br />1 час 30 мин: ",
-            "[<font color='#A0DB65'><execute expression='[""Mission"", 5400] call tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
-            "[<font color='#A0DB65'><execute expression='[""Mission""] call tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
+            "[<font color='#A0DB65'><execute expression='[""Mission"", 5400] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
+            "[<font color='#A0DB65'><execute expression='[""Mission""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
          "<br />30 мин        ",
-            "[<font color='#A0DB65'><execute expression='[""30 Min"", 1800] call tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
-            "[<font color='#A0DB65'><execute expression='[""30 Min""] call tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
+            "[<font color='#A0DB65'><execute expression='[""30 Min"", 1800] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
+            "[<font color='#A0DB65'><execute expression='[""30 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
         "<br />15 мин        ",
-            "[<font color='#A0DB65'><execute expression='[""15 Min"", 900] call tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
-            "[<font color='#A0DB65'><execute expression='[""15 Min""] call tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
+            "[<font color='#A0DB65'><execute expression='[""15 Min"", 900] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
+            "[<font color='#A0DB65'><execute expression='[""15 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
         "<br />5 мин          ",
-            "[<font color='#A0DB65'><execute expression='[""5 Min"", 300] call tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
-            "[<font color='#A0DB65'><execute expression='[""5 Min""] call tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
+            "[<font color='#A0DB65'><execute expression='[""5 Min"", 300] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
+            "[<font color='#A0DB65'><execute expression='[""5 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
         "<br />1 мин          ",
-            "[<font color='#A0DB65'><execute expression='[""1 Min"", 60] call tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
-            "[<font color='#A0DB65'><execute expression='[""1 Min""] call tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]"
+            "[<font color='#A0DB65'><execute expression='[""1 Min"", 60] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
+            "[<font color='#A0DB65'><execute expression='[""1 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]"
     ];
     player createDiaryRecord [tSF_AdminTools_Topic, ["Таймеры", _topic joinString ""]];
 
