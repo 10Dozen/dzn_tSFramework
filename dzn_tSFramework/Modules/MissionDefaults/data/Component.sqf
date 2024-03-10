@@ -5,8 +5,8 @@
     [ok] - Calc
     [ok] - equip
     [ok] - phoneticAbc
-    [] - numeric autocomplete
-    [] - adjust numeric autocomplete (move into settings?)
+    [ok] - numeric autocomplete
+    [ok] - adjust numeric autocomplete (move into settings?)
     [] - disable on start
     [] - orbat
 

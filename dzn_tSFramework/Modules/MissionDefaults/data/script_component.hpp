@@ -21,6 +21,6 @@
 #define NUMERIC_WILDCARD "#"
 
 // [min/base, othersMax, totalMax(inclusive)]
-#define NUMERIC_RANGES_3 [100, 10, 210]
-#define NUMERIC_RANGES_2 [10, 9, 24]
+#define NUMERIC_RANGES_3 [100, 30, 930]
+#define NUMERIC_RANGES_2 [10, 9, 99]
 #define NUMERIC_RANGES_1 [1, 9, 9]
