@@ -1,14 +1,24 @@
 #include "script_component.hpp"
 
-if (_self get Q(Settings) get "#ERRORS" isNotEqualTo []) exitWith {
+/*
+    Initialize Component Object and it's features.
+
+    Params:
+        none
+    Returns:
+        nothing
+*/
+
+//if (_self get Q(Settings) get "#ERRORS" isNotEqualTo []) exitWith {
+if (SETTING(_self,#ERRORS) isNotEqualTo []) exitWith {
     // not implemented - TSF_ERROR(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR, "- Component initialization aborted")
     LOG(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR);
 };
 
 [
     {
-        time > Component_Setting_Init(_this,timeout) &&
-        Component_Setting_Init(_this,condition)
+        time > SETTING_2(_this,Init,timeout) &&
+        SETTING_2(_this,Init,condition)
     },
     {
         LOG("Client init started");

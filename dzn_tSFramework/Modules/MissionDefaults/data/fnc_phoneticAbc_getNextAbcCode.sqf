@@ -2,41 +2,37 @@
 
 /*
     Returns next unused Alphabetic code word.
-
-    // scan map markers
-    // check for each alphabetic use
-    // mark map of alphabetic usage
-    // pick next unused one
+    Scans map markers and collects used words, then suggest unused one.
+    If all words from dictionary was used - returns nil.
 
     (_self)
 
     Returns:
-        _word (STRING) - suggested alphabetic word or NIL if no suggestions left
+        _word (STRING) or nil - suggested alphabetic word or NIL if no suggestions left
 */
 
-private _sidePlayer = side player;
-private _words = +(_self get Q(Settings) get Q(PhoneticAlphabet) get (
-    ["OPFOR", "BLUFOR"] select (_sidePlayer in [west, resistance])
-));
+forceUnicode 1;
+private _words = if ((side player) in [west, resistance]) then {
+    SETTING_2(_self,PhoneticAlphabet,BLUFOR)
+} else {
+    SETTING_2(_self,PhoneticAlphabet,OPFOR)
+};
 
-private ["_name", "_usedWrodIdx"];
+
+DEBUG_1("Words: %1", _words);
+
+private ["_name", "_idx"];
 private _usedWords = [];
 {
     _name = markerText _x;
-    _usedWrodIdx = _words findIf { _x in _name };
-    if (_usedWrodIdx == -1) then { continue; };
-    _usedWords pushBack (_words # _usedWrodIdx);
+    _idx = _words findIf { _x in _name };
+    if (_idx == -1) then { continue; };
+    _usedWords pushBack (_words # _idx);
 } forEach (allMapMarkers);
 
-DEBUG_MSG("Used Abc Words:");
-{ DEBUG_MSG(_x); } forEach _usedWords;
-
-
 // Delete used words from list of words and return first left
-_words = _words - _usedWords;
-
-DEBUG_MSG("Suggested Abc Words:");
-{ DEBUG_MSG(_x); } forEach _words;
+DEBUG_2("Used words: %1 (%2)", _usedWords, typename _usedWords);
+_words = (+_words) - _usedWords;
 
 // If no words left - return wildcard
 if (_words isEqualTo []) exitWith { nil };

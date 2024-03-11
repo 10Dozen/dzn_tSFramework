@@ -1,17 +1,16 @@
 #include "script_component.hpp"
 
 /*
-    Handles phonetic alphabet sequence.
+    Sets phonetic/numeric autocompletion handlersю
+    (_self)
 
-    ABF A% -> ABF Alpha
-    BOF C% -> BOF Charlie
-
-    or auto-generate name:
-
-    BOF % -> BOF Delta
+    Params:
+        none
+    Returns:
+        nothing
 */
 
-if !(_self get Q(Settings) get Q(PhoneticAlphabet) getOrDefault [Q(enable), false]) exitWith {};
+if !(SETTING_OR_DEFAULT_2(_self,PhoneticAlphabet,enable,false)) exitWith {};
 
 ["created", {
     params ["_marker"];

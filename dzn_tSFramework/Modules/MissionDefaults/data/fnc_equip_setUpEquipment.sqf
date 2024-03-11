@@ -4,9 +4,16 @@
     Applies equipment related defaults:
     - auto use Earplugs
     - put weapon on safe
+
+    (_self)
+
+    Params:
+        none
+    Returns:
+        nothing
 */
 
-private _settings = _self get Q(Settings) get Q(Equipment);
+private _settings = SETTING(_self,Equipment);
 
 if (_settings getOrDefault [Q(PutWeaponOnSafe), false]) then {
     // Put default weapon on safe
@@ -15,7 +22,7 @@ if (_settings getOrDefault [Q(PutWeaponOnSafe), false]) then {
 
 // Schedule equipment adjust after dzn_gear kit assigned
 [
-    { !isNil {player getVariable "dzn_gear_done"} },
+    { DZN_GEAR_APPLIED(player) },
     {
         params ["_useEarplugs", "_weaponOnSafe"];
         if (_useEarplugs) then {

@@ -5,24 +5,26 @@
       - by role name
       - by rank inside specific role name prefixes (like BLUE, RED)
 
+    (_self)
+
     Params:
         0: _unit (OBJECT) - unit to check it's group.
         1: _rolePrefixesSortOrder (ARRAY) - specified role name prefix to group (e.g. fireteam names).
 
     Return:
+        _groupName (STRING) - name of the group;
         _leaderInfo (ARRAY) - squad leader info in foramt:
             [@RoleName(STRING), @Rank(NUMBER), @PlayerName(STRING), @IsPlayer(BOOL)]
-        _orbatInfo (ARRAY) - ordered list of element in the same foramt.
+        _membersInfo (ARRAY) - ordered list of element in the same foramt.
 */
 
-#define STARTS_WITH(STR,SUBSTR) (STR select [0, count SUBSTR] == SUBSTR)
+
 DEBUG_1("[onStart_getGroupOrbat] Params: %1", _this);
 params ["_unit", "_rolePrefixesSortOrder"];
 
 private _grp = group _unit;
 private _leader = leader _grp;
-private _orbatInfo = [];
-
+private _membersInfo = [];
 private _leaderInfo = [
     roleDescription _leader, rankId _leader,
     name _leader, _leader == _unit
@@ -30,19 +32,19 @@ private _leaderInfo = [
 
 {
     if (_x == _leader) then { continue; };
-    _orbatInfo pushBack [
+    _membersInfo pushBack [
         roleDescription _x, rankId _x,
         name _x, _x == _player
     ];
 } forEach (units _grp);
 
 // Sorts by role name
-_orbatInfo = [_orbatInfo, [], { _x # 0 }] call BIS_fnc_sortBy;
+_membersInfo = [_membersInfo, [], { _x # 0 }] call BIS_fnc_sortBy;
 
 // Sort by rank inside prefixes-groups
 {
-    _orbatInfo = [
-        _orbatInfo, [_x],
+    _membersInfo = [
+        _membersInfo, [_x],
         {
             if (STARTS_WITH(_x # 0, _input0)) exitWith { _x # 1 };
             (_x # 1) + 99 // other lines make on top in output
@@ -50,5 +52,5 @@ _orbatInfo = [_orbatInfo, [], { _x # 0 }] call BIS_fnc_sortBy;
     ] call BIS_fnc_sortBy;
 } forEach _rolePrefixesSortOrder;
 
-DEBUG_2("[onStart_getGroupOrbat] Result: _leaderInfo=%1, _orbatInfo=%2", _leaderInfo, _orbatInfo);
-[_leaderInfo, _orbatInfo]
+DEBUG_3("[onStart_getGroupOrbat] Result: _grp=%1, _leaderInfo=%2, _membersInfo=%3", groupId _grp, _leaderInfo, _membersInfo);
+[groupId _grp, _leaderInfo, _membersInfo]

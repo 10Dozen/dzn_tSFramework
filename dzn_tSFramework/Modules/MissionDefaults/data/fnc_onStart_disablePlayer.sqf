@@ -2,26 +2,32 @@
 
 /*
     Initialize DisableOnStart feature on client.
+
+    (_self)
+
+    Params:
+        none
+    Returns:
+        nothing
 */
 
-private _settings = _self get Q(Settings) get Q(DisableOnStart);
+private _settings = SETTING(_self,DisableOnStart);
 
 if !(_settings get Q(disablePlayers)) exitWith {};
 
 [
-    {time > 0},
+    { ON_MISSION_STARTED },
     {
         params ["_cob", "_settings"];
 
-        private _enableAt = time + 2;
-        // if !(serverCommandAvailable "#logout" || !(isMultiplayer) || isServer ) then {
+        private _enableAt = time + 1;
+        if (isMultiplayer && !isServer && !serverCommandAvailable "#logout") then {
             _enableAt = time + (_settings get Q(time));
             player enableSimulation false;
             disableUserInput true;
-        // };
+        };
 
         DEBUG_1("[onStart] Enable At %1", _enableAt);
-
         // Loop each second and update Hint message
         [
             {

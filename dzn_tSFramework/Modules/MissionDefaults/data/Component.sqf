@@ -1,22 +1,19 @@
 #include "script_component.hpp"
 
 /*
-    Test:
-    [ok] - Calc
-    [ok] - equip
-    [ok] - phoneticAbc
-    [ok] - numeric autocomplete
-    [ok] - adjust numeric autocomplete (move into settings?)
-    [] - disable on start
-    [] - orbat
-
+    MissionDefaults component provide general features for every user
+    needed in every mission:
+    - puts weapon on safe on mission start
+    - puts earplugs in
+    - disables control for 20 seconds at the beginning (to avoid misfire or grenade)
+    - adds useful tools like calculator and marker name autocompltion;
 */
 
 private _declaration = [
-    ["#type", { format ["%1_ComponentObject", Q(COMPONENT)] }],
+    ["#type", { format ["%1_ComponentObject", Q(MODULE_COMPONENT)] }],
     /* ["#str", { format ["%1_ComponentObject", QUOTE(COMPONENT)] }],*/
 
-    [Q(Settings), [Q(COMPONENT_PATH(Settings.yaml))] call dzn_fnc_parseSFML],
+    PREP_COMPONENT_SETTINGS,
 
     PREP_COMPONENT_FUNCTION(init),
     PREP_COMPONENT_FUNCTION(onStart_disablePlayer),

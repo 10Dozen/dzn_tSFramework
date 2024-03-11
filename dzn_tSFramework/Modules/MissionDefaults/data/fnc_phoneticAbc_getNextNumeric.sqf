@@ -1,24 +1,41 @@
-
 #include "script_component.hpp"
-
 /*
-    Handles numeric auto-completion.
+
+[fails] - numeric autocomplete
+   -- криво переименовыает - оставляет # или ставит новое число не туда
+   -- если вводить 42# - то по достижению 430 начинает всегда отдавать 430
+        потому что
+        */
+/*
+    Returns next appropriate numeric value for marker.
+    Scans map markers and collects used numbers, then
+    selects next unused number that correspond to limits
+    and returns it.
+
+    If no number that match criteria is available - returns nil.
+
+    Use cases:
     # -> 1...9
     ## -> 11...99
     ### -> 101...999
-
-
-
-    TRP 3## -> 300 -> 301 -> 302..
+    3# -> 30...39
+    15# -> 150...159
+    2## -> 200...299
 
     Params:
-        0: _size (NUMBER) - number of digits to suggest.
+        0: _groups (ARRAY) - regex groups array:
+            [_fullMatch, _leadingNumbers, _wildcards].
 
     Returns:
-        nothing
+        _suggestion (NUMBER) or nil - suggested number.
 */
 
+#define REGEX_NO_LEADING_TEMPLATE "(?<!\d)\d{%1}(?!\d)"
+#define REGEX_WITH_LEADING_TEMPLATE "(?<!\d)%2\d{%1}(?!\d)"
+
 DEBUG_1("(phoneticAbs_handleNumeric) Params: %1", _this);
+
+forceUnicode 1;
 params ["_groups"];
 
 _groups params ["", "_leadingNumber", "_wildcards"];
@@ -31,17 +48,16 @@ _wildcardsSize = count (_wildcards # 0);
 DEBUG_1("(phoneticAbs_getNextNumeric) Leading Number=%1, wildcards size=%2", _leadingNumber, _wildcardsSize);
 
 
-private ["_name", "_found"];
-
-
 private _regex = [
-    format ["(?<!\d)\d{%1}(?!\d)", _wildcardsSize],
-    format ["(?<!\d)%2\d{%1}(?!\d)", _wildcardsSize, _leadingNumber]
+    format [REGEX_NO_LEADING_TEMPLATE, _wildcardsSize],
+    // format [REGEX_WITH_LEADING_TEMPLATE, _wildcardsSize, _leadingNumber]
+    format [REGEX_NO_LEADING_TEMPLATE, _wildcardsSize + count _leadingNumber]
 ] select (_leadingNumber != "");
 
 DEBUG_1("(phoneticAbs_getNextNumeric) Regex=%1", _regex);
 
 private _usedNumbers = [];
+private ["_name", "_found"];
 {
     _name = markerText _x;
     _found = (_name regexFind [_regex]);
@@ -52,52 +68,41 @@ private _usedNumbers = [];
 } forEach (allMapMarkers);
 
 _usedNumbers sort true;
-
 DEBUG_1("Found numbers: %1", _usedNumbers);
 
-// TODO: Adjust min-maxes
-DEBUG_1("_wildcardsSize=%1", _wildcardsSize);
-private _leadingNumberMod = count _leadingNumber;
-DEBUG_1("_leadingNumberModifier=%1", _leadingNumberMod);
-DEBUG_3("Case: %1 (_size=%2, _numOfLeading=%3)", _wildcardsSize + _leadingNumberMod, _wildcardsSize, count _leadingNumber);
-
-// 1 ## = 2 + 1 =3
-// 10 # = 1 + 2 = 3
-// 100 * (1)
 
 private _leadingNumberSize = count _leadingNumber;
-(switch (_wildcardsSize + _leadingNumberSize) do {
-    case 3: { NUMERIC_RANGES_3 };
-    case 2: { NUMERIC_RANGES_2 };
-    case 1: { NUMERIC_RANGES_1 };
-}) params ["_base", "_othersMax", "_totalMax"];
+DEBUG_3("(phoneticAbs_getNextNumeric) Case: %1 (leading=%2, wildcards=%3)", _wildcardsSize + _leadingNumberSize, _leadingNumberSize, _wildcardsSize);
+
+private _numericRange = SETTING_2(_self,PhoneticAlphabet,numeric) # (_wildcardsSize + _leadingNumberSize - 1);
+private _base = _numericRange get Q(base);
+private _max = _numericRange get Q(max);
+private _limit = _numericRange get Q(limit);
 
 if (_leadingNumber != "") then {
     _base = (parseNumber _leadingNumber) * _base / 10^(_leadingNumberSize-1);
-
-    // _base = (parseNumber (_leadingNumber select [0]) * _base;
     DEBUG_1("Modify _base with leading number: %1", _base);
 };
 
-DEBUG_2("(phoneticAbs_getNextNumeric) Suggestion params: _base=%1, _totalMax=%2", _base, _totalMax);
+DEBUG_2("(phoneticAbs_getNextNumeric) Suggestion params: _base=%1, _max=%2", _base, _max);
 
 private _suggestion = _base;
 DEBUG_1("(phoneticAbs_getNextNumeric) Search for suggestion. First: %1", _suggestion);
 
 while {
     DEBUG_1("(phoneticAbs_getNextNumeric)Check that suggested is occupied: %1", _suggestion in _usedNumbers);
-    _suggestion in _usedNumbers && _suggestion <= _totalMax
+    _suggestion in _usedNumbers && _suggestion <= _max
 } do {
     private _other = _suggestion % _base;
     DEBUG_1("(phoneticAbs_getNextNumeric) _other = %1", _other);
-    if (_other == _othersMax) then {
-        _suggestion = _suggestion - _othersMax + _base - 1;
+    if (_other == _limit) then {
+        _suggestion = _suggestion - _limit + _base - 1;
         DEBUG_1("(phoneticAbs_getNextNumeric) Jump to next step = %1", _suggestion);
     };
     _suggestion = _suggestion + 1;
     DEBUG_1("(phoneticAbs_getNextNumeric) New suggestion = %1", _suggestion);
 };
-if (_suggestion > _totalMax) exitWith {
+if (_suggestion > _max) exitWith {
     DEBUG_1("(phoneticAbs_getNextNumeric) Suggestion = %1 is out of allowed range", _suggestion);
     nil
 };
