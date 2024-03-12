@@ -28,6 +28,10 @@ if (SETTING(_self,#ERRORS) isNotEqualTo []) exitWith {
         _this call [F(phoneticAbc_setHandler)];
         _this call [F(calc_init)];
 
+        if (SETTING_2(PlayerRating,enable)) then {
+            player addRating SETTING_2(PlayerRating,rating);
+        };
+
         LOG("Client initialized");
     }
     , _self
