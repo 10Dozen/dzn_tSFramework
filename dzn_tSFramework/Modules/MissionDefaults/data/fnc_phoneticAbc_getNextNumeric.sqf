@@ -47,12 +47,8 @@ _wildcardsSize = count (_wildcards # 0);
 
 DEBUG_1("(phoneticAbs_getNextNumeric) Leading Number=%1, wildcards size=%2", _leadingNumber, _wildcardsSize);
 
-
-private _regex = [
-    format [REGEX_NO_LEADING_TEMPLATE, _wildcardsSize],
-    // format [REGEX_WITH_LEADING_TEMPLATE, _wildcardsSize, _leadingNumber]
-    format [REGEX_NO_LEADING_TEMPLATE, _wildcardsSize + count _leadingNumber]
-] select (_leadingNumber != "");
+private _leadingNumberSize = count _leadingNumber;
+private _regex = format [REGEX_NO_LEADING_TEMPLATE, _wildcardsSize + _leadingNumberSize];
 
 DEBUG_1("(phoneticAbs_getNextNumeric) Regex=%1", _regex);
 
@@ -70,8 +66,6 @@ private ["_name", "_found"];
 _usedNumbers sort true;
 DEBUG_1("Found numbers: %1", _usedNumbers);
 
-
-private _leadingNumberSize = count _leadingNumber;
 DEBUG_3("(phoneticAbs_getNextNumeric) Case: %1 (leading=%2, wildcards=%3)", _wildcardsSize + _leadingNumberSize, _leadingNumberSize, _wildcardsSize);
 
 private _numericRange = SETTING_2(_self,PhoneticAlphabet,numeric) # (_wildcardsSize + _leadingNumberSize - 1);

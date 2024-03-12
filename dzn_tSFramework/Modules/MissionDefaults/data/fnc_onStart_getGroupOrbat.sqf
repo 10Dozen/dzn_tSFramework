@@ -26,7 +26,8 @@ private _grp = group _unit;
 private _leader = leader _grp;
 private _membersInfo = [];
 private _leaderInfo = [
-    roleDescription _leader, rankId _leader,
+    ((roleDescription _leader) splitString "@") # 0, 
+    rankId _leader,
     name _leader, _leader == _unit
 ];
 
@@ -34,7 +35,7 @@ private _leaderInfo = [
     if (_x == _leader) then { continue; };
     _membersInfo pushBack [
         roleDescription _x, rankId _x,
-        name _x, _x == _player
+        name _x, _x == _unit
     ];
 } forEach (units _grp);
 

@@ -46,7 +46,6 @@ if (_settings getOrDefault [Q(showOrbat), false]) then {
             _settings get Q(orbatPrefixSortingOrder)
         ]
     ];
-    _hintMessageLines pushBack "";
     _hintMessageLines append (_self call [F(onStart_composeOrbatHint), _orbatInfo]);
 };
 
