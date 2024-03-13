@@ -1,13 +1,16 @@
 // Common macro
-#define __SERVER_ONLY__ if (!isServer) exitWith {};
-#define __CLIENT_ONLY__ if (!hasInterface) exitWith {};
-#define __HEADLESS_OR_SERVER__ if ( \
-        (isNil "HC" && !isServer) || \
-        (!isNil "HC" && (hasInterface || isServer)) \
-    ) exitWith {};
-
-
 #define MISSION_STARTED time > 0
+#define ON_MISSION_STARTED time > 0
+
+// Dynai
+#define DZN_DYNAI_RUNNING (!isNil "dzn_dynai_initialized")
+#define DZN_DYNAI_RUNNING_SERVER_SIDE (!isNil "dzn_dynai_initialized" && {dzn_dynai_initialized })
+
+// dzn_Gear
+#define DZN_GEAR_RUNNING (!isNil "dzn_gear_serverInitDone")
+#define DZN_GEAR_APPLIED(UNIT) (UNIT getVariable ["dzn_gear_done", false])
+
+
 
 // tSF Error reporting
 #define TSF_ERROR_FUNC tSF_tSFDiag_fnc_ReportFrameworkError
@@ -26,15 +29,9 @@
 #define TSF_ERROR_TYPE__MISCONFIGURED "Misconfigured"
 #define TSF_ERROR_TYPE__MISSING_ENTITY "Missing Entity"
 
-// Dynai
-#define DZN_DYNAI_RUNNING (!isNil "dzn_dynai_initialized")
-#define DZN_DYNAI_RUNNING_SERVER_SIDE (!isNil "dzn_dynai_initialized" && {dzn_dynai_initialized })
-
-#define DZN_GEAR_RUNNING (!isNil "dzn_gear_serverInitDone")
-
 
 // Credits: CBA Team (https://github.com/CBATeam/CBA_A3/blob/master/addons/main/script_macros_common.hpp)
-#define DEBUG true
+//#define DEBUG true
 
 #define MAINPREFIX dzn_tSFramework
 #define SUBPREFIX Modules
@@ -69,11 +66,21 @@
 #define QQFUNC_INNER(var1,var2) QUOTE(QFUNC_INNER(var1,var2))
 #define QQEFUNC(var1,var2) QUOTE(QEFUNC(var1,var2))
 
+
+
 // -- Module and file execution
+#define __SERVER_ONLY__ if (!isServer) exitWith {};
+#define __CLIENT_ONLY__ if (!hasInterface) exitWith {};
+#define __HEADLESS_OR_SERVER__ if ( \
+        (isNil "HC" && !isServer) || \
+        (!isNil "HC" && (hasInterface || isServer)) \
+    ) exitWith {};
+
+
 #define COMPONENT_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\FILE
-#define COMPONENT_DATA_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\FILE
 #define COMPONENT_FILE_PATH(DIR,FILE) MAINPREFIX\SUBPREFIX\COMPONENT\DIR\FILE
-#define COMPILE_EXECUTE(PATH) call compile preProcessFileLineNumbers 'PATH.sqf'
+#define COMPONENT_DATA_PATH(FILE) COMPONENT_FILE_PATH(data,FILE)
+#define COMPILE_EXECUTE(PATH) call compileScript ['PATH.sqf']
 
 #define INIT_SETTING COMPILE_EXECUTE(COMPONENT_PATH(Settings))
 #define INIT_FUNCTIONS COMPILE_EXECUTE(COMPONENT_DATA_PATH(Functions))
@@ -82,8 +89,39 @@
 #define INIT_SERVER if (isServer) then { COMPILE_EXECUTE(COMPONENT_DATA_PATH(InitServer)) }
 #define INIT_CLIENT if (hasInterface) then { COMPILE_EXECUTE(COMPONENT_DATA_PATH(InitClient)) }
 
+#define INIT_COMPONENT COMPILE_EXECUTE(COMPONENT_DATA_PATH(Component))
+
+
+// --- Component Object
+#define Q(X) #X
+#define F_WRAP(NAME) fnc_##NAME
+#define F(NAME) Q(F_WRAP(NAME))
+
+#define COMPONENT_FNC_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\fnc_##FILE##.sqf
+#define PREP_COMPONENT_FUNCTION(NAME) \
+    [F(NAME), compileScript [Q(COMPONENT_FNC_PATH(NAME))]]
+
+#define COMPONENT_SETTINGS_PATH COMPONENT_PATH(Settings.yaml)
+#define PREP_COMPONENT_SETTINGS \
+    [Q(Settings), [Q(COMPONENT_SETTINGS_PATH)] call dzn_fnc_parseSFML]
+
+
+// --- Component Objects - Setting getters
+#define SETTING(SRC,NODE1) (SRC get Q(Settings) get Q(NODE1))
+#define SETTING_2(SRC,NODE1,NODE2) (SRC get Q(Settings) get Q(NODE1) get Q(NODE2))
+#define SETTING_3(SRC,NODE1,NODE2,NODE3) (SRC get Q(Settings) get Q(NODE1) get Q(NODE2) get Q(NODE3))
+
+#define SETTING_OR_DEFAULT(SRC,NODE1,DEFAULT) (SRC get Q(Settings) getOrDefault [Q(NODE1), DEFAULT])
+#define SETTING_OR_DEFAULT_2(SRC,NODE1,NODE2,DEFAULT) (SRC get Q(Settings) get Q(NODE1) getOrDefault [Q(NODE2), DEFAULT])
+#define SETTING_OR_DEFAULT_3(SRC,NODE1,NODE2,NODE3,DEFAULT) (SRC get Q(Settings) get Q(NODE1) get Q(NODE2) getOrDefault [Q(NODE3), DEFAULT])
+
+
+
 // --- Module init
 #define RUN_MODULE(X) if (TRIPLES(PREFIX,module,X)) then { [] execVM 'MAINPREFIX\SUBPREFIX\X\data\PreInit.sqf'; }
+
+// --- Useful macro
+#define STARTS_WITH(STR,SUBSTR) (STR select [0, count SUBSTR] == SUBSTR)
 
 // -- Logging
 #define LOG_SYS_FORMAT(LEVEL,MESSAGE) format ['[%1] (%2) %3: %4', 'PREFIX', 'COMPONENT', LEVEL, MESSAGE]
@@ -108,6 +146,17 @@
 	#define DEBUG_6(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6) DEBUG_MSG(FORMAT_6(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6))
 	#define DEBUG_7(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7) DEBUG_MSG(FORMAT_7(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7))
 	#define DEBUG_8(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8) DEBUG_MSG(FORMAT_8(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8))
+#else
+    #define DEBUG_MSG
+    #define DEBUG_1(MSG)
+    #define DEBUG_2(MSG,ARG1)
+    #define DEBUG_3(MSG,ARG1,ARG2)
+    #define DEBUG_4(MSG,ARG1,ARG2,ARG3)
+    #define DEBUG_5(MSG,ARG1,ARG2,ARG3,ARG4)
+	#define DEBUG_5(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5)
+	#define DEBUG_6(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6)
+	#define DEBUG_7(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7)
+	#define DEBUG_8(MESSAGE,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8)
 #endif
 
 #define FORMAT_1(STR,ARG1) format[STR, ARG1]

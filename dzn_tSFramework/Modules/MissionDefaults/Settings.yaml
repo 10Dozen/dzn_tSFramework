@@ -1,0 +1,109 @@
+
+Init:
+    timeout: -1
+    condition: { true }
+
+
+DisableOnStart:  # отключает управление игроков на старте
+    disablePlayers: true
+    time: 20  # секунд
+    onDisableText: |
+        <t color='#AAAAAA' font='PuristaLight' size='0.8'>
+        Управление отключено, не паникуй!<br /><br />
+        - Не нажимай кнопок<br />
+        - Прослушай ORBAT<br />
+        - Запомни своего командира и напарника</t>
+    onEnableText: |
+        <t color='#FFE240' font='PuristaLight'>Удачной Игры!</t>
+
+    showOrbat: true  # показывать состав отряда вместе со счетчиком
+    orbatPrefixSortingOrder:  # порядок сортировки по префиксам
+        - RED
+        - BLUE
+
+
+Equipment:
+    EarplugAutoUse: true  # автоматически втыкает беруши
+    PutWeaponOnSafe: true  # ставит оружие на предохранитель
+
+
+PlayerRating:  # больший рейтинг позволяет совершать больше убийств союзников без последствий
+    enable: true
+    rating: 25
+
+
+Calculator:  # калькулятор через чат-команду "#calc 12+2"
+    enable: true
+
+
+PhoneticAlphabet:  # автозаполняет имя маркера, если в его имени есть $ или #
+                   # $ -> не занятым значением фонетиеского алфавита (Alpha, Bravo),
+                   #      в зависимости от стороны
+                   # # -> не занятым числовым значением,
+                   #      # => 1..9, ## => 10..99, ### => 100..930,
+                   #      2# => 20..29, 2## => 200..230, 21# => 210..219
+    enable: true
+    numeric:
+        # здесь порядок соответсвтует категории 1, 2 и 3 цифр
+        # base - минимум и основной шаг для "первого" числа (для XYY - X00 % base = 0)
+        # max - макс. число которое можно предлагать для категории (включительно)
+        # limit - макс. число "остальных" цифр (для XYY - YY <= limit)
+        - (base: 1, max: 9, limit: 9)       # диапазон 1...9
+        - (base: 10, max: 99, limit: 9)     # диапазон 10...99
+        - (base: 100, max: 930, limit: 30)  # диапазон 100..130, 200..230, .., 900..930
+    BLUFOR:
+        - Alpha
+        - Bravo
+        - Charlie
+        - Delta
+        - Echo
+        - Foxtrot
+        - Golf
+        - Hotel
+        - India
+        - Juliett
+        - Kilo
+        - Lima
+        - Mike
+        - November
+        - Oscar
+        - Papa
+        - Quebec
+        - Romeo
+        - Sierra
+        - Tango
+        - Uniform
+        - Victor
+        - Whiskey
+        - X-ray
+        - Yankee
+        - Zulu
+    OPFOR:
+        - Анна
+        - Борис
+        - Василий
+        - Григорий
+        - Дмитрий
+        - Елена
+        - Женя
+        - Зоя
+        - Иван
+        - Константин
+        - Леонид
+        - Михаил
+        - Николай
+        - Ольга
+        - Павел
+        - Роман
+        - Семен
+        - Татьяна
+        - Ульяна
+        - Федор
+        - Харитон
+        - Цапля
+        - Чайка
+        - Шура
+        - Щука
+        - Эхо
+        - Юрий
+        - Яков

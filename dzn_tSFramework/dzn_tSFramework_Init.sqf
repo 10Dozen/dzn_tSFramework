@@ -5,7 +5,7 @@
 // 	DZN TS FRAMEWORK
 //
 // **************************
-tSF_Version = "v2.0.6";
+tSF_Version = "v2.0.7";
 
 // **************************
 //  MODULES
@@ -42,8 +42,9 @@ tSF_module_Conversations = false;
 //  INIT
 // **************************
 [
-	"MissionDefaults"
-	, "JIPTeleport"
+	/*"MissionDefaults"
+	, */
+	"JIPTeleport"
 	, "MissionConditions"
 
 	/*, "IntroText"*/
@@ -70,6 +71,7 @@ tSF_module_Conversations = false;
 	call compile format ["if (tSF_module_%1) then { [] execVM 'dzn_tSFramework\Modules\%1\Init.sqf' }", _x]
 };
 
+RUN_MODULE(MissionDefaults);
 RUN_MODULE(Authorization);
 RUN_MODULE(IntroText);
 RUN_MODULE(AirborneSupport);
