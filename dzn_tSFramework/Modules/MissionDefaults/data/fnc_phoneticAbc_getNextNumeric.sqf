@@ -30,8 +30,7 @@
         _suggestion (NUMBER) or nil - suggested number.
 */
 
-#define REGEX_NO_LEADING_TEMPLATE "(?<!\d)\d{%1}(?!\d)"
-#define REGEX_WITH_LEADING_TEMPLATE "(?<!\d)%2\d{%1}(?!\d)"
+#define REGEX_TEMPLATE "(?<!\d)\d{%1}(?!\d)"
 
 DEBUG_1("(phoneticAbs_handleNumeric) Params: %1", _this);
 
@@ -45,10 +44,10 @@ DEBUG_1("(phoneticAbs_handleNumeric) _wildcards group: %1", _wildcards);
 _leadingNumber = _leadingNumber # 0;
 _wildcardsSize = count (_wildcards # 0);
 
-DEBUG_1("(phoneticAbs_getNextNumeric) Leading Number=%1, wildcards size=%2", _leadingNumber, _wildcardsSize);
+DEBUG_2("(phoneticAbs_getNextNumeric) Leading Number=%1, wildcards size=%2", _leadingNumber, _wildcardsSize);
 
 private _leadingNumberSize = count _leadingNumber;
-private _regex = format [REGEX_NO_LEADING_TEMPLATE, _wildcardsSize + _leadingNumberSize];
+private _regex = format [REGEX_TEMPLATE, _wildcardsSize + _leadingNumberSize];
 
 DEBUG_1("(phoneticAbs_getNextNumeric) Regex=%1", _regex);
 
