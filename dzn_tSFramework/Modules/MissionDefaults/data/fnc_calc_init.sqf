@@ -16,3 +16,9 @@ if !(SETTING_OR_DEFAULT_2(_self,Calculator,enable,false)) exitWith {};
     {  GVAR(ComponentObject) call [F(calc_handle), _this]; },
     "all"
 ] call CBA_fnc_registerChatCommand;
+
+[
+    "c",
+    {  GVAR(ComponentObject) call [F(calc_handle), _this]; },
+    "all"
+] call CBA_fnc_registerChatCommand;
