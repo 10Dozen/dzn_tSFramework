@@ -1,3 +1,5 @@
+#define TSF_VERSION_NUMBER "v2.0.7"
+
 // Common macro
 #define MISSION_STARTED time > 0
 #define ON_MISSION_STARTED time > 0
@@ -28,6 +30,7 @@
 #define TSF_ERROR_TYPE__NO_MARKER "Marker not found"
 #define TSF_ERROR_TYPE__MISCONFIGURED "Misconfigured"
 #define TSF_ERROR_TYPE__MISSING_ENTITY "Missing Entity"
+#define TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR "Settings file failed to parse"
 
 
 // Credits: CBA Team (https://github.com/CBATeam/CBA_A3/blob/master/addons/main/script_macros_common.hpp)
@@ -97,6 +100,7 @@
 #define F_WRAP(NAME) fnc_##NAME
 #define F(NAME) Q(F_WRAP(NAME))
 
+#define COMPONENT_TYPE ["#type", { format ["%1_ComponentObject", Q(COMPONENT)] }]
 #define COMPONENT_FNC_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\fnc_##FILE##.sqf
 #define PREP_COMPONENT_FUNCTION(NAME) \
     [F(NAME), compileScript [Q(COMPONENT_FNC_PATH(NAME))]]
@@ -115,10 +119,8 @@
 #define SETTING_OR_DEFAULT_2(SRC,NODE1,NODE2,DEFAULT) (SRC get Q(Settings) get Q(NODE1) getOrDefault [Q(NODE2), DEFAULT])
 #define SETTING_OR_DEFAULT_3(SRC,NODE1,NODE2,NODE3,DEFAULT) (SRC get Q(Settings) get Q(NODE1) get Q(NODE2) getOrDefault [Q(NODE3), DEFAULT])
 
-
-
 // --- Module init
-#define RUN_MODULE(X) if (TRIPLES(PREFIX,module,X)) then { [] execVM 'MAINPREFIX\SUBPREFIX\X\data\PreInit.sqf'; }
+#define RUN_MODULE(X) if (_settings get Q(X)) then { [] call compileScript ['MAINPREFIX\SUBPREFIX\X\data\PreInit.sqf']; }
 
 // --- Useful macro
 #define STARTS_WITH(STR,SUBSTR) (STR select [0, count SUBSTR] == SUBSTR)

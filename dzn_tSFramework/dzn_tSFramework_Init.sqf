@@ -1,79 +1,43 @@
 #include "Modules\script_macro.hpp"
 
-// **************************
-//
-// 	DZN TS FRAMEWORK
-//
-// **************************
-tSF_Version = "v2.0.7";
+tSF_Version = TSF_VERSION_NUMBER;
 
-// **************************
-//  MODULES
-// **************************
-tSF_module_IntroText = true;
-tSF_module_Briefing = true;
-tSF_module_tSNotes = true;
-tSF_module_tSSettings = true;
-
-tSF_module_MissionDefaults = true;
-tSF_module_JIPTeleport = true;
-tSF_module_MissionConditions = true;
-
-tSF_module_CCP = true;
-tSF_module_FARP = true;
-
-tSF_module_Interactives = false;
-tSF_module_ACEActions = true;
-
-tSF_module_Authorization = true;
-tSF_module_AirborneSupport = false;
-tSF_module_ArtillerySupport = false;
-tSF_module_POM = false;
-
-tSF_module_EditorVehicleCrew = false;
-tSF_module_EditorUnitBehavior = false;
-tSF_module_EditorRadioSettings = false;
-
-tSF_module_tSAdminTools = true;
-
-tSF_module_Conversations = false;
-
-// **************************
-//  INIT
-// **************************
-[
-	/*"MissionDefaults"
-	, */
-	"JIPTeleport"
-	, "MissionConditions"
-
-	/*, "IntroText"*/
-	, "Briefing"
-	, "tSNotes"
-	, "tSSettings"
-	/*, "POM"*/
-
-	, "CCP"
-	, "FARP"
-	/*, "Authorization"*/
-	/*, "AirborneSupport"*/
-	, "ArtillerySupport"
-	, "Interactives"
-	, "ACEActions"
-
-	/*, "EditorVehicleCrew"*/
-	, "EditorUnitBehavior"
-	, "EditorRadioSettings"
-	, "tSAdminTools"
-
-	, "Conversations"
-] apply {
-	call compile format ["if (tSF_module_%1) then { [] execVM 'dzn_tSFramework\Modules\%1\Init.sqf' }", _x]
+private _settings = ["dzn_tSFramework\Settings.yaml"] call dzn_fnc_parseSFML;
+if (_settings get "#ERRORS" isNotEqualTo []) exitWith {
+    LOG(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR);
+    [{ time > 5 }, {
+        [
+            "TaskFailed",
+            ["", format ["%1<br/>%2", "tS Framework", TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR]]
+        ] call BIS_fnc_showNotification;
+    }] call CBA_fnc_waitUntilAndExecute;
 };
 
+// New module init
 RUN_MODULE(MissionDefaults);
 RUN_MODULE(Authorization);
 RUN_MODULE(IntroText);
 RUN_MODULE(AirborneSupport);
 RUN_MODULE(EditorVehicleCrew);
 RUN_MODULE(POM);
+
+// Legacy module init
+{
+    if !(_settings get _x) then { continue; };
+    [] execVM format ['dzn_tSFramework\Modules\%1\Init.sqf', _x];
+} forEach [
+    "JIPTeleport"
+    , "MissionConditions"
+    , "Briefing"
+    , "tSNotes"
+    , "tSSettings"
+    , "CCP"
+    , "FARP"
+    , "ArtillerySupport"
+    , "Interactives"
+    , "ACEActions"
+    , "EditorUnitBehavior"
+    , "EditorRadioSettings"
+    , "tSAdminTools"
+    , "Conversations"
+]

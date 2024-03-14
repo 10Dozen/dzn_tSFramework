@@ -1,0 +1,41 @@
+
+# tSFramework
+# ---
+# Здесь можно включить или отключить определенные модули
+# если они нужны/ненужны в вашем сценарии.
+# Утилита очистки удалит отключенные модули, что позволит уменьшить вес миссии.
+
+# Базовая настройка миссии
+Briefing: true
+MissionConditions: true
+MissionDefaults: true
+JIPTeleport: true
+
+# Информирование игроков (титры, записки) и настройки
+IntroText: true
+tSNotes: true
+tSSettings: true
+
+# Взаимодействия игроков и объектов миссии
+Interactives: false
+ACEActions: true
+Conversations: false
+
+# Поддержка в тылу: лечение игроков и ремонт/перезарядка техники
+CCP: true
+FARP: true
+
+# Поддержка на поле боя: артиллерия, вертолеты и управление правами доступа к ним
+# Все модули зависят от модуля Authorization (должен быть включен)
+Authorization: true
+AirborneSupport: false
+ArtillerySupport: false
+POM: false
+
+# Модули-помощники для настройки юнитов/объектов миссии
+EditorVehicleCrew: false
+EditorUnitBehavior: false
+EditorRadioSettings: false
+
+# Утилиты для админа
+tSAdminTools: true
