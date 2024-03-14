@@ -4,7 +4,9 @@ __HEADLESS_OR_SERVER__
 
 LOG("Pre-Initialization started");
 
-INIT_SETTING;
-INIT_FUNCTIONS;
+#define INIT_COMPONENT \
+    COMPILE_EXECUTE(COMPONENT_DATA_PATH(Component))
 
-INIT_COMMON;
+INIT_COMPONENT;
+
+GVAR(ComponentObject) call ["init"];
