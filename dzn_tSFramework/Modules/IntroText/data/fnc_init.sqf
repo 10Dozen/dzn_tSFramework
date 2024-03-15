@@ -8,14 +8,7 @@
         nothing
 */
 
-if (SETTING(_self,#ERRORS) isNotEqualTo []) exitWith {
-    // not implemented - TSF_ERROR(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR, "- Component initialization aborted")
-    LOG(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR);
-    [
-        "TaskFailed",
-        ["", format ["%1<br/>%2", Q(COMPONENT), TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR]]
-    ] call BIS_fnc_showNotification;
-};
+__EXIT_ON_SETTINGS_PARSE_ERROR__
 
 [
     {

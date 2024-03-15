@@ -13,6 +13,9 @@ if (_settings get "#ERRORS" isNotEqualTo []) exitWith {
     }] call CBA_fnc_waitUntilAndExecute;
 };
 
+// Core module
+[] call compileScript ["dzn_tSFramework\Modules\Core\data\PreInit.sqf"];
+
 // New module init
 RUN_MODULE(MissionDefaults);
 RUN_MODULE(Authorization);

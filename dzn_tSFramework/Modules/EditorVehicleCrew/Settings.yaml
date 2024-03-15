@@ -10,6 +10,7 @@ Init:
     timeout: 1
     condition: { true }
 
+
 # Настройки на которые ссылаются стандартные конфигурации вражеской стороны,
 # вы можете изменить значения в соответствии с вашим сценарием
 Defaults:
@@ -23,14 +24,12 @@ Defaults:
              # hold         - осматриваться на 360 градусов вокруг
              # frontal      - сектор 90 градусов (+-45 по направлению машины)
              # full frontal - сектор 180 градусов (+-90 по направлению машины)
-    skill:             # навык экипажа (будет перезаписан, при выборе настроек)
-        general: 0.75  # общий навык, если указан только он, то используется простая схема навыков
-        # прочие навыки см. https://community.bistudio.com/wiki/setSkill -- будет использована расширенная схема (см. синтаксис 2)
+    skill: 0.75  # навык экипажа - коэфициент относительно установленного скилла в dzn_dyani (TODO)
+
 
 Configs:
     # Пример:
     # MyCustomConfig:
-    #     use: *Defaults  # набор значений по-умолчанию (если не указаны в конфиге, то будут взяты отсюда)
     #     # роли в машине: commander, gunner, driver
     #     roles:
     #         - gunner  # первый член команды станет лидером (поэтому должен сидеть на месте, где хоть что-то видно)
@@ -39,19 +38,17 @@ Configs:
     #     crewClass: "B_Soldier_F"
     #     crewKit: "kit_blufor_light_crew"
     #     vehicleKit: "kit_cargo_opfor"
-    #     skill:
-    #         general: 0.75
+    #     skill: 0.75
 
     OPFOR VC, GNR, DRV:
-        $use: *Defaults
         roles:
             - commander
             - driver
             - gunner
 
-    OPFOR VC, DRV: ($use: *Defaults, roles: [commander, driver])
-    OPFOR GNR, DRV: ($use: *Defaults, roles: [gunner, driver])
-    OPFOR VC, GNR: ($use: *Defaults, roles: [commander, gunner])
-    OPFOR VC: ($use: *Defaults, roles: [commander])
-    OPFOR GNR: ($use: *Defaults, roles: [gunner])
-    OPFOR DRV: ($use: *Defaults, roles: [driver])
+    OPFOR VC, DRV: (roles: [commander, driver])
+    OPFOR GNR, DRV: (roles: [gunner, driver])
+    OPFOR VC, GNR: (roles: [commander, gunner])
+    OPFOR VC: (roles: [commander])
+    OPFOR GNR: (roles: [gunner])
+    OPFOR DRV: (roles: [driver])

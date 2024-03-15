@@ -1,14 +1,25 @@
 #include "script_component.hpp"
 
-#define Q(X) #X
-#define Setting_Init(NAME) (_self get "Init" get Q(NAME))
+/*
+    Initialize Component Object and it's features.
+    Params:
+        none
+    Returns:
+        nothing
+*/
+
+__EXIT_ON_SETTINGS_PARSE_ERROR__
+
 
 [
-    { time > Setting_Init(timeout) &&  Setting_Init(condition) },
+    {
+        time > SETTING_2(_this,Init,timeout) &&
+        SETTING_2(_this,Init,condition)
+    },
     {
         LOG("Server/Headless init started");
 
-        _this call [Q(processLogics)];
+        _this call [F(processLogics)];
 
         LOG("Server/Headless initialized");
     }

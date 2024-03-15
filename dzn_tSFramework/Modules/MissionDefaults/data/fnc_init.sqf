@@ -9,11 +9,7 @@
         nothing
 */
 
-//if (_self get Q(Settings) get "#ERRORS" isNotEqualTo []) exitWith {
-if (SETTING(_self,#ERRORS) isNotEqualTo []) exitWith {
-    // not implemented - TSF_ERROR(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR, "- Component initialization aborted")
-    LOG(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR);
-};
+__EXIT_ON_SETTINGS_PARSE_ERROR__
 
 [
     {

@@ -10,9 +10,7 @@
 */
 
 private _declaration = [
-    ["#type", { format ["%1_ComponentObject", Q(MODULE_COMPONENT)] }],
-    /* ["#str", { format ["%1_ComponentObject", QUOTE(COMPONENT)] }],*/
-
+    COMPONENT_TYPE,
     PREP_COMPONENT_SETTINGS,
 
     PREP_COMPONENT_FUNCTION(init),
@@ -32,5 +30,5 @@ private _declaration = [
     PREP_COMPONENT_FUNCTION(calc_handle)
 ];
 
-GVAR(ComponentObject) = createHashMapObject [_declaration];
-GVAR(ComponentObject) call [F(init)];
+COB = createHashMapObject [_declaration];
+COB call [F(init)];

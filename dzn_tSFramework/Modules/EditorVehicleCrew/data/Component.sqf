@@ -1,40 +1,29 @@
 #include "script_component.hpp"
 
-
-#define COMPONENT_FNC_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\fnc_##FILE##.sqf
-#define PREP_COMPONENT_FUNCTION(NAME) \
-    [Q(NAME), compileScript [QUOTE(COMPONENT_FNC_PATH(NAME))]]
+/*
+    MissionDefaults component provide general features for every user
+    needed in every mission:
+    - puts weapon on safe on mission start
+    - puts earplugs in
+    - disables control for 20 seconds at the beginning (to avoid misfire or grenade)
+    - adds useful tools like calculator and marker name autocompltion;
+*/
 
 private _declaration = [
-    ["#create", {
-        LOG("Component creation started. Reading settings...");
-        private _settings = [Q(COMPONENT_PATH(Settings.yaml))] call dzn_fnc_parseSFML;
-        if ((_settings get "#ERRORS") isNotEqualTo []) exitWith {
-            LOG("Error on component creation!");
-            ["%1 - Failed to parse Settings.sfml", Q(COMPONENT)] call BIS_fnc_error;
-        };
-
-        private _cfgs = (_settings get Q(Configs));
-        {
-            // _x - config name, _y - config body
-
-            private _inheritFrom = _y get Q(use);
-            if (isNil "_inheritFrom") then { continue; };
-            _inheritFrom = +_inheritFrom;
-            _y deleteAt Q(use);
-            _inheritFrom merge [_y, true];
-            _cfgs set [_x, _inheritFrom];
-        } forEach _cfgs;
-
-        _self set [QUOTE(Settings), _settings];
-        LOG("Component created!");
-    }],
-    ["#type", { format ["%1_ComponentObject", Q(COMPONENT)] }],
-   /* ["#str", { format ["%1_ComponentObject", QUOTE(COMPONENT)] }],*/
+    COMPONENT_TYPE,
+    PREP_COMPONENT_SETTINGS,
 
     PREP_COMPONENT_FUNCTION(init),
+    PREP_COMPONENT_FUNCTION(assignCrewAndGear),
     PREP_COMPONENT_FUNCTION(processLogics),
-    PREP_COMPONENT_FUNCTION(assignCrew)
+
+    [Q(VehicleBehaviorMap), createHashMapFromArray [
+        ["hold", DZN_DYNAI_VEHICLE_HOLD],
+        ["frontal", DZN_DYNAI_VEHICLE_HOLD_45],
+        ["full frontal", DZN_DYNAI_VEHICLE_HOLD_90]
+    ]]
 ];
 
-GVAR(ComponentObject) = createHashMapObject [_declaration];
+COB = createHashMapObject [_declaration];
+COB call [F(init)];
+
