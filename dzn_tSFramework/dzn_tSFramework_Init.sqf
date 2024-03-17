@@ -18,8 +18,9 @@ if (_settings get "#ERRORS" isNotEqualTo []) exitWith {
 
 // New module init
 RUN_MODULE(MissionDefaults);
-RUN_MODULE(Authorization);
+RUN_MODULE(JIPTeleport);
 RUN_MODULE(IntroText);
+RUN_MODULE(Authorization);
 RUN_MODULE(AirborneSupport);
 RUN_MODULE(EditorVehicleCrew);
 RUN_MODULE(POM);
@@ -29,8 +30,7 @@ RUN_MODULE(POM);
     if !(_settings get _x) then { continue; };
     [] execVM format ['dzn_tSFramework\Modules\%1\Init.sqf', _x];
 } forEach [
-    "JIPTeleport"
-    , "MissionConditions"
+    "MissionConditions"
     , "Briefing"
     , "tSNotes"
     , "tSSettings"

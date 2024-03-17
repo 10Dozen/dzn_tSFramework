@@ -13,6 +13,7 @@
 */
 
 params["_veh", "_config"];
+DEBUG_1("[assignCrewAndGear] Params: %1", _this);
 
 #define Value(NAME) (_config get QUOTE(NAME))
 #define ValueOrDefault(NAME) (_config getOrDefault [QUOTE(NAME), SETTING_2(_self,Defaults,NAME)])
@@ -25,29 +26,30 @@ private _vehicleKit = ValueOrDefault(vehicleKit);
 private _behavior = ValueOrDefault(behavior);
 private _skill = ValueOrDefault(skill);
 
-
-// If dzn_gear is needed, but is not running at the moment -
-// schedule execution after dzn_gear init done
-if ((_crewKit isNotEqualTo "" || _vehicleKit isNotEqualTo "") && !DZN_GEAR_RUNNING) exitWith {
-    [
-        { DZN_GEAR_RUNNING },
-        {
-            params ["_cob", "_args"];
-            _cob call [F(assignCrew), _args];
-        },
-        [_self, _this]
-    ] call CBA_fnc_waitUntilAndExecute;
-    true
-};
-
-[_veh, _vehicleKit, true] call dzn_fnc_gear_assignKit;
-
 if (_crewClass isEqualTo "") then {
     _crewClass = nil;
 };
 
-private _crew = [_veh, _side, _roles, _crewKit, _skill, _crewClass] call dzn_fnc_createVehicleCrew;
+[_veh, _vehicleKit, true] call dzn_fnc_gear_assignKit;
 
+// Read/update DynAI skill with mission params and apply adjusted values to crew
+[] call dzn_fnc_dynai_getSkillFromParameters;
+dzn_dynai_complexSkill params ["_isComplexSkill", "_dynaiSkill"];
+private ["_adjustedSkill"];
+if (_isComplexSkill) then {
+    _adjustedSkill = [];
+    {
+        _x params ["_skillName", "_skillLevel"];
+        if (_skillName in ["general", "aimingSpeed", "aimingAccuracy"]) then {
+            _skillLevel = (_skillLevel * _skill) min 1;
+        };
+        _adjustedSkill pushBack [_skillName, _skillLevel];
+    } forEach _dynaiSkill;
+} else {
+    _adjustedSkill = (_dynaiSkill * _skill) min 1;
+};
+
+private _crew = [_veh, _side, _roles, _crewKit, _adjustedSkill, _crewClass] call dzn_fnc_createVehicleCrew;
 
 if (units _crew findIf {isNull objectParent _x} > -1) then {
     TSF_ERROR_4(TSF_ERROR_TYPE__MISCONFIGURED, "Crew does not fit vehicle %1. Config '%2' with %3 roles used - but actual mounted crew number is %4.", typeof _veh, _configName, _roles, count crew _veh);
@@ -60,15 +62,5 @@ private _behaviourParams = [
     _veh,
     _self get Q(VehicleBehaviorMap) get toLower(_behavior)
 ];
-
-if (!DZN_DYNAI_RUNNING_SERVER_SIDE && isNil "dzn_fnc_dynai_addUnitBehavior") exitWith {
-    [
-        { DZN_DYNAI_RUNNING_SERVER_SIDE && !isNil "dzn_fnc_dynai_addUnitBehavior"},
-        { _this call dzn_fnc_dynai_addUnitBehavior; },
-        _behaviourParams
-    ] call CBA_fnc_waitUntilAndExecute;
-    true
-};
-
 _behaviourParams call dzn_fnc_dynai_addUnitBehavior;
 true

@@ -10,20 +10,18 @@
 
 __EXIT_ON_SETTINGS_PARSE_ERROR__
 
-
 [
     {
+        local player &&
         time > SETTING_2(_this,Init,timeout) &&
-        SETTING_2(_this,Init,condition) &&
-        DZN_DYNAI_RUNNING_SERVER_SIDE &&
-        DZN_GEAR_RUNNING
+        SETTING_2(_this,Init,condition)
     },
     {
-        LOG("Server/Headless init started");
+        LOG("Client init started");
 
-        _this call [F(processLogics)];
+        _this call [F(addTeleportAction), [player]];
 
-        LOG("Server/Headless initialized");
+        LOG("Client initialized");
     }
     , _self
 ] call CBA_fnc_waitUntilAndExecute;
