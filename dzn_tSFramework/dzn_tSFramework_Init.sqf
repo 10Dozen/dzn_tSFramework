@@ -1,5 +1,13 @@
 #include "Modules\script_macro.hpp"
 
+/*
+    TODO:
+        Fix tSFAdmin tools to handle new MissionConditions
+
+
+*/
+
+
 tSF_Version = TSF_VERSION_NUMBER;
 
 private _settings = ["dzn_tSFramework\Settings.yaml"] call dzn_fnc_parseSFML;
@@ -24,14 +32,14 @@ RUN_MODULE(Authorization);
 RUN_MODULE(AirborneSupport);
 RUN_MODULE(EditorVehicleCrew);
 RUN_MODULE(POM);
+RUN_MODULE(MissionConditions);
 
 // Legacy module init
 {
     if !(_settings get _x) then { continue; };
     [] execVM format ['dzn_tSFramework\Modules\%1\Init.sqf', _x];
 } forEach [
-    "MissionConditions"
-    , "Briefing"
+    "Briefing"
     , "tSNotes"
     , "tSSettings"
     , "CCP"
