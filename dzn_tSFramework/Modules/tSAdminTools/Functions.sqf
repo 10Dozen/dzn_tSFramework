@@ -1,4 +1,4 @@
-#include "..\..\script_macro.hpp"
+#include "data\script_component.hpp"
 
 tSF_fnc_adminTools_handleKey = {
 	if (tSF_adminTools_isKeyPressed) exitWith {};
@@ -81,27 +81,24 @@ tSF_fnc_adminTools_handleGSOMenuOverSpectator = {
 	Mission Endings
 */
 dzn_fnc_adminTools_addMissionEndsControls = {
-	waitUntil { sleep 5; time > 5 && !isNil {tSF_Ends} };
+	waitUntil { sleep 5; time > 5 && !isNil QECOB(MissionConditions) };
 
 	// Mission Notes
-	private _topicLines = format [
-		"<font color='#12C4FF' size='14'>Завершение миссии</font>",
-        "<font color='#A0DB65'><execute expression='""end1"" spawn tSF_fnc_adminTools_callEndings;'>Generic WIN</execute></font>"
-        "<font color='#A0DB65'><execute expression='""loser"" spawn tSF_fnc_adminTools_callEndings;'>Generic LOSE</execute></font>"
+    private _topicLines = [
+        "<font color='#12C4FF' size='14'>Завершение миссии</font>",
+        "<font color='#A0DB65'><execute expression='""end1"" spawn tSF_fnc_adminTools_callEndings;'>Generic WIN</execute></font>",
+        "<font color='#A0DB65'><execute expression='""loser"" spawn tSF_fnc_adminTools_callEndings;'>Generic LOSE</execute></font>",
         "----"
-	];
+    ];
 
-	{
+    {
         _x params ["_name", "_desc"];
         _topicLines pushBack format [
-			"<font color='#A0DB65'><execute expression='""%2"" spawn tSF_fnc_adminTools_callEndings;'>%2</execute></font> %3",
-			_topic,
-			_name,
-			if (_desc isEqualTo "") then { "" } else { format ["(%1)", _desc] }
-		];
-	} forEach (ECOB(MissionConditions) call [F(getEndings)]);
-
-    // tSF_Ends;
+            "<font color='#A0DB65'><execute expression='""%1"" spawn tSF_fnc_adminTools_callEndings;'>%1</execute></font> %2",
+            _name,
+            if (_desc isEqualTo "") then { "" } else { format ["(%1)", _desc] }
+        ];
+    } forEach (ECOB(MissionConditions) call [F(getEndings)]);
 
 	player createDiaryRecord [
         tSF_AdminTools_Topic,

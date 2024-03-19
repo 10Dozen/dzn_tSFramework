@@ -109,6 +109,8 @@
 // --- Component Object
 #define COB DOUBLES(MODULE_COMPONENT,Component)
 #define ECOB(var1) TRIPLES(PREFIX,var1,Component)
+#define QCOB Q(COB)
+#define QECOB(var1) Q(ECOB(var1))
 
 #define Q(X) #X
 #define F_WRAP(NAME) fnc_##NAME

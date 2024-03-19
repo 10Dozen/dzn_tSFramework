@@ -1,13 +1,5 @@
 #include "Modules\script_macro.hpp"
 
-/*
-    TODO:
-        Fix tSFAdmin tools to handle new MissionConditions
-
-
-*/
-
-
 tSF_Version = TSF_VERSION_NUMBER;
 
 private _settings = ["dzn_tSFramework\Settings.yaml"] call dzn_fnc_parseSFML;

@@ -56,7 +56,7 @@ if (hasInterface) then {
 		if (tSF_AdminTool_EnableMissionEndings) then { [] spawn dzn_fnc_adminTools_addMissionEndsControls; };
 		if (tSF_AdminTool_EnableGATTool) then { [] spawn dzn_fnc_adminTools_addGATControls; };
         [] call tSF_fnc_adminTools_addTimerControls;
-        
+
 		[] spawn tSF_Diag_AddDiagTopic;
 
 		[["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], [-20,-5,150,0.032], [0,0,0,.75], 30] call dzn_fnc_ShowMessage;
