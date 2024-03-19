@@ -13,7 +13,7 @@ echo #                                                                   #
 echo #    tSF File Sweeper                                               #
 echo #    Remove all non-arma files from your mission                    #
 echo #    (e.g. html-helpers) and unused tSFramework files               #
-echo #    (according to dzn_tSFramework_Init.sqf settings)               #
+echo #    (according to dzn_tSFramework\Settings.yaml settings)               #
 echo #                                                                   #
 echo #####################################################################
 
