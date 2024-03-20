@@ -1,0 +1,15 @@
+# tS Notes
+# ---
+# Создает записи в дневнике (на экране миссии) с памятками об игровых процедурах
+#
+# Зависимости:
+# нет
+
+Title: "tS Заметки"
+
+Reports: true
+ACEMedicine: true
+MedEvacRequest: true
+ArtilleryRequest: true
+CASRequest: false
+RangeFinding: true

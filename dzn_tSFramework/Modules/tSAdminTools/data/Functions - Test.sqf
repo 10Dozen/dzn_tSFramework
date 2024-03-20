@@ -30,6 +30,6 @@ FUNC(testEntities) = {
 	if (!_hasScenarioLogic) then { "Scenario is not set up!" call _fnc_fail; };
 	// if (!_hasHC) then { "No Headless Client set!" call _fnc_fail; };
 	if (!_hasZeus) then { "No Zeus Module set!" call _fnc_fail; };
-	if (tSF_module_CCP && !_hasCCP) then { "No CCP set!" call _fnc_fail; };
-	if (tSF_module_FARP && !_hasFARP) then { "No FARP set!" call _fnc_fail; };
+	if (ECOB(Core) call [F(isModuleEnabled), "CCP"] && !_hasCCP) then { "No CCP set!" call _fnc_fail; };
+	if (ECOB(Core) call [F(isModuleEnabled), "FARP"] && !_hasFARP) then { "No FARP set!" call _fnc_fail; };
 };

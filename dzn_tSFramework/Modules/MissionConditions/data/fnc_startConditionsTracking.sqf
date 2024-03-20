@@ -35,7 +35,6 @@ DEBUG_MSG("[startConditionsTracking] Initialize tracker...");
 
 [
     {
-        DEBUG_MSG("[startConditionsTracking] On PFH");
         params ["_self", "_pfhId"];
         _self call [F(checkConditions), [_pfhId]];
     },

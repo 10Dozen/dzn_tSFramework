@@ -32,12 +32,12 @@ tSF_fnc_adminTools_showGSOScreen = {
 			ADD_PLR_POS(_pl select 0,"PL");
 		};
 
-		if (tSF_module_CCP && {!isNil "tSF_CCP_Position"}) then {
+		if (ECOB(Core) call [F(isModuleEnabled), "CCP"] && {!isNil "tSF_CCP_Position"}) then {
 			ADD_GSO_POS(ASLtoATL tSF_CCP_Position, "CCP");
 			ADD_PLR_POS(ASLtoATL tSF_CCP_Position, "CCP");
 		};
 
-		if (tSF_module_FARP && {!isNil "tSF_FARP_Position"}) then {
+		if (ECOB(Core) call [F(isModuleEnabled), "FARP"]  && {!isNil "tSF_FARP_Position"}) then {
 			ADD_GSO_POS(ASLtoATL tSF_FARP_Position, "FARP");
 			ADD_PLR_POS(ASLtoATL tSF_FARP_Position, "FARP");
 		};
@@ -193,12 +193,12 @@ tSF_fnc_adminTools_showGSOScreen = {
 tSF_fnc_adminTools_teleportTo = {
 	params["_pos","_u"];
 
+    if !(local _u) exitWith {
+        [_pos, _u] remoteExec ["tSF_fnc_adminTools_teleportTo", _u];
+    };
+
 	if (typename _pos == "OBJECT") then {
 		_pos = getPosATL _pos;
-	};
-
-	if !(local _u) exitWith {
-		[_pos, _u] remoteExec ["tSF_fnc_adminTools_teleportTo", _u];
 	};
 
 	0 cutText ["", "WHITE OUT", 0.1];
