@@ -2,8 +2,8 @@
 
 #define COMPONENT EditorVehicleCrew
 
-#define EVC_GAMELOGIC_FLAG QUOTE(tSF_EVC)
+#define EVC_GAMELOGIC_FLAG Q(tSF_EVC)
 
-#define CREW_CONFIG_TABLE GVAR(CrewConfig) = createHashMapFromArray [
-#define CREW_CONFIG_TABLE_END ];
-#define OPFOR_CREW_CONFIG_DEFAULT GVAR(OPFOR_Side),GVAR(OPFOR_CrewSkill),GVAR(OPFOR_CrewKit),GVAR(OPFOR_HoldType)
+#define DZN_DYNAI_VEHICLE_HOLD "vehicle hold"
+#define DZN_DYNAI_VEHICLE_HOLD_45 "vehicle 45 hold"
+#define DZN_DYNAI_VEHICLE_HOLD_90 "vehicle 90 hold"

@@ -1,3 +1,5 @@
+#include "data\script_component.hpp"
+
 /*
  *	F5 GSO Main Screen
  */
@@ -5,8 +7,8 @@ tSF_fnc_adminTools_showGSOScreen = {
 	#define ADD_GSO_POS(X,Y) 	tSF_AdminTools_GSO_TeleportPositions pushBack (X); tSF_AdminTools_GSO_TeleportSelections pushBack (Y)
 	#define	ADD_PLR_POS(X,Y)	tSF_AdminTools_PLR_TeleportPositions pushBack (X); tSF_AdminTools_PLR_TeleportSelections pushBack (Y)
 
-	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};	
-	
+	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
+
 	if (tSF_AdminTools_TeleportListNeedUpdate) then {
 		tSF_AdminTools_GSO_TeleportPositions = [];
 		tSF_AdminTools_GSO_TeleportSelections = [];
@@ -30,12 +32,12 @@ tSF_fnc_adminTools_showGSOScreen = {
 			ADD_PLR_POS(_pl select 0,"PL");
 		};
 
-		if (tSF_module_CCP && {!isNil "tSF_CCP_Position"}) then {
+		if (ECOB(Core) call [F(isModuleEnabled), "CCP"] && {!isNil "tSF_CCP_Position"}) then {
 			ADD_GSO_POS(ASLtoATL tSF_CCP_Position, "CCP");
 			ADD_PLR_POS(ASLtoATL tSF_CCP_Position, "CCP");
 		};
 
-		if (tSF_module_FARP && {!isNil "tSF_FARP_Position"}) then {
+		if (ECOB(Core) call [F(isModuleEnabled), "FARP"]  && {!isNil "tSF_FARP_Position"}) then {
 			ADD_GSO_POS(ASLtoATL tSF_FARP_Position, "FARP");
 			ADD_PLR_POS(ASLtoATL tSF_FARP_Position, "FARP");
 		};
@@ -53,7 +55,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 	{
 		_ends pushBack (_x select 0);
 		_endsNames pushBack (format ["%1 (%2)", _x select 0, _x select 1]);
-	} forEach tSF_Ends;
+	} forEach (ECOB(MissionConditions) call [F(getEndings)]);
 
 	private _listPLayers = call BIS_fnc_listPlayers;
 	private _gatList = if (!isNil "tSF_GATList") then { tSF_GATList } else { [] };
@@ -190,15 +192,15 @@ tSF_fnc_adminTools_showGSOScreen = {
 
 tSF_fnc_adminTools_teleportTo = {
 	params["_pos","_u"];
-	
+
+    if !(local _u) exitWith {
+        [_pos, _u] remoteExec ["tSF_fnc_adminTools_teleportTo", _u];
+    };
+
 	if (typename _pos == "OBJECT") then {
 		_pos = getPosATL _pos;
 	};
-	
-	if !(local _u) exitWith {
-		[_pos, _u] remoteExec ["tSF_fnc_adminTools_teleportTo", _u];
-	};
-	
+
 	0 cutText ["", "WHITE OUT", 0.1];
 	player allowDamage false;
 	sleep 1;
@@ -216,7 +218,7 @@ tSF_fnc_adminTools_heal = {
 	if !(local _this) exitWith {
 		_this remoteExec ["tSF_fnc_adminTools_heal",_this];
 	};
-	
+
 	[player] call ace_medical_treatment_fnc_fullHealLocal;
 };
 
@@ -267,13 +269,13 @@ tSF_fnc_adminTools_doWaterPipeAction = {
 		_time2 = 60;
 	};
 
-	if (!isNil "tSF_Pipe_PP_eff") then { 
-		ppEffectDestroy tSF_Pipe_PP_eff; 
+	if (!isNil "tSF_Pipe_PP_eff") then {
+		ppEffectDestroy tSF_Pipe_PP_eff;
 		tSF_Pipe_PP_eff = nil;
 		sleep 0.5;
 	};
 
-	for "_i" from 1 to 20 do { 
+	for "_i" from 1 to 20 do {
 		drop [
 			["\A3\data_f\ParticleEffects\Universal\Universal", 16, 7, 48],
 			"",	"Billboard",0, 9.5 + random 0.5,
@@ -283,7 +285,7 @@ tSF_fnc_adminTools_doWaterPipeAction = {
 			[1],0.1,
 			0.1, "", "", player,	random 360,	true, 0.1
 		];
-	}; 
+	};
 
 	tSF_Pipe_PP_eff = ppEffectCreate ["WetDistortion",300];
 	tSF_Pipe_PP_eff ppEffectEnable true;
@@ -303,7 +305,7 @@ tSF_fnc_adminTools_doWaterPipeAction = {
 	if (isNil "tSF_Pipe_PP_eff") exitWith {};
 
 	ppEffectDestroy tSF_Pipe_PP_eff;
-}; 
+};
 
 
 tSF_fnc_adminTools_createTeleportRP = {

@@ -1,3 +1,5 @@
+#include "data\script_component.hpp"
+
 tSF_fnc_adminTools_handleKey = {
 	if (tSF_adminTools_isKeyPressed) exitWith {};
 	switch (_this select 1) do {
@@ -79,25 +81,29 @@ tSF_fnc_adminTools_handleGSOMenuOverSpectator = {
 	Mission Endings
 */
 dzn_fnc_adminTools_addMissionEndsControls = {
-	waitUntil { sleep 5; time > 5 && !isNil {tSF_Ends} };
+	waitUntil { sleep 5; time > 5 && !isNil QECOB(MissionConditions) };
 
 	// Mission Notes
-	private _topic = format [
-		"<font color='#12C4FF' size='14'>Завершение миссии</font>%1%2<br />----"
-		, "<br /><font color='#A0DB65'><execute expression='""end1"" spawn tSF_fnc_adminTools_callEndings;'>Generic WIN</execute></font>"
-		, "<br /><font color='#A0DB65'><execute expression='""loser"" spawn tSF_fnc_adminTools_callEndings;'>Generic LOSE</execute></font>"
-	];
-	{
-		_topic = format [
-			"%1<br /><font color='#A0DB65'><execute expression='""%2"" spawn tSF_fnc_adminTools_callEndings;'>%2</execute></font>%3"
-			, _topic
-			, _x select 0
-			, if (_x select 1 != "") then { " (" + (_x select 1) + ")" } else { "" }
-		];
+    private _topicLines = [
+        "<font color='#12C4FF' size='14'>Завершение миссии</font>",
+        "<font color='#A0DB65'><execute expression='""end1"" spawn tSF_fnc_adminTools_callEndings;'>Generic WIN</execute></font>",
+        "<font color='#A0DB65'><execute expression='""loser"" spawn tSF_fnc_adminTools_callEndings;'>Generic LOSE</execute></font>",
+        "----"
+    ];
 
-	} forEach tSF_Ends;
+    {
+        _x params ["_name", "_desc"];
+        _topicLines pushBack format [
+            "<font color='#A0DB65'><execute expression='""%1"" spawn tSF_fnc_adminTools_callEndings;'>%1</execute></font> %2",
+            _name,
+            if (_desc isEqualTo "") then { "" } else { format ["(%1)", _desc] }
+        ];
+    } forEach (ECOB(MissionConditions) call [F(getEndings)]);
 
-	player createDiaryRecord [tSF_AdminTools_Topic, ["Mission End", _topic]];
+	player createDiaryRecord [
+        tSF_AdminTools_Topic,
+        ["Mission End", _topicLines joinString "<br/>"]
+    ];
 };
 
 tSF_End = {
@@ -105,17 +111,15 @@ tSF_End = {
 
 	[] spawn {
 		sleep 5;
-		private _ends = [];
-		{
-			private _endOption = format ["%1 (%2)", _x select 0, _x select 1];
-			_ends pushBack _endOption;
-		} forEach tSF_Ends;
+        private _ends = (ECOB(MissionConditions) call [F(getEndings)]);
+		private _endsOptions = _ends apply {
+            format ["%1 (%2)", _x select 0, _x select 1]
+        };
 
-		private _Result = [];
-		_Result = ["End Mission",[["Ending", _ends]]] call dzn_fnc_ShowChooseDialog;
+		private _result = ["End Mission",[["Ending", _endsOptions]]] call dzn_fnc_ShowChooseDialog;
 
-		if (count _Result == 0) exitWith {};
-		( (tSF_Ends select (_Result select 0)) select 0 ) spawn tSF_fnc_adminTools_callEndings;
+		if (_result isEqualTo []) exitWith {};
+		( (_ends # (_result # 0)) # 0 ) spawn tSF_fnc_adminTools_callEndings;
 	};
 };
 
@@ -135,9 +139,7 @@ tSF_fnc_adminTools_callEndings = {
 	};
 
 	if !(_Result) exitWith {};
-
-	MissionFinished = _ending;
-	publicVariable "MissionFinished";
+    [_ending, true, 2] remoteExec ["BIS_fnc_endMission", 0, true];
 };
 
 

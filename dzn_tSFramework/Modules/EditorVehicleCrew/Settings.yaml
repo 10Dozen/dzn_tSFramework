@@ -1,0 +1,54 @@
+# Dependency: No
+
+# Засинхронизируйте машины/статичные орудия в редакторе с GameLogic с инит-кодом:
+#   this setVariable ["tSF_EVC", "Config name"]
+# Для всех засинхронизированных машин будет создан экипаж, с настройками согласно
+# выбранному конфигу.
+
+
+Init:
+    timeout: 1
+    condition: { true }
+
+
+# Настройки на которые ссылаются стандартные конфигурации вражеской стороны,
+# вы можете изменить значения в соответствии с вашим сценарием
+Defaults:
+    side: east        # сторона экипажа: west, east, resistance, civilian
+    vehicleKit: ""    # имя кита для машины (dzn_gear)
+    crewClass: ""     # по умолчанию выбирает класс экипажа согласно стороне
+                      # однако можно задать вручную.
+                      # Следите за тем, чтобы класс относился к выбранной стороне!
+    crewKit: ""       # имя кита для экипажа (dzn_gear)
+    behavior: "full frontal"  # поведение маишны (dzn_dynai):
+             # hold         - осматриваться на 360 градусов вокруг
+             # frontal      - сектор 90 градусов (+-45 по направлению машины)
+             # full frontal - сектор 180 градусов (+-90 по направлению машины)
+    skill: 1  # навык экипажа - коэфициент относительно установленного скилла в dzn_dyani
+
+
+Configs:
+    # Пример:
+    # MyCustomConfig:
+    #     # роли в машине: commander, gunner, driver
+    #     roles:
+    #         - gunner  # первый член команды станет лидером (поэтому должен сидеть на месте, где хоть что-то видно)
+    #         - driver
+    #     side: west
+    #     crewClass: "B_Soldier_F"
+    #     crewKit: "kit_blufor_light_crew"
+    #     vehicleKit: "kit_cargo_opfor"
+    #     skill: 0.75
+
+    OPFOR VC, GNR, DRV:
+        roles:
+            - commander
+            - driver
+            - gunner
+
+    OPFOR VC, DRV: (roles: [commander, driver])
+    OPFOR GNR, DRV: (roles: [gunner, driver])
+    OPFOR VC, GNR: (roles: [commander, gunner])
+    OPFOR VC: (roles: [commander])
+    OPFOR GNR: (roles: [gunner])
+    OPFOR DRV: (roles: [driver])

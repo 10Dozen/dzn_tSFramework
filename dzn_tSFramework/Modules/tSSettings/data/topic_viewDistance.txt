@@ -1,0 +1,20 @@
+<font color='#12C4FF' size='14'>Настройки дальности видимости</font>
+<br />[<font color='#A0DB65'><execute expression='%1 call ["%2", [1000,750]]'>+ Дальность</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%2", [-1000, -750]]'>- Дальность</execute></font>]
+<br />[<font color='#A0DB65'><execute expression='%1 call ["%3"]'>Макс. дальность объектов</execute></font>]
+<br />
+<br /><font color='#A0DB65'><execute expression='%1 call ["%4"]'>Сохранить настройки</execute></font>
+<br />
+<br /><font color='#12C4FF' size='14'>Быстрая настройка:</font>
+<br /><font color='#A0DB65'><execute expression='%1 call ["%5", [1500, 750]]'>Близко (1500/750)</execute></font>
+<br /><font color='#A0DB65'><execute expression='%1 call ["%5", [3000, 2250]]'>Обычно (3000/2250)</execute></font>
+<br /><font color='#A0DB65'><execute expression='%1 call ["%5", [5000, 3750]]'>Средне (5000/3000)</execute></font>
+<br /><font color='#A0DB65'><execute expression='%1 call ["%5", [10000, 7500]]'>Далеко (10000/7500)</execute></font>
+<br /><font color='#A0DB65'><execute expression='%1 call ["%5", [20000,15000]]'>Очень далеко (20000/12500)</execute></font>
+<br />
+<br /><font color='#12C4FF' size='14'>Тени:</font>
+<br />[<font color='#A0DB65'><execute expression='%1 call ["%6", 1]'>Нет (1)</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%6", 10]'>Близко (10)</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%6", 25]'>Средне (25)</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%6", 50]'>Далеко (50)</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%6", 250]'>Очень далеко (250)</execute></font>]

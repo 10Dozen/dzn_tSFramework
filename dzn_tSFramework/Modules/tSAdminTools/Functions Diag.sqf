@@ -1,3 +1,5 @@
+#include "data\script_component.hpp"
+
 tSF_Diag_AddDiagTopic = {
 	tSF_Diag_Subject = "tSF_Diagpage";
 	if !(player diarySubjectExists tSF_Diag_Subject) then {
@@ -30,54 +32,32 @@ tSF_Diag_AddDiagTopic = {
 };
 
 tSF_Diag_TSF_CollectTotalData = {
-	private _formatDate = {
-		#define	STR_DATE(X)		if (count str(X) == 1) then { "0" + str(X) } else { str(X) }
-		format["%1/%2/%3", STR_DATE(MissionDate select 2), STR_DATE(MissionDate select 1), MissionDate select 0]
-	};
+    #define	STR_DATE(X) ([str(X), "0" + str(X)] select (count str(X) == 1))
 
-	private _topicHead = format[
-		"<font %1>Scenario name:</font><br/>        %2<br /><br /><font %1>Date:</font><br />        %3<br />"
-		, "size='14' color='#b7f931'"
-		, missionName
-		, call _formatDate
-	];
+    private _topicLines = [
+        "<font size='14' color='#b7f931'>Scenario name:</font>",
+        format ["        %2", missionName],
+        "",
+        "<font size='14' color='#b7f931'>Date:</font>",
+        format ["        %1/%2/%3", STR_DATE(MissionDate select 2), STR_DATE(MissionDate select 1), MissionDate select 0],
+        "<font size='14' color='#b7f931'>Modules:</font>",
+        ""
+    ];
 
-	private _topicModules = format["<font %1>Modules:</font><br />", "size='14' color='#b7f931'"];
+    private _onOffLabels = ["<font color='#f95631'>OFF</font>", "<font color='#b7f931'>ON</font>"];
+    private _fontColors = ["#777777", "#ffffff"];
+    private _seps = ["", " "];
 	{
-		private _show = if (isNil {call compile (_x select 0)}) then { false } else {  call compile (_x select 0) };
+        _topicLines pushBack format [
+            "<font size='12'>[%1]</font>%2   <font color='%3'>%4</font>",
+            _onOffLabels select _y,
+            _seps select _y,
+            _fontColors select _y,
+            _x
+        ];
+	} forEach (ECOB(Core) get Q(Settings));
 
-		_topicModules = format [
-			"%1<br /><font size='12'>[%2]</font>%3   <font color='%4'>%5</font>"
-			, _topicModules
-			, if (_show) then { "<font color='#b7f931'>ON</font>"} else {"<font color='#f95631'>OFF</font>"}
-			, if (_show) then { " " } else { "" }
-			, if (_show) then { "#ffffff" } else { "#777777" }
-			, _x select 1
-		];
-	} forEach [
-        ["tSF_module_ACEActions","ACE Actions"],
-        ["tSF_module_AirborneSupport","Airborne Support"],
-        ["tSF_module_ArtillerySupport","Artillery Support"],
-        ["tSF_module_Authorization","Authorization"],
-        ["tSF_module_Briefing","Briefing"],
-        ["tSF_module_CCP","CCP"],
-        ["tSF_module_Conversations","Conversations"],
-        ["tSF_module_EditorRadioSettings","Editor Radio Settings"],
-        ["tSF_module_EditorUnitBehavior","Editor Unit Behavior"],
-        ["tSF_module_EditorVehicleCrew","Editor Vehicle Crew"],
-        ["tSF_module_FARP","FARP"],
-        ["tSF_module_Interactives","Interactives"],
-        ["tSF_module_IntroText","Intro Text"],
-        ["tSF_module_JIPTeleport","JIP Teleport"],
-        ["tSF_module_MissionConditions","Mission Conditions"],
-        ["tSF_module_MissionDefaults","Mission Defaults"],
-        ["tSF_module_POM","POM"],
-        ["tSF_module_tSAdminTools","tS Admin Tools"],
-        ["tSF_module_tSNotes","tS Notes"],
-        ["tSF_module_tSSettings","tS Settings"]
-	];
-
-	player createDiaryRecord ["tSF_Diagpage", ["tSF - Totals", format ["%1<br />%2", _topicHead, _topicModules]]];
+	player createDiaryRecord ["tSF_Diagpage", ["tSF - Totals", _topicLines joinString "<br />"]];
 };
 
 tSF_Diag_Dynai_CollectData = {

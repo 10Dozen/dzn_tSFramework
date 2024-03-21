@@ -1,0 +1,59 @@
+# Mission Conditions
+# ---
+# Определяет условия завершения миссии с определнной концовкой.
+#
+# Зависимости:
+# - dzn_dynai/dzn_gear
+
+Init:
+    timeout: 1
+    condition: { true }
+
+
+# Таймаут перед завершением миссии при выолнении условий
+MissionEndTimeout: 20
+
+# Таймаут по-умолчанию для проверки условий (1 раз в указанное кол-во секунд)
+Timeout: 30
+
+
+# Описание условий
+# Условия проверяются по-порядку!
+Conditions:
+    - name: "WIN"                          # имя соотв. концовки в Endings.hpp
+      condition: { false }                 # условие, код которы возвращает true/false либо спец.усовие
+      description: "Все задачи выполнены"  # описание концовки для GSO
+      # timeout: 15  # (опицонально) таймаут для проверки условия,
+                     # если не указан используется таймаут по-умолчанию
+
+    - name: "WIPED"
+      condition: ALL_DEAD
+      description: "Все игроки мертвы"
+      timeout: 30
+
+
+# Полезные условия:
+# MVP/Объект доставлен в зону:
+#     TGT inArea TRG_NAME
+# MVP/Объект жив:
+#     alive TGT
+# MVP/Объект уничтожен:
+#     !alive TGT
+# Все игроки добрались до зоны (триггер baseTrg):
+#     [] call fnc_CheckPlayersReturned
+# Хоть один игрок добрался до зоны:
+#     { {_x inArea TRG_1} count (call BIS_fnc_listPlayers) > 0}
+#   или
+#     [TRG_1, "", "> 1"] call dzn_fnc_ccPlayers
+# Игроков в зоне больше 3 (see https://github.com/10Dozen/dzn_commonFunctions/wiki/Area-Functions#dzn_fnc_ccplayers)
+#     [TRG_1, "", "> 3"] call dzn_fnc_ccPlayers
+# Все игроки умерли (или см. спец. условия):
+#     {alive _x} count (call BIS_fnc_listPlayers) < 1
+# Юнитов красной стороны в зоне TRG_1 меньше 3 (see https://github.com/10Dozen/dzn_commonFunctions/wiki/Area-Functions#dzn_fnc_ccunits)
+#     [ TRG_1, "east", "", "< 3"] call dzn_fnc_ccUnits
+# Вооруженных юнитов красной стороны в зонах TRG_1, TRG_2, TRG_3 меньше 3
+#     [ [TRG_1, TRG_2, TRG_3], "east", "primaryWeapon _x != ''", "< 3"] call dzn_fnc_ccUnits
+
+# Спец. условия:
+# Все игроки умерли:
+#     condition: ALL_DEAD

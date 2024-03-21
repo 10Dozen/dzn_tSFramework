@@ -10,10 +10,10 @@ cd %main%
 
 echo #####################################################################
 echo #                                                                   #
-echo #    tSF File Sweeper                                               #      
+echo #    tSF File Sweeper                                               #
 echo #    Remove all non-arma files from your mission                    #
 echo #    (e.g. html-helpers) and unused tSFramework files               #
-echo #    (according to dzn_tSFramework_Init.sqf settings)               #
+echo #    (according to dzn_tSFramework\Settings.yaml settings)               #
 echo #                                                                   #
 echo #####################################################################
 
@@ -30,9 +30,10 @@ echo Removing tSF Helpers >> tSF_FS_log.txt
 del /q /f  init3DEN.sqf
 del /q /f  README.md
 del /q /f  dzn_tSFramework\tS_SettingsOverview.html
+del /q /f  dzn_tSFramework\Modules\MissionConditions\Helper.html
 @RD /S /Q dzn_tSFramework\3DEN
 @RD /S /Q dzn_tSFramework\Modules\Briefing\BriefingHelper
-@RD /S /Q dzn_tSFramework\Modules\MissionConditions\EndingsHelper
+@RD /S /Q dzn_tSFramework\Modules\MissionConditions\helper
 
 echo Removing DynAI Helpers
 echo Removing DynAI Helpers >> tSF_FS_log.txt
@@ -42,30 +43,30 @@ echo Removing DynAI Helpers >> tSF_FS_log.txt
 echo Removing unused tSF Modules
 echo Removing unused tSF Modules >> tSF_FS_log.txt
 
-call :removeFolder tSF_module_ACEActions ACEActions
-call :removeFolder tSF_module_AirborneSupport AirborneSupport
-call :removeFolder tSF_module_ArtillerySupport ArtillerySupport
-call :removeFolder tSF_module_Authorization Authorization
-call :removeFolder tSF_module_Briefing Briefing
-call :removeFolder tSF_module_CCP CCP
-call :removeFolder tSF_module_Conversations Conversations
-call :removeFolder tSF_module_EditorRadioSettings EditorRadioSettings
-call :removeFolder tSF_module_EditorUnitBehavior EditorUnitBehavior
-call :removeFolder tSF_module_EditorVehicleCrew EditorVehicleCrew
-call :removeFolder tSF_module_FARP FARP
-call :removeFolder tSF_module_Interactives Interactives
-call :removeFolder tSF_module_IntroText IntroText
-call :removeFolder tSF_module_JIPTeleport JIPTeleport
-call :removeFolder tSF_module_MissionConditions MissionConditions
-call :removeFolder tSF_module_MissionDefaults MissionDefaults
-call :removeFolder tSF_module_POM POM
-call :removeFolder tSF_module_tSAdminTools tSAdminTools
-call :removeFolder tSF_module_tSNotes tSNotes
-call :removeFolder tSF_module_tSSettings tSSettings
+call :removeFolder ACEActions
+call :removeFolder AirborneSupport
+call :removeFolder ArtillerySupport
+call :removeFolder Authorization
+call :removeFolder Briefing
+call :removeFolder CCP
+call :removeFolder Conversations
+call :removeFolder EditorRadioSettings
+call :removeFolder EditorUnitBehavior
+call :removeFolder EditorVehicleCrew
+call :removeFolder FARP
+call :removeFolder Interactives
+call :removeFolder IntroText
+call :removeFolder JIPTeleport
+call :removeFolder MissionConditions
+call :removeFolder MissionDefaults
+call :removeFolder POM
+call :removeFolder tSAdminTools
+call :removeFolder tSNotes
+call :removeFolder tSSettings
 
 echo #####################################################################
 echo #                                                                   #
-echo #    tSF File Sweeper has finished his work.                        #      
+echo #    tSF File Sweeper has finished his work.                        #
 echo #    All non-arma files were removed. Have a nice day!              #
 echo #                                                                   #
 echo #####################################################################
@@ -81,9 +82,9 @@ exit
 
 :removeFolder
 set tsfparam="%1"
-set  tsffolder=%2
+set  tsffolder=%1
 
-findstr  /c:%tsfparam% dzn_tSFramework\dzn_tSFramework_Init.sqf  > tSFS_temp.txt
+findstr  /c:%tsfparam% dzn_tSFramework\Settings.yaml  > tSFS_temp.txt
 findstr  "true" tSFS_temp.txt > tSFS_temp2.txt
 for /f %%i in ("tSFS_temp2.txt") do set size=%%~zi
 if NOT %size% gtr 0 (
