@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 /*
-    Adds pre-defined topics according to settings.
+    Adds pre-defined topics with settings according to settings.
     (_self)
 
     Params:

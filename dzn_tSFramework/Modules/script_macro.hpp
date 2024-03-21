@@ -45,7 +45,7 @@
 
 
 // Credits: CBA Team (https://github.com/CBATeam/CBA_A3/blob/master/addons/main/script_macros_common.hpp)
-#define DEBUG true
+// #define DEBUG true
 
 #define MAINPREFIX dzn_tSFramework
 #define SUBPREFIX Modules

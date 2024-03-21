@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 /*
-    Adds pre-defined topics according to settings.
+    Sets view distance to specific value.
     (_self)
 
     Params:

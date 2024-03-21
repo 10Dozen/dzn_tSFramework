@@ -8,7 +8,6 @@
 ToDO:
     - Menu for view distance (+quick options)
         - CBA keybind
-    - Handle https://community.bistudio.com/wiki/setDetailMapBlendPars
 */
 
 forceUnicode 0;

@@ -1,12 +1,11 @@
 #include "script_component.hpp"
 
 /*
-    Adds pre-defined topics according to settings.
+    Restores previously saved view distance setting.
     (_self)
 
     Params:
-        0: _view (NUMBER) - view distance.
-        1: _objectView (NUMBER) - object view distance.
+        none
     Returns:
         nothing
 */

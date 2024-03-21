@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 /*
-    Adds pre-defined topics according to settings.
+    Set terrain grid setting.
     (_self)
 
     Params:

@@ -1,12 +1,11 @@
 #include "script_component.hpp"
 
 /*
-    Adds pre-defined topics according to settings.
+    Saves view distance settings to be reused in another mission.
     (_self)
 
     Params:
-        0: _view (NUMBER) - view distance.
-        1: _objectView (NUMBER) - object view distance.
+        none
     Returns:
         nothing
 */
