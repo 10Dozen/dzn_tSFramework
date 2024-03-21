@@ -1,4 +1,4 @@
-#define TSF_VERSION_NUMBER "v2.0.7"
+#define TSF_VERSION_NUMBER "v2.0.8"
 
 // Common macro
 #define MISSION_STARTED time > 0
