@@ -1,0 +1,11 @@
+# tS Settings
+# ---
+# Создает запись в дневнике с клиентсиким настройками.
+#
+# Зависимости:
+# нет
+
+Title: "tS Настройки"
+
+ViewDistance: true
+TerrainGrid: true

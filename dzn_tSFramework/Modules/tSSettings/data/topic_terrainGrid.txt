@@ -1,0 +1,7 @@
+<font color='#12C4FF' size='14'>Настройки детализации ландшафта</font>
+<br /><font color='#A0DB65'><execute expression='%1 call ["%2", 1]'>Обычная</execute></font>
+<br /><font color='#A0DB65'><execute expression='%1 call ["%2", 0]'>Низкая</execute></font>
+<br />
+<br /><font color='#A0DB65'><execute expression='%1 call ["%2", 2]'>Высокая</execute></font>
+<br /><font color='#A0DB65'><execute expression='%1 call ["%2", 3]'>Очень высокая</execute></font>
+<br /><font color='#A0DB65'><execute expression='%1 call ["%2", 4]'>Максимальная</execute></font>

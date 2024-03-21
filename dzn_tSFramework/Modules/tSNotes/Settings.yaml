@@ -11,5 +11,5 @@ Reports: true
 ACEMedicine: true
 MedEvacRequest: true
 ArtilleryRequest: true
-CASRequest: false
+CASRequest: true
 RangeFinding: true

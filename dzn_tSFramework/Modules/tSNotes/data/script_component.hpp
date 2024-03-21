@@ -2,7 +2,7 @@
 
 #define COMPONENT tSNotes
 
-#define SUBJECT_NAME Q(tSF_Notespage)
+#define SUBJECT_NAME Q(tSF_NotesPage)
 
 
 #define GET_TOPIC_CONTENT(X) loadFile Q(COMPONENT_DATA_PATH(X.txt))

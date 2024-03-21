@@ -116,7 +116,7 @@
 #define F_WRAP(NAME) fnc_##NAME
 #define F(NAME) Q(F_WRAP(NAME))
 
-#define COMPONENT_TYPE ["#type", { format ["%1_ComponentObject", Q(COMPONENT)] }]
+#define COMPONENT_TYPE ["#type", { format ["%1_Component", Q(COMPONENT)] }]
 #define COMPONENT_FNC_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\fnc_##FILE##.sqf
 #define PREP_COMPONENT_FUNCTION(NAME) \
     [F(NAME), compileScript [Q(COMPONENT_FNC_PATH(NAME))]]
@@ -142,7 +142,7 @@
 
 
 // --- Module init
-#define RUN_MODULE(X) if (_settings get Q(X)) then { [] call compileScript ['MAINPREFIX\SUBPREFIX\X\data\PreInit.sqf']; }
+// #define RUN_MODULE(X) [] call compileScript ['MAINPREFIX\SUBPREFIX\X\data\PreInit.sqf'];
 
 // --- Useful macro
 #define STARTS_WITH(STR,SUBSTR) (STR select [0, count SUBSTR] == SUBSTR)

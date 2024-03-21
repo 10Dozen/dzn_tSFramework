@@ -4,7 +4,6 @@
 
 #define LEGACY_MODULES \
     "Briefing", \
-    "tSSettings", \
     "CCP", \
     "FARP", \
     "ArtillerySupport", \

@@ -12,46 +12,60 @@
         Array of topics and content in format [@TopicName, @Content]
 */
 
-private _lines = ["<font color='#12C4FF' size='14'>Доступно:</font>"];
-DEBUG_1("(composeFrameworkNotes) Lines: %1", _lines);
+private _lines = [];
 
 if (ECOB(Core) call [F(isModuleEnabled), "CCP"]) then {
-    _lines pushBack "- CCP";
-    _lines pushBack "<font></font>   Воспользуйтесь меню действий 'Get Medical Care' на любом из объекте CCP.";
-    _lines pushBack "<font></font>   Позволяет лечиться игроку, а также лечить других игроков без сознания (опция 'Provide first aid to uncon. patients').";
+    _lines pushBack "<font size='15' color='#12C4FF'>CCP</font>";
+    _lines pushBack "<font color='#cccccc'>Воспользуйтесь меню действий 'Get Medical Care' на любом из объекте CCP.</font>";
+    _lines pushBack "<font color='#cccccc'>Позволяет лечиться игроку, а также лечить других игроков без сознания (опция 'Provide first aid to uncon. patients').</font>";
+    _lines pushBack "";
 };
 
 if (ECOB(Core) call [F(isModuleEnabled), "FARP"]) then {
-    _lines pushBack "- FARP";
-    _lines pushBack "<font></font>   Воспользуйтесь меню действий 'FARP Menu' на любом из объекте FARPа.";
-    _lines pushBack "<font></font>   Позволяет обслуживать технику на FARP, а также перевыдать снаряжение игрока.";
+    _lines pushBack "<font size='15' color='#12C4FF'>FARP</font>";
+    _lines pushBack "<font color='#cccccc'>Воспользуйтесь меню действий 'FARP Menu' на любом из объекте FARPа.</font>";
+    _lines pushBack "<font color='#cccccc'>Позволяет обслуживать технику на FARP, а также перевыдать снаряжение игрока.</font>";
+    _lines pushBack "";
 };
 
 if (ECOB(Core) call [F(isModuleEnabled), "AirborneSupport"]) then {
-    _lines pushBack "- Airborne Support";
-    _lines pushBack "<font></font>   Воспользуйтесь ACE-меню - Radio (Airborne) для вызова воздушного транспорта (доступно при наличии ДВ рации).";
-    _lines pushBack "<font></font>   Воспользуйтесь ACE-меню на вертолете поддержки, чтобы начать процедуру транспортировки.";
+    _lines pushBack "<font size='15' color='#12C4FF'>Airborne Support</font>";
+    _lines pushBack "<font color='#cccccc'>Воспользуйтесь ACE-меню - Radio (Airborne) для вызова воздушного транспорта (доступно при наличии ДВ рации).</font>";
+    _lines pushBack "<font color='#cccccc'>Воспользуйтесь ACE-меню на вертолете поддержки, чтобы начать процедуру транспортировки.</font>";
+    _lines pushBack "";
 };
 
 if (ECOB(Core) call [F(isModuleEnabled), "POM"]) then {
-    _lines pushBack "- Platoon Markers";
+    // TODO: Update name of the page to some static one in POM and here
+    _lines pushBack "<font size='15' color='#12C4FF'>Platoon Markers</font>";
+    _lines pushBack "<font color='#cccccc'>Для PL доступны легко перемещаемые маркеры союзных и вражеских сил. Зажмите ЛКМ и перетащите маркер подразделения в нужную позицию, согласно полученному LOCSTAT. Удерживая маркер нажмите LCtrl, чтобы изминть подпись, либо Del, чтобы удалить маркер.</font>";
+    _lines pushBack "<font color='#cccccc'>Дополнительные макреры можно добавить через запись <font color='#ffb300'><log subject='tSF Operational Markers' record='Record0'>tSF Operational Markers</log></font>.</font>";
+    _lines pushBack "";
 };
 
 if (ECOB(Core) call [F(isModuleEnabled), "MissionDefaults"]) then {
     if (ECOB(MissionDefaults) get Q(Settings) get Q(Calculator) get Q(enable)) then {
-        _lines pushBack "- Калькулятор";
-        _lines pushBack "<font></font>   Воспользуйтесь чатом и введите '#c 12+2' или '#= 12+2, чтобы высчитать значчение.";
+        _lines pushBack "<font size='15' color='#12C4FF'>Калькулятор</font>";
+        _lines pushBack "<font color='#cccccc'>Воспользуйтесь чатом и введите '#c 12+2' или '#= 12+2, чтобы вычислить значение.</font>";
+        _lines pushBack "";
     };
 
     if (ECOB(MissionDefaults) get Q(Settings) get Q(PhoneticAlphabet) get Q(enable)) then {
-        _lines pushBack "- Автоматические названия маркеров";
-        _lines pushBack "<font></font>   Введите '$' в имя маркера, чтобы автоматически подобрать имя из фонетического алфавита.";
-        _lines pushBack "<font></font>   Введите '#', '## или '###' в имя маркера, чтобы автоматически подобрать следующий номер (1-, 2- или 3-значное число).";
+        _lines pushBack "<font size='15' color='#12C4FF'>Автоматические названия маркеров</font>";
+        _lines pushBack "<font color='#cccccc'>Введите '$' в имя маркера, чтобы автоматически подобрать имя из фонетического алфавита (например, 'OBJ $' -> 'OBJ Alpha').</font>";
+        _lines pushBack "<font color='#cccccc'>Введите '#', '## или '###' в имя маркера, чтобы автоматически подобрать следующий номер (1-, 2- или 3-значное число, например 'TRP ###' -> 'TRP 100', 'TRP 2##' -> 'TRP 200').</font>";
+        _lines pushBack "";
     };
 };
 
-// TODO: tS Settings
-// TODO: Zeus F8
+if (ECOB(Core) call [F(isModuleEnabled), "tSSettings"]) then {
+    _lines pushBack "<font size='15' color='#12C4FF'>tS Настройки</font>";
+    _lines pushBack "<font color='#cccccc'>Через запись <font color='#ffb300'><log subject='tSF_NotesSettingsPage' record='Record0'>tSF Настройки</log></font> можно настроить дальность видимости.</font>";
+    _lines pushBack "";
+};
+
+_lines pushBack "<font size='15' color='#12C4FF'>Связь с GSO</font>";
+_lines pushBack "<font color='#cccccc'>Кнопка F8 открывает меню для отправки сообщения GSO. Если вы столкнулись с технической проблемой, то вы можете сообщить об этом напрямую.</font>";
 
 [
     "Mission Framework",
