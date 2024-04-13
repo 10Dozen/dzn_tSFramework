@@ -17,7 +17,7 @@ tSNotes: true
 tSSettings: true
 
 # Взаимодействия игроков и объектов миссии
-Chatter: true
+Chatter: false
 Interactives: false
 ACEActions: true
 Conversations: false

@@ -9,13 +9,11 @@ tSF_Diag_AddDiagTopic = {
 	private _text = "<font size='14' color='#b7f931'>%1</font>";
 	private _texts = [];
 	{
-		if (!isNil (_x select 1)) then {
-			_texts pushBack format [
-				"%1 - <font color='#ffffff'>%2</font>"
-				, _x # 0
-				, _x # 1
-			];
-		};
+		_texts pushBack format [
+			"%1 - <font color='#ffffff'>%2</font>"
+			, _x # 0
+			, _x # 1
+		];
 	} forEach [
 		["tS Framework", tSF_Version]
 		, ["dzn_Gear", dzn_gear_version]
@@ -36,7 +34,7 @@ tSF_Diag_TSF_CollectTotalData = {
 
     private _topicLines = [
         "<font size='14' color='#b7f931'>Scenario name:</font>",
-        format ["        %2", missionName],
+        format ["        %1 (%2)", missionName, briefingName],
         "",
         "<font size='14' color='#b7f931'>Date:</font>",
         format ["        %1/%2/%3", STR_DATE(MissionDate select 2), STR_DATE(MissionDate select 1), MissionDate select 0],

@@ -1,12 +1,9 @@
 #include "script_component.hpp"
 
 /*
-    MissionDefaults component provide general features for every user
-    needed in every mission:
-    - puts weapon on safe on mission start
-    - puts earplugs in
-    - disables control for 20 seconds at the beginning (to avoid misfire or grenade)
-    - adds useful tools like calculator and marker name autocompltion;
+    Editor Vehicle Crew allows to automatically populate marked static turrets
+    and vehicles with specific crew.
+    Also allows to apply DYNAI vehicle behaviour to crew.
 */
 
 private _declaration = [
@@ -26,4 +23,3 @@ private _declaration = [
 
 COB = createHashMapObject [_declaration];
 COB call [F(init)];
-
