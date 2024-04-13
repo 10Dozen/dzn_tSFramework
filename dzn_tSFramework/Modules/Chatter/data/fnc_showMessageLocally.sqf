@@ -3,7 +3,7 @@
 /*
     Shows heard speech for player if player is in range.
     Also add 'noise' if player is close to maximum distance.
-    _self
+    (_self)
 
     Params:
     _unit - (object) a speaker.

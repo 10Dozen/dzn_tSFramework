@@ -3,12 +3,13 @@
 /*
     Makes unit to send radio message 'using SW radio'.
     Message will be printed in 'sideChat' only to players with LR radio and within range.
+    If _unitIdentity of registerd RadioTalker was given - uses it's settings.
     Has global effect.
 
     Params:
     _unitIdentity - (object) or (string) unit that sends the radio message OR callsign (requires unit to be registred).
     _message - (string) message to display.
-    _distance - (number) max distance to broadcast in meters. -1 - for unlimited range. 
+    _distance - (number) max distance to broadcast in meters. -1 - for unlimited range.
                 Optional, default - Radio > SW Range  defined in Settings.yaml.
 
     Return: nothing

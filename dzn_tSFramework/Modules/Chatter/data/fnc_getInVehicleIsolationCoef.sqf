@@ -18,7 +18,7 @@ params ["_unit", "_veh"];
 
 private _vehicleIsolationCoef = _veh getVariable QGVAR(isolatedCoef);
 if (isNil "_vehicleIsolationCoef") then {
-    _vehicleIsolationCoef = 1 - ([typeOf _veh, "tf_isolatedAmount", 0.3] call TFAR_fnc_getConfigProperty);
+    _vehicleIsolationCoef = 1 - ([typeOf _veh, "tf_isolatedAmount", 0.3] call TFAR_fnc_getVehicleConfigProperty);
     _veh setVariable [QGVAR(isolatedCoef), _vehicleIsolationCoef];
 };
 _vehicleIsolationCoef = [_vehicleIsolationCoef, 1] select (isTurnedOut _unit);

@@ -1,7 +1,8 @@
 #include "script_component.hpp"
 
 /*
-    Core component contains common functions used by other modules.
+    Chatter component is used to display some LR/SR radio coms and direct speech.
+    Used by other componets (like Conversations, Artillery and Airborne Support)
 */
 
 private _declaration = [

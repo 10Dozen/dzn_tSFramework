@@ -1,7 +1,9 @@
 #include "script_component.hpp"
 
 /*
-    Same as tSF_Chatter_fnc_Say, but for shorter distance (~7 meters, see Settings)
+    Same as tSF_Chatter_fnc_Say, but for shorter distance (~7 meters, see Settings).
+
+    [player, "Get into da choppa!", "Dutch"] call tSF_Chatter_fnc_Whisper;
 */
 params [
     "_unit",
