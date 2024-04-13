@@ -50,6 +50,7 @@ call :removeFolder Authorization
 call :removeFolder Briefing
 call :removeFolder CCP
 call :removeFolder Conversations
+call :removeFolder Chatter
 call :removeFolder EditorRadioSettings
 call :removeFolder EditorUnitBehavior
 call :removeFolder EditorVehicleCrew

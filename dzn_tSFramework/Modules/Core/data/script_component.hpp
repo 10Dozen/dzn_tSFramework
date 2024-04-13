@@ -10,6 +10,5 @@
     "Interactives", \
     "ACEActions", \
     "EditorUnitBehavior", \
-    "EditorRadioSettings", \
     "tSAdminTools", \
     "Conversations"
