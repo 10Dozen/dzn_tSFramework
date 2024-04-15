@@ -1,5 +1,7 @@
 #define TSF_VERSION_NUMBER "v2.0.9"
 
+#define TSF_KEYBIND_SECTION "Tactical Shift Framework"
+
 // Common macro
 #define MISSION_STARTED time > 0
 #define ON_MISSION_STARTED time > 0
