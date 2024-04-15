@@ -4,10 +4,9 @@
  *		b) date (to use editor set date)
  */
 private _date = [
-	date
-	, "par_daytime" call BIS_fnc_getParamValue
-	/* Расширеные опции: ["day","night","morning","midday","evening","midnight","random"] */
-	, ["day","night","random"] 
+    date,
+    "par_daytime" call BIS_fnc_getParamValue,
+    ["day","night","morning","midday","evening","midnight","random"]
 ] call dzn_fnc_randomizeTime;
 
 /*
@@ -21,7 +20,7 @@ publicVariable "MissionDate";
  *	Weather
  */
 if (!isNil "dzn_fnc_setWeather") then {
-	("par_weather" call BIS_fnc_getParamValue) spawn dzn_fnc_setWeather;
+    ("par_weather" call BIS_fnc_getParamValue) spawn dzn_fnc_setWeather;
 };
 
 
@@ -30,11 +29,11 @@ if (!isNil "dzn_fnc_setWeather") then {
  */
 PlayerConnectedData = [];
 PlayerConnectedEH = addMissionEventHandler ["PlayerConnected", {
-	diag_log "Client connected";
-	diag_log _this;
-	// [ DirectPlayID, getPlayerUID player, name player, @bool, clientOwner ]
-	PlayerConnectedData pushBack _this;
-	publicVariable "PlayerConnectedData";
+    diag_log "Client connected";
+    diag_log _this;
+    // [ DirectPlayID, getPlayerUID player, name player, @bool, clientOwner ]
+    PlayerConnectedData pushBack _this;
+    publicVariable "PlayerConnectedData";
 }];
 
 /*

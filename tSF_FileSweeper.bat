@@ -10,10 +10,10 @@ cd %main%
 
 echo #####################################################################
 echo #                                                                   #
-echo #    tSF File Sweeper                                               #
+echo #    tSF File Sweeper (tSF v2.0.9)                                  #
 echo #    Remove all non-arma files from your mission                    #
 echo #    (e.g. html-helpers) and unused tSFramework files               #
-echo #    (according to dzn_tSFramework\Settings.yaml settings)               #
+echo #    (according to dzn_tSFramework\Settings.yaml settings)          #
 echo #                                                                   #
 echo #####################################################################
 
@@ -50,6 +50,7 @@ call :removeFolder Authorization
 call :removeFolder Briefing
 call :removeFolder CCP
 call :removeFolder Conversations
+call :removeFolder Chatter
 call :removeFolder EditorRadioSettings
 call :removeFolder EditorUnitBehavior
 call :removeFolder EditorVehicleCrew

@@ -9,13 +9,11 @@ tSF_Diag_AddDiagTopic = {
 	private _text = "<font size='14' color='#b7f931'>%1</font>";
 	private _texts = [];
 	{
-		if (!isNil (_x select 1)) then {
-			_texts pushBack format [
-				"%1 - <font color='#ffffff'>%2</font>"
-				, _x # 0
-				, _x # 1
-			];
-		};
+		_texts pushBack format [
+			"%1 - <font color='#ffffff'>%2</font>"
+			, _x # 0
+			, _x # 1
+		];
 	} forEach [
 		["tS Framework", tSF_Version]
 		, ["dzn_Gear", dzn_gear_version]
@@ -36,26 +34,40 @@ tSF_Diag_TSF_CollectTotalData = {
 
     private _topicLines = [
         "<font size='14' color='#b7f931'>Scenario name:</font>",
-        format ["        %2", missionName],
-        "",
+        format ["        %1 (%2)", missionName, briefingName],
         "<font size='14' color='#b7f931'>Date:</font>",
         format ["        %1/%2/%3", STR_DATE(MissionDate select 2), STR_DATE(MissionDate select 1), MissionDate select 0],
-        "<font size='14' color='#b7f931'>Modules:</font>",
-        ""
+        "<font size='14' color='#b7f931'>Modules:</font>"
     ];
 
+    private _moduleTemplate = "<font size='12'>[%1]</font>%2   <font color='%3'>%4</font>";
     private _onOffLabels = ["<font color='#f95631'>OFF</font>", "<font color='#b7f931'>ON</font>"];
     private _fontColors = ["#777777", "#ffffff"];
     private _seps = ["", " "];
-	{
+
+    private _enabledModules = [];
+    private _disabledModules = [];
+    {
+        ([_disabledModules, _enabledModules] select _y) pushBack _x;
+    } forEach (ECOB(Core) get Q(Settings));
+
+    _enabledModules sort true;
+    {
         _topicLines pushBack format [
-            "<font size='12'>[%1]</font>%2   <font color='%3'>%4</font>",
-            _onOffLabels select _y,
-            _seps select _y,
-            _fontColors select _y,
+            _moduleTemplate,
+            _onOffLabels # 1, _seps # 1, _fontColors # 1,
             _x
         ];
-	} forEach (ECOB(Core) get Q(Settings));
+    } forEach _enabledModules;
+
+    _disabledModules sort true;
+    {
+        _topicLines pushBack format [
+            _moduleTemplate,
+            _onOffLabels # 0, _seps # 0, _fontColors # 0,
+            _x
+        ];
+    } forEach _disabledModules;
 
 	player createDiaryRecord ["tSF_Diagpage", ["tSF - Totals", _topicLines joinString "<br />"]];
 };

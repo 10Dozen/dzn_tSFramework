@@ -1,4 +1,6 @@
-#define TSF_VERSION_NUMBER "v2.0.8"
+#define TSF_VERSION_NUMBER "v2.0.9"
+
+#define TSF_KEYBIND_SECTION "Tactical Shift Framework"
 
 // Common macro
 #define MISSION_STARTED time > 0
@@ -12,6 +14,13 @@
 #define DZN_GEAR_RUNNING (!isNil "dzn_gear_serverInitDone")
 #define DZN_GEAR_APPLIED(UNIT) (UNIT getVariable ["dzn_gear_done", false])
 
+// Client/Server execution
+#define __SERVER_ONLY__ if (!isServer) exitWith {};
+#define __CLIENT_ONLY__ if (!hasInterface) exitWith {};
+#define __HEADLESS_OR_SERVER__ if ( \
+        (isNil "HC" && !isServer) || \
+        (!isNil "HC" && (hasInterface || isServer)) \
+    ) exitWith {};
 
 
 // tSF Error reporting
@@ -83,16 +92,10 @@
 
 
 // -- Module and file execution
-#define __SERVER_ONLY__ if (!isServer) exitWith {};
-#define __CLIENT_ONLY__ if (!hasInterface) exitWith {};
-#define __HEADLESS_OR_SERVER__ if ( \
-        (isNil "HC" && !isServer) || \
-        (!isNil "HC" && (hasInterface || isServer)) \
-    ) exitWith {};
-
-
 #define COMPONENT_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\FILE
 #define COMPONENT_FILE_PATH(DIR,FILE) MAINPREFIX\SUBPREFIX\COMPONENT\DIR\FILE
+#define COMPONENT_SUBPATH(SUBPATH,FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\SUBPATH\FILE##.sqf
+
 #define COMPONENT_DATA_PATH(FILE) COMPONENT_FILE_PATH(data,FILE)
 #define COMPILE_EXECUTE(PATH) call compileScript ['PATH.sqf']
 
@@ -105,6 +108,9 @@
 
 #define INIT_COMPONENT COMPILE_EXECUTE(COMPONENT_DATA_PATH(Component))
 
+// Public functions in component
+#define COMPONENT_PUBLIC_FNC_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\Public\fnc_##FILE##.sqf
+#define PREP_PUBLIC_FUNCTION(NAME) FUNC(NAME) = compileScript [QUOTE(COMPONENT_PUBLIC_FNC_PATH(NAME))]
 
 // --- Component Object
 #define COB DOUBLES(MODULE_COMPONENT,Component)
