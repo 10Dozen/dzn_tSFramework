@@ -3,14 +3,11 @@
 	<head>
 		<meta charset="utf-8">
 		<title>tSF Briefing Helper</title>
-		
-		<link rel="stylesheet" href="src/css/bhelper.css">
-		<script src="src/js/jquery.min.js"></script>
-		<script src="src/js/bhelper.js"></script>
+		<link rel="stylesheet" href="data/helper/bhelper.css">
+		<script src="data/helper/jquery.min.js"></script>
+		<script src="data/helper/bhelper.js"></script>
 	</head>
 	<body>
-	
-	
 		<div id="header">
 			<div id="header-title">
 				<span>tSF</span> Briefing Helper
@@ -22,20 +19,18 @@
 				<input type='file' name='uploader' id="uploader" accept='.sqf' onchange='openFile(event)'>
 			</div>
 		</div>
-		
 		<div id="briefing-form">
 			<div id="tags">
 				<div class='dl-1' style="margin-left: 40px;">Tags:</div>
-				<ul>				
+				<ul>
 				</ul>
 			</div>
 			<ul></ul>
 			<hr />
 		</div>
-		
 		<div id="result-tab">
 			<div id="result-tab-header">SQF Code <span onClick="closeCodeDisplay()">Close</span></div>
-			<div id="result-tab-data"></div>
+			<div id="result-tab-data"><textarea></textarea></div>
 		</div>
 	</body>
 </html>

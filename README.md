@@ -1,6 +1,6 @@
 ![img](https://tacticalshift.github.io/src/img/ts_logo_site_black_s.png)
 ------
-##### Version: 2.0.9
+##### Version: 2.0.10
 Tactical Shift Framework
 
 ##### Getting Started

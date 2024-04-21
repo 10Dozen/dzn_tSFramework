@@ -12,6 +12,8 @@ private _declaration = [
     PREP_COMPONENT_FUNCTION(init),
     PREP_COMPONENT_FUNCTION(reportError),
     PREP_COMPONENT_FUNCTION(isModuleEnabled),
+    PREP_COMPONENT_FUNCTION(getGroupORBAT),
+    PREP_COMPONENT_FUNCTION(getUnitGearInfo),
 
     [Q(ReportedErrors), createHashMap],
     [Q(LegacyModules), [ LEGACY_MODULES ]]

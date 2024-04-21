@@ -1,0 +1,42 @@
+# Briefing
+# ---
+# Создает топики брифинга.
+#
+# Зависимости: Нет
+
+
+# Ростер отображает список отряды и игроков в них в виде записи в брифинге.
+# Он периодически будет обновляться во время брифинга и некоторое время после старта,
+# чтобы отразить информацию о составе играющих.
+# В ростере собирается информация только об игроках одной стороны.
+Roster:
+    enabled: true
+    updatePeriod: 5  # Время между обновлениями ростера, в секундах
+    updateUntil: 5 * 60  # Время после старта миссии, когда ростера все еще будет обновляться. В секундах
+    showPlayersFromAllSides: true  # Флаг чтобы включить информацию об игроках другой стороны
+
+    # Настройки для отображения стороны в ростере (имя и цвет текста)
+    factions:
+        - side: west
+          name: "BLUFOR"
+          color: "#4287f5"
+
+        - side: east
+          name: "OPFOR"
+          color: "#ba3d3d"
+
+        - side: independent
+          name: "INDEP"
+          color: "#4cba4e"
+
+        - side: civilian
+          name: "Гражданские"
+          color: "#b55acc"
+
+# TODO:
+# - Refactor to new module
+# - Auto-roster
+#   (SIDE) - (Group) - (SL) (Weapon main / Launcher / LR Radio / SW Radio)
+#                      (unit)  (Weapon main / Launcher / LR Radio / SW Radio)
+
+# (tSNotes) - Add framework version info

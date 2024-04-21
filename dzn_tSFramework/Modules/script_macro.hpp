@@ -1,4 +1,4 @@
-#define TSF_VERSION_NUMBER "v2.0.9"
+#define TSF_VERSION_NUMBER "v2.0.10"
 
 #define TSF_KEYBIND_SECTION "Tactical Shift Framework"
 
