@@ -20,6 +20,7 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
         LOG("Client init started");
 
         _this call [F(addTeleportAction), [player]];
+        REGISTER_COMPONENT;
 
         LOG("Client initialized");
     }

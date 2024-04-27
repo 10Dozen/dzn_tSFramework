@@ -23,6 +23,7 @@ if (!isServer) exitWith {
             !isNil Q(RADIO_TALKERS)
         },
         {
+            REGISTER_COMPONENT;
             LOG("Client iInitialized");
         }
     ] call CBA_fnc_waitUntilAndExecute;
@@ -37,6 +38,7 @@ if (!isServer) exitWith {
         LOG("Server init started");
 
         _this call [F(prepareTalkers)];
+        REGISTER_COMPONENT;
 
         LOG("Server initialized");
     }

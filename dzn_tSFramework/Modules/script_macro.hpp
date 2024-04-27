@@ -131,6 +131,7 @@
 #define PREP_COMPONENT_SETTINGS \
     [Q(Settings), [Q(COMPONENT_SETTINGS_PATH)] call dzn_fnc_parseSFML]
 
+#define REGISTER_COMPONENT ECOB(Core) call [F(registerComponentObject), [Q(COMPONENT), _this]]
 
 // --- Component Objects - Setting getters
 #define SETTING(SRC,NODE1) (SRC get Q(Settings) get Q(NODE1))
@@ -143,7 +144,7 @@
 
 #define __EXIT_ON_SETTINGS_PARSE_ERROR__ \
     if (SETTING(_self,#ERRORS) isNotEqualTo []) exitWith { \
-        TSF_ERROR(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR) \
+        TSF_ERROR(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR,"Module failed to start") \
     };
 
 

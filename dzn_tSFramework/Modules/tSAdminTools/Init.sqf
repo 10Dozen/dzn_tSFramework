@@ -41,6 +41,7 @@ if (hasInterface) then {
 		[] spawn tSF_fnc_adminTools_handleGSOMenuOverSpectator;
 
 		waitUntil { sleep 15; call tSF_fnc_adminTools_checkIsAdmin };
+		waitUntil { !isNil QEGVAR(MissionConditions,Endings) };
 
 		tSF_GATList = (allVariables missionNamespace)  select {
 			["kit_", _x, false] call BIS_fnc_inString
