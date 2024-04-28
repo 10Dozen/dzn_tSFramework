@@ -28,7 +28,7 @@ private _pfhId = [
 private _ehId = addMissionEventHandler ["Ended", {
     LOG("(Renderer.OnMissionEnded) Clearing...");
     private _cob = _thisArgs # 0;
-    _cob call [F(clear)];
+    _cob call [F(clear), [false]];
     (_cob get Q(PFH)) call CBA_fnc_removePerFrameHandler;
 }, [_self]];
 

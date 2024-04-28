@@ -10,7 +10,7 @@ cd %main%
 
 echo #####################################################################
 echo #                                                                   #
-echo #    tSF File Sweeper (tSF v2.0.9)                                  #
+echo #    tSF File Sweeper (tSF v2.0.10)                                 #
 echo #    Remove all non-arma files from your mission                    #
 echo #    (e.g. html-helpers) and unused tSFramework files               #
 echo #    (according to dzn_tSFramework\Settings.yaml settings)          #
@@ -31,9 +31,11 @@ del /q /f  init3DEN.sqf
 del /q /f  README.md
 del /q /f  dzn_tSFramework\tS_SettingsOverview.html
 del /q /f  dzn_tSFramework\Modules\MissionConditions\Helper.html
+del /q /f  dzn_tSFramework\Modules\Briefing\Helper.html
+
 @RD /S /Q dzn_tSFramework\3DEN
-@RD /S /Q dzn_tSFramework\Modules\Briefing\BriefingHelper
-@RD /S /Q dzn_tSFramework\Modules\MissionConditions\helper
+@RD /S /Q dzn_tSFramework\Modules\Briefing\data\helper
+@RD /S /Q dzn_tSFramework\Modules\MissionConditions\data\helper
 
 echo Removing DynAI Helpers
 echo Removing DynAI Helpers >> tSF_FS_log.txt

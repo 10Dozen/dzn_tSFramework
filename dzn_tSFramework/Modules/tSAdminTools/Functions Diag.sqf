@@ -23,10 +23,11 @@ tSF_Diag_AddDiagTopic = {
 
 	player createDiaryRecord ["tSF_Diagpage", ["Overview", format [_text, _texts joinString "<br />"]]];
 
-	call tSF_Diag_Gear_CollectKitData;
-	call tSF_Diag_Gear_CollectTotalData;
-	call tSF_Diag_TSF_CollectTotalData;
-	call tSF_Diag_Dynai_CollectData;
+	[] call tSF_Diag_Gear_CollectKitData;
+	[] call tSF_Diag_Gear_CollectTotalData;
+	[] call tSF_Diag_TSF_CollectTotalData;
+    [5 * 60, 5] call tSF_Diag_Framework_HandleErrorsData;
+	[] spawn tSF_Diag_Dynai_CollectData;
 };
 
 tSF_Diag_TSF_CollectTotalData = {
@@ -34,7 +35,7 @@ tSF_Diag_TSF_CollectTotalData = {
 
     private _topicLines = [
         "<font size='14' color='#b7f931'>Scenario name:</font>",
-        format ["        %1 (%2)", missionName, briefingName],
+        format ["        %1 (%2)", briefingName, missionName],
         "<font size='14' color='#b7f931'>Date:</font>",
         format ["        %1/%2/%3", STR_DATE(MissionDate select 2), STR_DATE(MissionDate select 1), MissionDate select 0],
         "<font size='14' color='#b7f931'>Modules:</font>"
@@ -133,9 +134,10 @@ tSF_Diag_Gear_CollectTotalData = {
 	private _allKitsColors = [];
 
 	private _fnc_generateKitColor = {
-		private _color = "#";
-		for "_i" from 1 to 6 do {_color = format ["%1%2",_color, selectRandom [4,5,6,7,8,9,"A","B","C","D","E","F"]];};
-		_color
+        private _colorCodes = [4,5,6,7,8,9,"A","B","C","D","E","F"];
+		private _color = ["#"];
+		for "_i" from 1 to 6 do { _color pushBack selectRandom _colorCodes; };
+		_color joinString ""
 	};
 
 	{
@@ -222,4 +224,76 @@ tSF_Diag_Gear_CollectKitData = {
 	} forEach dzn_gear_gat_table;
 
 	player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Kits", _kitTopic]];
+};
+
+tSF_Diag_Framework_HandleErrorsData = {
+    params ["_updateUntilTime", "_updateTimeout"];
+
+    private _pfh = [{
+        if (time > _this # 0) then {
+            [_this # 1] call CBA_fnc_removePerFrameHandler;
+        };
+
+        [] call tSF_Diag_Framework_UpdateErrorReport;
+    }, _updateTimeout, time + _updateUntilTime] call CBA_fnc_addPerFrameHandler;
+};
+
+#define GET_COLOR_ON_ERROR_COUNT(COUNT) \
+    [ \
+        linearConversion [0, 10, COUNT, 1, 0.85, false], \
+        linearConversion [0, 10, COUNT, 0.85, 0.5, false], \
+        0 \
+    ] call BIS_fnc_colorRGBtoHTML
+
+tSF_Diag_Framework_UpdateErrorReport = {
+    /* DIAGNOSTICS - ! ERRORS ! - ComponentName (2)
+                                  timestamp Some message
+                                  timestamp Some message
+
+                                  ComponentName2 (1)
+                                  timestamp Some message
+    */
+
+    private _errorsData = ECOB(Core) get Q(ReportedErrors);
+    private _keys = keys _errorsData;
+    _keys sort true;
+
+    private _lines = [];
+    private _totalErrors = 0;
+    {
+        private _errors = _errorsData get _x;
+        private _count = count _errors;
+        _totalErrors = _totalErrors + _count;
+
+        _lines pushBack format [
+            "<font color='%1'>%2 (%3)</font>",
+            GET_COLOR_ON_ERROR_COUNT(_count),
+            _x,
+            _count
+        ];
+
+        {
+            _lines pushBack _x;
+        } forEach _errors;
+        _lines pushBack "";
+    } forEach _keys;
+
+    if (_totalErrors == 0) then {
+        _lines insert [0, ["<font color='#d7eb71'>Ошибок не обнаружено</font>"]];
+    } else {
+         _lines insert [
+            0,[format [
+                "<font color='%1'>Всего ошибок: %2</font><br/>---",
+                GET_COLOR_ON_ERROR_COUNT(_totalErrors),
+                _totalErrors
+            ]]
+        ];
+    };
+
+    if (!isNil "tSF_Diag_Framework_ErrorTopicRecord") then {
+        player removeDiaryRecord ["tSF_Diagpage", tSF_Diag_Framework_ErrorTopicRecord];
+    };
+    tSF_Diag_Framework_ErrorTopicRecord = player createDiaryRecord [
+        "tSF_Diagpage", ["! ОШИБКИ !", _lines joinString "<br />"]
+    ];
 };

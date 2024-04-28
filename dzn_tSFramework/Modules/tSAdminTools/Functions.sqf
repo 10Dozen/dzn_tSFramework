@@ -81,7 +81,7 @@ tSF_fnc_adminTools_handleGSOMenuOverSpectator = {
 	Mission Endings
 */
 dzn_fnc_adminTools_addMissionEndsControls = {
-	waitUntil { sleep 5; time > 5 && !isNil QECOB(MissionConditions) };
+	waitUntil { sleep 5; time > 5 && !isNil QEGVAR(MissionConditions,Endings) };
 
 	// Mission Notes
     private _topicLines = [
@@ -98,7 +98,7 @@ dzn_fnc_adminTools_addMissionEndsControls = {
             _name,
             if (_desc isEqualTo "") then { "" } else { format ["(%1)", _desc] }
         ];
-    } forEach (ECOB(MissionConditions) call [F(getEndings)]);
+    } forEach EGVAR(MissionConditions,Endings);
 
 	player createDiaryRecord [
         tSF_AdminTools_Topic,
@@ -111,7 +111,7 @@ tSF_End = {
 
 	[] spawn {
 		sleep 5;
-        private _ends = (ECOB(MissionConditions) call [F(getEndings)]);
+        private _ends = EGVAR(MissionConditions,Endings);
 		private _endsOptions = _ends apply {
             format ["%1 (%2)", _x select 0, _x select 1]
         };

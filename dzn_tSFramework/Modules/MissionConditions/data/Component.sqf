@@ -11,7 +11,7 @@ private _declaration = [
     PREP_COMPONENT_FUNCTION(init),
     PREP_COMPONENT_FUNCTION(startConditionsTracking),
     PREP_COMPONENT_FUNCTION(checkConditions),
-    PREP_COMPONENT_FUNCTION(getEndings)
+    PREP_COMPONENT_FUNCTION(publishEndings)
 ];
 
 COB = createHashMapObject [_declaration];

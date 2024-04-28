@@ -52,10 +52,15 @@ tSF_fnc_adminTools_showGSOScreen = {
 
 	private _endsNames = [];
 	private _ends = [];
-	{
-		_ends pushBack (_x select 0);
-		_endsNames pushBack (format ["%1 (%2)", _x select 0, _x select 1]);
-	} forEach (ECOB(MissionConditions) call [F(getEndings)]);
+    if (!isNil QEGVAR(MissionConditions,Endings)) then {
+        {
+            _ends pushBack (_x select 0);
+            _endsNames pushBack (format ["%1 (%2)", _x select 0, _x select 1]);
+        } forEach EGVAR(MissionConditions,Endings);
+    } else {
+        _endsNames = ["Generic WIN", "Generic LOSE"];
+        _ends = ["end1", "loser"];
+    };
 
 	private _listPLayers = call BIS_fnc_listPlayers;
 	private _gatList = if (!isNil "tSF_GATList") then { tSF_GATList } else { [] };

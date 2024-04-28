@@ -55,6 +55,10 @@ if (ECOB(Core) call [F(isModuleEnabled), "MissionDefaults"]) then {
         _lines pushBack "<font color='#cccccc'>Введите '$' в имя маркера, чтобы автоматически подобрать имя из фонетического алфавита (например, 'OBJ $' -> 'OBJ Alpha').</font>";
         _lines pushBack "<font color='#cccccc'>Введите '#', '## или '###' в имя маркера, чтобы автоматически подобрать следующий номер (1-, 2- или 3-значное число, например 'TRP ###' -> 'TRP 100', 'TRP 2##' -> 'TRP 200').</font>";
         _lines pushBack "";
+
+        _lines pushBack "<font size='15' color='#12C4FF'>ORBAT Группы</font>";
+        _lines pushBack "<font color='#cccccc'>Нажмите <font color='#ffb300'>Ctrl + O</font> (можно настроить в опциях игры), чтобы увидеть состав и роли своей группы.</font>";
+        _lines pushBack "";
     };
 };
 
@@ -67,7 +71,8 @@ if (ECOB(Core) call [F(isModuleEnabled), "tSSettings"]) then {
 _lines pushBack "<font size='15' color='#12C4FF'>Связь с GSO</font>";
 _lines pushBack "<font color='#cccccc'>Кнопка F8 открывает меню для отправки сообщения GSO. Если вы столкнулись с технической проблемой, то вы можете сообщить об этом напрямую.</font>";
 
+
 [
-    "Mission Framework",
+    format ["Mission Framework (%1)", TSF_VERSION_NUMBER],
     _lines joinString "<br/>"
 ]

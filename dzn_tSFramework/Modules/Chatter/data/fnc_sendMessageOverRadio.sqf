@@ -62,14 +62,14 @@ private _comsRange = [_swRange, _lrRange] select (toUpper _radioType == "LR");
 
 DEBUG_5("(sendMessageOverRadio) Going to send to: _unit=%1 _callsign=%2 _message=%3 _type=%4, _range=%5", _unit, _callsign, _message, _radioType, _comsRange);
 
-// [_unit, _callsign, _message, _radioType, _comsRange] remoteExec [QFUNC(showMessageOverRadio)];
-[
-    COB,
+ECOB(Core) call [
+    F(remoteExecComponent),
     [
+        "Chatter",
         F(showMessageOverRadio),
         [_unit, _callsign, _message, _radioType, _comsRange]
     ]
-] remoteExec ["call"];
+];
 
 if (!_sayLocal) exitWith {};
 

@@ -2,8 +2,9 @@
 
 #define COMPONENT core
 
+#define DEFAULT_ORBAT_ORDERING ["RED","BLUE"]
+
 #define LEGACY_MODULES \
-    "Briefing", \
     "CCP", \
     "FARP", \
     "ArtillerySupport", \

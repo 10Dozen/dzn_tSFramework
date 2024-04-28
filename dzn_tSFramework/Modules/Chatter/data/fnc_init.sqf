@@ -20,11 +20,13 @@ if (!isServer) exitWith {
         {
             time > SETTING_2(_this,Init,timeout) &&
             SETTING_2(_this,Init,condition) &&
-            !isNil Q(RADIO_TALKERS)
+            !isNil QRADIO_TALKERS
         },
         {
+            REGISTER_COMPONENT;
             LOG("Client iInitialized");
-        }
+        },
+        _self
     ] call CBA_fnc_waitUntilAndExecute;
 };
 
@@ -37,6 +39,7 @@ if (!isServer) exitWith {
         LOG("Server init started");
 
         _this call [F(prepareTalkers)];
+        REGISTER_COMPONENT;
 
         LOG("Server initialized");
     }

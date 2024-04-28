@@ -34,4 +34,4 @@ private ["_callsign","_unit","_lrRange","_swRange", "_talker"];
 
 // --- Make talkers public
 DEBUG_1("(prepareTalkers) Publushing: %1", RADIO_TALKERS);
-publicVariable Q(RADIO_TALKERS);
+publicVariable QRADIO_TALKERS;

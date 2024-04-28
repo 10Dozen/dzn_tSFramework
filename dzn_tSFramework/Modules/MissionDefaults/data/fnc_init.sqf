@@ -40,6 +40,8 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
             [DIK_O, [false, true, false]]
         ] call CBA_fnc_addKeybind;
 
+
+        REGISTER_COMPONENT;
         LOG("Client initialized");
     }
     , _self
