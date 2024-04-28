@@ -79,4 +79,4 @@ RADIO_TALKERS set [
 ];
 
 if (!_publish) exitWith {};
-publicVariable Q(RADIO_TALKERS);
+publicVariable QRADIO_TALKERS;

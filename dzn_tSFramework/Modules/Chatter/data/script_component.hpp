@@ -3,6 +3,7 @@
 #define COMPONENT Chatter
 
 #define RADIO_TALKERS GVAR(RadioTalkers)
+#define QRADIO_TALKERS GVAR(RadioTalkers)
 
 #define SAY_MODE__NORMAL 0
 #define SAY_MODE__WHISPER 1

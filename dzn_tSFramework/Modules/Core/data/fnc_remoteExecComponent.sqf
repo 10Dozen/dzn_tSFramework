@@ -33,9 +33,9 @@
     ];
 */
 
-params ["_componentName", "_methodName", "_args", "_targets", "_callback"];
+params ["_componentName", "_methodName", "_args", ["_targets", 0], ["_callback", nil]];
 
-hint str(_this);
+DEBUG_1("(remoteExecComponent) Params: %1", _this);
 
 [
     _componentName, _methodName, _args, _callback
