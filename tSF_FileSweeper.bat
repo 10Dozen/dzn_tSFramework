@@ -10,7 +10,7 @@ cd %main%
 
 echo #####################################################################
 echo #                                                                   #
-echo #    tSF File Sweeper (tSF v2.0.9)                                  #
+echo #    tSF File Sweeper (tSF v2.0.10)                                 #
 echo #    Remove all non-arma files from your mission                    #
 echo #    (e.g. html-helpers) and unused tSFramework files               #
 echo #    (according to dzn_tSFramework\Settings.yaml settings)          #
