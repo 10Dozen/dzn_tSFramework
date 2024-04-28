@@ -5,7 +5,7 @@
 #define ROSTER_TOPIC_NAME "ORBAT"
 
 
-#define MAIN_WRAPPER "<font size='14' face='TahomaB'>%1</font>"
+#define MAIN_WRAPPER "<font size='14' face='EtelkaNarrowMediumPro'>%1</font>"
 #define HEADER_WRAPPER "<font color='%1'>%2</font> (%3)"
 #define ROLE_WRAPPER "<font color='#c9bea7'>%1</font>"
 #define NAME_WRAPPER "          <font size='12'>%1</font>"

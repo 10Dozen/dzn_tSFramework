@@ -16,7 +16,6 @@ private _declaration = [
     PREP_COMPONENT_FUNCTION(init),
     PREP_COMPONENT_FUNCTION(onStart_disablePlayer),
     PREP_COMPONENT_FUNCTION(onStart_composeOrbatHint),
-    PREP_COMPONENT_FUNCTION(onStart_getGroupOrbat),
     PREP_COMPONENT_FUNCTION(onStart_drawOnTimeout),
 
     PREP_COMPONENT_FUNCTION(showORBATHint),

@@ -33,10 +33,11 @@
     ];
 */
 
-params ["_componentName", "_methodName", "_args", ["_targets", 0], ["_callback", nil]];
+params ["_componentName", "_methodName", ["_args", []], ["_targets", 0], ["_callback", nil]];
 
 DEBUG_1("(remoteExecComponent) Params: %1", _this);
 
-[
-    _componentName, _methodName, _args, _callback
-] remoteExec [QFUNC(CallComponentByRemote), _targets];
+private _payload = [_componentName, _methodName, _args];
+if (!isNil "_callback") then { _payload pushBack _callback; };
+
+_payload remoteExec [QFUNC(CallComponentByRemote), _targets];

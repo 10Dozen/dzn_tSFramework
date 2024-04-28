@@ -25,7 +25,8 @@ if (!isServer) exitWith {
         {
             REGISTER_COMPONENT;
             LOG("Client iInitialized");
-        }
+        },
+        _self
     ] call CBA_fnc_waitUntilAndExecute;
 };
 

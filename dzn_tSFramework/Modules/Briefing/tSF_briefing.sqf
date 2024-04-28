@@ -79,6 +79,3 @@ END
 };
 
 ADD_TOPICS
-
-
-diag_log "BRIEFING ADDED";

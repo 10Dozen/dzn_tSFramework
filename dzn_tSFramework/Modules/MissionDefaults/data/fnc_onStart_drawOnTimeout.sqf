@@ -39,13 +39,7 @@ if (_timeLeft <= 0) then {
 
 if (_settings getOrDefault [Q(showOrbat), false]) then {
     DEBUG_MSG("[onStart] Showing ORBAT");
-    private _orbatInfo = _self call [
-        F(onStart_getGroupOrbat),
-        [
-            player,
-            _settings get Q(orbatPrefixSortingOrder)
-        ]
-    ];
+    private _orbatInfo = ECOB(Core) call [F(getGroupORBAT), [player, false]];
     _hintMessageLines append (_self call [F(onStart_composeOrbatHint), _orbatInfo]);
 };
 

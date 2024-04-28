@@ -10,64 +10,11 @@
         nothing
 */
 
+params [["_updateUpcoming", true]];
 
 /*
     Gather data here
 */
-
-/*
-private _wrapper = "<font size='12' face='TahomaB'>%1</font>";
-private _content = [
-    "<font size='14'><font color='#4287f5'>BLUFOR</font> (18)</font>",
-
-    "<font size='14'><font color='#f5c242'>Razor 1`6</font> (4)</font>",
-    "<font color='#c9bea7'>Platoon Leader</font>",
-    "          Some Nickname <font face='TahomaB' size='10' color='#cfcfcf'>/ АКС74У <font color='#93afba'>ДВ</font> <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>Platoon Sergeant</font>",
-    "          Comrade_Paulus <font face='TahomaB' size='10' color='#cfcfcf'>/ АКС74У <font color='#93afba'>ДВ</font> <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>Снайпер</font>",
-    "          Реневал[SBER] <font face='TahomaB' size='10' color='#cfcfcf'>/ СВ-96 <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>JTAC</font>",
-    "          Kilo-Kilo-123 <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74М (Зенитка/RIS/Пустынный) + Javeline FGM142 <font color='#93afba'>ДВ</font> <font color='#9db099'>КВ</font></font>",
-    "",
-
-    "<font size='14'><font color='#f5c242'>Razor 1`2*</font> (7)</font>",
-    "<font color='#c9bea7'>Razor 1`2 Squad Leader</font>",
-    "          Some Nickname <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74Н <font color='#93afba'>ДВ</font> <font color='#9db099'>КВ</font></font>",
-    "*<font color='#c9bea7'>RED - Fireteam Leader</font>",
-    "          10Dozen <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74Н <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>RED - Automatic Rifleman</font>",
-    "          Comrade_Paulus <font face='TahomaB' size='10' color='#cfcfcf'>/ ПКМ (Б-50/Ручка) <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>RED - Grenadier</font>",
-    "          Реневал[SBER] <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74 ГП-25 (Лесной) <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>BLUE - Старший стрелок</font>",
-    "          Kilo-Kilo-123 <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74М (Зенитка/RIS/Лесной) + РШГ-2 <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>BLUE - Стрелок</font>",
-    "          Comrade_Paulus <font face='TahomaB' size='10' color='#cfcfcf'>/ РПК (Зенитка/RIS/Лесной) <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>BLUE - Стрелок</font>",
-    "          Реневал[SBER] <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74М (Лесной) + РПГ-26 <font color='#9db099'>КВ</font></font>",
-
-    "",
-    "<font size='14'><font color='#f5c242'>Razor 1`3</font> (7)</font>",
-    "<font color='#c9bea7'>Razor 1`3 Squad Leader</font>",
-    "          Some Nickname <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74Н <font color='#93afba'>ДВ</font> <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>RED - Fireteam Leader</font>",
-    "          10Dozen <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74Н <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>RED - Automatic Rifleman</font>",
-    "          Comrade_Paulus <font face='TahomaB' size='10' color='#cfcfcf'>/ ПКМ (Б-50/Ручка) <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>RED - Grenadier</font>",
-    "          Реневал[SBER] <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74 ГП-25 <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>BLUE - Старший стрелок</font>",
-    "          Kilo-Kilo-123 <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74М (Зенитка/RIS) + РШГ-2 <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>BLUE - Стрелок</font>",
-    "          Comrade_Paulus <font face='TahomaB' size='10' color='#cfcfcf'>/ РПК (Зенитка/RIS) <font color='#9db099'>КВ</font></font>",
-    "<font color='#c9bea7'>BLUE - Стрелок</font>",
-    "          Реневал[SBER] <font face='TahomaB' size='10' color='#cfcfcf'>/ АК-74М + РПГ-26 <font color='#9db099'>КВ</font></font>",
-
-     ""
-];
-*/
-
 
 DEBUG_MSG("(updateRoster) Invoked");
 private _rosterContent = [];
@@ -82,10 +29,6 @@ if (!_showAllSides) then {
 };
 DEBUG_1("(updateRoster) Slots: %1", _allSlots);
 
-private ["_prefixOrdering"];
-if (!isNil QECOB(MissionDefaults)) then {
-    _prefixOrdering = SETTING_2(ECOB(MissionDefaults),DisableOnStart,orbatPrefixSortingOrder);
-};
 
 private _processedGroups = [];
 private _groupsInfo = createHashMapFromArray [
@@ -97,19 +40,10 @@ private ["_grp", "_grpInfo"];
     if (_grp in _processedGroups) then { continue; };
     _processedGroups pushBack _grp;
 
-    _grpInfo = ECOB(Core) call [F(getGroupORBAT), [_x, _prefixOrdering, true]];
+    _grpInfo = ECOB(Core) call [F(getGroupORBAT), [_x, true]];
     (_groupsInfo get (side _x)) pushBack _grpInfo;
 } forEach _allSlots;
 
-// Sort group names
-/*
-{
-    _groupsInfo set [
-        _x,
-        [_groupsInfo get _x, [], { _x # 0 }] call BIS_fnc_sortBy
-    ]
-} forEach (keys _groupsInfo);
-*/
 
 // Compose content
 private _sidesToShow = [_sidePlayer];
@@ -126,6 +60,12 @@ DEBUG_1("(updateRoster) _groupsInfo: %1", _groupsInfo);
 
 
 private _rosterContent = [];
+if (_updateUpcoming) then {
+    _rosterContent pushBack format [
+        "(обновление каждые %1 секунд)",
+        SETTING_2(_self,Roster,updatePeriod)
+    ];
+};
 
 private ["_side", "_sideGroups", "_unitsPerSide", "_sideSettings", "_sideRoster"];
 {
@@ -190,6 +130,7 @@ private ["_side", "_sideGroups", "_unitsPerSide", "_sideSettings", "_sideRoster"
 } forEach _sidesToShow;
 
 DEBUG_1("(updateRoster) Updating with _rosterContent: %1", _rosterContent);
+
 
 private _record = _self get Q(RosterRecord);
 player removeDiaryRecord ["Diary", _self get Q(RosterRecord)];

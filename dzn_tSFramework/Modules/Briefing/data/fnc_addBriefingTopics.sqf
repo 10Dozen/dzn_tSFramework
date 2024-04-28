@@ -9,5 +9,4 @@
         nothing
 */
 
-diag_log "addBriefingTopics";
 [] call compileScript [Q(COMPONENT_PATH(tSF_briefing.sqf))];
