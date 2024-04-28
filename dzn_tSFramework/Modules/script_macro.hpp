@@ -46,15 +46,15 @@
 #define TSF_ERROR_8(REASON,MSG,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8) [QUOTE(COMPONENT), REASON, FORMAT_8(MSG,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8)] call TSF_ERROR_FUNC;
 */
 
-#define TSF_ERROR_TYPE__NO_CONFIG "Config not found"
-#define TSF_ERROR_TYPE__NO_MARKER "Marker not found"
-#define TSF_ERROR_TYPE__MISCONFIGURED "Misconfigured"
-#define TSF_ERROR_TYPE__MISSING_ENTITY "Missing Entity"
-#define TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR "Settings file failed to parse"
+#define TSF_ERROR_TYPE__NO_CONFIG "Конфиг не найден"
+#define TSF_ERROR_TYPE__NO_MARKER "Маркер не найден"
+#define TSF_ERROR_TYPE__MISCONFIGURED "Некорректная конфигурация"
+#define TSF_ERROR_TYPE__MISSING_ENTITY "Отстутсвует целевой объект"
+#define TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR "Не удалось распарсить файл настроек (Settings.yaml)"
 
 
 // Credits: CBA Team (https://github.com/CBATeam/CBA_A3/blob/master/addons/main/script_macros_common.hpp)
-// #define DEBUG true
+//#define DEBUG true
 
 #define MAINPREFIX dzn_tSFramework
 #define SUBPREFIX Modules
@@ -144,7 +144,9 @@
 
 #define __EXIT_ON_SETTINGS_PARSE_ERROR__ \
     if (SETTING(_self,#ERRORS) isNotEqualTo []) exitWith { \
-        TSF_ERROR(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR,"Module failed to start") \
+        ((SETTING(_self,#ERRORS)) select 0) params ["","_lineNo","","_errorText"]; \
+        private _src = SETTING(_self,#SOURCE); \
+        TSF_ERROR_3(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR,"Модуль не запущен! Ошибка '%1' в строке %2 файла %3",_errorText,_lineNo,_src); \
     };
 
 

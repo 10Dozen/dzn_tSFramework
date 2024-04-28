@@ -81,7 +81,7 @@ tSF_fnc_adminTools_handleGSOMenuOverSpectator = {
 	Mission Endings
 */
 dzn_fnc_adminTools_addMissionEndsControls = {
-	waitUntil { sleep 5; time > 5 && !isNil QECOB(MissionConditions) };
+	waitUntil { sleep 5; time > 5 && !isNil QEGVAR(MissionConditions,Endings) };
 
 	// Mission Notes
     private _topicLines = [
