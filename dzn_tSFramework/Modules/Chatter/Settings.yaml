@@ -49,6 +49,5 @@ Talkers:
     #   SW: 1500 # (Опционально) Дальность передачи по КВ, в метрах.
 
     - callsign: "PAPA BEAR"
-      unit: `papabear`
-      LR: 1000
-      SW: 500
+      LR: 50000
+      SW: 4000

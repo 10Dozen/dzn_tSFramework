@@ -35,7 +35,7 @@ tSF_Diag_TSF_CollectTotalData = {
 
     private _topicLines = [
         "<font size='14' color='#b7f931'>Scenario name:</font>",
-        format ["        %1 (%2)", missionName, briefingName],
+        format ["        %1 (%2)", briefingName, missionName],
         "<font size='14' color='#b7f931'>Date:</font>",
         format ["        %1/%2/%3", STR_DATE(MissionDate select 2), STR_DATE(MissionDate select 1), MissionDate select 0],
         "<font size='14' color='#b7f931'>Modules:</font>"

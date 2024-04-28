@@ -20,7 +20,7 @@ if (!isServer) exitWith {
         {
             time > SETTING_2(_this,Init,timeout) &&
             SETTING_2(_this,Init,condition) &&
-            !isNil Q(RADIO_TALKERS)
+            !isNil QRADIO_TALKERS
         },
         {
             REGISTER_COMPONENT;
