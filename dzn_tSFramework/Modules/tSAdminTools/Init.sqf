@@ -1,5 +1,10 @@
 #include "data\script_component.hpp"
 
+if (clientOwner == dzn_dynai_owner) then {
+    [] call compileScript ["dzn_tSFramework\Modules\tSAdminTools\data\Functions - Dynai Control Remote.sqf"];
+};
+
+
 if (hasInterface) then {
 	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Settings.sqf"];
 	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions.sqf"];
@@ -62,9 +67,9 @@ if (hasInterface) then {
 		[["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], [-20,-5,150,0.032], [0,0,0,.75], 30] call dzn_fnc_ShowMessage;
 
 		// Start DynAI Control Panel
-		waitUntil { sleep 5; !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } }
-		call FUNC(DC_RequestDynaiData);
-		call tSF_adminTools_DC_addDynaiControlPage;
+		waitUntil { sleep 5; !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } };
+		[] call FUNC(DC_RequestDynaiData);
+		[] call tSF_adminTools_DC_addDynaiControlPage;
 	};
 };
 

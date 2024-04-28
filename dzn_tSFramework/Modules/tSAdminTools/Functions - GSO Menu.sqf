@@ -52,7 +52,7 @@ tSF_fnc_adminTools_showGSOScreen = {
 
 	private _endsNames = [];
 	private _ends = [];
-    if (!isNil EGVAR(MissionConditions,Endings)) then {
+    if (!isNil QEGVAR(MissionConditions,Endings)) then {
         {
             _ends pushBack (_x select 0);
             _endsNames pushBack (format ["%1 (%2)", _x select 0, _x select 1]);
