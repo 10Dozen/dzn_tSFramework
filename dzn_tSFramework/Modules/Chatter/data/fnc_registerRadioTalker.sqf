@@ -40,7 +40,15 @@
 DEBUG_1("(registerRadioTalker) Params: %1", _this);
 
 if (!isServer) exitWith {
-    [QCOB, [F(registerRadioTalker), _this]] remoteExec ["call", 2];
+    ECOB(Core) call [
+        F(remoteExecComponent),
+        [
+            "Chatter",
+            F(registerRadioTalker),
+            _this,
+            2
+        ]
+    ];
 };
 
 params [

@@ -28,12 +28,11 @@ params [
 
 if (isNull _unit || { !alive _unit }) exitWith {};
 
-
-
-[
-    COB,
+ECOB(Core) call [
+    F(remoteExecComponent),
     [
+        "Chatter",
         F(showMessageLocally),
         [_unit, _message, _name, _distance, _sayMode]
     ]
-] remoteExec ["call"];
+];

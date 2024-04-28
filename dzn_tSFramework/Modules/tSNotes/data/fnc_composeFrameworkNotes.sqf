@@ -67,7 +67,8 @@ if (ECOB(Core) call [F(isModuleEnabled), "tSSettings"]) then {
 _lines pushBack "<font size='15' color='#12C4FF'>Связь с GSO</font>";
 _lines pushBack "<font color='#cccccc'>Кнопка F8 открывает меню для отправки сообщения GSO. Если вы столкнулись с технической проблемой, то вы можете сообщить об этом напрямую.</font>";
 
+
 [
-    "Mission Framework",
+    format ["Mission Framework (%1)", TSF_VERSION_NUMBER],
     _lines joinString "<br/>"
 ]

@@ -32,11 +32,3 @@ Roster:
         - side: civilian
           name: "Гражданские"
           color: "#b55acc"
-
-# TODO:
-# - Refactor to new module
-# - Auto-roster
-#   (SIDE) - (Group) - (SL) (Weapon main / Launcher / LR Radio / SW Radio)
-#                      (unit)  (Weapon main / Launcher / LR Radio / SW Radio)
-
-# (tSNotes) - Add framework version info
