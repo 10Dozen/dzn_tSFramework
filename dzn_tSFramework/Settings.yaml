@@ -10,6 +10,7 @@ Briefing: true
 MissionConditions: true
 MissionDefaults: true
 JIPTeleport: true
+Respawn: true
 
 # Информирование игроков (титры, записки) и настройки
 IntroText: true

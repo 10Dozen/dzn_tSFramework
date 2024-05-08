@@ -2,7 +2,7 @@
 
 #define COMPONENT IntroText
 
-#define	STR_DATE(X) if (count str(X) == 1) then { "0" + str(X) } else { str(X) }
+#define	STR_DATE(X) (format ["%1%2", ["","0"] select (X < 10), X])
 
 #define CURSOR_CLICK_PER_SECOND 10
 
