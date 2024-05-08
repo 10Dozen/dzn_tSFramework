@@ -68,12 +68,12 @@ tSF_fnc_FARP_createFARP_Server = {
 
 	tSF_FARP_Objects = [[_pos, _dir], _composition] call dzn_fnc_setComposition;
 	{
-        _x lock true;
-        clearItemCargoGlobal _x;
-        clearMagazineCargoGlobal _x;
-        clearWeaponCargoGlobal _x;
-        clearBackpackCargoGlobal _x;
-    } forEach tSF_FARP_Objects apply { };
+            _x lock true;
+            clearItemCargoGlobal _x;
+            clearMagazineCargoGlobal _x;
+            clearWeaponCargoGlobal _x;
+            clearBackpackCargoGlobal _x;
+        } forEach tSF_FARP_Objects;
 
 	private _pad = "Land_HelipadCircle_F" createVehicle [0,0,0];
 	_pad setPos (tSF_FARP_Position getPos [20, 225]);
