@@ -8,7 +8,8 @@ private _declaration = [
     COMPONENT_TYPE,
     PREP_COMPONENT_SETTINGS,
 
-    PREP_COMPONENT_FUNCTION(init),
+    PREP_COMPONENT_FUNCTION(initServer),
+    PREP_COMPONENT_FUNCTION(initClient),
     PREP_COMPONENT_FUNCTION(onRespawn),
 
     PREP_COMPONENT_FUNCTION(processLogics),
@@ -21,4 +22,5 @@ if (isServer) then {
 }
 
 COB = createHashMapObject [_declaration];
-COB call [F(init)];
+COB call [F(initServer)];
+COB call [F(initClient)];
