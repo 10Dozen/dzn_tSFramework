@@ -1,0 +1,52 @@
+# Crew Options
+# ---
+#
+#
+#
+#
+#
+#
+# Зависимости:
+#   dzn_gear/dzn_dynai
+
+# Выбирет машину, затем откройте tSF 3DEN Tool > [Vehicle] Add crew options
+#  или
+# Засинхронизируйте машины/статичные орудия в редакторе с GameLogic с инит-кодом:
+#   this setVariable ["tSF_CrewOptions", "Config name"]
+# Для всех засинхронизированных машин будет создан экипаж, с настройками согласно
+# выбранному конфигу.
+
+
+
+
+
+Init:
+    timeout: 3
+    condition: { true }
+
+
+Defaults:
+    side: west
+    unit: "B_crew_F"
+    kit: ""
+
+
+Configs:
+    armoredDriver:
+        count: 1
+        crew:
+            - seat: driver
+
+    helicopter:
+        count: 2
+        kit: "kit_west_doorgunner"
+        crew:
+            - seat: turret_1
+            - seat: turret_2
+
+    helicopter:
+        count: 2
+        kit: "kit_west_mgunner_ffv"
+        crew:
+            - seat: ffv_1
+            - seat: ffv_2
