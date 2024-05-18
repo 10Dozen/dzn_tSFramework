@@ -18,8 +18,10 @@
 #define __SERVER_ONLY__ if (!isServer) exitWith {};
 #define __CLIENT_ONLY__ if (!hasInterface) exitWith {};
 #define __HEADLESS_OR_SERVER__ if ( \
-        (isNil "HC" && !isServer) || \
-        (!isNil "HC" && (hasInterface || isServer)) \
+        isMultiplayer && { \
+            (isNil "HC" && !isServer) || \
+            (!isNil "HC" && (hasInterface || isServer)) \
+        } \
     ) exitWith {};
 
 

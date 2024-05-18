@@ -34,7 +34,7 @@ ArtillerySupport: false
 POM: false
 
 # Модули-помощники для настройки юнитов/объектов миссии
-EditorVehicleCrew: false
+EditorVehicleCrew: true
 EditorUnitBehavior: false
 EditorRadioSettings: false
 
