@@ -30,7 +30,9 @@ if (_crewClass isEqualTo "") then {
     _crewClass = nil;
 };
 
-[_veh, _vehicleKit, true] call dzn_fnc_gear_assignKit;
+if (_vehicleKit isNotEqualTo "") then {
+    [_veh, _vehicleKit, true] call dzn_fnc_gear_assignKit;
+};
 
 // Read/update DynAI skill with mission params and apply adjusted values to crew
 [] call dzn_fnc_dynai_getSkillFromParameters;
