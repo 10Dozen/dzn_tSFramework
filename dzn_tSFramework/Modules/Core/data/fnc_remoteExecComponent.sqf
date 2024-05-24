@@ -17,7 +17,7 @@
         _args (ANY) - optional, list of arguments.
         _targets (NUMBER or ARRAY or OBJECT) - target for remote exec (see https://community.bistudio.com/wiki/remoteExec).
         _callback (HASHMAP OBJECT) - optional, optional remote exec callback hashmap object
-        (declared by tSF_Core_RemoteExecFunctionCallback or tSF_Core_RemoteExecFunctionCallback).
+        (declared by tSF_Core_RemoteExecFunctionCallback or tSF_Core_RemoteExecCallbackCOB).
 
     Returns:
        nothing

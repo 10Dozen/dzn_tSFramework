@@ -7,8 +7,9 @@
 #
 # Зависимости:
 #   dzn_gear/dzn_dynai
-
-# Выбирет машину, затем откройте tSF 3DEN Tool > [Vehicle] Add crew
+#
+#
+# Выберите машину, затем откройте tSF 3DEN Tool > [Vehicle] Add crew
 #  или
 # Засинхронизируйте машины/статичные орудия в редакторе с GameLogic с инит-кодом:
 #   this setVariable ["tSF_EVC", "Config name"]

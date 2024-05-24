@@ -2,28 +2,25 @@
 
 /*
     Initialize Component Object and it's features.
+    (_self)
+
     Params:
-        none
+        0: _respawnLocations (HashMap) - respawn location found by server.
     Returns:
         nothing
 */
 
 __CLIENT_ONLY__
 
-__EXIT_ON_SETTINGS_PARSE_ERROR__
+params ["_respawnLocations"];
 
-[
-    { /* wait for server to read location logics and publish it */ },
-    {
-        LOG("Client init started");
+LOG("Client init started");
 
-        {
-            (_this get Q(Locations)) set [_x, []];
-        } forEach keys (SETTINGS(_this,Locations));
-        
-        _this call [F(addRespawnHandler), [player]];
+_self set [Q(Locations), _respawnLocations];
 
-        LOG("Client initialized");
-    }
-    , _self
-] call CBA_fnc_waitUntilAndExecute;
+_self call [F(setDefaultEquipment)];
+_self call [F(setDefaultRating)];
+
+_self call [F(addRespawnHandler), [player]];
+
+LOG("Client initialized");

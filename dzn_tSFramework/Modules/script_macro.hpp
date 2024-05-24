@@ -23,7 +23,7 @@
             (!isNil "HC" && (hasInterface || isServer)) \
         } \
     ) exitWith {};
-
+#define __NOT_HEADLESS__ if (!hasInterface && !isServer) exitWith {};
 
 // tSF Error reporting
 #define TSF_ERROR_METHOD F(reportError)

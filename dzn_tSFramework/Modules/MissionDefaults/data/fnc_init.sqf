@@ -20,14 +20,9 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
     {
         LOG("Client init started");
 
-        _this call [F(equip_setUpEquipment)];
         _this call [F(onStart_disablePlayer)];
         _this call [F(phoneticAbc_setHandler)];
         _this call [F(calc_init)];
-
-        if (SETTING_2(_this,PlayerRating,enable)) then {
-            player addRating SETTING_2(_this,PlayerRating,rating);
-        };
 
         [
             TSF_KEYBIND_SECTION,

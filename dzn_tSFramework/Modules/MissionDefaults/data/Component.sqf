@@ -20,8 +20,6 @@ private _declaration = [
 
     PREP_COMPONENT_FUNCTION(showORBATHint),
 
-    PREP_COMPONENT_FUNCTION(equip_setUpEquipment),
-
     PREP_COMPONENT_FUNCTION(phoneticAbc_setHandler),
     PREP_COMPONENT_FUNCTION(phoneticAbc_handle),
     PREP_COMPONENT_FUNCTION(phoneticAbc_getNextAbcCode),

@@ -1,6 +1,6 @@
 #include "script_component.hpp"
 
-__CLIENT_ONLY__
+__NOT_HEADLESS__
 
 LOG("Pre-Initialization started");
 

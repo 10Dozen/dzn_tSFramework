@@ -15,8 +15,8 @@
 
 private _settings = SETTING(_self,Equipment);
 
+// Put default weapon on safe
 if (_settings getOrDefault [Q(PutWeaponOnSafe), false]) then {
-    // Put default weapon on safe
     [ACE_player, currentWeapon ACE_player, true] call ace_safemode_fnc_setWeaponSafety;
 };
 

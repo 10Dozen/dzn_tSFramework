@@ -3,7 +3,10 @@
 # Задает локации для респауна игроков, а также управление респауном со стороны GSO
 #
 # Зависимости: IntroText
-
+#
+# Ставим на карте объекты GameLogic с инит-кодом:
+#   this setVariable ["tSF_RespawnLocation", "Default"]
+# где Default - имя конфигурации респауна
 
 Equipment:
     EarplugAutoUse: true   # автоматически втыкает беруши
@@ -12,7 +15,7 @@ Equipment:
 
 PlayerRating:  # небольшой рейтинг предотвращает проблемы с доступом к технике после случайного огня по своим
     enable: true
-    rating: 50
+    rating: 200
 
 
 
@@ -23,14 +26,13 @@ Locations:
     Default:
         name: ""                    # Отображаемое имя
         description: "По умолчанию" # Описание (для GSO)
-        # snapToSurface: false      # Нужно ли пытаться поставить игроков на ближайшую поверхость под ними
+        # snapToSurface: true       # Нужно ли пытаться поставить игроков на ближайшую поверхость под ними
                                     # (например на палубу корабля под GameLogic). По умолчанию - да.
         # groups: []                # Список групп которые возрождаются на этой точке
 
     AircraftCarrier:
         name: "Авианосец"
         description: "Авианосец классу эсминец, для спецназа"
-        snapToSurface: false
         groups:
             - Razor 1`1
             - Razor 1`2
@@ -43,9 +45,10 @@ Locations:
             - Jupiter 1`2
 
 
-
-BeforeRespawnMessage: "Подкрепления через %1 секунд..."   # сообщение отображаемое перед респауном
-OnRespawnMessage: |                          # сообщение отображаемое после респауна в hint parseText
+# сообщение отображаемое перед респауном
+BeforeRespawnMessage: "Подкрепления через %1 секунд..."
+# сообщение отображаемое после респауна в hint parseText
+OnRespawnMessage: |
     <t color="#334455" align="center" size="0.075">Вы в отряде %1</t><br>
     <t color="#334455" align="center">Ваши действия сейчас:</t><br>
     <t align="left">- Проверьте снаряжение</t><br>
