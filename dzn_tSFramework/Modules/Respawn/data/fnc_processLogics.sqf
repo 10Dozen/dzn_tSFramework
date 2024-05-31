@@ -11,10 +11,11 @@
 */
 
 private ["_logic", "_logicConfigName", "_logicConfig", "_locationsForConfig"];
+
 private _configs = SETTING(_self,Locations);
-private _locations = _self get Q(Locations);
+private _locations = createHashMap;
 {
-    _locations set [_x, []];
+    _locations set [_x, objNull];
 } forEach keys _configs;
 
 {
@@ -29,6 +30,7 @@ private _locations = _self get Q(Locations);
         continue;
     };
 
-    _locationsForConfig = _locations getOrDefaultCall [_logicConfigName, { [] }, true];
-    _locationsForConfig pushBack _logic;
+    _locations set [_logicConfigName, _logic];
 } forEach (entities "Logic");
+
+_locations

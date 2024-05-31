@@ -16,11 +16,10 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
 
 LOG("Server init started");
 
-_self call [F(processLogics)];
-
+private _locationsToObjects = _self call [F(processLogics)];
 ECOB(Core) call [
     F(remoteExecComponent),
-    ["Respawn", F(initClient), [_self get Q(Locations)], 0]
+    ["Respawn", F(initClient), [_locationsToObjects], 0]
 ];
 
 LOG("Server initialized");

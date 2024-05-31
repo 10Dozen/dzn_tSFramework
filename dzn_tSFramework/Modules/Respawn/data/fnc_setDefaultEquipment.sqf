@@ -22,7 +22,7 @@ if (_settings getOrDefault [Q(PutWeaponOnSafe), false]) then {
 
 // Schedule equipment adjust after dzn_gear kit assigned
 [
-    { DZN_GEAR_APPLIED(player) },
+    { time > 0 && DZN_GEAR_APPLIED(player) },
     {
         params ["_useEarplugs", "_weaponOnSafe"];
         if (_useEarplugs) then {

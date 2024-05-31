@@ -12,9 +12,19 @@ private _declaration = [
     PREP_COMPONENT_FUNCTION(setDefaultEquipment),
     PREP_COMPONENT_FUNCTION(setDefaultRating),
 
-    PREP_COMPONENT_FUNCTION(addRespawnHandler),
+    PREP_COMPONENT_FUNCTION(scheduleRespawn),
+    PREP_COMPONENT_FUNCTION(onRespawn),
 
-    [Q(Locations), createHashMap]
+    PREP_COMPONENT_FUNCTION(showMessage),
+    PREP_COMPONENT_FUNCTION(getDefaultSpawnLocationName),
+
+    [Q(GroupToLocation), createHashMap],
+    [Q(GroupName), nil],
+    [Q(RespawnLocation), DEFAULT_LOCATION],
+    [Q(ForcedRespawnLocation), nil],
+
+    [Q(Manager), call compileScript [Q(COMPONENT_SUBPATH(RespawnManager,Component))]]
+
 ];
 
 if (isServer) then {
@@ -22,5 +32,6 @@ if (isServer) then {
     _declaration pushBack PREP_COMPONENT_FUNCTION(processLogics);
 }
 
-COB = createHashMapObject [_declaration];
+// Init:
+CREATE_AND_REGISTER_COMPONENT(_declaration);
 COB call [F(initServer)];

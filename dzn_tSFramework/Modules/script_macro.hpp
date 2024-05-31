@@ -133,6 +133,10 @@
 #define PREP_COMPONENT_SETTINGS \
     [Q(Settings), [Q(COMPONENT_SETTINGS_PATH)] call dzn_fnc_parseSFML]
 
+#define CREATE_AND_REGISTER_COMPONENT(DECLARATION) \
+    COB = createHashMapObject [DECLARATION];
+    ECOB(Core) call [F(registerComponentObject), [Q(COMPONENT), COB]]
+
 #define REGISTER_COMPONENT ECOB(Core) call [F(registerComponentObject), [Q(COMPONENT), _this]]
 
 // --- Component Objects - Setting getters

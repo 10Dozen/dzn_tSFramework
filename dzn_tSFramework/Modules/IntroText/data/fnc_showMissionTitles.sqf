@@ -14,8 +14,7 @@ params ["_dateTitle", "_locTitle", "_opTitle"]
 
 private _spawnLocation = nil;
 if (TSF_MODULE_ENABLED(Respawn)) then {
-    (ECOB(Respawn) call [F(getCurrentSpawnLocation)]) params ["_locId","_locName"];
-    _spawnLocation = _locName;
+    _spawnLocation = ECOB(Respawn) call [F(getDefaultSpawnLocationName)];
 };
 
 _self call [

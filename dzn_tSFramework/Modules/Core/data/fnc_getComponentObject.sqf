@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 /*
-    Returns component object by component's name.
+    Returns registered component object by component's name.
     Component name is case insensitive.
 
     (_self)
