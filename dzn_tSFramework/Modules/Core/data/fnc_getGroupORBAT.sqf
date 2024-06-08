@@ -47,10 +47,10 @@ private ["_member"];
         roleDescription _x,
         name _x,
         _x
-     ];
-     if (_collectGear) then {
-         _member pushBack (_self call [F(getUnitGearInfo), [_x]]);
-     };
+    ];
+    if (_collectGear) then {
+        _member pushBack (_self call [F(getUnitGearInfo), [_x]]);
+    };
 
     _membersInfo pushBack _member;
 } forEach _members;

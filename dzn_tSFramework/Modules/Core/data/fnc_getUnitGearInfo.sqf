@@ -21,16 +21,21 @@
         3: _hasSR (BOOL)
 */
 
-// --- dzn_gear not yet initialized
-// if (isNil "dzn_gear_serverInitDone") exitWith { [] };
-
 params ["_unit"];
 
-// --- dzn_gear not yet applied kit to unit
-// if (isNil { _unit getVariable "dzn_gear" }) exitWith { [] };
+private _gearInfo = _unit getVariable [QGVAR(ORBAT_Gear), []];
 
-private _gearInfo = [];
+if (!local _unit) exitWith { _gearInfo };
 
+// If dzn_Gear not yet started or ORBAT Gear already set - return as is
+if (
+    _gearInfo isNotEqualTo [] ||
+    !(_unit getVariable ["dzn_gear_done", false])
+) exitWith { 
+    _gearInfo
+};
+
+// Otherwise - read loadout and cache it
 private _loadout = getUnitLoadout _unit;
 
 (_loadout # 0) params [["_pwClass", ""]];
@@ -53,5 +58,8 @@ _gearInfo pushBack (getNumber (configFile >> "CfgVehicles" >> _backpack >> "tf_h
 
 // -- Check that backpack is TFAR LR radio
 _gearInfo pushBack (_assignedItems findIf { _x == 'ItemRadio' || _x call TFAR_fnc_isRadio } > -1);
+
+// -- Publish variable for other players to see unit's local gear
+_unit setVariable [QGVAR(ORBAT_Gear), _gearInfo, true];
 
 _gearInfo
