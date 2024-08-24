@@ -15,13 +15,13 @@ params ["_mode", ["_args",[]]];
 if (_mode == MODE_ON_RESPAWN_HINT) exitWith {
     private _message = format [
         SETTING(_self,OnRespawnMessage),
-        groupId player
+        groupId group player
     ];
-    hintSilent parseText (_message joinString "<br/>");
+    hintSilent parseText _message;
 };
 
 if (_mode == MODE_BEFORE_RESPAWN_MSG) exitWith {
-    private _message = format (SETTING(_self,BeforeRespawnMessage) + _args);
+    private _message = format ([SETTING(_self,BeforeRespawnMessage)] +_args);
 
     [
         [

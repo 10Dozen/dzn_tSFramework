@@ -26,7 +26,7 @@
 #define __NOT_HEADLESS__ if (!hasInterface && !isServer) exitWith {};
 
 // Modules availability
-#define TSF_MODULE_ENABLED(MODULE) ECOB(Core) call [F(isModuleEnabled), [Q(MODULE)]]
+#define TSF_MODULE_ENABLED(MODULE) ECOB(Core) call [F(isModuleEnabled), Q(MODULE)]
 
 
 // tSF Error reporting

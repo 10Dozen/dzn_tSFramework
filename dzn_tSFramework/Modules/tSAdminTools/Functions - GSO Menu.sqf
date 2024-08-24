@@ -32,12 +32,12 @@ tSF_fnc_adminTools_showGSOScreen = {
 			ADD_PLR_POS(_pl select 0,"PL");
 		};
 
-		if (ECOB(Core) call [F(isModuleEnabled), "CCP"] && {!isNil "tSF_CCP_Position"}) then {
+		if (TSF_MODULE_ENABLED(CCP) && {!isNil "tSF_CCP_Position"}) then {
 			ADD_GSO_POS(ASLtoATL tSF_CCP_Position, "CCP");
 			ADD_PLR_POS(ASLtoATL tSF_CCP_Position, "CCP");
 		};
 
-		if (ECOB(Core) call [F(isModuleEnabled), "FARP"]  && {!isNil "tSF_FARP_Position"}) then {
+		if (TSF_MODULE_ENABLED(FARP) && {!isNil "tSF_FARP_Position"}) then {
 			ADD_GSO_POS(ASLtoATL tSF_FARP_Position, "FARP");
 			ADD_PLR_POS(ASLtoATL tSF_FARP_Position, "FARP");
 		};

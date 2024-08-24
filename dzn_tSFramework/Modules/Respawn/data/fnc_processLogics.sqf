@@ -10,8 +10,6 @@
         nothing
 */
 
-private ["_logic", "_logicConfigName", "_logicConfig", "_locationsForConfig"];
-
 private _configs = SETTING(_self,Locations);
 private _locations = createHashMap;
 {
@@ -19,17 +17,18 @@ private _locations = createHashMap;
 } forEach keys _configs;
 
 // Process default location - marker-based 
-private _mrk = allMapMarkers select { _x in [
+private _mrkId = allMapMarkers findIf { _x in [
     "respawn", "respawn_west", "respawn_east", "respawn_guerrila", "respawn_civilian"
 ] };
-if (_mrk isEqualTo []) exitWith {
+if (_mrkId == -1) exitWith {
     TSF_ERROR(TSF_ERROR_TYPE__NO_MARKER, "Не найден маркер респауна");
     []
 };
-_locations set [DEFAULT_LOCATION, getMarkerPos (_mrk # 0)];
+_locations set [DEFAULT_LOCATION, getMarkerPos (allMapMarkers # _mrkId)];
 
 
 // Find positions of the GameLogic entities
+private ["_logic", "_logicConfigName", "_logicConfig"];
 {
     _logic = _x;
     _logicConfigName = _logic getVariable [GAMELOGIC_CONFIG_ID, ""];

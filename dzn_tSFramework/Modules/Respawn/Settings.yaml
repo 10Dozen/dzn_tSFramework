@@ -5,7 +5,7 @@
 # Зависимости: IntroText
 #
 # Ставим на карте объекты GameLogic с инит-кодом:
-#   this setVariable ["tSF_RespawnLocation", "Default"]
+#   this setVariable ["tSF_RespawnLocation", "MyLocation"]
 # где Default - имя конфигурации респауна
 
 Equipment:
@@ -51,8 +51,9 @@ BeforeRespawnTimeout: 5
 BeforeRespawnMessage: "Подкрепления через %1 секунд..."
 # сообщение отображаемое после респауна в hint parseText
 OnRespawnMessage: |
-    <t color="#334455" align="center" size="0.075">Вы в отряде %1</t><br>
-    <t color="#334455" align="center">Ваши действия сейчас:</t><br>
-    <t align="left">- Проверьте снаряжение</t><br>
-    <t align="left">- Настройте рацию</t><br>
-    <t align="left">- Ожидайте указаний от GSO</t>
+    <t color="#AAAAAA"><t align="center" size="1.2">Вы в отряде %1</t><br/>
+    Ваши действия сейчас:<br/>
+    <br/>
+    - Проверьте снаряжение<br/>
+    - Настройте рацию<br/>
+    - Ожидайте указаний от GSO</t>

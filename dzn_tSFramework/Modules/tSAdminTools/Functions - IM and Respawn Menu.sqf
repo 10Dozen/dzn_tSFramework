@@ -7,19 +7,24 @@
 tSF_fnc_adminTools_ForceRespawn_showMenu = {
 	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
 
-	private _menu = [];
+	
 
 	// Instant messenger 
 	private _players = call BIS_fnc_listPlayers;
 	private _receivers = [
 		["Всем", _players], 
 		["Spectators", _players select { !alive _x }]
-	] + (_players apply { [format ["%1 (%2)", name _x, groupId _x], _x] });
+	] + (_players apply { [format ["%1 (%2)", name _x, groupId group _x], _x] });
 
-	_menu pushBack ["HEADER", "GSO - Мессенджер / Респаун"];
-	_menu pushBack ["INPUT", "", [["tag", "chatMessageText"]]];
-	_menu pushBack ["BR", ""];
-	_menu pushBack ["DROPDOWN", _receivers, nil, [["tag", "chatReceiver"]]];
+	
+	private _menu = [
+		["HEADER", "GSO - Мессенджер / Респаун"],
+		["INPUT", "", [["tag", "chatMessageText"], ["h", 0.07]]],
+		["br"],
+		//["DROPDOWN", _receivers, -1, [["tag", "chatReceiver"],["w", 0.5]]],
+		["LABEL", "", [["w", 0.25]]]
+	];
+	/*
 	_menu pushBack ["BUTTON", "Отправить", {
 		params ["_cob"];
 		private _message = _cob call ["GetValueByTag", "chatMessageText"];
@@ -27,14 +32,17 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 
 		[_message, _receivers] call tSF_fnc_adminTools_IM_sendByGSO;
 	}, [], [["w", 0.25]]];
+	*/
 
 	// Respawn part 
+	/*
 	private _respawnMenu = if (TSF_MODULE_ENABLED(Respawn)) then {
 		[] call tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu
 	} else {
 		[] call tSF_fnc_adminTools_ForceRespawn_composeDefaultRespawnMenu
 	};
 	_menu append _respawnMenu;
+	*/
 
 	_menu call dzn_fnc_showAdvDialog2;
 };
@@ -79,7 +87,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 	private _groupsMap = createHashMap;
 	private ["_groupName", "_playersInGroup"];
 	{ 
-		_groupName = groupId _x;
+		_groupName = groupId group _x;
 		_playersInGroup = _groupsMap getOrDefault [_groupName, []];
 		_playersInGroup pushBack (name _x);
 		_groupsMap set [_groupName, _playersInGroup];
@@ -90,7 +98,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 	_groupsOptions = _groupsOptions apply { [_x] };
 
 	private _deadPlayersOptions = _deadPlayers apply {
-		[format ["%1 (%2)", name _x, groupId _x], _x]
+		[format ["%1 (%2)", name _x, groupId group _x], _x]
 	};
 	_deadPlayersOptions sort true;
 
@@ -177,7 +185,7 @@ tSF_fnc_adminTools_ForceRespawn_scheduleRespawns = {
 	private _unitsToRespawn = [];
 	if (_unitIdentifier isEqualType "") then {
 		// Case: Units of group (by group name)
-		_unitsToRespawn = (call BIS_fnc_listPlayers) select { !alive _x && groupId _x == _unitIdentifier };
+		_unitsToRespawn = (call BIS_fnc_listPlayers) select { !alive _x && groupId group _x == _unitIdentifier };
 	} else {
 		if (isNull _unitIdentifier) then {
 			// Case: All dead players

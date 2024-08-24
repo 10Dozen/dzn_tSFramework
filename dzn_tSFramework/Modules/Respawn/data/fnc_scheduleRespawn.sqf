@@ -16,6 +16,10 @@ params [
     ["_timeout", 0]
 ];
 
+if (alive player) exitWith {
+    //setPlayerRespawnTime 999999;
+};
+
 _timeout = _timeout + SETTING(_self,BeforeRespawnTimeout);
 
 if (!isNil "_forcedLocation") then {
