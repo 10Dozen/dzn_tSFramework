@@ -7,6 +7,9 @@
 private _declaration = [
     COMPONENT_TYPE,
     PREP_COMPONENT_SETTINGS,
+    
+    PREP_COMPONENT_FUNCTION(initServer),
+    PREP_COMPONENT_FUNCTION(processLogics),
 
     PREP_COMPONENT_FUNCTION(initClient),
     PREP_COMPONENT_FUNCTION(setDefaultEquipment),
@@ -17,6 +20,7 @@ private _declaration = [
 
     PREP_COMPONENT_FUNCTION(showMessage),
     PREP_COMPONENT_FUNCTION(getDefaultSpawnLocationName),
+    PREP_COMPONENT_FUNCTION(getSpawnLocationsNames),
 
     [Q(GroupToLocation), createHashMap],
     [Q(GroupName), nil],
@@ -24,13 +28,7 @@ private _declaration = [
     [Q(ForcedRespawnLocation), nil],
 
     [Q(Manager), call compileScript [Q(COMPONENT_SUBPATH(RespawnManager,Component))]]
-
 ];
-
-if (isServer) then {
-    _declaration pushBack PREP_COMPONENT_FUNCTION(initServer);
-    _declaration pushBack PREP_COMPONENT_FUNCTION(processLogics);
-}
 
 // Init:
 CREATE_AND_REGISTER_COMPONENT(_declaration);

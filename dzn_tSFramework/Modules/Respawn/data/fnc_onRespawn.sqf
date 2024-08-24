@@ -21,7 +21,7 @@ private _locConfig = SETTING(_self,Locations) get _targetLocation;
 
 private _positionObject = _locConfig get Q(positionObject);
 private _snap = _locConfig getOrDefault [Q(snapToSurface), true];
-private _text = _locConfig get Q(name);
+private _locationDisplayName = _locConfig get Q(name);
 private _gearKit = player getVariable "dzn_gear";
 
 
@@ -41,12 +41,12 @@ if (!isNil "_gearKit") then {
 _self call [F(setDefaultRating)];
 _self call [F(setDefaultEquipment)];
 
-// Show into text again (Date + Location name)
+// Show intro text again (Date + Location name)
 ECOB(IntroText) call [F(showTitles), [
-    nil, nil, nil, _text
+    nil, nil, nil, _locationDisplayName
 ]];
 
-// Show messages
+// Show hint messages
 _self call [F(showMessage), [MODE_ON_RESPAWN_HINT]];
 
 

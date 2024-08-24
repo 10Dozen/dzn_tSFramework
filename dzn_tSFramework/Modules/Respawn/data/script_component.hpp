@@ -5,6 +5,7 @@
 #define GAMELOGIC_CONFIG_ID tSF_RespawnLocation
 
 #define DEFAULT_LOCATION "Default"
+#define DEFAULT_LOCATION_NAME "Стандартная"
 
 
 #define MODE_ON_RESPAWN_HINT 0

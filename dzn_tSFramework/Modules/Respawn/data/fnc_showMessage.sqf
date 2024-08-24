@@ -30,7 +30,7 @@ if (_mode == MODE_BEFORE_RESPAWN_MSG) exitWith {
         ]
         , "TOP"
         , [0,0,0,.75]
-        , 30
+        , _args # 0
     ] call dzn_fnc_ShowMessage;
 };
 

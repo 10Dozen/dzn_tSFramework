@@ -35,9 +35,13 @@ _self set [Q(RespawnLocation), _defaultRespawnLocation];
 //_self call [F(setDefaultEquipment)];
 //_self call [F(setDefaultRating)];
 
-player addEventHandler ["MPRespawn", {
+player addEventHandler ["Respawn", {
     private _position = ECOB(Respawn) call [F(onRespawn), _this];
     _position
+}];
+
+player addEventHandler ["Killed", {
+	[1, "BLACK", 5, 1] spawn BIS_fnc_fadeEffect;
 }];
 
 LOG("Client initialized");

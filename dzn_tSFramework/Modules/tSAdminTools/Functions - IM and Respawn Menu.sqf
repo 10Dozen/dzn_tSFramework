@@ -1,75 +1,199 @@
 /*
  *	F7 Force Respwn Zeus Menu
  */
+
+
+
+tSF_fnc_adminTools_ForceRespawn_scheduleRespawns = {
+	params ["_unitIdentifier", "_forcedLocation", "_timeout"];
+
+	private _unitsToRespawn = [];
+	if (_unitIdentifier isEqualType "") then {
+		// Case: Units of group (by group name)
+		_unitsToRespawn = (call BIS_fnc_listPlayers) select { !alive _x && groupId _x == _unitIdentifier };
+	} else {
+		if (isNull _unitIdentifier) then {
+			// Case: All dead players
+			_unitsToRespawn = (call BIS_fnc_listPlayers) select { !alive _x };
+		} else {
+			// Case: Player
+			_unitsToRespawn = [_unitIdentifier];
+		};
+	};
+
+	{
+		ECOB(Core) call [
+			F(remoteExecComponent),
+			[Q(Respawn), F(scheduleRespawn), [_forcedLocation, _timeout], _x]
+		];
+	} forEach _unitsToRespawn;
+};
+
 tSF_fnc_adminTools_ForceRespawn_showMenu = {
 	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
-	
-	private _players = (call BIS_fnc_listPlayers) select { !alive _x };
-	private _playersStr = (_players apply { name _x }) joinString ", ";
-	
-	if (count _playersStr > 104) then { _playersStr = format ["%1...", _playersStr select [0,101]]; };
-	tSF_adminTools_ForceRespawn_List = _players;
 
+	private _menu = [];
+
+	// Instant messenger 
+	private _players = call BIS_fnc_listPlayers;
+	private _receivers = [
+		["Всем", _players], 
+		["Spectators", _players select { !alive _x }]
+	] + (_players apply { [format ["%1 (%2)", name _ x, groupId _x], _x] });
+
+	_menu pushBack ["HEADER", "GSO - Мессенджер / Респаун"];
+	_menu pushBack ["INPUT", "", [["tag", "chatMessageText"]]];
+	_menu pushBack ["BR", ""];
+	_menu pushBack ["DROPDOWN", _receivers, nil, [["tag", "chatReceiver"]]];
+	_menu pushBack ["BUTTON", "Отправить", {
+		params ["_cob"];
+		private _message = _cob call ["GetValueByTag", "chatMessageText"];
+		private _receivers = _cob call ["GetValueByTag", "chatReceiver"];
+
+		[_message, _receivers] call tSF_fnc_adminTools_IM_sendByGSO;
+	}, [], [["w", 0.25]]];
+
+	// Respawn part 
+	private _respawnMenu = if (TSF_MODULE_ENABLED(Respawn)) then {
+		[] call tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu
+	} else {
+		[] call tSF_fnc_adminTools_ForceRespawn_composeDefaultRespawnMenu
+	};
+	_menu append _respawnMenu;
+
+	_menu call dzn_fnc_showAdvDialog2;
+};
+
+tSF_fnc_adminTools_ForceRespawn_composeDefaultRespawnMenu = {
  	/*
  	[ Players pending									            ]
  	[ (label with player's names with comma)						]
- 	[ Instant messenger	][					][ V List of players	]
- 	[ (input)														]
-	[					][ Send Message		][						]
- 	[ Cancel			][					][ Respawn All			]
+ 	[                                     ][ Respawn All			]
  	*/
-
-	[
-		[0, "HEADER", "GSO Zeus Screen - Force Respawn"]
-		, [1, "LABEL", format ["Players pending respawn: %1", count _players]]
-		, [2, "LABEL",  format ["<t color='#FFD000' size='0.85'>%1</t>", _playersStr]]
-		
-		, [3, "LABEL", "Instant Messenger"]
-		, [3, "LABEL", "<t align='right'>send to</t>"]
-		, [3, "DROPDOWN", ["All", "Spectators"] + ((call BIS_fnc_listPlayers) apply { name _x }), [objNull, tSF_adminTools_ForceRespawn_List] + (call BIS_fnc_listPlayers)]
-		
-		, [4, "INPUT"]
-		
-		
-		, [5, "LABEL", ""]
-		, [5, "BUTTON", "SEND MESSAGE", {
+	private _deadPlayersNames = (call BIS_fnc_listPlayers select { !alive _x }) apply { name _x };
+	private _deadPlayersNamesStr = ", " joinString _deadPlayersNames;
+	if (count _deadPlayersNamesStr > 104) then { 
+		_deadPlayersNamesStr = format ["%1...", _deadPlayersNamesStr select [0, 101]]
+	};
+	private _menu = [
+		["HEADER", "Управление Респаунами"],
+		["LABEL", format ["<t color='#FFD000'>Ожидают возрождения:</t> %1", count _deadPlayersNames]],
+		["BR"],
+		["LABEL", format ["<t size='0.85'>%1</t>", _deadPlayersNamesStr]],
+		["BR"],
+		["LABEL", "", [["w",0.75]]],
+		["BUTTON", "Возродить всех", {
 			closeDialog 2;
-			params["_receiverParams","_msgParams"];
-
-			private _msg = _msgParams select 0;
-			private _receiversList = switch (_receiverParams select 0) do {
-				case 0: {
-					// All players
-					(call BIS_fnc_listPlayers)
-				};
-				case 1: {
-					// Spectators
-					tSF_adminTools_ForceRespawn_List
-				};
-				default {
-					// Specific player
-					[_receiverParams select 3]
-				};
-			};
-
-			{
-				["GSO","GSO",_msg] remoteExec ["tSF_fnc_adminTools_IM_Notify", _x];
-			} forEach _receiversList;
-
-		}]
-		, [5, "LABEL", ""]
-		
-		, [6, "BUTTON", "CLOSE", { closeDialog 2; }]
-		, [6, "LABEL", ""]
-		, [6, "BUTTON", "RESPAWN ALL", {
-			closeDialog 2;
-			
 			hint "Respawn in 5 seconds";
 			{
 				[] remoteExec ["tSF_fnc_adminTools_ForceRespawn_RespawnPlayer", _x];
-			} forEach tSF_adminTools_ForceRespawn_List;
-		}]
-	] call dzn_fnc_ShowAdvDialog;
+			} forEach (call BIS_fnc_listPlayers select { !alive _x });
+		}, [], [["w",0.25]]],
+	];
+
+	_menu
+};
+
+tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
+	/*
+		Compose menu if Respawn module is enabled.
+	*/
+	// Who options 
+	private _deadPlayers = (call BIS_fnc_listPlayers) select { !alive _x }) 
+
+	private _groupsMap = createHashMap;
+	private ["_groupName", "_playersInGroup"];
+	{ 
+		_groupName = groupId _x;
+		_playersInGroup = _groupsMap getOrDefault [_groupName, []];
+		_playersInGroup pushBack (name _x);
+		_groupsMap set [_groupName, _playersInGroup];
+	} forEach _deadPlayers;
+
+	private _groupsOptions = keys _groupsMap;
+	_groupsOptions sort true;
+	_groupsOptions = _groupsOptions apply { [_x] };
+
+	private _deadPlayersOptions = _deadPlayers apply {
+		[format ["%1 (%2)", name _x, groupId _x], _x]
+	};
+	_deadPlayersOptions sort true;
+
+	private _whoOptions = [["Всех", objNull]] + _groupsOptions + _deadPlayersOptions;
+
+	// Where options 
+	private _spawnLocations = ECOB(Respawn) call [F(getSpawnLocationsNames)];
+	private _whereOptions = [["Назначенная", nil]] + _spawnLocations;
+
+	// When options 
+	private _whenOptions = [
+		["Сейчас", 0],
+		["30 сек", 30],
+		["1 мин", 1 * 60],
+		["5 мин", 5 * 60],
+	];
+
+	//Menu declaration
+	/*
+	----------------------------------------------------------
+	Респун 
+	----------------------------------------------------------
+	[ Who                               v]  
+	[ Where                             v]                                      
+	[ When (Now)                        v][ Респаун        ] 
+	---------------------------------------------------------
+	Ожидают респауна: 3                                      
+	---------------------------------------------------------
+	Razor 1`1 (Player1, Player2, Player3)                       < 1.2
+	Razor 1`2 (Player4, Player5)
+	*/
+	private _menu = [
+		["HEADER", "Управление Респаунами"],
+		["DROPDOWN", _whoOptions, 0, [["w", 0.75],["tag","respawnWho"]]],
+		["BR"],
+		["DROPDOWN", _whereOptions, 0, [["w", 0.75],["tag","respawnWhere"]]],
+		["BR"],
+		["DROPDOWN", _whenOptions, 0, [["w", 0.75],["tag","respawnWhen"]]],
+		["BUTTON", "Возродить", {
+			params ["_cob"];
+			private _who = (_cob call ["GetValueByTag", "respawnWho"]) # 2;
+			private _where = (_cob call ["GetValueByTag", "respawnWhere"]) # 2;
+			private _when = (_cob call ["GetValueByTag", "respawnWhen"]) # 2;
+			[_who, _where, _when] call tSF_fnc_adminTools_ForceRespawn_scheduleRespawns;
+		}, [], [["w",0.25]]],
+		["BR"],
+		["HEADER", format ["Ожидают респауна: %1", count _deadPlayers]],
+		["BR"]
+	];
+
+	// Groups and it's dead members
+	{
+		private _lineText = format ["[%1] %2 (%3)", count _y, _x, ", " joinString _y;
+
+		// More then 1 line - cut into 2 at char #104
+		if (count _lineText > 104) then {
+			private _cutLineAtIndex = 104;
+			for "_i" from 104 to 0 do {
+				if (_lineText select _i == ",") then {
+					_cutLineAtIndex = _i;
+					break;
+				};
+			};
+			_menu pushBack ["LABEL", _lineText select [0, _cutLineAtIndex+1]];
+			_menu pushBack ["BR"];
+			_menu pushBack [
+				"LABEL", 
+				format ["    %1", _lineText select [_cutLineAtIndex+1, count _lineText]]
+			];
+			_menu pushBack ["BR"];
+			continue;
+		};
+
+		_menu pushBack ["LABEL",_lineText];
+		_menu pushBack ["BR"];
+	} forEach _groupsMap;
+
+	_menu
 };
 
 tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {	
@@ -128,6 +252,18 @@ tSF_fnc_adminTools_IM_showMenu = {
 	] call dzn_fnc_ShowAdvDialog;
 };
 
+tSF_fnc_adminTools_IM_sendByGSO = {
+	params ["_message", "_receivers"];
+
+	if !(_receivers isEqualType []) then {
+		_receivers = [_receivers];
+	};
+
+	{
+		["GSO", "GSO", _message] remoteExec ["tSF_fnc_adminTools_IM_Notify", _x];
+	} forEach _receivers;
+};
+
 tSF_fnc_adminTools_IM_Notify = {
 	params ["_sender", "_title", "_text"];
 
@@ -157,14 +293,14 @@ tSF_fnc_adminTools_IM_SaveMsgToDiary = {
 		player createDiarySubject [tSF_AdminTools_IM_Topic, tSF_AdminTools_IM_Topic];
 	};
 
-/*
-	Case1: GSO to 10Dozen:
-		For GSO: 		- "tSF Instant Messenger" -> 10Dozen -> GSO Text
-		For 10Dozne:	- "tSF Instant Messenger" -> GSO -> GSO text
-	Case2: 10Dozen to GSO:
-		For GSO: 		- "tSF Instant Messenger" -> 10Dozen -> 10Dozen text
-		For 10Dozne:	- "tSF Instant Messenger" -> GSO -> 10Dozen text
-*/
+	/*
+		Case1: GSO to 10Dozen:
+			For GSO: 		- "tSF Instant Messenger" -> 10Dozen -> GSO Text
+			For 10Dozne:	- "tSF Instant Messenger" -> GSO -> GSO text
+		Case2: 10Dozen to GSO:
+			For GSO: 		- "tSF Instant Messenger" -> 10Dozen -> 10Dozen text
+			For 10Dozne:	- "tSF Instant Messenger" -> GSO -> 10Dozen text
+	*/
 
 	if (["execute expression=", _msg] call dzn_fnc_inString) then {
 		_msg = " -- Illegal hack was deteceted (execute expression=). Admin is reported about u, h4x0r --"

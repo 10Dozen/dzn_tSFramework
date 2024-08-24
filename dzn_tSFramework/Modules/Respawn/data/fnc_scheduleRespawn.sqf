@@ -1,6 +1,5 @@
 #include "script_component.hpp"
 
-
 /*
     (_self)
 
@@ -10,10 +9,14 @@
         nothing
 */
 
+__CLIENT_ONLY__
+
 params [
     ["_forcedLocation", nil],
-    ["_timeout", SETTING(_self,BeforeRespawnTimeout)]
+    ["_timeout", 0]
 ];
+
+_timeout = _timeout + SETTING(_self,BeforeRespawnTimeout);
 
 if (!isNil "_forcedLocation") then {
     _self set [Q(ForcedRespawnLocation), _forcedLocation];
