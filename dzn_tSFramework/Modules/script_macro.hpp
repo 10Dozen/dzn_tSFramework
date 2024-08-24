@@ -25,6 +25,10 @@
     ) exitWith {};
 #define __NOT_HEADLESS__ if (!hasInterface && !isServer) exitWith {};
 
+// Modules availability
+#define TSF_MODULE_ENABLED(MODULE) ECOB(Core) call [F(isModuleEnabled), [Q(MODULE)]]
+
+
 // tSF Error reporting
 #define TSF_ERROR_METHOD F(reportError)
 #define TSF_ERROR(REASON,MSG) ECOB(Core) call [TSF_ERROR_METHOD, [Q(COMPONENT),REASON,MSG]]
@@ -110,9 +114,11 @@
 
 #define INIT_COMPONENT COMPILE_EXECUTE(COMPONENT_DATA_PATH(Component))
 
+
 // Public functions in component
 #define COMPONENT_PUBLIC_FNC_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\Public\fnc_##FILE##.sqf
 #define PREP_PUBLIC_FUNCTION(NAME) FUNC(NAME) = compileScript [QUOTE(COMPONENT_PUBLIC_FNC_PATH(NAME))]
+
 
 // --- Component Object
 #define COB DOUBLES(MODULE_COMPONENT,Component)
@@ -134,7 +140,7 @@
     [Q(Settings), [Q(COMPONENT_SETTINGS_PATH)] call dzn_fnc_parseSFML]
 
 #define CREATE_AND_REGISTER_COMPONENT(DECLARATION) \
-    COB = createHashMapObject [DECLARATION];
+    COB = createHashMapObject [DECLARATION]; \
     ECOB(Core) call [F(registerComponentObject), [Q(COMPONENT), COB]]
 
 #define REGISTER_COMPONENT ECOB(Core) call [F(registerComponentObject), [Q(COMPONENT), _this]]

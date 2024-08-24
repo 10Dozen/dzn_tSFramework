@@ -1,33 +1,8 @@
+#include "script_component.hpp"
+
 /*
  *	F7 Force Respwn Zeus Menu
  */
-
-
-
-tSF_fnc_adminTools_ForceRespawn_scheduleRespawns = {
-	params ["_unitIdentifier", "_forcedLocation", "_timeout"];
-
-	private _unitsToRespawn = [];
-	if (_unitIdentifier isEqualType "") then {
-		// Case: Units of group (by group name)
-		_unitsToRespawn = (call BIS_fnc_listPlayers) select { !alive _x && groupId _x == _unitIdentifier };
-	} else {
-		if (isNull _unitIdentifier) then {
-			// Case: All dead players
-			_unitsToRespawn = (call BIS_fnc_listPlayers) select { !alive _x };
-		} else {
-			// Case: Player
-			_unitsToRespawn = [_unitIdentifier];
-		};
-	};
-
-	{
-		ECOB(Core) call [
-			F(remoteExecComponent),
-			[Q(Respawn), F(scheduleRespawn), [_forcedLocation, _timeout], _x]
-		];
-	} forEach _unitsToRespawn;
-};
 
 tSF_fnc_adminTools_ForceRespawn_showMenu = {
 	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
@@ -39,7 +14,7 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 	private _receivers = [
 		["Всем", _players], 
 		["Spectators", _players select { !alive _x }]
-	] + (_players apply { [format ["%1 (%2)", name _ x, groupId _x], _x] });
+	] + (_players apply { [format ["%1 (%2)", name _x, groupId _x], _x] });
 
 	_menu pushBack ["HEADER", "GSO - Мессенджер / Респаун"];
 	_menu pushBack ["INPUT", "", [["tag", "chatMessageText"]]];
@@ -88,7 +63,7 @@ tSF_fnc_adminTools_ForceRespawn_composeDefaultRespawnMenu = {
 			{
 				[] remoteExec ["tSF_fnc_adminTools_ForceRespawn_RespawnPlayer", _x];
 			} forEach (call BIS_fnc_listPlayers select { !alive _x });
-		}, [], [["w",0.25]]],
+		}, [], [["w",0.25]]]
 	];
 
 	_menu
@@ -99,7 +74,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 		Compose menu if Respawn module is enabled.
 	*/
 	// Who options 
-	private _deadPlayers = (call BIS_fnc_listPlayers) select { !alive _x }) 
+	private _deadPlayers = (call BIS_fnc_listPlayers) select { !alive _x };
 
 	private _groupsMap = createHashMap;
 	private ["_groupName", "_playersInGroup"];
@@ -130,7 +105,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 		["Сейчас", 0],
 		["30 сек", 30],
 		["1 мин", 1 * 60],
-		["5 мин", 5 * 60],
+		["5 мин", 5 * 60]
 	];
 
 	//Menu declaration
@@ -168,7 +143,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 
 	// Groups and it's dead members
 	{
-		private _lineText = format ["[%1] %2 (%3)", count _y, _x, ", " joinString _y;
+		private _lineText = format ["[%1] %2 (%3)", count _y, _x, ", " joinString _y];
 
 		// More then 1 line - cut into 2 at char #104
 		if (count _lineText > 104) then {
@@ -194,6 +169,31 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 	} forEach _groupsMap;
 
 	_menu
+};
+
+tSF_fnc_adminTools_ForceRespawn_scheduleRespawns = {
+	params ["_unitIdentifier", "_forcedLocation", "_timeout"];
+
+	private _unitsToRespawn = [];
+	if (_unitIdentifier isEqualType "") then {
+		// Case: Units of group (by group name)
+		_unitsToRespawn = (call BIS_fnc_listPlayers) select { !alive _x && groupId _x == _unitIdentifier };
+	} else {
+		if (isNull _unitIdentifier) then {
+			// Case: All dead players
+			_unitsToRespawn = (call BIS_fnc_listPlayers) select { !alive _x };
+		} else {
+			// Case: Player
+			_unitsToRespawn = [_unitIdentifier];
+		};
+	};
+
+	{
+		ECOB(Core) call [
+			F(remoteExecComponent),
+			[Q(Respawn), F(scheduleRespawn), [_forcedLocation, _timeout], _x]
+		];
+	} forEach _unitsToRespawn;
 };
 
 tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {	

@@ -15,7 +15,8 @@
         _componentName (STRING) - name of the component to exec.
         _methodName (STRING) - name of the method to execute.
         _args (ANY) - optional, list of arguments.
-        _targets (NUMBER or ARRAY or OBJECT) - target for remote exec (see https://community.bistudio.com/wiki/remoteExec).
+        _targets (NUMBER or ARRAY or OBJECT) - optional, target for remote exec (see https://community.bistudio.com/wiki/remoteExec). Defaults to 0 (all machines).
+        _jip (bool)- optional, add execution to JIP queue. Defaults to false.
         _callback (HASHMAP OBJECT) - optional, optional remote exec callback hashmap object
         (declared by tSF_Core_RemoteExecFunctionCallback or tSF_Core_RemoteExecCallbackCOB).
 
@@ -33,11 +34,11 @@
     ];
 */
 
-params ["_componentName", "_methodName", ["_args", []], ["_targets", 0], ["_callback", nil]];
+params ["_componentName", "_methodName", ["_args", []], ["_targets", 0], ["_jip", false], ["_callback", nil]];
 
 DEBUG_1("(remoteExecComponent) Params: %1", _this);
 
 private _payload = [_componentName, _methodName, _args];
 if (!isNil "_callback") then { _payload pushBack _callback; };
 
-_payload remoteExec [QFUNC(CallComponentByRemote), _targets];
+_payload remoteExec [QFUNC(CallComponentByRemote), _targets, _jip];

@@ -24,6 +24,7 @@ private _mrk = allMapMarkers select { _x in [
 ] };
 if (_mrk isEqualTo []) exitWith {
     TSF_ERROR(TSF_ERROR_TYPE__NO_MARKER, "Не найден маркер респауна");
+    []
 };
 _locations set [DEFAULT_LOCATION, getMarkerPos (_mrk # 0)];
 
@@ -43,7 +44,5 @@ _locations set [DEFAULT_LOCATION, getMarkerPos (_mrk # 0)];
 
     _locations set [_logicConfigName, _logic];
 } forEach (entities "Logic");
-
-
 
 _locations

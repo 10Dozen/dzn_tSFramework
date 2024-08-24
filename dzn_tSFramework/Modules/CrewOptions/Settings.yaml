@@ -2,10 +2,6 @@
 # ---
 #
 #
-#
-#
-#
-#
 # Зависимости:
 #   dzn_gear/dzn_dynai
 
@@ -13,10 +9,17 @@
 #  или
 # Засинхронизируйте машины/статичные орудия в редакторе с GameLogic с инит-кодом:
 #   this setVariable ["tSF_CrewOptions", "Config name"]
-# Для всех засинхронизированных машин будет создан экипаж, с настройками согласно
+# Для всех засинхронизированных машин будет добавлено действие для создания экипажа, с настройками согласно
 # выбранному конфигу.
 
-
+# [ Управление экипажем                Х ]
+# [ Водитель                      [  +  ]]
+# [ *Стрелок                      [  -  ]]
+#
+#
+#
+#
+#
 
 
 
@@ -32,19 +35,30 @@ Defaults:
 
 
 Configs:
-    armoredDriver:
+    Driver:
         count: 1
         crew:
             - seat: driver
 
-    helicopter:
+    CrewDriver:
+        count: 1
+        crew:
+            - seat: driver
+
+    Helicopter Pilot:
+        count: 2
+        kit: "kit_west_pilot"
+        crew:
+            - seat: driver
+
+    Helicopter Doorgunner:
         count: 2
         kit: "kit_west_doorgunner"
         crew:
-            - seat: turret_1
-            - seat: turret_2
+            - seat: [0]
+            - seat: [1]
 
-    helicopter:
+    Helicopter FFV:
         count: 2
         kit: "kit_west_mgunner_ffv"
         crew:

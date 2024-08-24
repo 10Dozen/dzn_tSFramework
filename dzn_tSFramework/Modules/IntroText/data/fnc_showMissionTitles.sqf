@@ -10,11 +10,11 @@
 		nothing
 */
 
-params ["_dateTitle", "_locTitle", "_opTitle"]
+params ["_dateTitle", "_locTitle", "_opTitle"];
 
-private _spawnLocation = nil;
+private _spawnLocationName = nil;
 if (TSF_MODULE_ENABLED(Respawn)) then {
-    _spawnLocation = ECOB(Respawn) call [F(getDefaultSpawnLocationName)];
+    _spawnLocationName = ECOB(Respawn) call [F(getDefaultSpawnLocationName)];
 };
 
 _self call [
@@ -23,6 +23,6 @@ _self call [
         SETTING(_self,Date),
         SETTING(_self,Location),
         SETTING(_self,Operation),
-        _locName
+        _spawnLocationName
     ]
 ];

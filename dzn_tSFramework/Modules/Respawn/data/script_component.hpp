@@ -2,10 +2,10 @@
 
 #define COMPONENT Respawn
 
-#define GAMELOGIC_CONFIG_ID tSF_RespawnLocation
+#define GAMELOGIC_CONFIG_ID Q(tSF_RespawnLocation)
 
-#define DEFAULT_LOCATION "Default"
-#define DEFAULT_LOCATION_NAME "Стандартная"
+#define DEFAULT_LOCATION Q(Default)
+#define DEFAULT_LOCATION_NAME Q(Стандартная)
 
 
 #define MODE_ON_RESPAWN_HINT 0

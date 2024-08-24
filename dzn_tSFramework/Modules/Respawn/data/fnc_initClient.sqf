@@ -12,14 +12,19 @@
 
 __CLIENT_ONLY__
 
+__EXIT_ON_SETTINGS_PARSE_ERROR__
+
 params ["_respawnLocations"];
 
 LOG("Client init started");
+LOG_1("Params: %1",_respawnLocations);
 
 // Update Configs with locationObjects and select player's default spawn location
 private _groupName = groupId player;
 private _defaultRespawnLocation = DEFAULT_LOCATION;
 {
+    LOG_2("Key: %1, Value: %2",_x, _y);
+    LOG_1("Respawn location object: %1",_respawnLocations get _x);
     private _locObject = _respawnLocations get _x;
     _y set [Q(positionObject), _locObjet];
 

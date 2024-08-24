@@ -25,8 +25,8 @@ if (_mode == MODE_BEFORE_RESPAWN_MSG) exitWith {
 
     [
         [
-            "<t color='#FFD000'>Штаб</t>",
-            , format ["<t align='center'>%1</t>", _message]
+            "<t color='#FFD000'>Возрождение</t>",
+            format ["<t align='center'>%1</t>", _message]
         ]
         , "TOP"
         , [0,0,0,.75]

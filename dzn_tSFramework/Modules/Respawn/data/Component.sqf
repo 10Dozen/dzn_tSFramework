@@ -25,9 +25,7 @@ private _declaration = [
     [Q(GroupToLocation), createHashMap],
     [Q(GroupName), nil],
     [Q(RespawnLocation), DEFAULT_LOCATION],
-    [Q(ForcedRespawnLocation), nil],
-
-    [Q(Manager), call compileScript [Q(COMPONENT_SUBPATH(RespawnManager,Component))]]
+    [Q(ForcedRespawnLocation), nil]
 ];
 
 // Init:
