@@ -8,5 +8,6 @@
 #define DEFAULT_LOCATION_NAME Q(Стандартная)
 
 
+#define MODE_CLEAR -1
 #define MODE_ON_RESPAWN_HINT 0
 #define MODE_BEFORE_RESPAWN_MSG 1

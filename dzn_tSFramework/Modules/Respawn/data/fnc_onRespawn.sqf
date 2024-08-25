@@ -41,26 +41,26 @@ private _position = [
 
 LOG_1("(onRespawn) _position = %1", _position);
 
-
 // Re-apply gear
 if (!isNil "_gearKit") then {
     player setVariable ["dzn_gear_done", nil];
     [player, _gearKit, false] spawn dzn_fnc_gear_assignKit;
 };
 
-[{
-    _this call [F(setDefaultRating)];
-    _this call [F(setDefaultEquipment)];
-}, _self] call CBA_fnc_execNextFrame;
+_self call [F(setDefaultRating)];
+_self call [F(setDefaultEquipment)];
 
 // Show intro text again (Date + Location name)
 ECOB(IntroText) call [F(showTitles), [
-    nil, nil, nil, _locationDisplayName
+    SETTING(ECOB(IntroText),Date), 
+    nil, 
+    nil, 
+    _locationDisplayName
 ]];
 
 // Show hint messages
+_self call [F(showMessage), [MODE_CLEAR]];
 _self call [F(showMessage), [MODE_ON_RESPAWN_HINT]];
-
 
 // Reset
 _self set [Q(ForcedRespawnLocation), nil];

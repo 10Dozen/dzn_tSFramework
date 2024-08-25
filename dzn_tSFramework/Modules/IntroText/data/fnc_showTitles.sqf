@@ -44,13 +44,6 @@ if (!isNil "_locTitle" && { _locTitle != LOCATION_TITLE_DEFAULT }) then {
     ];
 };
 
-if (!isNil "_opTitle" && { _opTitle != OPERATION_TITLE_DEFAULT }) then {
-    _linesAndStyles pushBack [
-        _opTitle,
-        SETTING_2(_self,Templates,operation)
-    ];
-};
-
 if (!isNil "_spawnLocationTitle" && { _spawnLocationTitle != "" }) then {
     _linesAndStyles pushBack [
         _spawnLocationTitle,
@@ -58,7 +51,12 @@ if (!isNil "_spawnLocationTitle" && { _spawnLocationTitle != "" }) then {
     ];
 };
 
-
+if (!isNil "_opTitle" && { _opTitle != OPERATION_TITLE_DEFAULT }) then {
+    _linesAndStyles pushBack [
+        _opTitle,
+        SETTING_2(_self,Templates,operation)
+    ];
+};
 
 // No lines defined - skip
 if (_linesAndStyles isEqualTo []) exitWith {};

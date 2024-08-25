@@ -34,6 +34,7 @@ if (_mode == MODE_BEFORE_RESPAWN_MSG) exitWith {
     ] call dzn_fnc_ShowMessage;
 };
 
+// Otherwise - clear both messages
 hintSilent "";
-[[""], "TOP", [0,0,0,.75], 0] call dzn_fnc_ShowMessage;
+(uiNamespace getVariable ["dzn_DynamicMessageDialog",displayNull]) call dzn_fnc_dynamicMessage_clearControls;
 

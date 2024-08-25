@@ -18,8 +18,9 @@ tSF_fnc_adminTools_handleKey = {
 		// F7
 		case 65: {
 			tSF_adminTools_isKeyPressed = true;
-			[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
-			[] spawn tSF_fnc_adminTools_ForceRespawn_showMenu;
+			// [] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
+            [{ tSF_adminTools_isKeyPressed = false; }, nil, 1] call CBA_fnc_waitAndExecute;
+			[] call tSF_fnc_adminTools_ForceRespawn_showMenu;
 		};
 		// F8
         case 66: {

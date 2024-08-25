@@ -13,7 +13,11 @@
 params ["_dateTitle", "_locTitle", "_opTitle"];
 
 private _spawnLocationName = nil;
-if (TSF_MODULE_ENABLED(Respawn)) then {
+
+if (
+    SETTING_2(_self,General,showRespawnLocationTitle) 
+    && TSF_MODULE_ENABLED(Respawn)
+) then {
     _spawnLocationName = ECOB(Respawn) call [F(getDefaultSpawnLocationName)];
 };
 
