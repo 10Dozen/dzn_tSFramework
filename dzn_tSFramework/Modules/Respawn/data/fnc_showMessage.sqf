@@ -34,6 +34,19 @@ if (_mode == MODE_BEFORE_RESPAWN_MSG) exitWith {
     ] call dzn_fnc_ShowMessage;
 };
 
+if (_mode == MODE_RESPAWN_CANCELED_MSG) exitWith {
+    private _message = format ([SETTING(_self,CancelRespawnMessage)] +_args);
+    [
+        [
+            "<t color='#FFD000'>Возрождение отменено</t>",
+            format ["<t align='center'>%1</t>", _message]
+        ]
+        , "TOP"
+        , [0,0,0,.75]
+        , 15
+    ] call dzn_fnc_ShowMessage;
+};
+
 // Otherwise - clear both messages
 hintSilent "";
 (uiNamespace getVariable ["dzn_DynamicMessageDialog",displayNull]) call dzn_fnc_dynamicMessage_clearControls;

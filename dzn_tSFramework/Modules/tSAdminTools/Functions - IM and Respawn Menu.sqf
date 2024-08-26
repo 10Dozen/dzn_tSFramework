@@ -4,20 +4,24 @@
  *	F7 Force Respawn Menu
  */
 
-#define OPTION_COLOR_ALL [0.78, 0.92, 0, 1]
-#define OPTION_COLOR_SPECTATORS [0.92, 0.52, 0.52, 1]
-#define OPTION_COLOR_GROUP [0.92, 0.81, 0, 1]
-#define OPTION_COLOR_RIGHT [0.7,0.7,0.7,1]
+#define RGBA_COLOR_LIGHT_GREEN [0.78, 0.92, 0, 1]
+#define RGBA_COLOR_LIGHT_RED [0.92, 0.52, 0.52, 1]
+#define RGBA_COLOR_YELLOW [0.92, 0.81, 0, 1]
+#define RGBA_COLOR_GRAY [0.7,0.7,0.7,1]
+#define RGBA_COLOR_LIGHT_BLUE [0.6,0.6,0.9,1]
+#define RGBA_COLOR_BY_UI (["GUI", "BCG_RGB"] call BIS_fnc_displayColorGet)
+#define RGBA_COLOR_DIMMED_RED [0.4, 0.1, 0.1, 0.5]
+#define RGBA_COLOR_DIMMED_GREEN [0.1, 0.4, 0.1, 0.5]
 
 tSF_fnc_adminTools_getPlayersGroups = {
 	params ["_players"];
 
 	private _groupsMap = createHashMap;
 	private ["_groupName", "_playersInGroup"];
-	{ 
+	{
 		_groupName = groupId group _x;
 		_playersInGroup = _groupsMap getOrDefault [_groupName, []];
-		_playersInGroup pushBack (name _x);
+		_playersInGroup pushBack _x;
 		_groupsMap set [_groupName, _playersInGroup];
 	} forEach _players;
 
@@ -33,19 +37,21 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 
 	private _messengerMenu = [] call tSF_fnc_adminTools_IM_composeGSOMenu;
 	_menu append _messengerMenu;
+	_menu append [["br"], ["LABEL"], ["br"]];
 
-	// Respawn part 
+	// Respawn part
 	private _respawnMenu = if (TSF_MODULE_ENABLED(Respawn)) then {
 		[] call tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu
 	} else {
 		[] call tSF_fnc_adminTools_ForceRespawn_composeDefaultRespawnMenu
 	};
+
 	_menu append _respawnMenu;
 
 	_menu call dzn_fnc_showAdvDialog2;
 };
 
-// --- Respawn menu 
+// --- Respawn menu
 tSF_fnc_adminTools_ForceRespawn_composeDefaultRespawnMenu = {
  	/*
  	[ Players pending									            ]
@@ -53,91 +59,96 @@ tSF_fnc_adminTools_ForceRespawn_composeDefaultRespawnMenu = {
  	[                                     ][ Respawn All			]
  	*/
 	private _deadPlayersNames = (call BIS_fnc_listPlayers select { !alive _x }) apply { name _x };
-	private _deadPlayersNamesStr = ", " joinString _deadPlayersNames;
-	if (count _deadPlayersNamesStr > 104) then { 
-		_deadPlayersNamesStr = format ["%1...", _deadPlayersNamesStr select [0, 101]]
+	private _deadPlayersNamesStr = _deadPlayersNames joinString ", ";
+	if (count _deadPlayersNamesStr > 96) then {
+		_deadPlayersNamesStr = format ["%1...", _deadPlayersNamesStr select [0, 96]]
 	};
 	private _menu = [
-		["br"],
-		["HEADER", "Управление Респаунами"],
+		["LABEL", "Управление Респаунами",[["bg",RGBA_COLOR_BY_UI]]],
+		["BR"],
 		["LABEL", format ["<t color='#FFD000'>Ожидают возрождения:</t> %1", count _deadPlayersNames]],
 		["BR"],
 		["LABEL", format ["<t size='0.85'>%1</t>", _deadPlayersNamesStr]],
 		["BR"],
 		["LABEL", "", [["w",0.75]]],
 		["BUTTON", "Возродить всех", {
-			closeDialog 2;
 			hint "Respawn in 5 seconds";
-			{
-				[] remoteExec ["tSF_fnc_adminTools_ForceRespawn_RespawnPlayer", _x];
-			} forEach (call BIS_fnc_listPlayers select { !alive _x });
+			[] remoteExec [
+				"tSF_fnc_adminTools_ForceRespawn_RespawnPlayer",
+				(call BIS_fnc_listPlayers) select { !alive _x }
+			];
+			_cob call ["Close"];
 		}, [], [["w",0.25]]]
 	];
 
 	_menu
 };
 
+
+#define RESPAWN_MODE_SCHEDULE 100
+#define RESPAWN_MODE_CANCEL 0
 tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 	/*
 		Compose menu if Respawn module is enabled.
 	*/
-	// Who options 
+	// Who options
 	private _deadPlayers = (call BIS_fnc_listPlayers) select { !alive _x };
 	_deadPlayers sort true;
 	private _groupsMap = [_deadPlayers] call tSF_fnc_adminTools_getPlayersGroups;
 
 	private _groupsOptions = keys _groupsMap;
 	_groupsOptions sort true;
-	_groupsOptions = _groupsOptions apply { 
+	_groupsOptions = _groupsOptions apply {
 		[
 			_x,
 			_x,
 			[
-				["color", OPTION_COLOR_GROUP],
+				["color", RGBA_COLOR_YELLOW],
 				["textRight", format ["%1 чел.", count (_groupsMap get _x)]],
-				["textRightColor", OPTION_COLOR_RIGHT]
+				["textRightColor", RGBA_COLOR_GRAY]
 			]
 		]
 	};
 
 	private _deadPlayersOptions = _deadPlayers apply {
+		private _respawnScheduled = _x getVariable [QEGVAR(Respawn,Scheduled), false];
 		[
-			name _x,
+			[name _x, format ["%1*", name _x]] select _respawnScheduled,
 			_x,
 			[
 				["textRight", groupId group _x],
-				["textRightColor", OPTION_COLOR_RIGHT]
+				["textRightColor", RGBA_COLOR_GRAY],
+				["color", [[1,1,1,1], RGBA_COLOR_LIGHT_BLUE] select _respawnScheduled]
 			]
 		]
 	};
 
 	private _whoOptions = [
-		["Всех", objNull, [["color", OPTION_COLOR_ALL]]]
+		["Всех", objNull, [["color", RGBA_COLOR_LIGHT_GREEN]]]
 	] + _groupsOptions + _deadPlayersOptions;
 
-	// Where options 
+	// Where options
 	private _spawnLocations = (ECOB(Respawn) call [F(getSpawnLocationsNames)]) apply {
 		[
 			_x # 0,
 			_x # 1,
-			[
-				["tooltip", _x # 2]
-			]
+			[["tooltip", _x # 2]]
 		]
 	};
+
 	(_spawnLocations select 0 select 2) append [
 		["textRight", "Респаун по умолчанию"],
-		["textRightColor", OPTION_COLOR_RIGHT]
+		["textRightColor", RGBA_COLOR_GRAY]
 	];
 
 	private _whereOptions = [
-		["Позиция согласно настройкам миссии", nil, [
-			["color", OPTION_COLOR_ALL],
+		["Позиция согласно настройкам миссии", "", [
+			["color", RGBA_COLOR_LIGHT_GREEN],
 			["tooltip", "В соответствии с конфигурацией респаунов для каждой группы, указанной в модуле"]
 		]]
 	] + _spawnLocations;
 
-	// When options 
+	// When options
 	private _whenOptions = [
 		["Сейчас", 0],
 		["+30 сек", 30],
@@ -148,50 +159,74 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 	//Menu declaration
 	/*
 	----------------------------------------------------------
-	Респун 
+	Респун
 	----------------------------------------------------------
-	[ Who                               v]  
-	[ Where                             v]                                      
-	[ When (Now)                        v][ Респаун        ] 
+	[ Who                               v]
+	[ Where                             v]
+	[ When (Now)                        v][ Респаун        ]
 	---------------------------------------------------------
-	Ожидают респауна: 3                                      
+	Ожидают респауна: 3
 	---------------------------------------------------------
 	Razor 1`1 (Player1, Player2, Player3)                       < 1.2
 	Razor 1`2 (Player4, Player5)
 	*/
 	private _menu = [
-		["br"],
-		["HEADER", "Управление Респаунами", [["closeButton", false]]],
-		["DROPDOWN", _whoOptions, 0, [["w", 0.75],["tag","respawnWho"]]],
+		["LABEL", "Управление Респаунами", [["bg", RGBA_COLOR_BY_UI]]],
 		["BR"],
-		["DROPDOWN", _whereOptions, 0, [["w", 0.75],["tag","respawnWhere"]]],
-		["BR"],
-		["DROPDOWN", _whenOptions, 0, [["w", 0.75],["tag","respawnWhen"]]],
+		["DROPDOWN", _whoOptions, 0, [["w", 0.75],["tag","respawnWho"],["bg", [0,0,0,1]]]],
 		["BUTTON", "Возродить", {
 			params ["_cob"];
-			private _who = (_cob call ["GetValueByTag", "respawnWho"]) # 2;
-			private _where = (_cob call ["GetValueByTag", "respawnWhere"]) # 2;
-			private _when = (_cob call ["GetValueByTag", "respawnWhen"]) # 2;
-			[_who, _where, _when] call tSF_fnc_adminTools_ForceRespawn_scheduleRespawns;
-			closeDialog 2;
-		}, [], [["w",0.25]]],
+			[
+				_cob call ["GetValueByTag", "respawnWho"],
+				_cob call ["GetValueByTag", "respawnWhere"],
+				_cob call ["GetValueByTag", "respawnWhen"],
+				RESPAWN_MODE_SCHEDULE
+			] call tSF_fnc_adminTools_ForceRespawn_handleRespawns;
+			_cob call ["Close"];
+		}, [], [["w",0.25],["tooltip", "Планирует возрождение выбранных игроков/групп\nв выбранной локации."]]],
 		["BR"],
-		["LABEL", format ["Ожидают респауна: %1", count _deadPlayers], [["bg", [0.4,0.4,0.1,1]]]],
+		["DROPDOWN", _whereOptions, 0, [["w", 0.75],["tag","respawnWhere"],["bg", [0,0,0,1]]]],
+		["BR"],
+		["DROPDOWN", _whenOptions, 0, [["w", 0.75],["tag","respawnWhen"],["bg", [0,0,0,1]]]],
+		["BUTTON", "Отменить", {
+			params ["_cob"];
+			[
+				_cob call ["GetValueByTag", "respawnWho"],
+				_cob call ["GetValueByTag", "respawnWhere"],
+				_cob call ["GetValueByTag", "respawnWhen"],
+				RESPAWN_MODE_CANCEL
+			] call tSF_fnc_adminTools_ForceRespawn_handleRespawns;
+			_cob call ["Close"];
+		}, [], [["w",0.25],["tooltip","Отменяет возрождение для выбранных игроков/групп"]]],
+		["BR"],
+		[
+			"LABEL",
+			format ["Ожидают респауна: %1", count _deadPlayers],
+			[
+				["bg", [RGBA_COLOR_DIMMED_RED, RGBA_COLOR_DIMMED_GREEN] select (_deadPlayers isEqualTo [])]
+			]
+		],
 		["BR"]
 	];
 
 	// Groups and it's dead members
-	#define MAX_LINE_LENGTH 96
+	#define MAX_LINE_LENGTH 87
+	#define PLAYER_NAMES_FONT_SIZE 0.034
 	{
-		//private _lineText = format ["[%1] %2 (%3)", count _y, _x, _y joinString ", " ];
 		_menu append [
 			["LABEL", format ["%1 чел. из", count _y], [["w", 0.12]]],
-			["LABEL", _x, [["color", OPTION_COLOR_GROUP]]],
+			["LABEL", _x, [["color", RGBA_COLOR_YELLOW]]],
 			["br"]
 		];
 
-		private _namesLine = format ["   %1", _y joinString ", "];
-
+		private _names = _y apply {
+			[
+				name _x,
+				format ["<t color='#8888ff'>%1</t>", name _x]
+			] select (_x getVariable [QEGVAR(Respawn,Scheduled), false])
+		};
+		private _namesLine = format ["   %1", _names joinString ", "];
+		
 		// More then 1 line - cut into 2 at char MAX_LINE_LENGTH
 		private ["_cutLineAtIndex", "_part1", "_part2"];
 		if (count _namesLine > MAX_LINE_LENGTH) then {
@@ -202,28 +237,33 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 					break;
 				};
 			};
-			
+
 			_part1 = _namesLine select [0, _cutLineAtIndex+1];
 			_part2 = _namesLine select [_cutLineAtIndex+2, count _namesLine];
 
-			_menu pushBack ["LABEL", _part1, [["color", OPTION_COLOR_RIGHT]]];
-			_menu pushBack ["BR"];
-			_menu pushBack [
-				"LABEL",  format ["   %1", _part2], [["color", OPTION_COLOR_RIGHT]]
+			_menu append [
+				["LABEL", _part1, [["color", RGBA_COLOR_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]],
+				["BR"],
+				["LABEL",  format ["   %1", _part2], [["color", RGBA_COLOR_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]],
+				["BR"]
 			];
-			_menu pushBack ["BR"];
 			continue;
 		};
 
-		_menu pushBack ["LABEL", _namesLine, [["color", OPTION_COLOR_RIGHT]]];
+		_menu pushBack ["LABEL", _namesLine, [["color", RGBA_COLOR_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]];
 		_menu pushBack ["BR"];
 	} forEach _groupsMap;
 
 	_menu
 };
 
-tSF_fnc_adminTools_ForceRespawn_scheduleRespawns = {
-	params ["_unitIdentifier", "_forcedLocation", "_timeout"];
+
+tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
+	params ["_who", "_where", "_when", "_mode"];
+
+	_who params ["", "_whoName", "_unitIdentifier"];
+	_where params ["", "_whereName", "_forcedLocation"];
+	_when params ["", "_whenName", "_timeout"];
 
 	private _unitsToRespawn = [];
 	if (_unitIdentifier isEqualType "") then {
@@ -239,21 +279,49 @@ tSF_fnc_adminTools_ForceRespawn_scheduleRespawns = {
 		};
 	};
 
-	{
-		ECOB(Core) call [
-			F(remoteExecComponent),
-			[Q(Respawn), F(scheduleRespawn), [_forcedLocation, _timeout], _x]
+	private _hintMsg = format [
+		"<t color='#eb4f34' size='1.2'>Возрождеие запланировано!</t><br/>
+		<t align='left' color='#adadad'>Кто</t><br/>
+		<t align='right'>%1</t><br/>
+		<t align='left' color='#adadad'>Где:</t><br/>
+		<t align='right'>%2</t><br/>
+		<t align='left' color='#adadad'>Когда</t><br/>
+		<t align='right'>%3</t><br/>",
+		_whoName,
+		_whereName,
+		_whenName
+	];
+	private _reParams = [
+		Q(Respawn),
+		F(scheduleRespawn),
+		[
+			[_forcedLocation, nil] select (_forcedLocation == ""),
+			_timeout
+		],
+		_unitsToRespawn
+	];
+
+	if (_mode == RESPAWN_MODE_CANCEL) then {
+		_hintMsg = format [
+			"<t color='#eb4f34' size='1.2'>Возрождеие отменено!</t><br/>
+			<t align='left' color='#adadad'>Для</t><br/>
+			<t align='right'>%1</t><br/>",
+			_whoName
 		];
-	} forEach _unitsToRespawn;
+		_reParams = [Q(Respawn), F(unscheduleRespawn), [], _unitsToRespawn]
+	};
+
+	ECOB(Core) call [F(remoteExecComponent), _reParams];
+	hint parseText _hintMsg;
 };
 
-tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {	
-	["GSO", "GSO", "Respawning in 5 seconds"] call tSF_fnc_adminTools_IM_Notify;
-	
+tSF_fnc_adminTools_ForceRespawn_RespawnPlayer = {
+	["GSO", "GSO", ["Respawning in 5 seconds"]] call tSF_fnc_adminTools_IM_Notify;
+
 	setPlayerRespawnTime 5;
 	sleep 7;
 	setPlayerRespawnTime 9999999;
-	
+
 	if (!isNil { player getVariable "dzn_gear" }) then {
 		[player, player getVariable "dzn_gear", false] spawn dzn_fnc_gear_assignKit;
 	};
@@ -274,51 +342,59 @@ tSF_fnc_adminTools_IM_composeGSOMenu = {
 	_groups sort true;
 	_groups = _groups apply {
 		[
-			_x, 
+			_x,
 			_x,
 			[
-				["color", OPTION_COLOR_GROUP],
+				["color", RGBA_COLOR_YELLOW],
 				["textRight", format ["%1 чел.", count (_groupsMap get _x)]],
-				["textRightColor", OPTION_COLOR_RIGHT]
+				["textRightColor", RGBA_COLOR_GRAY],
+				["tooltip", ((_groupsMap get _x) apply { name _x }) joinString ", "]
 			]
 		]
 	};
 
 	private _receivers = [
-		["Всем", IM_RECEIVERS_ALL, [["color", OPTION_COLOR_ALL]]], 
+		["Всем", IM_RECEIVERS_ALL, [["color", RGBA_COLOR_LIGHT_GREEN]]],
 		["Spectators", IM_RECEIVERS_DEAD, [
-			["color", OPTION_COLOR_SPECTATORS],
+			["color", RGBA_COLOR_LIGHT_RED],
 			["textRight", format ["%1 чел.", {!alive _x} count _players]],
-			["textRightColor", OPTION_COLOR_RIGHT]
+			["textRightColor", RGBA_COLOR_GRAY],
+			["tooltip", (_players select {!alive _x} apply { name _x }) joinString ", "]
 		]]
-	] 
+	]
 	+ _groups
-	+ (_players apply { 
+	+ (_players apply {
 		[
-			name _x, 
+			name _x,
 			_x,
 			[
 				["color", [1,1,1, [0.5, 1] select (alive _x)]],
 				["textRight",  (groupId group _x) + " "],
-				["textRightColor", OPTION_COLOR_RIGHT]
+				["textRightColor", RGBA_COLOR_GRAY],
+				["tooltip", ["Мертв",""] select (alive _x)]
 			]
-		] 
+		]
 	});
 
 	[
 		["br"],
-		["INPUT", "", [["tag", "chatMessageText"], ["h", 0.07]]],
+		["LABEL", "Введите сообщение (Shift + Enter для переноса строки)."],
 		["br"],
-		["DROPDOWN", _receivers, -1, [["tag", "chatReceiver"],["w", 0.5]]],
-		["LABEL", "", [["w", 0.25]]],
+		["INPUT_AREA", "", [["tag", "chatMessageText"], ["h", 0.15]]],
+		["br"],
+		["DROPDOWN", _receivers, -1, [["tag", "chatReceiver"],["w", 0.75],["h",0.06],["bg", [0,0,0,1]]]],
+		//["LABEL", "", [["w", 0.25]]],
 		["BUTTON", "Отправить", {
 			params ["_cob"];
-			private _message = _cob call ["GetValueByTag", "chatMessageText"];
-			private _receivers = (_cob call ["GetValueByTag", "chatReceiver"]) # 2;
+			private _message = (_cob call ["GetValueByTag", "chatMessageText"]) splitString toString[10];
+			private _receivers = _cob call ["GetValueByTag", "chatReceiver"];
 
-			[_message, _receivers] call tSF_fnc_adminTools_IM_sendByGSO;
-			closeDialog 2;
-		}, [], [["w", 0.25],["size",0.06]]]
+			if (_message isEqualTo []) exitWith {};
+
+			hint format ["Сообщение отправлено %1", _receivers # 1];
+			[_message, _receivers # 2] call tSF_fnc_adminTools_IM_sendByGSO;
+			_cob call ["Close"];
+		}, [], [["size",0.06]]]
 	]
 };
 
@@ -331,36 +407,23 @@ tSF_fnc_adminTools_IM_showMenu = {
  	[ 																]
  	[					][					][ Send Message			]
  	*/
-
 	[
-		[0,"HEADER","GSO Instant Messenger"]
-		, [1, "LABEL","Write your message to GSO (Admin)"]
-		, [2, "INPUT"]
-		, [3, "LABEL", ""]
-		, [4, "LABEL", ""]		
-		, [4, "LABEL", ""]		
-		, [4, "BUTTON", "SEND MESSAGE", {
-			closeDialog 2;
-			[
-				name player
-				, format ["%1 [<t color='#FFFFFF'>%2 -- %3</t>]", name player, groupId group player, roleDescription player]
-				, _this select 0 select 0
-			] remoteExec ["tSF_fnc_adminTools_IM_Notify", tSF_Admin];
-
-			if (player == tSF_Admin) exitWith {};
-			[name player, name tSF_admin, _this select 0 select 0] call tSF_fnc_adminTools_IM_SaveMsgToDiary;
-			/*
-			hintC format [
-				"%1 (%2 - %3): %4"
-				, name player
-				, groupId group player
-				, roleDescription player
-				, (_this select 0 select 0)
-			];
-			*/
-		}]
-
-	] call dzn_fnc_ShowAdvDialog;
+		["HEADER", "Мессенджер"],
+		["LABEL", "Напишите ваше сообщение для GSO (Админа)."],
+		["br"],
+		["INPUT_AREA", "", [["tag", "chatMessageText"], ["h", 0.2]]],
+		["br"],
+		["LABEL", "<t align='right'>* Shift + Enter для переноса строки.</t>"],
+		["br"],
+		/*["LABEL", "", [["w", 0.75]]],*/
+		["BUTTON", "<t align='center'>Отправить</t>", {
+			params ["_cob"];
+			private _message = (_cob call ["GetValueByTag", "chatMessageText"]) splitString toString[10];
+			if (_message isEqualTo []) exitWith {};
+			[_message] call tSF_fnc_adminTools_IM_sendByPlayer;
+			_cob call ["Close"];
+		}, [], [["size",0.1]]]
+	] call dzn_fnc_ShowAdvDialog2;
 };
 
 tSF_fnc_adminTools_IM_sendByGSO = {
@@ -376,33 +439,43 @@ tSF_fnc_adminTools_IM_sendByGSO = {
 				_receiverUnits = (call BIS_fnc_listPlayers) select { !alive _x };
 			};
 			default {
-				// By Group name 
+				// By Group name
 				_receiverUnits = (call BIS_fnc_listPlayers) select { groupId group _x == _receiverID };
 			};
 		};
 	};
 
-	{
-		["GSO", "GSO", _message] remoteExec ["tSF_fnc_adminTools_IM_Notify", _x];
-	} forEach _receiverUnits;
+	["GSO", "GSO", _message] remoteExec ["tSF_fnc_adminTools_IM_Notify", _receiverUnits];
+};
+
+tSF_fnc_adminTools_IM_sendByPlayer = {
+	params ["_message"];
+
+	[
+		name player
+		, format ["<t color='#FFFFFF'>%1 из %2 (%3)</t>", name player, groupId group player, roleDescription player]
+		, _message
+	] remoteExec ["tSF_fnc_adminTools_IM_Notify", tSF_Admin];
+
+	hint "Сообщение отправлено!";
+	if (player == tSF_Admin) exitWith {};
+	[name player, name tSF_admin, _message] call tSF_fnc_adminTools_IM_SaveMsgToDiary;
 };
 
 tSF_fnc_adminTools_IM_Notify = {
 	params ["_sender", "_title", "_text"];
 
-	private _drawText = _text;
-	if (["execute expression=", _text] call dzn_fnc_inString) then {
-		_drawText = "(Execute Expression attempt)" + _text;
+	private _content = [
+		format ["<t align='left' color='#FFD000'>Сообщение от %1</t>", _title]
+	] + _text apply {
+		format ["<t align='center'>%1</t>", _x]
 	};
-	
+
 	[
-		[
-			format ["<t color='#FFD000'>Сообщение от %1</t>", _title]
-			, format ["<t align='center'>%1</t>", _drawText]
-		]
+		_content
 		, "TOP"
 		, [0,0,0,.75]
-		, 30 
+		, 30
 	] call dzn_fnc_ShowMessage;
 
 	[_sender, name player, _text] call tSF_fnc_adminTools_IM_SaveMsgToDiary;
@@ -425,6 +498,7 @@ tSF_fnc_adminTools_IM_SaveMsgToDiary = {
 			For 10Dozne:	- "tSF Instant Messenger" -> GSO -> 10Dozen text
 	*/
 
+	_msg = _msg joinString "<br/>";
 	if (["execute expression=", _msg] call dzn_fnc_inString) then {
 		_msg = " -- Illegal hack was deteceted (execute expression=). Admin is reported about u, h4x0r --"
 	};

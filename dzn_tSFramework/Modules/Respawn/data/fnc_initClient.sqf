@@ -36,10 +36,6 @@ private _playerRespawnLocation = DEFAULT_LOCATION;
 _self set [Q(GroupName), _groupName];
 _self set [Q(RespawnLocation), _playerRespawnLocation];
 
-LOG_1("(initClient) GroupName = %1", _self get Q(GroupName));
-LOG_1("(initClient) RespawnLocation = %1", _self get Q(RespawnLocation));
-LOG_1("(initClient) ForcedRespawnLocation = %1", _self get Q(ForcedRespawnLocation));
-
 _self call [F(setDefaultEquipment)];
 _self call [F(setDefaultRating)];
 
@@ -51,5 +47,7 @@ player addEventHandler ["Respawn", {
 player addEventHandler ["Killed", {
 	[1, "BLACK", 5, 1] spawn BIS_fnc_fadeEffect;
 }];
+
+player setVariable [QGVAR(Scheduled), false];
 
 LOG("Client initialized");

@@ -64,7 +64,11 @@ if (hasInterface) then {
 
 		[] spawn tSF_Diag_AddDiagTopic;
 
-		[["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], [-20,-5,150,0.032], [0,0,0,.75], 30] call dzn_fnc_ShowMessage;
+		[
+			["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], 
+			[-20,-5,150,0.032], 
+			[0,0,0,.75], 30
+		] call dzn_fnc_ShowMessage;
 
 		// Start DynAI Control Panel
 		waitUntil { sleep 5; !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } };

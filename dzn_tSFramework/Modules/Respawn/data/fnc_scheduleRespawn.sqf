@@ -26,5 +26,7 @@ if (!isNil "_forcedLocation") then {
     _self set [Q(ForcedRespawnLocation), _forcedLocation];
 };
 
+player setVariable [QGVAR(Scheduled), true, true];
+
 _self call [F(showMessage), [MODE_BEFORE_RESPAWN_MSG, [_timeout]]];
 setPlayerRespawnTime _timeout;

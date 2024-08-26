@@ -16,6 +16,8 @@ private _declaration = [
     PREP_COMPONENT_FUNCTION(setDefaultRating),
 
     PREP_COMPONENT_FUNCTION(scheduleRespawn),
+    PREP_COMPONENT_FUNCTION(unscheduleRespawn),
+    
     PREP_COMPONENT_FUNCTION(onRespawn),
 
     PREP_COMPONENT_FUNCTION(showMessage),
