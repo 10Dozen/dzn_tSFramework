@@ -4,15 +4,6 @@
  *	F7 Force Respawn Menu
  */
 
-#define RGBA_COLOR_LIGHT_GREEN [0.78, 0.92, 0, 1]
-#define RGBA_COLOR_LIGHT_RED [0.92, 0.52, 0.52, 1]
-#define RGBA_COLOR_YELLOW [0.92, 0.81, 0, 1]
-#define RGBA_COLOR_GRAY [0.7,0.7,0.7,1]
-#define RGBA_COLOR_LIGHT_BLUE [0.6,0.6,0.9,1]
-#define RGBA_COLOR_BY_UI (["GUI", "BCG_RGB"] call BIS_fnc_displayColorGet)
-#define RGBA_COLOR_DIMMED_RED [0.4, 0.1, 0.1, 0.5]
-#define RGBA_COLOR_DIMMED_GREEN [0.1, 0.4, 0.1, 0.5]
-
 tSF_fnc_adminTools_getPlayersGroups = {
 	params ["_players"];
 
@@ -64,7 +55,7 @@ tSF_fnc_adminTools_ForceRespawn_composeDefaultRespawnMenu = {
 		_deadPlayersNamesStr = format ["%1...", _deadPlayersNamesStr select [0, 96]]
 	};
 	private _menu = [
-		["LABEL", "Управление Респаунами",[["bg",RGBA_COLOR_BY_UI]]],
+		["LABEL", "Управление Респаунами",[["bg",COLOR_RGBA_BY_UI]]],
 		["BR"],
 		["LABEL", format ["<t color='#FFD000'>Ожидают возрождения:</t> %1", count _deadPlayersNames]],
 		["BR"],
@@ -103,9 +94,9 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 			_x,
 			_x,
 			[
-				["color", RGBA_COLOR_YELLOW],
+				["color", COLOR_RGBA_YELLOW],
 				["textRight", format ["%1 чел.", count (_groupsMap get _x)]],
-				["textRightColor", RGBA_COLOR_GRAY]
+				["textRightColor", COLOR_RGBA_GRAY]
 			]
 		]
 	};
@@ -117,14 +108,14 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 			_x,
 			[
 				["textRight", groupId group _x],
-				["textRightColor", RGBA_COLOR_GRAY],
-				["color", [[1,1,1,1], RGBA_COLOR_LIGHT_BLUE] select _respawnScheduled]
+				["textRightColor", COLOR_RGBA_GRAY],
+				["color", [[1,1,1,1], COLOR_RGBA_LIGHT_BLUE] select _respawnScheduled]
 			]
 		]
 	};
 
 	private _whoOptions = [
-		["Всех", objNull, [["color", RGBA_COLOR_LIGHT_GREEN]]]
+		["Всех", objNull, [["color", COLOR_RGBA_LIGHT_GREEN]]]
 	] + _groupsOptions + _deadPlayersOptions;
 
 	// Where options
@@ -138,12 +129,12 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 
 	(_spawnLocations select 0 select 2) append [
 		["textRight", "Респаун по умолчанию"],
-		["textRightColor", RGBA_COLOR_GRAY]
+		["textRightColor", COLOR_RGBA_GRAY]
 	];
 
 	private _whereOptions = [
 		["Позиция согласно настройкам миссии", "", [
-			["color", RGBA_COLOR_LIGHT_GREEN],
+			["color", COLOR_RGBA_LIGHT_GREEN],
 			["tooltip", "В соответствии с конфигурацией респаунов для каждой группы, указанной в модуле"]
 		]]
 	] + _spawnLocations;
@@ -171,7 +162,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 	Razor 1`2 (Player4, Player5)
 	*/
 	private _menu = [
-		["LABEL", "Управление Респаунами", [["bg", RGBA_COLOR_BY_UI]]],
+		["LABEL", "Управление Респаунами", [["bg", COLOR_RGBA_BY_UI]]],
 		["BR"],
 		["DROPDOWN", _whoOptions, 0, [["w", 0.75],["tag","respawnWho"],["bg", [0,0,0,1]]]],
 		["BUTTON", "Возродить", {
@@ -203,7 +194,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 			"LABEL",
 			format ["Ожидают респауна: %1", count _deadPlayers],
 			[
-				["bg", [RGBA_COLOR_DIMMED_RED, RGBA_COLOR_DIMMED_GREEN] select (_deadPlayers isEqualTo [])]
+				["bg", [COLOR_RGBA_DIMMED_RED, COLOR_RGBA_DIMMED_GREEN] select (_deadPlayers isEqualTo [])]
 			]
 		],
 		["BR"]
@@ -215,7 +206,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 	{
 		_menu append [
 			["LABEL", format ["%1 чел. из", count _y], [["w", 0.12]]],
-			["LABEL", _x, [["color", RGBA_COLOR_YELLOW]]],
+			["LABEL", _x, [["color", COLOR_RGBA_YELLOW]]],
 			["br"]
 		];
 
@@ -242,15 +233,15 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 			_part2 = _namesLine select [_cutLineAtIndex+2, count _namesLine];
 
 			_menu append [
-				["LABEL", _part1, [["color", RGBA_COLOR_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]],
+				["LABEL", _part1, [["color", COLOR_RGBA_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]],
 				["BR"],
-				["LABEL",  format ["   %1", _part2], [["color", RGBA_COLOR_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]],
+				["LABEL",  format ["   %1", _part2], [["color", COLOR_RGBA_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]],
 				["BR"]
 			];
 			continue;
 		};
 
-		_menu pushBack ["LABEL", _namesLine, [["color", RGBA_COLOR_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]];
+		_menu pushBack ["LABEL", _namesLine, [["color", COLOR_RGBA_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]];
 		_menu pushBack ["BR"];
 	} forEach _groupsMap;
 
@@ -260,7 +251,6 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 
 tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 	params ["_who", "_where", "_when", "_mode"];
-
 	_who params ["", "_whoName", "_unitIdentifier"];
 	_where params ["", "_whereName", "_forcedLocation"];
 	_when params ["", "_whenName", "_timeout"];
@@ -280,13 +270,7 @@ tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 	};
 
 	private _hintMsg = format [
-		"<t color='#eb4f34' size='1.2'>Возрождеие запланировано!</t><br/>
-		<t align='left' color='#adadad'>Кто</t><br/>
-		<t align='right'>%1</t><br/>
-		<t align='left' color='#adadad'>Где:</t><br/>
-		<t align='right'>%2</t><br/>
-		<t align='left' color='#adadad'>Когда</t><br/>
-		<t align='right'>%3</t><br/>",
+		Q(TEMPLATE_RESPAWN_MENU_ON_SCHEDULED),
 		_whoName,
 		_whereName,
 		_whenName
@@ -345,20 +329,20 @@ tSF_fnc_adminTools_IM_composeGSOMenu = {
 			_x,
 			_x,
 			[
-				["color", RGBA_COLOR_YELLOW],
+				["color", COLOR_RGBA_YELLOW],
 				["textRight", format ["%1 чел.", count (_groupsMap get _x)]],
-				["textRightColor", RGBA_COLOR_GRAY],
+				["textRightColor", COLOR_RGBA_GRAY],
 				["tooltip", ((_groupsMap get _x) apply { name _x }) joinString ", "]
 			]
 		]
 	};
 
 	private _receivers = [
-		["Всем", IM_RECEIVERS_ALL, [["color", RGBA_COLOR_LIGHT_GREEN]]],
+		["Всем", IM_RECEIVERS_ALL, [["color", COLOR_RGBA_LIGHT_GREEN]]],
 		["Spectators", IM_RECEIVERS_DEAD, [
-			["color", RGBA_COLOR_LIGHT_RED],
+			["color", COLOR_RGBA_LIGHT_RED],
 			["textRight", format ["%1 чел.", {!alive _x} count _players]],
-			["textRightColor", RGBA_COLOR_GRAY],
+			["textRightColor", COLOR_RGBA_GRAY],
 			["tooltip", (_players select {!alive _x} apply { name _x }) joinString ", "]
 		]]
 	]
@@ -370,7 +354,7 @@ tSF_fnc_adminTools_IM_composeGSOMenu = {
 			[
 				["color", [1,1,1, [0.5, 1] select (alive _x)]],
 				["textRight",  (groupId group _x) + " "],
-				["textRightColor", RGBA_COLOR_GRAY],
+				["textRightColor", COLOR_RGBA_GRAY],
 				["tooltip", ["Мертв",""] select (alive _x)]
 			]
 		]
@@ -466,9 +450,9 @@ tSF_fnc_adminTools_IM_Notify = {
 	params ["_sender", "_title", "_text"];
 
 	private _content = [
-		format ["<t align='left' color='#FFD000'>Сообщение от %1</t>", _title]
+		format [Q(TEMPLATE_IM_MESSAGE_HEADER), _title]
 	] + _text apply {
-		format ["<t align='center'>%1</t>", _x]
+		format [Q(TEMPLATE_IM_MESSAGE_LINE), _x]
 	};
 
 	[

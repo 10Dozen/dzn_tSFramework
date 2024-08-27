@@ -12,54 +12,70 @@
 # Для всех засинхронизированных машин будет добавлено действие для создания экипажа, с настройками согласно
 # выбранному конфигу.
 
-# [ Управление экипажем                Х ]
-# [ Водитель                      [  +  ]]
-# [ *Стрелок                      [  -  ]]
-#
-#
-#
-#
-#
-
 Init:
     timeout: 3
     condition: { true }
 
 
+AddActions: true         # добавлять действия в меню действий машины
+AddACEActions: true      # добавлять действия в ACE меню взаимодействия с машиной
+
 
 Defaults:
     side: west
-    unit: "B_crew_F"
+    class: "B_crew_F"
     kit: ""
 
+SeatDriver:
+    seat: driver 
+    name: Водитель
 
 Configs:
-    Driver:
-        count: 1
+    Driver:   # имя конфига
+        # Список подстрок для проверки роли игрока - 
+        # только игроки с соответствующими ролями могут добавлять AI-экипаж
+        allowedForRoles:             
+           - Экипаж
+           - Crew
+        
+        # Общие настройки AI-экипажа, если не указаны, то используются значения из Defaults
+        side: "west"
+        class: "B_crew_F"
+        kit: "kit_driver"
+        
+        # Настройки слотов для AI-экипажа
         crew:
-            - seat: driver
+            - seat: driver      # имя слота/места: driver, gunner, commander или в формате [0], [0,1] (см. https://community.bistudio.com/wiki/allTurrets)
+              name: Водитель    # опциональное имя для меню, если не указано, то будет использовано имя слота
+              class: "B_crew_F"  # опционально, класс юнита (если не задан, то кит конфига)
+              kit: "kit_1"      # опционально, кит (если не задан, то кит конфига)
 
     CrewDriver:
-        count: 1
         crew:
-            - seat: driver
+            - *SeatDriver   # Можно использовать ссылку
 
     Helicopter Pilot:
-        count: 2
+        allowedForRoles: ["Pilot", "Пилот"]
         kit: "kit_west_pilot"
         crew:
             - seat: driver
+            - seat: gunner
 
     Helicopter Doorgunner:
-        count: 2
+        allowedForRoles: ["Pilot", "Пилот"]
         kit: "kit_west_doorgunner"
         crew:
-            - seat: [0]
-            - seat: [1]
+            - name: Бортстрелок (левая турель)
+              seat: [0,0]              
+            - name: Бортстрелок (правая турель)
+              seat: [1,0]
 
     Helicopter FFV:
-        count: 2
+        allowedForRoles: ["Pilot", "Пилот"]
         kit: "kit_west_mgunner_ffv"
         crew:
-            - seat: ffv_1
-            - seat: ffv_2
+            - name: Стрелок (левый борт)
+              seat: [2,0]
+            - name: Стрелок (правый борт)
+              seat: [2,1]
+
