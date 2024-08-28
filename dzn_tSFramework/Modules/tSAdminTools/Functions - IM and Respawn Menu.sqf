@@ -251,6 +251,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 
 tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 	params ["_who", "_where", "_when", "_mode"];
+
 	_who params ["", "_whoName", "_unitIdentifier"];
 	_where params ["", "_whereName", "_forcedLocation"];
 	_when params ["", "_whenName", "_timeout"];
@@ -284,7 +285,7 @@ tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 		],
 		_unitsToRespawn
 	];
-
+	
 	if (_mode == RESPAWN_MODE_CANCEL) then {
 		_hintMsg = format [
 			"<t color='#eb4f34' size='1.2'>Возрождеие отменено!</t><br/>

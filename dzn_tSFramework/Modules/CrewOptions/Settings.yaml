@@ -30,13 +30,16 @@ SeatDriver:
     seat: driver 
     name: Водитель
 
+
+# Driver 
+# HelicopterFull
 Configs:
     Driver:   # имя конфига
         # Список подстрок для проверки роли игрока - 
         # только игроки с соответствующими ролями могут добавлять AI-экипаж
         allowedForRoles:             
-           - Экипаж
-           - Crew
+            - Экипаж
+            - Crew
         
         # Общие настройки AI-экипажа, если не указаны, то используются значения из Defaults
         side: "west"

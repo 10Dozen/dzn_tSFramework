@@ -20,7 +20,7 @@ params ["_vehicle", "_seatCfg", ["_joinPlayer", false]];
 private _seat = _seatCfg get Q(seat);
 private _seatName = _seatCfg getOrDefault [Q(name), _seat];
 
-private _currentSeatUnit = _self call [F(getUnitOnSeat), [_vehicle, _seat]]
+private _currentSeatUnit = _self call [F(getUnitOnSeat), [_vehicle, _seat]];
 if (!isNull _currentSeatUnit) then {
 	if (alive _currentSeatUnit) exitWith {
 		hint format ["Место %1 уже занято!", _seatName];
@@ -35,14 +35,14 @@ private _configName = _vehicle getVariable GAMELOGIC_FLAG;
 private _unitSide = side player;
 private _unitClass = _seatCfg getOrDefault [
 	Q(class), 
-	SETTINGS(_self,Configs,_configName) getOrDefault [
+	SETTING_2(_self,Configs,_configName) getOrDefault [
 		Q(class), 
 		SETTING_2(_self,Defaults,class)
 	]
 ];
 private _unitKit = _seatCfg getOrDefault [
 	Q(kit), 
-	SETTINGS(_self,Configs,_configName) getOrDefault [
+	SETTING_2(_self,Configs,_configName) getOrDefault [
 		Q(kit), 
 		SETTING_2(_self,Defaults,kit)
 	]
@@ -68,4 +68,4 @@ _seatFncParams call _seatFnc;
 
 _unit setSkill 1;
 _unit setSkill ["courage", 1];
-_unit allowFleeing false;
+_unit allowFleeing 0;

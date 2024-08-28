@@ -21,8 +21,8 @@ params["_vehiclesMap"];
 #define Value(CFG,NAME) (CFG get Q(NAME))
 #define ValueOrDefault(CFG,NAME) (CFG getOrDefault [Q(NAME), SETTING_2(_self,Defaults,NAME)])
 
-private _addAction = SETTINGS(_self,AddActions);
-private _addAceAction = SETTINGS(_self,AddACEActions);
+private _addAction = SETTING(_self,AddActions);
+private _addAceAction = SETTING(_self,AddACEActions);
 
 {
     private _cfgName = _x;
@@ -40,7 +40,7 @@ private _addAceAction = SETTINGS(_self,AddACEActions);
                 false,
                 true,
                 "",
-                Q(ECOB(CrewOptions) call [F(actionCondition), [_target]]), // condition
+                [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
                 5   // radius
             ];
         };

@@ -1,11 +1,13 @@
 
+#define SQ(X) 'X'
+
 // HEX colors 
-#define COLOR_HEX_WHITE Q(#FFFFFF)
-#define COLOR_HEX_GOLD Q(#FFD000)
-#define COLOR_HEX_BRICK_RED Q(#eb4f34)
-#define COLOR_HEX_GRAY Q(adadad)
-#define COLOR_HEX_LIGHT_BLUE Q(#84b0f0)
-#define COLOR_HEX_LIGHT_GREEN Q(#acdb8b)
+#define COLOR_HEX_WHITE SQ(#FFFFFF)
+#define COLOR_HEX_GOLD SQ(#FFD000)
+#define COLOR_HEX_BRICK_RED SQ(#eb4f34)
+#define COLOR_HEX_GRAY SQ(#adadad)
+#define COLOR_HEX_LIGHT_BLUE SQ(#84b0f0)
+#define COLOR_HEX_LIGHT_GREEN SQ(#acdb8b)
 
 // RGBA colors 
 #define COLOR_RGBA_BY_UI (["GUI", "BCG_RGB"] call BIS_fnc_displayColorGet)
@@ -19,10 +21,10 @@
 
 
 // Font sizes 
-#define UI_SIZE_HINT_TITLE 1.2
+#define UI_SIZE_HINT_TITLE SQ(1.2)
 
 // Fonts 
-#define UI_FONT_MAIN Q(PuristaMedium)
+#define UI_FONT_MAIN SQ(PuristaMedium)
 
 // 
 
