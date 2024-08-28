@@ -23,24 +23,21 @@ private _vehiclesToHandle = createHashMap;
     _logicConfigName = _logic getVariable [GAMELOGIC_FLAG, ""];
     if (_logicConfigName == "") then { continue; };
 
-    
-    diag_log format ["_logicConfigName = %1", _logicConfigName];
     private _f = _logicConfigName in _configs;
-    diag_log format ["In configs? = %1", _f];
     if !(_logicConfigName in _configs) then {
         TSF_ERROR_1(TSF_ERROR_TYPE__NO_CONFIG, "Не найден конфиг '%1'", _logicConfigName);
-        
-        diag_log "Going to Continue...";
         continue;
     };
-    diag_log "Processing vehicles...";
 
     _vehicles = synchronizedObjects _logic;
     if (_vehicles isEqualTo []) then {
         TSF_ERROR_1(TSF_ERROR_TYPE__MISSING_ENTITY, "Не найдено объектов синхронизированных с GameLogic '%1', чтобы назначить конфиг", _logic);
         continue;
     };
-    diag_log "Mapping vehicles...";
+
+    {
+        _x allowCrewInImmobile [true, true];
+    } forEach _vehicles;
 
     _vehiclesInMap = _vehiclesToHandle getOrDefaultCall [_logicConfigName, { [] }, true];
     _vehiclesInMap append _vehicles;

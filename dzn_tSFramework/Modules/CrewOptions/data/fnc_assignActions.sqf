@@ -18,16 +18,16 @@
 
 params["_vehiclesMap"];
 
-#define Value(CFG,NAME) (CFG get Q(NAME))
-#define ValueOrDefault(CFG,NAME) (CFG getOrDefault [Q(NAME), SETTING_2(_self,Defaults,NAME)])
-
 private _addAction = SETTING(_self,AddActions);
 private _addAceAction = SETTING(_self,AddACEActions);
 
+private ["_cfgName", "_vehicles"];
 {
-    private _cfgName = _x;
-    _vehicle setVariable [GAMELOGIC_FLAG, _cfgName];
+    _cfgName = _x;
+    _vehicles = _y;
     {
+        _x setVariable [GAMELOGIC_FLAG, _cfgName];
+
         if (_addAction) then {
             _x addAction [
                 ACTION_TITLE,
@@ -41,13 +41,12 @@ private _addAceAction = SETTING(_self,AddACEActions);
                 true,
                 "",
                 [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
-                5   // radius
+                5   // radius, hope there won't be gigantic vehicles
             ];
         };
-
 
         if (_addAceAction) then {
             // TBD
         };
-    } forEach _y;
+    } forEach _vehicles;
 } forEach _vehiclesMap;

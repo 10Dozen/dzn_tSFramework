@@ -13,7 +13,6 @@
 
     _self call ["fnc_actionCondition", [_vehicle]];
 */
-[_vehicle, _seat, true]
 
 params ["_vehicle", "_seatCfg", ["_joinPlayer", false]];
 
@@ -47,12 +46,33 @@ private _unitKit = _seatCfg getOrDefault [
 		SETTING_2(_self,Defaults,kit)
 	]
 ];
-private _unitGroup = if (_joinPlayer) then {
-	group player
-} else {
-	createGroup _unitSide
-};
 
+/* -- Select group for unit:
+    1) Use player group if function params is set to True
+	2) Otherwise - check group related to vehicle 
+		2.1) If group doesn't exists - create new group
+		2.2) Otherwise - check existing group 
+			2.2.1) If group is not controlled by player (e.g. player joined and became a leader):
+                     - if some units are not in vehicle (disembarked), expel'em  to a new group
+*/   
+private _unitGroup = group player;
+if !(_joinPlayer) then {
+	_unitGroup = _vehicle getVariable [QGVAR(Group), grpNull];
+	if (isNull _unitGroup) then {
+		_unitGroup = createGroup _unitSide;
+		_vehicle setVariable [QGVAR(Group), _unitGroup, true];
+	} else {
+		if (!isPlayer (leader _unitGroup)) then {
+			private _expelGroup = nil;
+			{
+				if !(_x in _vehicle) then {
+					if (isNil "_expelGroup") then { _expelGroup = createGroup _unitSide; };
+					_x joinSilent _expelGroup;
+				};
+			} forEach (units _unitGroup);
+		};
+	};
+};
 
 private _unit = _unitGroup createUnit [_unitClass, getPosATL _vehicle, [], 0, "NONE"];
 [_unit, _unitKit] call dzn_fnc_gear_assignKit;
@@ -69,3 +89,9 @@ _seatFncParams call _seatFnc;
 _unit setSkill 1;
 _unit setSkill ["courage", 1];
 _unit allowFleeing 0;
+_unit disableAI "LIGHTS";
+_unit disableAI "AUTOTARGET";
+_unit disableAI "AUTOCOMBAT";
+_unit disableAI "CHECKVISIBLE";
+_unit disableAI "FSM";
+_unit disableAI "RADIOPROTOCOL";
