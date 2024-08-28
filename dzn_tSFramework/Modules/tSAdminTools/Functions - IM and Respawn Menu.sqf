@@ -23,7 +23,7 @@ tSF_fnc_adminTools_ForceRespawn_showMenu = {
 	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
 
 	private _menu = [
-		["HEADER", "GSO - Мессенджер / Респаун"]
+		["HEADER", Q(RESPAWN_MENU_TITLE)]
 	];
 
 	private _messengerMenu = [] call tSF_fnc_adminTools_IM_composeGSOMenu;
@@ -55,11 +55,11 @@ tSF_fnc_adminTools_ForceRespawn_composeDefaultRespawnMenu = {
 		_deadPlayersNamesStr = format ["%1...", _deadPlayersNamesStr select [0, 96]]
 	};
 	private _menu = [
-		["LABEL", "Управление Респаунами",[["bg",COLOR_RGBA_BY_UI]]],
+		["LABEL", Q(RESPAWN_MENU_SECTION_HEADER), [["bg",COLOR_RGBA_BY_UI]]],
 		["BR"],
-		["LABEL", format ["<t color='#FFD000'>Ожидают возрождения:</t> %1", count _deadPlayersNames]],
+		["LABEL", format [Q(RESPAWN_OLD_MENU_WAITING_FOR_RESPAWN_HEADER), count _deadPlayersNames]],
 		["BR"],
-		["LABEL", format ["<t size='0.85'>%1</t>", _deadPlayersNamesStr]],
+		["LABEL", format [Q(RESPAWN_OLD_MENU_WAITING_FOR_RESPAWN_PLAYER_LIST), _deadPlayersNamesStr]],
 		["BR"],
 		["LABEL", "", [["w",0.75]]],
 		["BUTTON", "Возродить всех", {
@@ -162,7 +162,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 	Razor 1`2 (Player4, Player5)
 	*/
 	private _menu = [
-		["LABEL", "Управление Респаунами", [["bg", COLOR_RGBA_BY_UI]]],
+		["LABEL", Q(RESPAWN_MENU_SECTION_HEADER), [["bg", COLOR_RGBA_BY_UI]]],
 		["BR"],
 		["DROPDOWN", _whoOptions, 0, [["w", 0.75],["tag","respawnWho"],["bg", [0,0,0,1]]]],
 		["BUTTON", "Возродить", {
@@ -192,7 +192,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 		["BR"],
 		[
 			"LABEL",
-			format ["Ожидают респауна: %1", count _deadPlayers],
+			format [Q(RESPAWN_MENU_WAITING_FOR_RESPAWN_HEADER), count _deadPlayers],
 			[
 				["bg", [COLOR_RGBA_DIMMED_RED, COLOR_RGBA_DIMMED_GREEN] select (_deadPlayers isEqualTo [])]
 			]
@@ -213,7 +213,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 		private _names = _y apply {
 			[
 				name _x,
-				format ["<t color='#8888ff'>%1</t>", name _x]
+				format ["<t color='%2'>%1</t>", name _x, COLOR_HEX_LIGHT_BLUE]
 			] select (_x getVariable [QEGVAR(Respawn,Scheduled), false])
 		};
 		private _namesLine = format ["   %1", _names joinString ", "];
@@ -271,7 +271,7 @@ tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 	};
 
 	private _hintMsg = format [
-		Q(TEMPLATE_RESPAWN_MENU_ON_SCHEDULED),
+		Q(HINT_RESPAWN_MENU_ON_SCHEDULED),
 		_whoName,
 		_whereName,
 		_whenName
@@ -288,9 +288,7 @@ tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 	
 	if (_mode == RESPAWN_MODE_CANCEL) then {
 		_hintMsg = format [
-			"<t color='#eb4f34' size='1.2'>Возрождеие отменено!</t><br/>
-			<t align='left' color='#adadad'>Для</t><br/>
-			<t align='right'>%1</t><br/>",
+			Q(HINT_RESPAWN_MENU_ON_UNSCHEDULED),
 			_whoName
 		];
 		_reParams = [Q(Respawn), F(unscheduleRespawn), [], _unitsToRespawn]
@@ -437,9 +435,15 @@ tSF_fnc_adminTools_IM_sendByPlayer = {
 	params ["_message"];
 
 	[
-		name player
-		, format ["<t color='#FFFFFF'>%1 из %2 (%3)</t>", name player, groupId group player, roleDescription player]
-		, _message
+		name player, 
+		format [
+			"<t color=%4>%1 из %2 (%3)</t>", 
+			name player, 
+			groupId group player, 
+			roleDescription player, 
+			COLOR_HEX_WHITE
+		], 
+		_message
 	] remoteExec ["tSF_fnc_adminTools_IM_Notify", tSF_Admin];
 
 	hint "Сообщение отправлено!";
@@ -489,12 +493,12 @@ tSF_fnc_adminTools_IM_SaveMsgToDiary = {
 	};
 
 	player createDiaryRecord [tSF_AdminTools_IM_Topic, [
-		_receiver
-		, format [
-			"<font color='#12C4FF' size='14'>%1 -- from %2:</font><br />%3"
-			, [] call BIS_fnc_timeToString
-			, _sender
-			, _msg
+		_receiver, 
+		format [
+			Q(NOTE_IM_LOG),
+			[] call BIS_fnc_timeToString,
+			_sender,
+			_msg
 		]
 	]];
 };
