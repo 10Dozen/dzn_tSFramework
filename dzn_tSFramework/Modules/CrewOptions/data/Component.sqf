@@ -16,11 +16,11 @@ private _declaration = [
     PREP_COMPONENT_FUNCTION(actionCondition),
 
     PREP_COMPONENT_FUNCTION(openCrewMenu),
-    PREP_COMPONENT_FUNCTION(AddCrew),
-    PREP_COMPONENT_FUNCTION(RemoveCrew),
+    PREP_COMPONENT_FUNCTION(addCrew),
+    PREP_COMPONENT_FUNCTION(removeCrew),
 
-    PREP_COMPONENT_FUNCTION(onEngineAction),
-    PREP_COMPONENT_FUNCTION(onLightsAction),
+    PREP_COMPONENT_FUNCTION(engineAction),
+    PREP_COMPONENT_FUNCTION(lightsAction),
 
     [Q(MoveToSeatFunctions), createHashMapFromArray [
         ["driver", { params ["_unit", "_vehicle"]; _unit moveInDriver _vehicle; _unit assignAsDriver _vehicle; }],

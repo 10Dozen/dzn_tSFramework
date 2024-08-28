@@ -11,7 +11,7 @@
     Returns:
         none
 
-    _statistics = _self call ["processLogics"]
+    _statistics = _self call ["fnc_processLogics"]
 */
 
 private _configs = SETTING(_self,Configs);
@@ -35,9 +35,7 @@ private _vehiclesToHandle = createHashMap;
         continue;
     };
 
-    {
-        _x allowCrewInImmobile [true, true];
-    } forEach _vehicles;
+    { _x allowCrewInImmobile [true, true]; } forEach _vehicles;
 
     _vehiclesInMap = _vehiclesToHandle getOrDefaultCall [_logicConfigName, { [] }, true];
     _vehiclesInMap append _vehicles;

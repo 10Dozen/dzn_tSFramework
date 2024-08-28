@@ -1,22 +1,22 @@
 #include "script_component.hpp"
 
-/* TBD
-    Checks that player is admin or have whitelisted role name to access 
-	crew menu for particular vehicle (and it's config).
+/*
+    Removes AI crew from the seat of the vehicle and deletes unit. 
+    Do not remove players.
 
     (_self)
 
     Params:
-        _vehicle (OBJECT) - vehicle to check against
+        _vehicle (OBJECT) - vehicle to check against.
+        _seatName (STRING) - name of the seat
     Returns:
         none
 
-    _self call ["fnc_actionCondition", [_vehicle]];
+    _self call ["fnc_removeCrew", [_vehicle, _seatName]];
 */
 
-params ["_vehicle", "_seatCfg"];
+params ["_vehicle", "_seatName"];
 
-private _seatName = _seatCfg get Q(seat);
 private _unit = _self call [F(getUnitOfSeat), [_vehicle, _seatName]];
 
 if (isNull _unit || { isPlayer _unit }) exitWith {};

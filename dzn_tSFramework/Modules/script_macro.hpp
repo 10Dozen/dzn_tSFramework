@@ -60,6 +60,7 @@
 #define TSF_ERROR_TYPE__MISCONFIGURED "Некорректная конфигурация"
 #define TSF_ERROR_TYPE__MISSING_ENTITY "Отстутсвует целевой объект"
 #define TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR "Не удалось распарсить файл настроек (Settings.yaml)"
+#define TSF_ERROR_TYPE__INVALID_ARG "Аргумент не корректен"
 
 
 // Credits: CBA Team (https://github.com/CBATeam/CBA_A3/blob/master/addons/main/script_macros_common.hpp)

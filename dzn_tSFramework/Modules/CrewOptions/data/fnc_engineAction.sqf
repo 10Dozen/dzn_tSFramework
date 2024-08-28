@@ -1,16 +1,16 @@
 #include "script_component.hpp"
 
 /*
-    TBD
+    Turns vehicle's engine off.
 
     (_self)
 
     Params:
-        _vehiclesMap (HASHMAP) - map of configs vs vehicles assigned with it.
+        _vehicle (OBJECT) - target vehicle.
     Returns:
         none
 
-    _self call ["fnc_assignActions", [_vehiclesMap]];
+    _self call ["fnc_engineAction", [_vehicle]];
 */
 
 params ["_vehicle"];

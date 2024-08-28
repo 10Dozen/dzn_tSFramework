@@ -1,16 +1,19 @@
 #include "script_component.hpp"
 
 /*
-    TBD
+    Turns vehicle's headlights and collision light in cycle:
+     - OFF / OFF 
+     - OFF / ON (collision only)
+     - ON / ON
 
     (_self)
 
     Params:
-        _vehiclesMap (HASHMAP) - map of configs vs vehicles assigned with it.
+        _vehicle (OBJECT) - target vehicle.
     Returns:
         none
 
-    _self call ["fnc_assignActions", [_vehiclesMap]];
+    _self call ["fnc_lightAction", [_vehicle]];
 */
 
 params ["_vehicle"];

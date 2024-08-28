@@ -3,6 +3,11 @@
 
 /*
     Opens Crew menu for given vehicle.
+	[ Title                             X ]
+	[ Slotname 1              [ + ] [ ++ ]]
+	[ Slotname 2                     [ - ]]
+	[                                     ]
+	[                          [ Close   ]]
 
     (_self)
 
@@ -11,12 +16,22 @@
     Returns:
         none
 
-    _self call ["fnc_actionCondition", [_vehicle]];
+    _self call ["fnc_openCrewMenu", [_vehicle]];
 */
 
-params["_vehicle"];
+params ["_vehicle"];
 
-private _cfg = SETTING_OR_DEFAULT_3(_self,Configs,_vehicle getVariable GAMELOGIC_FLAG);
+private _configName = _vehicle getVariable GAMELOGIC_FLAG;
+if (isNil "_configName") exitWith {
+	TSF_ERROR_1(TSF_ERROR_TYPE__NO_CONFIG, "(AddCrew) У машины %1 не задан конфиг опций экипажа", _vehicle);
+	objNull
+};
+if !(_configName in SETTING(_self,Configs)) exitWith {
+	TSF_ERROR_2(TSF_ERROR_TYPE__NO_CONFIG, "(AddCrew) Конфиг опций экипажа %1 для машины %2 не найден в настройках модуля", _configName, _vehicle);
+	objNull
+};
+
+private _cfg = SETTING_OR_DEFAULT_3(_self,Configs,_configName);
 
 private _slotsControls = [];
 private _seats = _cfg get Q(crew);
@@ -60,9 +75,9 @@ private _seats = _cfg get Q(crew);
 	_slotsControls append [
 		["BUTTON", "-", {
 			params ["","_args"];
-			_args params ["_crewOptionsCOB", "_vehicle", "_seat"];
-			_crewOptionsCOB call [F(RemoveCrew), [_vehicle, _seat, true]];
-		}, [_self, _vehicle, _seat], [
+			_args params ["_crewOptionsCOB", "_vehicle", "_seatName"];
+			_crewOptionsCOB call [F(RemoveCrew), [_vehicle, _seatName, true]];
+		}, [_self, _vehicle, _seatName], [
 			["w", 0.25],
 			["tooltip","Удалить AI-юнита на выбранном месте."],
 			["enabled", !(isPlayer _seatCurrentUnit)]

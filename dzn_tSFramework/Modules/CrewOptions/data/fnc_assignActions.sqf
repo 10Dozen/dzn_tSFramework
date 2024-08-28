@@ -1,6 +1,12 @@
 #include "script_component.hpp"
 
-#define ACTION_TITLE Q(<t color=COLOR_HEX_LIGHT_BLUE>Экипаж</t>)
+#define ACTION_TITLE_MENU Q(<t color=COLOR_HEX_LIGHT_BLUE>Экипаж</t>)
+#define ACTION_TITLE_ENGINE Q(<t color=COLOR_HEX_LIGHT_BLUE>Выключить двигатель</t>)
+#define ACTION_TITLE_LIGHTS Q(<t color=COLOR_HEX_LIGHT_BLUE>Фары/габаритные огни</t>)
+
+#define ACE_ACTION_TITLE_MENU Q(Экипаж)
+#define ACE_ACTION_TITLE_ENGINE Q(Выключить двигатель)
+#define ACE_ACTION_TITLE_LIGHTS Q(Фары/габаритные огни)
 
 /*
     Assigns actions to given vehicle, based on given radio config. If some config
@@ -9,7 +15,7 @@
     (_self)
 
     Params:
-        _vehiclesMap (HASHMAP) - map of configs vs vehicles assigned with it.
+        _vehiclesMap (HASHMAP) - map of configs vs vehicles assigned to it.
     Returns:
         none
 
@@ -21,22 +27,56 @@ params["_vehiclesMap"];
 private _addAction = SETTING(_self,AddActions);
 private _addAceAction = SETTING(_self,AddACEActions);
 
-private ["_cfgName", "_vehicles"];
+private ["_cfgName", "_vehicles", "_vehicle"];
 {
     _cfgName = _x;
     _vehicles = _y;
     {
-        _x setVariable [GAMELOGIC_FLAG, _cfgName];
+        _vehicle = _x;
+        _vehicle setVariable [GAMELOGIC_FLAG, _cfgName];
 
         if (_addAction) then {
-            _x addAction [
-                ACTION_TITLE,
+            // Menu action 
+            _vehicle addAction [
+                ACTION_TITLE_MENU,
                 {
                     params ["_target", "_caller", "_actionId", "_arguments"];
                     ECOB(CrewOptions) call [F(openCrewMenu), [_target]];
                 },
                 [],
-                6,
+                6, // priority
+                false,
+                true,
+                "",
+                [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
+                5   // radius, hope there won't be gigantic vehicles
+            ];
+
+            // Engine action 
+            _vehicle addAction [
+                ACTION_TITLE_ENGINE,
+                {
+                    params ["_target", "_caller", "_actionId", "_arguments"];
+                    ECOB(CrewOptions) call [F(engineAction), [_target]];
+                },
+                [],
+                1.5,
+                false,
+                true,
+                "",
+                [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
+                5   // radius, hope there won't be gigantic vehicles
+            ];
+
+            // Light action 
+            _vehicle addAction [
+                ACTION_TITLE_LIGHTS,
+                {
+                    params ["_target", "_caller", "_actionId", "_arguments"];
+                    ECOB(CrewOptions) call [F(lightsAction), [_target]];
+                },
+                [],
+                1.5,
                 false,
                 true,
                 "",
@@ -47,6 +87,45 @@ private ["_cfgName", "_vehicles"];
 
         if (_addAceAction) then {
             // TBD
+            private _actionMenu = [
+                "Menu",
+                ACE_ACTION_TITLE_MENU,"",
+                { ECOB(CrewOptions) call [F(openCrewMenu), [_target]]; },
+                { ECOB(CrewOptions) call [F(actionCondition), [_target]] },
+                {},
+                [parameters], 
+                [0,0,0],
+                5,
+                [false, true, false, false, true]
+            ] call ace_interact_menu_fnc_createAction;
+
+            private _actionEngine = [
+                "EngineOff",
+                ACE_ACTION_TITLE_ENGINE,"",
+                { ECOB(CrewOptions) call [F(engineAction), [_target]]; },
+                { ECOB(CrewOptions) call [F(actionCondition), [_target]] },
+                {},
+                [], 
+                [0,0,0],
+                5,
+                [false, true, false, false, true]
+            ] call ace_interact_menu_fnc_createAction;
+
+            private _actionLights = [
+                "LightsCycle",
+                ACE_ACTION_TITLE_LIGHTS,"",
+                { ECOB(CrewOptions) call [F(lightsAction), [_target]]; },
+                { ECOB(CrewOptions) call [F(actionCondition), [_target]] },
+                {},
+                [], 
+                [0,0,0],
+                5,
+                [false, true, false, false, true]
+            ] call ace_interact_menu_fnc_createAction;
+
+            {
+                [_vehicle, 0, [], _x] call ace_interact_menu_fnc_addActionToObject;
+            } forEach [_actionMenu, _actionEngine, _actionLights];
         };
     } forEach _vehicles;
 } forEach _vehiclesMap;

@@ -1,18 +1,18 @@
 #include "script_component.hpp"
 
 
-/*   TBD
-    Assigns actions to given vehicle, based on given radio config. If some config
-    values are missing - settings from Defaults section will be used instead.
+/*
+    Returns unit at given seat of the vehicle.
 
     (_self)
 
     Params:
-        _vehiclesMap (HASHMAP) - map of configs vs vehicles assigned with it.
+        _vehicle (OBJECT) - target vehicle.
+        _seat (STRING or ARRAY) - seat identifier (e.g. 'driver' or [0,0] turret path)
     Returns:
-        none
+        _unit (OBJECT) - unit that occupies the seat, or objNull
 
-    _self call ["fnc_assignActions", [_vehiclesMap]];
+    _unit = _self call ["fnc_getUnitOnSeat", [_vehicle, _seat]];
 */
 
 params ["_vehicle", "_seat"];
@@ -26,7 +26,7 @@ if (_seat isEqualType []) then {
 private _seatFnc = _self get Q(GetSeatUnitFunctions) get _seatFncName;
 
 if (isNil "_seatFnc") exitWith { 
-    LOG_1("There is no valid function to define unit of the seat '%1'", _seat);
+    TSF_ERROR_1(TSF_ERROR_TYPE__INVALID_ARG, "There is no valid function to define unit of the seat '%1'", _seat);
     objNull
 };
 

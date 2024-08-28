@@ -10,7 +10,7 @@
 
 __CLIENT_ONLY__
 __EXIT_ON_SETTINGS_PARSE_ERROR__
-
+/*
 [
     {
         time > SETTING_2(_this,Init,timeout) &&
@@ -22,3 +22,4 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
     }
     , _self
 ] call CBA_fnc_waitUntilAndExecute;
+*/
