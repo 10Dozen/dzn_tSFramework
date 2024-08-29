@@ -35,7 +35,10 @@ private _vehiclesToHandle = createHashMap;
         continue;
     };
 
-    { _x allowCrewInImmobile [true, true]; } forEach _vehicles;
+    { 
+        _x disableAI "LIGHTS";
+        _x allowCrewInImmobile [true, true]; 
+    } forEach _vehicles;
 
     _vehiclesInMap = _vehiclesToHandle getOrDefaultCall [_logicConfigName, { [] }, true];
     _vehiclesInMap append _vehicles;

@@ -18,10 +18,13 @@
 
 params["_vehicle"];
 
-if (player == tSF_Admin) exitWith { true };
+private _isInVehicle = player in _vehicle;
 
-private _cfg = SETTING_OR_DEFAULT_3(_self,Configs,_vehicle getVariable GAMELOGIC_FLAG,Q(allowedForRoles));
+if (_isInVehicle && player == tSF_Admin) exitWith { true };
+
+private _cfgName = _vehicle getVariable GAMELOGIC_FLAG;
+private _cfg = SETTING(_self,Configs) get _cfgName get Q(allowedForRoles);
 private _playerRole = roleDescription player;
 
 // At least 1 match for player role
-(_cfg findIf { [_x, _playerRole, false] call BIS_fnc_inString }) > -1
+_isInVehicle && (_cfg findIf { [_x, _playerRole, false] call BIS_fnc_inString }) > -1

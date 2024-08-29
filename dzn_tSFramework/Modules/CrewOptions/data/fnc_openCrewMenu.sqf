@@ -31,12 +31,14 @@ if !(_configName in SETTING(_self,Configs)) exitWith {
 	objNull
 };
 
-private _cfg = SETTING_OR_DEFAULT_3(_self,Configs,_configName);
+private _cfg = SETTING(_self,Configs) get _configName;
+LOG_1("CFG: %1", _cfg);
 
 private _slotsControls = [];
 private _seats = _cfg get Q(crew);
 
 {
+	private _seatCfg = _x;
 	private _seat = _x get Q(seat);
 	private _seatName = _x getOrDefault [Q(name), _seat];
 	private _seatCurrentUnit = _self call [F(getUnitOnSeat), [_vehicle, _seat]];
@@ -47,7 +49,7 @@ private _seats = _cfg get Q(crew);
 		format [
 			"<t color='%1'>%2</t>",
 			[
-				[COLOR_HEX_LIGHT_GREEN, COLOR_HEX_GRAY] select (isPlayer _seatCurrentUnit),
+				[COLOR_HEX_LIGHT_GREEN, COLOR_HEX_DARK_GRAY] select (isPlayer _seatCurrentUnit),
 				COLOR_HEX_WHITE
 			] select (isNull _seatCurrentUnit),
 			_seatName
@@ -57,29 +59,35 @@ private _seats = _cfg get Q(crew);
 	// Added Add or Remove actions
 	if (isNull _seatCurrentUnit) then {
 		_slotsControls append [
-			["BUTTON", "+", {
-				params ["","_args"];
+			["BUTTON", "<t align='center'>+</t>", {
+				params ["_cob","_args"];
 				_args params ["_crewOptionsCOB", "_vehicle", "_seat"];
-				_crewOptionsCOB call [F(AddCrew), [_vehicle, _seat, false]];
-			}, [_self, _vehicle, _seat], [["w", 0.25],["tooltip","Добавить AI-юнита на место в экипаже"]]],
-			["BUTTON", "++", {
-				params ["","_args"];
+				_crewOptionsCOB call [F(addCrew), [_vehicle, _seat, false]];
+				_cob call ["Close"];
+			}, [_self, _vehicle, _seatCfg], [["w", 0.25],["tooltip","Добавить AI-юнита на место в экипаже"]]],
+			["BUTTON", "<t align='center'>++</t>", {
+				params ["_cob","_args"];
 				_args params ["_crewOptionsCOB", "_vehicle", "_seat"];
-				_crewOptionsCOB call [F(AddCrew), [_vehicle, _seat, true]];
-			}, [_self, _vehicle, _seat], [["w", 0.25],["tooltip","Добавить AI-юнита на место в экипаже и присоединить к группе"]]],
+				_crewOptionsCOB call [F(addCrew), [_vehicle, _seat, true]];
+				_cob call ["Close"];
+			}, [_self, _vehicle, _seatCfg], [["w", 0.25],["tooltip","Добавить AI-юнита на место в экипаже и присоединить к группе"]]],
 			["BR"]
 		];
 		continue;
 	};
 
 	_slotsControls append [
-		["BUTTON", "-", {
-			params ["","_args"];
-			_args params ["_crewOptionsCOB", "_vehicle", "_seatName"];
-			_crewOptionsCOB call [F(RemoveCrew), [_vehicle, _seatName, true]];
-		}, [_self, _vehicle, _seatName], [
+		["BUTTON", "<t align='center'>—</t>", {
+			params ["_cob","_args"];
+			_args params ["_crewOptionsCOB", "_vehicle", "_seat"];
+			_crewOptionsCOB call [F(removeCrew), [_vehicle, _seat]];
+			_cob call ["Close"];
+		}, [_self, _vehicle, _seatCfg], [
 			["w", 0.25],
-			["tooltip","Удалить AI-юнита на выбранном месте."],
+			[
+				"tooltip", 
+				["Удалить AI-юнита на выбранном месте.", "Слот занят игроком"] select (isPlayer _seatCurrentUnit)
+			],
 			["enabled", !(isPlayer _seatCurrentUnit)]
 		]],
 		["BR"]
@@ -90,11 +98,13 @@ private _seats = _cfg get Q(crew);
 
 private _menu = [
 	["HEADER", "Управление экипажем"],
-	["LABEL"],
+	["LABEL", "Добавляйте или удаляйте AI-экипаж:"],
 	["BR"]
 ];
 _menu append _slotsControls;
 _menu append [
+	["BR"],
+	["LABEL"],
 	["BR"],
 	["LABEL", "", [["w", 0.6]]], 
 	["BUTTON", "Закрыть", { params ["_cob"]; _cob call ["Close"]; }]

@@ -37,5 +37,12 @@ if (!_headlight && !_collision) then {
     };
 };
 
+[_vehicle, "LIGHTS"] remoteExec ["disableAI", _vehicle]; 
 [_vehicle, _headlight] remoteExec ["setPilotLight", _vehicle];
 [_vehicle, _collision] remoteExec ["setCollisionLight", _vehicle];
+
+hintSilent parseText format [
+    Q(CREW_OPTIONS_HINT_LIGHTS),
+    ["Выкл.", "Вкл."] select _collision,
+    ["Выкл.", "Вкл."] select _headlight
+];

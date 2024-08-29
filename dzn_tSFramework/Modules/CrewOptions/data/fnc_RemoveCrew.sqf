@@ -8,18 +8,28 @@
 
     Params:
         _vehicle (OBJECT) - vehicle to check against.
-        _seatName (STRING) - name of the seat
+        _seatCfg (HASHMAP) - seat configuration
     Returns:
         none
 
-    _self call ["fnc_removeCrew", [_vehicle, _seatName]];
+    _self call ["fnc_removeCrew", [_vehicle, _seat]];
 */
 
-params ["_vehicle", "_seatName"];
+params ["_vehicle", "_seatCfg"];
 
-private _unit = _self call [F(getUnitOfSeat), [_vehicle, _seatName]];
+LOG_1("(removeCrew) Params: %1", _this);
 
-if (isNull _unit || { isPlayer _unit }) exitWith {};
+private _unit = _self call [F(getUnitOnSeat), [_vehicle, _seatCfg get Q(seat)]];
+
+LOG_1("(removeCrew) _unit=%1", _unit);
+if (isNull _unit || { isPlayer _unit }) exitWith { LOG_1("(removeCrew) _unit is null or player", _unit); };
 
 moveOut _unit;
 deleteVehicle _unit;
+
+LOG_1("(removeCrew) _unit moved out", _unit);
+
+hintSilent parseText format [
+    Q(CREW_OPTIONS_HINT_MEMBER_REMOVED),
+    _seatCfg get Q(name)
+];

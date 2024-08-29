@@ -23,7 +23,7 @@
 	<t align=right>%3</t><br/>
 
 #define HINT_RESPAWN_MENU_ON_UNSCHEDULED \
-    <t color=COLOR_HEX_BRICK_RED size=UI_FONT_SIZE_L>Возрождеие отменено!</t><br/>
-	<t align='left' color=COLOR_HEX_GRAY>Для</t><br/>
+    <t color=COLOR_HEX_BRICK_RED size=UI_FONT_SIZE_L>Возрождеие отменено!</t><br/>\
+	<t align='left' color=COLOR_HEX_GRAY>Для</t><br/>\
 	<t align='right'>%1</t>
 

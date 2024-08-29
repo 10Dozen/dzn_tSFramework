@@ -15,6 +15,7 @@ private _declaration = [
     PREP_COMPONENT_FUNCTION(assignActions),
     PREP_COMPONENT_FUNCTION(actionCondition),
 
+    PREP_COMPONENT_FUNCTION(getUnitOnSeat),
     PREP_COMPONENT_FUNCTION(openCrewMenu),
     PREP_COMPONENT_FUNCTION(addCrew),
     PREP_COMPONENT_FUNCTION(removeCrew),
