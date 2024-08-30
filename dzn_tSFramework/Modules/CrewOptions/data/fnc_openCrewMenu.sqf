@@ -32,7 +32,6 @@ if !(_configName in SETTING(_self,Configs)) exitWith {
 };
 
 private _cfg = SETTING(_self,Configs) get _configName;
-LOG_1("CFG: %1", _cfg);
 
 private _slotsControls = [];
 private _seats = _cfg get Q(crew);
@@ -94,10 +93,16 @@ private _isMultislotMenu = (count _seats) > 1;
     _slotsControls append [
         ["BUTTON", "<t align='center'>—</t>", {
             params ["_cob","_args"];
-            _args params ["_crewOptionsCOB", "_vehicle", "_seat"];
+            _args params ["_crewOptionsCOB", "_vehicle", "_seat", "_isMultislotMenu"];
             _crewOptionsCOB call [F(removeCrew), [_vehicle, _seat]];
             _cob call ["Close"];
-        }, [_self, _vehicle, _seatCfg], [
+            // Re-open menu if there are several slots available
+            if (_isMultislotMenu) then {
+                [{
+                    (_this # 0) call [F(openCrewMenu), [_this # 1]]
+                }, [_crewOptionsCOB, _vehicle]] call CBA_fnc_execNextFrame;
+            };
+        }, [_self, _vehicle, _seatCfg, _isMultislotMenu], [
             ["w", 0.25],
             [
                 "tooltip",
@@ -107,8 +112,9 @@ private _isMultislotMenu = (count _seats) > 1;
         ]],
         ["BR"]
     ];
-} forEach _seats;
 
+    
+} forEach _seats;
 
 
 private _menu = [
@@ -117,11 +123,23 @@ private _menu = [
     ["BR"]
 ];
 _menu append _slotsControls;
+
 _menu append [
     ["BR"],
     ["LABEL"],
     ["BR"],
-    ["LABEL", "", [["w", 0.6]]],
+    ["BUTTON", "Очистить", {
+        params ["_cob","_args"];
+        _args params ["_crewOptionsCOB", "_vehicle", "_seats"];
+        {
+            _crewOptionsCOB call [F(removeCrew), [_vehicle, _x]];
+        } forEach _seats;
+        _cob call ["Close"];
+        [{
+            (_this # 0) call [F(openCrewMenu), [_this # 1]]
+        }, [_crewOptionsCOB, _vehicle]] call CBA_fnc_execNextFrame;
+    }, [_self, _vehicle, _seats], [["w", 0.25]]],
+    ["LABEL","",[["w",0.5]]],
     ["BUTTON", "Закрыть", { params ["_cob"]; _cob call ["Close"]; }]
 ];
 

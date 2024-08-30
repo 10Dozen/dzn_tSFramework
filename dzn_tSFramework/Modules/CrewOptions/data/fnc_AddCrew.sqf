@@ -19,8 +19,6 @@
 
 params ["_vehicle", "_seatCfg", ["_joinPlayer", false]];
 
-LOG_1("(addCrew) Params: %1", _this);
-
 private _configName = _vehicle getVariable GAMELOGIC_FLAG;
 if (isNil "_configName") exitWith {
     TSF_ERROR_1(TSF_ERROR_TYPE__NO_CONFIG, "(AddCrew) У машины %1 не задан конфиг опций экипажа", _vehicle);
@@ -31,18 +29,9 @@ if !(_configName in SETTING(_self,Configs)) exitWith {
     objNull
 };
 
-
-LOG_1("(addCrew) ConfigName=%1", _configName);
-
 private _seat = _seatCfg get Q(seat);
 private _seatName = _seatCfg getOrDefault [Q(name), _seat];
-
-LOG_1("(addCrew) _seatName=%1", _seatName);
-LOG_1("(addCrew) _seat=%1", _seat);
-
 private _currentSeatUnit = _self call [F(getUnitOnSeat), [_vehicle, _seat]];
-
-LOG_1("(addCrew) _currentSeatUnit=%1", _currentSeatUnit);
 
 if (!isNull _currentSeatUnit) then {
     if (alive _currentSeatUnit) exitWith {
@@ -50,8 +39,6 @@ if (!isNull _currentSeatUnit) then {
     };
     // Remove dead unit from vehicle
     moveOut _currentSeatUnit;
-
-    LOG_1("(addCrew) Removed dead unit form vehicle =%1", _currentSeatUnit);
 };
 
 // --- Creating new unit
@@ -63,7 +50,7 @@ private _unitClass = _seatCfg getOrDefault [
     Q(class),
     _vehicleCfg getOrDefault [
         Q(class),
-        SETTING(_self,Defaults) getOrDefaults [
+        SETTING(_self,Defaults) getOrDefault [
             Q(class),
             switch _unitSide do {
                 case west: { "B_crew_F" };
@@ -79,7 +66,7 @@ private _unitKit = _seatCfg getOrDefault [
     Q(kit),
     _vehicleCfg getOrDefault [
         Q(kit),
-        SETTING(_self,Defaults) getOrDefaults [Q(kit), ""]
+        SETTING(_self,Defaults) getOrDefault [Q(kit), ""]
     ]
 ];
 
@@ -87,7 +74,7 @@ private _combatAllowed = _seatCfg getOrDefault [
     Q(allowCombat),
     _vehicleCfg getOrDefault [
         Q(allowCombat),
-        SETTING(_self,Defaults) getOrDefaults [Q(allowCombat), false]
+        SETTING(_self,Defaults) getOrDefault [Q(allowCombat), false]
     ]
 ];
 
@@ -100,8 +87,6 @@ if !(_joinPlayer) then {
     };
 };
 
-LOG_4("(addCrew) Creating new unit: _side=%1, _unitClass=%2, _unitKit=%3, _unitGroup=%4", _unitSide, _unitClass, _unitKit, _unitGroup);
-
 private _unit = _unitGroup createUnit [_unitClass, getPosATL _vehicle, [], 0, "NONE"];
 if (_unitKit != "") then { [_unit, _unitKit] call dzn_fnc_gear_assignKit; };
 
@@ -112,8 +97,6 @@ if (_seat isEqualType []) then {
     _seatFncParams pushBack _seat;
 };
 private _seatFnc = _self get Q(MoveToSeatFunctions) get _seatFncName;
-
-LOG_3("(addCrew) Assigning unit: _seatFncName=%1, _seatFncParams=%2, _seatFnc=%3", _seatFncName, _seatFncParams, _seatFnc);
 
 _seatFncParams call _seatFnc;
 
@@ -129,6 +112,12 @@ if (!_combatAllowed) then {
     _unit disableAI "AUTOCOMBAT";
     _unit disableAI "CHECKVISIBLE";
     _unit disableAI "FSM";
+    
+};
+
+if (_unitGroup != group player) then {
+    _unitGroup setCombatMode (["GREEN", "RED"] select _combatAllowed);
+    _unitGroup setBehaviour (["AWARE", "COMBAT"] select _combatAllowed);
 };
 
 hintSilent parseText format [

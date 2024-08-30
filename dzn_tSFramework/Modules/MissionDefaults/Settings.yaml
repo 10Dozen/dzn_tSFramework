@@ -27,17 +27,6 @@ DisableOnStart:
     showOrbat: true  # показывать состав отряда вместе со счетчиком
 
 
-Equipment:
-    EarplugAutoUse: true  # автоматически втыкает беруши
-    PutWeaponOnSafe: true  # ставит оружие на предохранитель
-
-
-# больший рейтинг позволяет совершать больше убийств союзников без последствий
-PlayerRating:
-    enable: true
-    rating: 25
-
-
 # калькулятор через чат-команду "#calc 12+2"
 Calculator:
     enable: true

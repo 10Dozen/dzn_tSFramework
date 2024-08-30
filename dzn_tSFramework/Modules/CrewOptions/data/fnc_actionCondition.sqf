@@ -24,4 +24,4 @@ if (!_isInVehicle) exitWith { false };
 
 private _driver = _self call [F(getUnitOnSeat), [_vehicle, "driver"]];
 
-!(isNull _driver) || (alive _driver) || !(isPlayer _driver)
+!(isNull _driver) && (alive _driver) && !(isPlayer _driver)

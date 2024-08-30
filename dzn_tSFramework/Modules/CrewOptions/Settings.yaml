@@ -38,7 +38,7 @@ Configs:
         #    только игроки с соответствующими ролями могут добавлять AI-экипаж
         #    Например, игрок с ролью "1`5 Экипаж" будет иметь доступ. 
         #    По умолчанию равен [""] - т.е. будет доступно всем ролям.
-        # allowedForRoles: ["Экипаж", "Crew"]
+        allowedForRoles: ["Экипаж", "Crew"]
         
         # -- Опционально, Общие настройки AI-экипажа, если не указаны, то используются значения из Defaults
         # class: "B_rifleman_F"  
@@ -52,6 +52,7 @@ Configs:
               # kit: ""             # опционально, кит (если не задан, то кит конфига, если "" - не применяет кит)
               # allowCombat: false  # отключает боту возможность автоматически выбирать цель и атаковать
 
+
     # -- Пример с переиспользованием слота определенного в корне документа
     # CrewDriver:
     #     allowedForRoles: ["Экипаж", "Crew"]
@@ -59,26 +60,26 @@ Configs:
     #     crew:
     #         - *SeatDriver   # Можно использовать ссылку
 
-    HelicopterFull:
-        allowedForRoles: ["Pilot", "Пилот"]
-        kit: ""
-        class: "B_Helipilot_F"
-        crew:
-            - name: Пилот
-              seat: driver
+    #HelicopterFull:
+    #    allowedForRoles: ["Pilot", "Пилот"]
+    #    kit: ""
+    #    class: "B_Helipilot_F"
+    #    crew:
+    #        - name: Пилот
+    #          seat: driver
 
-            - name: Второй пилот
-              seat: [0]
+    #        - name: Второй пилот
+    #          seat: [0]
 
-            - name: Бортстрелок (левый)
-              seat: [1]                     # путь турели
-              class: "B_helicrew_F"
-              kit: "kit_west_doorgunner"
-              allowCombat: true
+    #        - name: Бортстрелок (левый)
+    #          seat: [1]                     # путь турели
+    #          class: "B_helicrew_F"
+    #          kit: "kit_west_doorgunner"
+    #          allowCombat: true
 
-            - name: Бортстрелок (правый)
-              seat: [2]
-              class: "B_helicrew_F"
-              kit: "kit_west_doorgunner"
-              allowCombat: true
+    #        - name: Бортстрелок (правый)
+    #          seat: [2]
+    #          class: "B_helicrew_F"
+    #          kit: "kit_west_doorgunner"
+    #          allowCombat: true
 

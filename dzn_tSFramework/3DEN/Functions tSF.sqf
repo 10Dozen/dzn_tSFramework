@@ -474,12 +474,15 @@ dzn_fnc_tSF_3DEN_AddRespawnLocation = {
 		};
 
 		private _attributeValue = format ["this setVariable ['tSF_RespawnLocation', '%1'];", _configName];
-		private _alreadyAssigned = entities findIf {
-			(_x get3DENAttribute "Init") == _attributeValue
+		private _alreadyAssinged = (all3DENEntities # 3) findIf {
+			private _init = _x get3DENAttribute "Init";
+			(_init isNotEqualTo []) && { [_attributeValue, _init # 0, false] call BIS_fnc_inString }
 		} > -1;
+
+
 		if (_alreadyAssinged) exitWith {
 			(format [
-				"tSF Tools - Respawn Locations: There is ""%1"" location logic already exists!",
+				"tSF Tools - Respawn Locations: location logic ""%1"" already exists!",
 				_configName
 			]) call dzn_fnc_tSF_3DEN_ShowWarn;
 		};

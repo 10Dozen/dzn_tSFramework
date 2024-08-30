@@ -17,17 +17,12 @@
 
 params ["_vehicle", "_seatCfg"];
 
-LOG_1("(removeCrew) Params: %1", _this);
-
 private _unit = _self call [F(getUnitOnSeat), [_vehicle, _seatCfg get Q(seat)]];
 
-LOG_1("(removeCrew) _unit=%1", _unit);
-if (isNull _unit || { isPlayer _unit }) exitWith { LOG_1("(removeCrew) _unit is null or player", _unit); };
+if (isNull _unit || { isPlayer _unit }) exitWith {};
 
 moveOut _unit;
 deleteVehicle _unit;
-
-LOG_1("(removeCrew) _unit moved out", _unit);
 
 hintSilent parseText format [
     Q(CREW_OPTIONS_HINT_MEMBER_REMOVED),
