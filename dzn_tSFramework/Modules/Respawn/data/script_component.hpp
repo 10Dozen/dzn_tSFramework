@@ -4,6 +4,8 @@
 
 #define GAMELOGIC_CONFIG_ID Q(tSF_RespawnLocation)
 
+#define RESPAWN_TIME_DISABLED 999999
+
 #define DEFAULT_LOCATION Q(Default)
 #define DEFAULT_LOCATION_NAME Q(Стандартная)
 
@@ -12,3 +14,4 @@
 #define MODE_ON_RESPAWN_HINT 0
 #define MODE_BEFORE_RESPAWN_MSG 1
 #define MODE_RESPAWN_CANCELED_MSG 2
+

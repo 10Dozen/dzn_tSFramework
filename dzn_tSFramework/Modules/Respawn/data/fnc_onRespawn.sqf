@@ -43,9 +43,9 @@ _self call [F(setDefaultEquipment)];
 
 // Show intro text again (Date + Location name)
 ECOB(IntroText) call [F(showTitles), [
-    SETTING(ECOB(IntroText),Date), 
-    nil, 
-    nil, 
+    SETTING(ECOB(IntroText),Date),
+    nil,
+    nil,
     _locationDisplayName
 ]];
 

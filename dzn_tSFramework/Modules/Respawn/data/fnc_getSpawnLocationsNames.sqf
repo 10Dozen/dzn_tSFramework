@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 /*
-    Returns sorted list of display name and config entry name of the respawn locations. 
+    Returns sorted list of display name and config entry name of the respawn locations.
     Default location is always on top.
     (_self)
 
@@ -17,8 +17,8 @@ private _locsConfig = SETTING(_self,Locations);
 private _defaultLocationName = _locsConfig get DEFAULT_LOCATION getOrDefault [Q(name), DEFAULT_LOCATION_NAME];
 if (_defaultLocationName == "") then { _defaultLocationName = DEFAULT_LOCATION_NAME; };
 _respawnLocationsInfo pushBack [
-    _defaultLocationName, 
-    DEFAULT_LOCATION, 
+    _defaultLocationName,
+    DEFAULT_LOCATION,
     _locsConfig get DEFAULT_LOCATION getOrDefault [Q(description), ""]
 ];
 

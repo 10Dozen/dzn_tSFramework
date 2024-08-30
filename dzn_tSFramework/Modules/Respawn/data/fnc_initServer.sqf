@@ -17,7 +17,6 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
 LOG("Server init started");
 
 private _locationsToObjects = _self call [F(processLogics)];
-LOG_1("(initServer) _locationsToObjects=%1", _locationsToObjects);
 if (_locationsToObjects isEqualTo []) exitWith {};
 
 ECOB(Core) call [

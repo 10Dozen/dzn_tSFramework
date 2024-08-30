@@ -23,7 +23,7 @@ private _groupName = groupId group player;
 private _playerRespawnLocation = DEFAULT_LOCATION;
 {
     _y set [
-        Q(positionObject), 
+        Q(positionObject),
         _respawnLocations get _x
     ];
 
@@ -45,7 +45,7 @@ player addEventHandler ["Respawn", {
 }];
 
 player addEventHandler ["Killed", {
-	[1, "BLACK", 5, 1] spawn BIS_fnc_fadeEffect;
+    [1, "BLACK", 5, 1] spawn BIS_fnc_fadeEffect;
 }];
 
 player setVariable [QGVAR(Scheduled), false];

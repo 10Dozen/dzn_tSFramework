@@ -16,7 +16,7 @@ private _locations = createHashMap;
     _locations set [_x, objNull];
 } forEach keys _configs;
 
-// Process default location - marker-based 
+// Process default location - marker-based
 private _mrkId = allMapMarkers findIf { _x in [
     "respawn", "respawn_west", "respawn_east", "respawn_guerrila", "respawn_civilian"
 ] };

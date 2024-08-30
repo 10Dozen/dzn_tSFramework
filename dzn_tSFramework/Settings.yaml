@@ -29,13 +29,13 @@ FARP: true
 
 # Поддержка на поле боя: артиллерия, вертолеты и управление правами доступа к ним
 # Все модули зависят от модуля Authorization (должен быть включен)
+CrewOptions: true
 Authorization: true
 AirborneSupport: false
 ArtillerySupport: false
 POM: false
 
 # Модули-помощники для настройки юнитов/объектов миссии
-CrewOptions: true
 EditorVehicleCrew: true
 EditorUnitBehavior: false
 EditorRadioSettings: false

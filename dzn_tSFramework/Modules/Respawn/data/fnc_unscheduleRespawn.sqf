@@ -16,7 +16,7 @@ __CLIENT_ONLY__
 if !(player getVariable [QGVAR(Scheduled), false]) exitWith {};
 
 // --- Otherwise revert respawn
-setPlayerRespawnTime 999999;
+setPlayerRespawnTime RESPAWN_TIME_DISABLED;
 player setVariable [QGVAR(Scheduled), false, true];
 
 _self call [F(showMessage), [MODE_RESPAWN_CANCELED_MSG, []]];

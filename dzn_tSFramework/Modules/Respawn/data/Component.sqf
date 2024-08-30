@@ -1,7 +1,10 @@
 #include "script_component.hpp"
 
 /*
-
+    Respawn component provides controllable respawn logic for individual players.
+    ALlows to define specific respawn locations per group and per player.
+    Handles putting weapon on safe and putting earplug in on initial spawn
+    and on respawn.
 */
 
 private _declaration = [

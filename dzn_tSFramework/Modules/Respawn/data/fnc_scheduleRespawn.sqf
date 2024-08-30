@@ -17,7 +17,7 @@ params [
 ];
 
 if (alive player) exitWith {
-    //setPlayerRespawnTime 999999;
+    setPlayerRespawnTime RESPAWN_TIME_DISABLED;
 };
 
 _timeout = _timeout + SETTING(_self,BeforeRespawnTimeout);
