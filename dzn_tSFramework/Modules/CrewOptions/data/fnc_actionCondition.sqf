@@ -3,8 +3,9 @@
 #define ACTION_TITLE Q(<t color=COLOR_HEX_LIGHT_BLUE>Экипаж</t>)
 
 /*
-    Checks that player is admin or have whitelisted role name to access 
-	crew menu for particular vehicle (and it's config).
+    Checks that EngineOn/Lights action is available:
+    - player is in vehicle
+    - driver seat is occupied by alive AI unit
 
     (_self)
 
@@ -18,17 +19,9 @@
 
 params["_vehicle"];
 
-private _isAdmin = player == tSF_Admin;
 private _isInVehicle = player in _vehicle;
-
 if (!_isInVehicle) exitWith { false };
-if (_isAdmin) exitWith { true };
 
-private _cfgName = _vehicle getVariable GAMELOGIC_FLAG;
-private _cfg = SETTING(_self,Configs) get _cfgName getOrDefault [Q(allowedForRoles), [""]];
-private _playerRole = roleDescription player;
+private _driver = _self call [F(getUnitOnSeat), [_vehicle, "driver"]];
 
-// At least 1 match for player role
-private _isRoleAllowed = (_cfg findIf { [_x, _playerRole, false] call BIS_fnc_inString }) > -1;
-
-_isRoleAllowed
+!(isNull _driver) || (alive _driver) || !(isPlayer _driver)

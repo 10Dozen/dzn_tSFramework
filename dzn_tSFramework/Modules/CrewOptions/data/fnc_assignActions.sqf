@@ -24,9 +24,6 @@
 
 params["_vehiclesMap"];
 
-private _addAction = SETTING(_self,AddActions);
-private _addAceAction = SETTING(_self,AddACEActions);
-
 private ["_cfgName", "_vehicles", "_vehicle"];
 {
     _cfgName = _x;
@@ -38,66 +35,60 @@ private ["_cfgName", "_vehicles", "_vehicle"];
         _vehicle disableAI "LIGHTS";
         _vehicle allowCrewInImmobile [true, true];
 
-        if (_addAction) then {
-            // Menu action 
-            _vehicle addAction [
-                ACTION_TITLE_MENU,
-                {
-                    params ["_target"];
-                    [{
-                        ECOB(CrewOptions) call [F(openCrewMenu), [_this]];
-                    }, _target] call CBA_fnc_execNextFrame;
-                },
-                [],
-                0, // priority
-                false,
-                true,
-                "",
-                [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
-                15   // radius, hope there won't be gigantic vehicles
-            ];
+        // Menu action
+        _vehicle addAction [
+            ACTION_TITLE_MENU,
+            {
+                params ["_target"];
+                [{
+                    ECOB(CrewOptions) call [F(openCrewMenu), [_this]];
+                }, _target] call CBA_fnc_execNextFrame;
+            },
+            [],
+            0, // lowest priority
+            false,
+            true,
+            "",
+            [{ ECOB(CrewOptions) call [F(menuActionCondition), [_target]] }] call dzn_fnc_stringify, // condition
+            15   // radius, hope there won't be gigantic vehicles
+        ];
 
-            // Engine action 
-            _vehicle addAction [
-                ACTION_TITLE_ENGINE,
-                {
-                    params ["_target", "_caller", "_actionId", "_arguments"];
-                    ECOB(CrewOptions) call [F(engineAction), [_target]];
-                },
-                [],
-                0,
-                false,
-                true,
-                "",
-                [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
-                15   // radius, hope there won't be gigantic vehicles
-            ];
+        // Engine action
+        _vehicle addAction [
+            ACTION_TITLE_ENGINE,
+            {
+                params ["_target", "_caller", "_actionId", "_arguments"];
+                ECOB(CrewOptions) call [F(engineAction), [_target]];
+            },
+            [],
+            0,
+            false,
+            true,
+            "",
+            [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
+            15   // radius, hope there won't be gigantic vehicles
+        ];
 
-            // Light action 
-            _vehicle addAction [
-                ACTION_TITLE_LIGHTS,
-                {
-                    params ["_target", "_caller", "_actionId", "_arguments"];
-                    ECOB(CrewOptions) call [F(lightsAction), [_target]];
-                },
-                [],
-                0,
-                false,
-                true,
-                "",
-                [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
-                15   // radius, hope there won't be gigantic vehicles
-            ];
-        };
+        // Light action
+        _vehicle addAction [
+            ACTION_TITLE_LIGHTS,
+            {
+                params ["_target", "_caller", "_actionId", "_arguments"];
+                ECOB(CrewOptions) call [F(lightsAction), [_target]];
+            },
+            [],
+            0,
+            false,
+            true,
+            "",
+            [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
+            15   // radius, hope there won't be gigantic vehicles
+        ];
 
+        /* This doesn't work for some reason
         if (_addAceAction) then {
             LOG_1("(assignActions) Adding ACE actions to vehicle %1", _vehicle);
-            // TBD
 
-            [
-                _vehicle, "CrewMenu", "CrewMenu", "",  { ECOB(CrewOptions) call [F(openCrewMenu), [_target]]; },
-                { ECOB(CrewOptions) call [F(actionCondition), [_target]] }
-            ] call tSF_fnc_ACEActions_addAction;
 
             private _actionMenu = [
                 "Menu",
@@ -113,7 +104,7 @@ private ["_cfgName", "_vehicles", "_vehicle"];
                 { ECOB(CrewOptions) call [F(engineAction), [_target]]; },
                 { ECOB(CrewOptions) call [F(actionCondition), [_target]] },
                 {},
-                [], 
+                [],
                 [0,0,0],
                 15,
                 [false, true, false, false, true]
@@ -123,18 +114,19 @@ private ["_cfgName", "_vehicles", "_vehicle"];
                 "LightsCycle",
                 ACE_ACTION_TITLE_LIGHTS,"",
                 { ECOB(CrewOptions) call [F(lightsAction), [_target]]; },
-                { true /*ECOB(CrewOptions) call [F(actionCondition), [_target]]*/ },
+                { ECOB(CrewOptions) call [F(actionCondition), [_target]] },
                 {},
-                [], 
+                [],
                 [0,0,0],
                 15,
                 [false, true, false, false, true]
             ] call ace_interact_menu_fnc_createAction;
 
             {
-                LOG_1("(assignActions) Adding ACE actions=%1", _x);            
+                LOG_1("(assignActions) Adding ACE actions=%1", _x);
                 [_vehicle, 0, ["ACE_MainActions"], _x] call ace_interact_menu_fnc_addActionToObject;
             } forEach [_actionMenu, _actionEngine, _actionLights];
         };
+        */
     } forEach _vehicles;
 } forEach _vehiclesMap;

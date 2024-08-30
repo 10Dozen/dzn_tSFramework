@@ -25,7 +25,7 @@ if (_seat isEqualType []) then {
 };
 private _seatFnc = _self get Q(GetSeatUnitFunctions) get _seatFncName;
 
-if (isNil "_seatFnc") exitWith { 
+if (isNil "_seatFnc") exitWith {
     TSF_ERROR_1(TSF_ERROR_TYPE__INVALID_ARG, "There is no valid function to define unit of the seat '%1'", _seat);
     objNull
 };

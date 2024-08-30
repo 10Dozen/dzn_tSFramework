@@ -16,87 +16,69 @@ Init:
     timeout: 3
     condition: { true }
 
-
-AddActions: true         # добавлять действия в меню действий машины
-AddACEActions: true      # добавлять действия в ACE меню взаимодействия с машиной
-
-
+# -- Значения по умолчанию:
+#    kit         - string, dzn_gear кит для бота, по умолчанию - без кита
+#    class       - string, класс бота, по умолчанию выбирается ванильный класс экипажа в зависимости от стороны игрока
+#    allowCombat - bool, должен ли бот участвовать в бою, по умолчанию false - бот будет игноировать цели, если ему их не назначит игрок
 Defaults:
-    side: west
-    class: "B_crew_F"
     kit: ""
 
+# -- "Слоты" можно описать отдельно, а затем переиспользовать в разных конфигах. 
+#    Не указанные значения будут наследоваться из соответсвующего конфига.
 SeatDriver:
     seat: driver 
     name: Водитель
 
 
-# Driver 
-# HelicopterFull
+# -- Описание конфигов
 Configs:
-    Driver:   # имя конфига
-        # Список подстрок для проверки роли игрока - 
-        # только игроки с соответствующими ролями могут добавлять AI-экипаж
-        allowedForRoles:             
-            - Экипаж
-            - Crew
+    # -- Имя конфига (для указания в переменной tSF_CrewOptions связанного GameLogic)
+    Driver:   
+        # -- Опционально, Список подстрок для проверки роли игрока: 
+        #    только игроки с соответствующими ролями могут добавлять AI-экипаж
+        #    Например, игрок с ролью "1`5 Экипаж" будет иметь доступ. 
+        #    По умолчанию равен [""] - т.е. будет доступно всем ролям.
+        # allowedForRoles: ["Экипаж", "Crew"]
         
-        # Общие настройки AI-экипажа, если не указаны, то используются значения из Defaults
-        side: "west"
-        class: "B_crew_F"
-        kit: "kit_driver"
+        # -- Опционально, Общие настройки AI-экипажа, если не указаны, то используются значения из Defaults
+        # class: "B_rifleman_F"  
+        # kit: ""
         
-        # Настройки слотов для AI-экипажа
+        # -- Настройки слотов для AI-экипажа
         crew:
-            - seat: driver      # имя слота/места: driver, gunner, commander или в формате [0], [0,1] (см. https://community.bistudio.com/wiki/allTurrets)
-              name: Водитель    # опциональное имя для меню, если не указано, то будет использовано имя слота
-              class: "B_crew_F"  # опционально, класс юнита (если не задан, то кит конфига)
-              kit: "kit_1"      # опционально, кит (если не задан, то кит конфига)
+            - seat: driver        # имя слота/места: driver, gunner, commander или в формате [0], [0,1] (см. https://community.bistudio.com/wiki/allTurrets)
+              name: Водитель      # имя для меню
+              # class: "B_crew_F"   # опционально, класс юнита (если не задан, то кит конфига)
+              # kit: ""             # опционально, кит (если не задан, то кит конфига, если "" - не применяет кит)
+              # allowCombat: false  # отключает боту возможность автоматически выбирать цель и атаковать
 
-    CrewDriver:
-        crew:
-            - *SeatDriver   # Можно использовать ссылку
+    # -- Пример с переиспользованием слота определенного в корне документа
+    # CrewDriver:
+    #     allowedForRoles: ["Экипаж", "Crew"]
+    #     class: "B_crew_F"
+    #     crew:
+    #         - *SeatDriver   # Можно использовать ссылку
 
     HelicopterFull:
         allowedForRoles: ["Pilot", "Пилот"]
-        kit: "kit_west_pilot"
+        kit: ""
         class: "B_Helipilot_F"
         crew:
             - name: Пилот
               seat: driver
+
             - name: Второй пилот
               seat: [0]
+
             - name: Бортстрелок (левый)
-              seat: [1]
+              seat: [1]                     # путь турели
               class: "B_helicrew_F"
               kit: "kit_west_doorgunner"
+              allowCombat: true
+
             - name: Бортстрелок (правый)
               seat: [2]
               class: "B_helicrew_F"
               kit: "kit_west_doorgunner"
-
-    Helicopter Pilot:
-        allowedForRoles: ["Pilot", "Пилот"]
-        kit: "kit_west_pilot"
-        crew:
-            - seat: driver
-            - seat: gunner
-
-    Helicopter Doorgunner:
-        allowedForRoles: ["Pilot", "Пилот"]
-        kit: "kit_west_doorgunner"
-        crew:
-            - name: Бортстрелок (левая турель)
-              seat: [0,0]              
-            - name: Бортстрелок (правая турель)
-              seat: [1,0]
-
-    Helicopter FFV:
-        allowedForRoles: ["Pilot", "Пилот"]
-        kit: "kit_west_mgunner_ffv"
-        crew:
-            - name: Стрелок (левый борт)
-              seat: [2,0]
-            - name: Стрелок (правый борт)
-              seat: [2,1]
+              allowCombat: true
 

@@ -2,7 +2,7 @@
 
 /*
     Turns vehicle's headlights and collision light in cycle:
-     - OFF / OFF 
+     - OFF / OFF
      - OFF / ON (collision only)
      - ON / ON
 
@@ -27,7 +27,7 @@ if (!_headlight && !_collision) then {
     _collision = true;
 } else {
     if (!_headlight && _collision) then {
-        // Headlights OFF, Collision ON - turn on both lights 
+        // Headlights OFF, Collision ON - turn on both lights
         _headlight = true;
         _collision = true;
     } else {
@@ -37,7 +37,7 @@ if (!_headlight && !_collision) then {
     };
 };
 
-[_vehicle, "LIGHTS"] remoteExec ["disableAI", _vehicle]; 
+[_vehicle, "LIGHTS"] remoteExec ["disableAI", _vehicle];
 [_vehicle, _headlight] remoteExec ["setPilotLight", _vehicle];
 [_vehicle, _collision] remoteExec ["setCollisionLight", _vehicle];
 

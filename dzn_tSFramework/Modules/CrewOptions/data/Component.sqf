@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 /*
-    
+
 */
 
 private _declaration = [
@@ -9,10 +9,10 @@ private _declaration = [
     PREP_COMPONENT_SETTINGS,
 
     PREP_COMPONENT_FUNCTION(initServer),
-    PREP_COMPONENT_FUNCTION(initClient),
 
     PREP_COMPONENT_FUNCTION(processLogics),
     PREP_COMPONENT_FUNCTION(assignActions),
+    PREP_COMPONENT_FUNCTION(menuActionCondition),
     PREP_COMPONENT_FUNCTION(actionCondition),
 
     PREP_COMPONENT_FUNCTION(getUnitOnSeat),
@@ -27,8 +27,8 @@ private _declaration = [
         ["driver", { params ["_unit", "_vehicle"]; _unit moveInDriver _vehicle; _unit assignAsDriver _vehicle; }],
         ["gunner", { params ["_unit", "_vehicle"]; _unit moveInGunner _vehicle; _unit assignAsGunner _vehicle; }],
         ["commander", { params ["_unit", "_vehicle"]; _unit moveInCommander _vehicle; _unit assignAsCommander _vehicle; }],
-        ["turret", { 
-            params ["_unit", "_vehicle", "_turretPath"]; 
+        ["turret", {
+            params ["_unit", "_vehicle", "_turretPath"];
             _unit moveInTurret [_vehicle, _turretPath];
             _unit assignAsTurret [_vehicle, _turretPath];
         }]

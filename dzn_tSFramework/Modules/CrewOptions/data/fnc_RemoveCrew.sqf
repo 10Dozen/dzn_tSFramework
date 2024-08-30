@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 /*
-    Removes AI crew from the seat of the vehicle and deletes unit. 
+    Removes AI crew from the seat of the vehicle and deletes unit.
     Do not remove players.
 
     (_self)
