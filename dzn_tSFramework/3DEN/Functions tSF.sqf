@@ -397,3 +397,98 @@ dzn_fnc_tSF_3DEN_AddSupportReturnPoint = {
 		"tSF Tools - Support: Return point was added" call dzn_fnc_tSF_3DEN_ShowNotif;
 	};
 };
+
+dzn_fnc_tSF_3DEN_AddCrewOptionsLogic = {
+	private _units = dzn_tSF_3DEN_SelectedUnits;
+	if (_units isEqualTo []) exitWith {
+		"tSF Tools - AI Crew Options: No vehicles selected" call dzn_fnc_tSF_3DEN_ShowWarn;
+	};
+
+	disableSerialization;
+	private _settings = ["dzn_tSFramework\Modules\CrewOptions\Settings.yaml"] call dzn_fnc_parseSFML;
+	private _options = keys (_settings get "Configs");
+	private _result = [
+		"Set Crew Options Logic"
+		,[
+			["Config Name", _options]
+			,["Custom Config Name", []]
+		]
+	] call dzn_fnc_3DEN_ShowChooseDialog;
+
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
+
+	dzn_tSF_3DEN_Parameter = _result;
+
+	collect3DENHistory {
+		private _units = dzn_tSF_3DEN_SelectedUnits;
+		private _result = dzn_tSF_3DEN_Parameter;
+		private _configName = "";
+
+		if ((_result select 1) isEqualType "") then {
+			_configName = _result select 1;
+		} else {
+			_configName = _options select (_result select 0);
+		};
+
+		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
+		_logic set3DENAttribute [
+			"Init"
+			, format [
+				"this setVariable ['tSF_CrewOptions', '%1'];"
+				, _configName
+			]
+		];
+
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;
+
+		add3DENConnection ["Sync", _units, _logic];
+		(format ["tSF Tools - AI Crew Options: ""%1"" config was assigned", _configName]) call dzn_fnc_tSF_3DEN_ShowNotif;
+	};
+};
+
+dzn_fnc_tSF_3DEN_AddRespawnLocation = {
+	disableSerialization;
+	private _settings = ["dzn_tSFramework\Modules\Respawn\Settings.yaml"] call dzn_fnc_parseSFML;
+	private _options = keys (_settings get "Locations");
+	private _result = [
+		"Add Respawn Location"
+		,[
+			["Location Name", _options]
+			,["Custom Location Name", []]
+		]
+	] call dzn_fnc_3DEN_ShowChooseDialog;
+
+	if (count _result == 0) exitWith { dzn_tSF_3DEN_toolDisplayed = false };
+
+	dzn_tSF_3DEN_Parameter = _result;
+
+	collect3DENHistory {
+		private _result = dzn_tSF_3DEN_Parameter;
+		private _configName = "";
+
+		if ((_result select 1) isEqualType "") then {
+			_configName = _result select 1;
+		} else {
+			_configName = _options select (_result select 0);
+		};
+
+		private _attributeValue = format ["this setVariable ['tSF_RespawnLocation', '%1'];", _configName];
+		private _alreadyAssigned = entities findIf {
+			(_x get3DENAttribute "Init") == _attributeValue
+		} > -1;
+		if (_alreadyAssinged) exitWith {
+			(format [
+				"tSF Tools - Respawn Locations: There is ""%1"" location logic already exists!",
+				_configName
+			]) call dzn_fnc_tSF_3DEN_ShowWarn;
+		};
+
+		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
+		_logic set3DENAttribute ["Init", _attributeValue];
+
+		call dzn_fnc_tSF_3DEN_createMiscLayer;
+		_logic set3DENLayer dzn_tSF_3DEN_MiscLayer;
+		(format ["tSF Tools - Respawn Locations: ""%1"" location logic was added", _configName]) call dzn_fnc_tSF_3DEN_ShowNotif;
+	};
+};

@@ -61,20 +61,21 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[Gear] Add Kit Logic"			, { [] spawn dzn_fnc_tSF_3DEN_AddGearLogic }]
 
 		,["[Unit] Add Unit Behavior"		, { [] spawn dzn_fnc_tSF_3DEN_ResolveUnitBehavior }]
+		
+		,["[Vehicle] Add AI Crew Options"	, { [] spawn dzn_fnc_tSF_3DEN_AddCrewOptionsLogic }]
 		,["[Vehicle] Add Vehicle Crew"		, { [] spawn dzn_fnc_tSF_3DEN_AddEVCLogic }]
 		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn dzn_fnc_tSF_3DEN_AddERSLogic }]
 
 		,["[Support] Assign Vehicle as Support"	, { [] spawn dzn_fnc_tSF_3DEN_AddAsSupporter }]
 		,["[Support] Add Return point"		, { [] spawn dzn_fnc_tSF_3DEN_AddSupportReturnPoint }]
+		,["[Support] Add Artillery Composition"		, { call dzn_fnc_tSF_3DEN_ShowArtilleryCompositionMenu }]
 
 		,["[tSF] Configure Scenario"		, { [] spawn dzn_fnc_tSF_3DEN_ConfigureScenario }]
-	/*
-		,["[tSF] Add Zeus"			, { call dzn_fnc_tSF_3DEN_AddZeus }]
-	*/
+
 		,["[tSF] Add Base Trigger"			, { call dzn_fnc_tSF_3DEN_AddBaseTrg }]
 		,["[tSF] Add CCP"				, { "CCP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
 		,["[tSF] Add FARP"				, { "FARP" call dzn_fnc_tSF_3DEN_AddSupportPoint }]
-		,["[Support] Add Artillery Composition"		, { call dzn_fnc_tSF_3DEN_ShowArtilleryCompositionMenu }]
+		,["[tSF] Add Respawn Location"		, { [] spawn dzn_fnc_tSF_3DEN_AddRespawnLocation }]
 		,["Add To Do List"				, { call dzn_fnc_tSF_3DEN_addToDoList }]
 		,["Show Permission menu"			, { closeDialog 2;[] spawn dzn_fnc_tSF_3DEN_ShowPermissionsMenu }]
 		,[" "						, { }]
