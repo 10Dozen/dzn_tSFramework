@@ -16,10 +16,13 @@
 */
 
 params ["_vehicle", "_seatCfg"];
+DEBUG_1("(removeCrew) Params: %1", _this);
 
 private _unit = _self call [F(getUnitOnSeat), [_vehicle, _seatCfg get Q(seat)]];
 
 if (isNull _unit || { isPlayer _unit }) exitWith {};
+
+(_self get Q(AddedCrew)) deleteAt ((_self get Q(AddedCrew)) findIf { _x == _unit });
 
 moveOut _unit;
 deleteVehicle _unit;

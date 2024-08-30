@@ -29,7 +29,7 @@
 
 // Modules availability
 #define TSF_MODULE_ENABLED(MODULE) ECOB(Core) call [F(isModuleEnabled), Q(MODULE)]
-
+#define TSF_COMPONENT(NAME) ECOB(Core) call [F(getComponent), Q(NAME)]
 
 // tSF Error reporting
 #define TSF_ERROR_METHOD F(reportError)
@@ -133,7 +133,9 @@
 #define F_WRAP(NAME) fnc_##NAME
 #define F(NAME) Q(F_WRAP(NAME))
 
-#define COMPONENT_TYPE ["#type", { format ["%1_Component", Q(COMPONENT)] }]
+#define COMPONENT_TYPE \
+   ["#type", format ["tSF_%1_Component", Q(COMPONENT)]],\
+   ["#str", {format ["tSF_%1_Component", Q(COMPONENT)]}]
 #define COMPONENT_FNC_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\fnc_##FILE##.sqf
 #define PREP_COMPONENT_FUNCTION(NAME) \
     [F(NAME), compileScript [Q(COMPONENT_FNC_PATH(NAME))]]
@@ -142,13 +144,12 @@
 #define PREP_COMPONENT_SETTINGS \
     [Q(Settings), [Q(COMPONENT_SETTINGS_PATH)] call dzn_fnc_parseSFML]
 
+#define REGISTER_COMPONENT ECOB(Core) call [F(registerComponent), [Q(COMPONENT), COB]]
 #define CREATE_AND_REGISTER_COMPONENT(DECLARATION) \
     COB = createHashMapObject [DECLARATION]; \
-    ECOB(Core) call [F(registerComponentObject), [Q(COMPONENT), COB]]
+    REGISTER_COMPONENT
 
-#define REGISTER_COMPONENT ECOB(Core) call [F(registerComponentObject), [Q(COMPONENT), _this]]
-
-// --- Component Objects - Setting getters
+// --- Component Objects - Setting gettersв
 #define SETTING(SRC,NODE1) (SRC get Q(Settings) get Q(NODE1))
 #define SETTING_2(SRC,NODE1,NODE2) (SRC get Q(Settings) get Q(NODE1) get Q(NODE2))
 #define SETTING_3(SRC,NODE1,NODE2,NODE3) (SRC get Q(Settings) get Q(NODE1) get Q(NODE2) get Q(NODE3))

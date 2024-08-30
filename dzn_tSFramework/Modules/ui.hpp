@@ -9,11 +9,13 @@
 #define COLOR_HEX_DARK_GRAY SQ(#777777)
 #define COLOR_HEX_LIGHT_BLUE SQ(#84b0f0)
 #define COLOR_HEX_LIGHT_GREEN SQ(#acdb8b)
+#define COLOR_HEX_LIME SQ(#7bbf37)
 #define COLOR_HEX_AQUA SQ(#12C4FF)
 
 // RGBA colors 
 #define COLOR_RGBA_BY_UI (["GUI", "BCG_RGB"] call BIS_fnc_displayColorGet)
 #define COLOR_RGBA_WHITE [1, 1, 1, 1]
+#define COLOR_RGBA_BLACK [0, 0, 0 ,1]
 #define COLOR_RGBA_LIGHT_RED [0.92, 0.52, 0.52, 1]
 #define COLOR_RGBA_LIGHT_GREEN [0.78, 0.92, 0, 1]
 #define COLOR_RGBA_LIGHT_BLUE [0.6,0.6,0.9,1]

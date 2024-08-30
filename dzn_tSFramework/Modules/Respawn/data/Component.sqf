@@ -11,13 +11,13 @@ private _declaration = [
     COMPONENT_TYPE,
     PREP_COMPONENT_SETTINGS,
     
-    PREP_COMPONENT_FUNCTION(initServer),
-    PREP_COMPONENT_FUNCTION(processLogics),
-
     PREP_COMPONENT_FUNCTION(initClient),
+    PREP_COMPONENT_FUNCTION(processLogics),
+    
     PREP_COMPONENT_FUNCTION(setDefaultEquipment),
     PREP_COMPONENT_FUNCTION(setDefaultRating),
 
+    PREP_COMPONENT_FUNCTION(addOnRespawnCall),
     PREP_COMPONENT_FUNCTION(scheduleRespawn),
     PREP_COMPONENT_FUNCTION(unscheduleRespawn),
     
@@ -30,9 +30,10 @@ private _declaration = [
     [Q(GroupToLocation), createHashMap],
     [Q(GroupName), nil],
     [Q(RespawnLocation), DEFAULT_LOCATION],
-    [Q(ForcedRespawnLocation), nil]
+    [Q(ForcedRespawnLocation), nil],
+    [Q(onRespawnSnippets), createHashMap]
 ];
 
 // Init:
 CREATE_AND_REGISTER_COMPONENT(_declaration);
-COB call [F(initServer)];
+COB call [F(initClient)];

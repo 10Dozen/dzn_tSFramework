@@ -11,37 +11,48 @@
 
 params ["_unit", "_corpse"];
 
-player setVariable [QGVAR(Scheduled), false, true];
+private _snippets = _self get Q(onRespawnSnippets);
+private _snippetsOrder = keys _snippets;
+_snippetsOrder sort true;
+{
+    DEBUG_1("(onRespawn) Executing snippets with priority %1", _x);
+    {
+        DEBUG_1("(onRespawn) Executing snippets %1", _forEachIndex);
+        _x params ["_code", "_codeArgs"];
+       [_unit, _corpse, _codeArgs] call _code;
+    } forEach (_snippets get _x);
+} forEach _snippetsOrder;
 
+
+// -- Find location
 private _targetLocation = _self get Q(ForcedRespawnLocation);
 if (isNil "_targetLocation") then {
     _targetLocation = _self get Q(RespawnLocation);
 };
 
 private _locConfig = SETTING(_self,Locations) get _targetLocation;
-
 private _positionObject = _locConfig get Q(positionObject);
 private _snap = _locConfig getOrDefault [Q(snapToSurface), true];
 private _locationDisplayName = _locConfig get Q(name);
-private _gearKit = player getVariable "dzn_gear";
 
-// Get actual position to be teleported to
+// -- Get actual position to be teleported to
 private _position = [
     _positionObject,
     _snap
 ] call dzn_fnc_getSurfacePos;
 
+LOG_1("(onRespawn) _targetLocation=%1", _targetLocation);
+LOG_1("(onRespawn) _locConfig=%1", _locConfig);
+LOG_1("(onRespawn) _positionObject=%1", _positionObject);
+LOG_1("(onRespawn) _snap=%1", _snap);
+LOG_1("(onRespawn) _locationDisplayName=%1", _locationDisplayName);
+LOG_1("(onRespawn) _position=%1", _position);
 
-// Re-apply gear
-if (!isNil "_gearKit") then {
-    player setVariable ["dzn_gear_done", nil];
-    [player, _gearKit, false] spawn dzn_fnc_gear_assignKit;
-};
+// -- Reset
+player setVariable [QGVAR(Scheduled), false, true];
+_self set [Q(ForcedRespawnLocation), nil];
 
-_self call [F(setDefaultRating)];
-_self call [F(setDefaultEquipment)];
-
-// Show intro text again (Date + Location name)
+// -- Show intro text again (Date + Location name)
 ECOB(IntroText) call [F(showTitles), [
     SETTING(ECOB(IntroText),Date),
     nil,
@@ -49,13 +60,13 @@ ECOB(IntroText) call [F(showTitles), [
     _locationDisplayName
 ]];
 
-// Show hint messages
+LOG_1("(onRespawn) Show intro text = %1 ", _locationDisplayName);
+
+// Clear hint messages
 _self call [F(showMessage), [MODE_CLEAR]];
 _self call [F(showMessage), [MODE_ON_RESPAWN_HINT]];
 
-// Reset
-_self set [Q(ForcedRespawnLocation), nil];
-setPlayerRespawnTime 9999999;
-
 // Return position to allow engine to safely move player here
+LOG_1("(onRespawn) Return _position=%1", _position);
+
 _position

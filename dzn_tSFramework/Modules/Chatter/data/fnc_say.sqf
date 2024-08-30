@@ -28,11 +28,8 @@ params [
 
 if (isNull _unit || { !alive _unit }) exitWith {};
 
-ECOB(Core) call [
-    F(remoteExecComponent),
-    [
-        "Chatter",
-        F(showMessageLocally),
-        [_unit, _message, _name, _distance, _sayMode]
-    ]
-];
+[
+    Q(COMPONENT),
+    F(showMessageLocally), 
+    [_unit, _message, _name, _distance, _sayMode]
+] call dzn_fnc_RCE;

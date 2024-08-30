@@ -16,6 +16,7 @@
 */
 
 params ["_vehicle", "_seat"];
+//DEBUG_1("(getUnitOnSeat) Params: %1", _this);
 
 private _seatFncName = _seat;
 private _seatFncParams = _vehicle;

@@ -8,7 +8,7 @@ private _declaration = [
     COMPONENT_TYPE,
     PREP_COMPONENT_SETTINGS,
 
-    PREP_COMPONENT_FUNCTION(initServer),
+    PREP_COMPONENT_FUNCTION(initClient),
 
     PREP_COMPONENT_FUNCTION(processLogics),
     PREP_COMPONENT_FUNCTION(assignActions),
@@ -17,9 +17,15 @@ private _declaration = [
 
     PREP_COMPONENT_FUNCTION(getUnitOnSeat),
     PREP_COMPONENT_FUNCTION(openCrewMenu),
+    PREP_COMPONENT_FUNCTION(onMenuButtonAdd),
+    PREP_COMPONENT_FUNCTION(onMenuButtonRemove),
+
     PREP_COMPONENT_FUNCTION(addCrew),
     PREP_COMPONENT_FUNCTION(removeCrew),
+    PREP_COMPONENT_FUNCTION(expelCrew),
 
+    PREP_COMPONENT_FUNCTION(onGetOutMan),
+    
     PREP_COMPONENT_FUNCTION(engineAction),
     PREP_COMPONENT_FUNCTION(lightsAction),
 
@@ -38,10 +44,10 @@ private _declaration = [
         ["gunner", { gunner _this }],
         ["commander", { commander _this }],
         ["turret", { params ["_vehicle", "_turretPath"]; _vehicle turretUnit _turretPath }]
-    ]]
+    ]],
+    [Q(AddedCrew), []]
 ];
 
 CREATE_AND_REGISTER_COMPONENT(_declaration);
 
-COB call [F(initServer)];
 COB call [F(initClient)];

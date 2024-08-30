@@ -40,15 +40,12 @@
 DEBUG_1("(registerRadioTalker) Params: %1", _this);
 
 if (!isServer) exitWith {
-    ECOB(Core) call [
-        F(remoteExecComponent),
-        [
-            "Chatter",
-            F(registerRadioTalker),
-            _this,
-            2
-        ]
-    ];
+    [
+        Q(COMPONENT),
+        F(registerRadioTalker), 
+        _this,
+        2
+    ] call dzn_fnc_RCE;
 };
 
 params [

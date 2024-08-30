@@ -14,6 +14,8 @@
     _statistics = _self call ["fnc_processLogics"]
 */
 
+DEBUG_1("(processLogics) Invoked",1);
+
 private _configs = SETTING(_self,Configs);
 
 private ["_logic", "_logicConfigName", "_logicConfig", "_assignmentResult"];
@@ -44,15 +46,4 @@ private _vehiclesToHandle = createHashMap;
     _vehiclesInMap append _vehicles;
 } forEach (entities "Logic");
 
-MyMAP = _vehiclesToHandle;
-
-ECOB(Core) call [
-    F(remoteExecComponent),
-    [
-        Q(COMPONENT),
-        F(assignActions),
-        [_vehiclesToHandle],
-        0,
-        true
-    ]
-];
+_vehiclesToHandle

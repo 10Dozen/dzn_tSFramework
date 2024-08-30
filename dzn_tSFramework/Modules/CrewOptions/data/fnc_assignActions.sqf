@@ -24,6 +24,8 @@
 
 params["_vehiclesMap"];
 
+DEBUG_1("(assignActions) Params: %1", _this);
+
 private ["_cfgName", "_vehicles", "_vehicle"];
 {
     _cfgName = _x;

@@ -29,20 +29,18 @@ Locations:
         # snapToSurface: true       # Нужно ли пытаться поставить игроков на ближайшую поверхость под ними
                                     # (например на палубу корабля под GameLogic/маркером respawn). По умолчанию - true.
 
-    #AircraftCarrier:
-    #    name: Авианосец "Эйхенхауэр"
-    #    description: "Авианосец классу эсминец, для спецназа"
-    #    snapToSurface: true
-    #    groups:                    # Список групп которые возрождаются на этой точке
-    #        - Razor 1`1
-    #        - Razor 1`2
+    IDAP Base:
+        name: "Палатка IDAP"
+        description: "Гурманитарная база IDAP"
+        groups:                    # Список групп которые возрождаются на этой точке
+            - Razor 1`1
 
-    #Convoy:
-    #    name: "пригород Расмана"
-    #    description: "Позиция начала маршрута конвоя"
-    #    groups:
-    #        - Jupiter 1`1
-    #        - Jupiter 1`2
+    Highground:
+        name: "Высотка"
+        description: "Высокая позиция напротив базы IDAP"
+        snapToSurface: true
+        groups:
+            - Razor 1`2
 
 
 

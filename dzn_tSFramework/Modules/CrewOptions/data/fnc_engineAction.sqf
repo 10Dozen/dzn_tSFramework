@@ -16,4 +16,4 @@
 params ["_vehicle"];
 
 doStop (driver _vehicle);
-[_vehicle, false] remoteExec ["engineOn", _vehicle];
+[_vehicle, false] remoteExec ["engineOn", 0];

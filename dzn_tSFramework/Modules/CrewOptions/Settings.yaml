@@ -38,7 +38,7 @@ Configs:
         #    только игроки с соответствующими ролями могут добавлять AI-экипаж
         #    Например, игрок с ролью "1`5 Экипаж" будет иметь доступ. 
         #    По умолчанию равен [""] - т.е. будет доступно всем ролям.
-        allowedForRoles: ["Экипаж", "Crew"]
+        # allowedForRoles: [""]
         
         # -- Опционально, Общие настройки AI-экипажа, если не указаны, то используются значения из Defaults
         # class: "B_rifleman_F"  
@@ -60,26 +60,26 @@ Configs:
     #     crew:
     #         - *SeatDriver   # Можно использовать ссылку
 
-    #HelicopterFull:
-    #    allowedForRoles: ["Pilot", "Пилот"]
-    #    kit: ""
-    #    class: "B_Helipilot_F"
-    #    crew:
-    #        - name: Пилот
-    #          seat: driver
+    HelicopterFull:
+        allowedForRoles: ["Squad Leader"]
+        kit: ""
+        class: "B_Helipilot_F"
+        crew:
+            - name: Пилот
+              seat: driver
 
-    #        - name: Второй пилот
-    #          seat: [0]
+            - name: Второй пилот
+              seat: [0]
 
-    #        - name: Бортстрелок (левый)
-    #          seat: [1]                     # путь турели
-    #          class: "B_helicrew_F"
-    #          kit: "kit_west_doorgunner"
-    #          allowCombat: true
+            - name: Бортстрелок (левый)
+              seat: [1]                     # путь турели
+              class: "B_helicrew_F"
+              kit: "kit_west_doorgunner"
+              allowCombat: true
 
-    #        - name: Бортстрелок (правый)
-    #          seat: [2]
-    #          class: "B_helicrew_F"
-    #          kit: "kit_west_doorgunner"
-    #          allowCombat: true
+            - name: Бортстрелок (правый)
+              seat: [2]
+              class: "B_helicrew_F"
+              kit: "kit_west_doorgunner"
+              allowCombat: true
 

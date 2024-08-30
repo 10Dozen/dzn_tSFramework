@@ -217,7 +217,7 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 			] select (_x getVariable [QEGVAR(Respawn,Scheduled), false])
 		};
 		private _namesLine = format ["   %1", _names joinString ", "];
-		
+
 		// More then 1 line - cut into 2 at char MAX_LINE_LENGTH
 		private ["_cutLineAtIndex", "_part1", "_part2"];
 		if (count _namesLine > MAX_LINE_LENGTH) then {
@@ -285,7 +285,7 @@ tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 		],
 		_unitsToRespawn
 	];
-	
+
 	if (_mode == RESPAWN_MODE_CANCEL) then {
 		_hintMsg = format [
 			Q(HINT_RESPAWN_MENU_ON_UNSCHEDULED),
@@ -294,7 +294,7 @@ tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 		_reParams = [Q(Respawn), F(unscheduleRespawn), [], _unitsToRespawn]
 	};
 
-	ECOB(Core) call [F(remoteExecComponent), _reParams];
+	_reParams call dzn_fnc_RCE;
 	hint parseText _hintMsg;
 };
 
@@ -434,15 +434,17 @@ tSF_fnc_adminTools_IM_sendByGSO = {
 tSF_fnc_adminTools_IM_sendByPlayer = {
 	params ["_message"];
 
-	[
-		name player, 
+	_params = [
+		name player,
 		format [
-			"<t color=%4>%1 из %2 (%3)</t>", 
-			name player, 
-			groupId group player, 
-			roleDescription player, 
-			COLOR_HEX_WHITE
-		], 
+			"<t color='%5'>%1%2</t> из <t color='%6'>%3 (%4)</t>",
+			name player,
+			[" (мертв)", ""] select (alive player),
+			groupId group player,
+			roleDescription player,
+			COLOR_HEX_WHITE,
+			COLOR_HEX_GRAY
+		],
 		_message
 	] remoteExec ["tSF_fnc_adminTools_IM_Notify", tSF_Admin];
 
@@ -493,7 +495,7 @@ tSF_fnc_adminTools_IM_SaveMsgToDiary = {
 	};
 
 	player createDiaryRecord [tSF_AdminTools_IM_Topic, [
-		_receiver, 
+		_receiver,
 		format [
 			Q(NOTE_IM_LOG),
 			[] call BIS_fnc_timeToString,
