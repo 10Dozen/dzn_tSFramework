@@ -672,14 +672,11 @@ tSF_fnc_FARP_ProcessService = {
 	};
 
     if (_needKitRenewal) then {
-        private _dznGearKit = _veh getVariable "dzn_gear";
-        private ["_kit"];
-        if (isNil "_dznGearKit") then {
-            _kit = [_veh] call tSF_fnc_FARP_getDefaultCargoLoadout;
-        } else {
-            _kit = call compile _dznGearKit;
+        private _gear = _veh getVariable "dzn_gear"; 
+        if (isNil "_gear") then {
+            _gear = [_veh] call tSF_fnc_FARP_getDefaultCargoLoadout;
         };
-        [_veh, _kit] spawn dzn_fnc_gear_assignCargoGear;
+        [_veh, _gear] spawn dzn_fnc_gear_assignCargoGear;
 
         private _gearRenewalCostTotal = 0;
         {
@@ -687,7 +684,7 @@ tSF_fnc_FARP_ProcessService = {
             if (tSF_FARP_Gear_ProportionalMode) then {
                 {
                     _itemCount = _itemCount + (_x # 1);
-                } forEach (_kit # _forEachIndex);
+                } forEach (_gear # _forEachIndex);
             };
             _gearRenewalCostTotal = _gearRenewalCostTotal + _itemCount * _x;
         } forEach tSF_FARP_Gear_TimeMultiplier;
