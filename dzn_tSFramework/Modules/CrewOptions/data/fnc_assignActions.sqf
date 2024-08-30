@@ -54,7 +54,7 @@ private ["_cfgName", "_vehicles", "_vehicle"];
                 true,
                 "",
                 [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
-                5   // radius, hope there won't be gigantic vehicles
+                15   // radius, hope there won't be gigantic vehicles
             ];
 
             // Engine action 
@@ -70,7 +70,7 @@ private ["_cfgName", "_vehicles", "_vehicle"];
                 true,
                 "",
                 [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
-                5   // radius, hope there won't be gigantic vehicles
+                15   // radius, hope there won't be gigantic vehicles
             ];
 
             // Light action 
@@ -86,19 +86,25 @@ private ["_cfgName", "_vehicles", "_vehicle"];
                 true,
                 "",
                 [{ ECOB(CrewOptions) call [F(actionCondition), [_target]] }] call dzn_fnc_stringify, // condition
-                5   // radius, hope there won't be gigantic vehicles
+                15   // radius, hope there won't be gigantic vehicles
             ];
         };
 
         if (_addAceAction) then {
             LOG_1("(assignActions) Adding ACE actions to vehicle %1", _vehicle);
             // TBD
+
+            [
+                _vehicle, "CrewMenu", "CrewMenu", "",  { ECOB(CrewOptions) call [F(openCrewMenu), [_target]]; },
+                { ECOB(CrewOptions) call [F(actionCondition), [_target]] }
+            ] call tSF_fnc_ACEActions_addAction;
+
             private _actionMenu = [
                 "Menu",
                 ACE_ACTION_TITLE_MENU,
                 "",
                 { ECOB(CrewOptions) call [F(openCrewMenu), [_target]]; },
-                { ECOB(CrewOptions) call [F(actionCondition), [_target]] }
+                { true }
             ] call ace_interact_menu_fnc_createAction;
 
             private _actionEngine = [
@@ -109,7 +115,7 @@ private ["_cfgName", "_vehicles", "_vehicle"];
                 {},
                 [], 
                 [0,0,0],
-                5,
+                15,
                 [false, true, false, false, true]
             ] call ace_interact_menu_fnc_createAction;
 
@@ -117,16 +123,16 @@ private ["_cfgName", "_vehicles", "_vehicle"];
                 "LightsCycle",
                 ACE_ACTION_TITLE_LIGHTS,"",
                 { ECOB(CrewOptions) call [F(lightsAction), [_target]]; },
-                { ECOB(CrewOptions) call [F(actionCondition), [_target]] },
+                { true /*ECOB(CrewOptions) call [F(actionCondition), [_target]]*/ },
                 {},
                 [], 
                 [0,0,0],
-                5,
+                15,
                 [false, true, false, false, true]
             ] call ace_interact_menu_fnc_createAction;
 
             {
-                 LOG_1("(assignActions) Adding ACE actions=%1", _x);            
+                LOG_1("(assignActions) Adding ACE actions=%1", _x);            
                 [_vehicle, 0, ["ACE_MainActions"], _x] call ace_interact_menu_fnc_addActionToObject;
             } forEach [_actionMenu, _actionEngine, _actionLights];
         };

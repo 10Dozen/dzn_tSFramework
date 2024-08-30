@@ -18,13 +18,17 @@
 
 params["_vehicle"];
 
+private _isAdmin = player == tSF_Admin;
 private _isInVehicle = player in _vehicle;
 
-if (_isInVehicle && player == tSF_Admin) exitWith { true };
+if (!_isInVehicle) exitWith { false };
+if (_isAdmin) exitWith { true };
 
 private _cfgName = _vehicle getVariable GAMELOGIC_FLAG;
-private _cfg = SETTING(_self,Configs) get _cfgName get Q(allowedForRoles);
+private _cfg = SETTING(_self,Configs) get _cfgName getOrDefault [Q(allowedForRoles), [""]];
 private _playerRole = roleDescription player;
 
 // At least 1 match for player role
-_isInVehicle && (_cfg findIf { [_x, _playerRole, false] call BIS_fnc_inString }) > -1
+private _isRoleAllowed = (_cfg findIf { [_x, _playerRole, false] call BIS_fnc_inString }) > -1;
+
+_isRoleAllowed

@@ -57,6 +57,24 @@ Configs:
         crew:
             - *SeatDriver   # Можно использовать ссылку
 
+    HelicopterFull:
+        allowedForRoles: ["Pilot", "Пилот"]
+        kit: "kit_west_pilot"
+        class: "B_Helipilot_F"
+        crew:
+            - name: Пилот
+              seat: driver
+            - name: Второй пилот
+              seat: [0]
+            - name: Бортстрелок (левый)
+              seat: [1]
+              class: "B_helicrew_F"
+              kit: "kit_west_doorgunner"
+            - name: Бортстрелок (правый)
+              seat: [2]
+              class: "B_helicrew_F"
+              kit: "kit_west_doorgunner"
+
     Helicopter Pilot:
         allowedForRoles: ["Pilot", "Пилот"]
         kit: "kit_west_pilot"
