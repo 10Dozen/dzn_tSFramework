@@ -31,7 +31,7 @@ if (_mode == MODE_BEFORE_RESPAWN_MSG) exitWith {
 
     [
         [
-            Q(RESPAWN_MSG_SCHEDULED)
+            Q(RESPAWN_MSG_SCHEDULED),
             format [Q(RESPAWN_HINT_MSG_TEXT), _message]
         ]
         , "TOP"
