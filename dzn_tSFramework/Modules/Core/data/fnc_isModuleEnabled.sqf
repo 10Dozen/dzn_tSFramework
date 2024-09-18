@@ -13,13 +13,13 @@
     Returns:
         _isEnabled (BOOL) or NIL - state of the module
 
-    _isEnabled = tSF_Core_Component call ["fnc_isModuleEnabled", ["FARP"]]; // true
-*/
+    _isEnabled = tSF_Core_Component call ["fnc_isModuleEnabled", "FARP"]; // true
 
-private _moduleName = _this;
+    Alternative usage - macros: TSF_MODULE_ENABLED(FARP)
+*/
+params ["_moduleName"];
 
 private _isEnabled = false;
-
 {
     if (_moduleName == _x) exitWith {
         _isEnabled = _y;

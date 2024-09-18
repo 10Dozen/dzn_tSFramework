@@ -9,7 +9,8 @@ private _declaration = [
     PREP_COMPONENT_SETTINGS,
 
     PREP_COMPONENT_FUNCTION(init),
-    PREP_COMPONENT_FUNCTION(showMissionTitles)
+    PREP_COMPONENT_FUNCTION(showMissionTitles),
+    PREP_COMPONENT_FUNCTION(showTitles)
 ];
 
 COB = createHashMapObject [_declaration];

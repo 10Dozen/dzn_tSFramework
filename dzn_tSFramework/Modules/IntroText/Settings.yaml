@@ -3,6 +3,7 @@
 # Печатает стилизованные титры в начале миссии.
 # Титры идут в порядке Date, Location, Operation.
 # Если титр пустой - он не будет отображаться вовсе.
+# Титры Location/Operation со значением по умолчанию также не выводятся.
 #
 # Зависимости: Нет
 
@@ -11,16 +12,18 @@ Init:
     condition: { true }
 
 
-Date: "%1/%2/%3"  # По-умолчанию будет использована дата заданная в редакторе, если нужно - задайте вручную
+Date: "%1 %2/%3/%4"  # По-умолчанию будет использована дата миссии, если нужно - задайте вручную
 Location: "Район Н, Страна Н, Регион Н"
 Operation: "Операция 'Без имени'"
 
 
 General:
-    displayTime: 15  # секунд после вывода всех строк
-    position: [0.2, 0.7]  # позиция на экране (по умолчанию - правый нижний угол)
+    displayTime: 15                 # секунд после вывода всех строк
+    position: [0.2, 0.7]            # позиция на экране (по умолчанию - правый нижний угол)
+    showRespawnLocationTitle: true  # показывать имя назначенной локации респауна в интро тексте
 
 Templates:
     date: "<t align='right' shadow='1' size='0.7' font='PuristaBold'><br />%1</t>"
     location: "<t align='right' shadow='1' size='0.7' font='PuristaBold'><br />%1</t>"
     operation: "<t align='right' shadow='1' size='0.9' font='PuristaBold'><br />%1</t>"
+    spawnLocation: "<t align='right' shadow='1' size='0.7' font='PuristaBold'><br />%1</t>"

@@ -15,9 +15,13 @@
 
 private _settings = SETTING(_self,Equipment);
 
+// Put default weapon on safe
 if (_settings getOrDefault [Q(PutWeaponOnSafe), false]) then {
-    // Put default weapon on safe
-    [ACE_player, currentWeapon ACE_player, true] call ace_safemode_fnc_setWeaponSafety;
+    [player, currentWeapon player, true] call ace_safemode_fnc_setWeaponSafety;
+};
+
+if (_settings getOrDefault [Q(EarplugAutoUse), false]) then {
+    player call ace_hearing_fnc_putInEarplugs;
 };
 
 // Schedule equipment adjust after dzn_gear kit assigned
@@ -29,7 +33,7 @@ if (_settings getOrDefault [Q(PutWeaponOnSafe), false]) then {
             player call ace_hearing_fnc_putInEarplugs;
         };
         if (_weaponOnSafe) then {
-            [ACE_player, currentWeapon ACE_player, true] call ace_safemode_fnc_setWeaponSafety;
+            [player, currentWeapon player, true] call ace_safemode_fnc_setWeaponSafety;
         };
     },
     [

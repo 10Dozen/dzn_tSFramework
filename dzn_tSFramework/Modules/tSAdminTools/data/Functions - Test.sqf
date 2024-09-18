@@ -33,6 +33,6 @@ FUNC(testEntities) = {
 	if (!_hasScenarioLogic) then { "Сценарий не настроен!" call _fnc_fail; };
 	// if (!_hasHC) then { "No Headless Client set!" call _fnc_fail; };
 	if (!_hasZeus) then { "Нет модуля Зевс!" call _fnc_fail; };
-	if (ECOB(Core) call [F(isModuleEnabled), "CCP"] && !_hasCCP) then { "Не установлен CCP!" call _fnc_fail; };
-	if (ECOB(Core) call [F(isModuleEnabled), "FARP"] && !_hasFARP) then { "Не установлен FARP!" call _fnc_fail; };
+	if (TSF_MODULE_ENABLED(CCP) && !_hasCCP) then { "Не установлен CCP!" call _fnc_fail; };
+	if (TSF_MODULE_ENABLED(FARP) && !_hasFARP) then { "Не установлен FARP!" call _fnc_fail; };
 };

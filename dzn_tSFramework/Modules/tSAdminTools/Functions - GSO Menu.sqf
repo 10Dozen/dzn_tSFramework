@@ -1,229 +1,440 @@
-#include "data\script_component.hpp"
+#include "script_component.hpp"
 
 /*
  *	F5 GSO Main Screen
  */
-tSF_fnc_adminTools_showGSOScreen = {
-	#define ADD_GSO_POS(X,Y) 	tSF_AdminTools_GSO_TeleportPositions pushBack (X); tSF_AdminTools_GSO_TeleportSelections pushBack (Y)
-	#define	ADD_PLR_POS(X,Y)	tSF_AdminTools_PLR_TeleportPositions pushBack (X); tSF_AdminTools_PLR_TeleportSelections pushBack (Y)
 
+tSF_fnc_adminTools_prepareGSOScreenData = {
+	// -- Locations 
+	private _locs = [] call tSF_fnc_adminTools_getLocationOptions;
+
+	// -- Ends 
+	private _endsList = [
+		[""],
+		["Победа", "WIN", [
+			["textRight", "(стандартная)"],
+			["textRightColor", COLOR_RGBA_GRAY]
+		]],
+		["Поражение", "LOSER", [
+			["textRight", "(стандартная)"],
+			["textRightColor", COLOR_RGBA_GRAY]
+		]]
+	];
+	if (TSF_MODULE_ENABLED(MissionConditions)) then {
+		if (!isNil QEGVAR(MissionConditions,Endings)) then {
+			{
+				_x params ["_name", "_desc"];
+				_endsList pushBack [
+					[_name, _desc] select (_desc != ""),
+					_name,
+					[
+						["color", COLOR_RGBA_LIGHT_GREEN],
+						["textRight", "(условие)"]
+					]
+				]
+			} forEach EGVAR(MissionConditions,Endings);
+		};
+	};
+
+	// -- Players
+	([] call tSF_fnc_adminTools_getPlayersAndGroupsOptions) params [
+        "_playerOptions",
+        "_groupOptions",
+        "_players",
+        "_groups"
+    ];
+	private _playerOptionsTotal = [
+		[""],
+		["Все игроки", objNull, [
+			["color", COLOR_RGBA_LIGHT_GREEN],
+			["textRight", format ["%1 чел.", count _players]],
+			["textRightColor", COLOR_RGBA_LIGHT_GREEN]
+		]]
+	] + _groupOptions + _playerOptions;
+
+	// -- Kits 
+	private _gatMap = createHashMap;
+	{
+		_x params ["_role", "_kit"];
+		private _listOfRoles = _gatMap getOrDefaultCall [_kit, { [] }, true];
+		_listOfRoles pushBack _role;
+	} forEach dzn_gear_gat_table;
+
+	private _kitsOptions = tSF_GATList apply {
+		private _assosiatedRoles = ([
+			(_gatMap getOrDefault [_x, []]) joinString ", ",
+			100,
+			",",
+			" и т.д."
+		] call tSF_fnc_adminTools_cutLongLine) # 0;
+		[
+			_x,
+			_x,
+			[
+				["tooltip", _assosiatedRoles],
+				["color", [COLOR_RGBA_WHITE, COLOR_RGBA_LIGHT_GREEN] select (_assosiatedRoles != "")]
+			]
+		]
+	};
+
+	createHashMapFromArray [
+		["missionEndings", _endsList],
+		["playersOptions", _playerOptionsTotal],
+		["locations", _locs],
+		["kits", _kitsOptions],
+		["aiUnitsCount", count (allUnits - _players)],
+		["playersCount", count _players],
+		["fps", round diag_fps],
+		["fpsServer", ["--", tSF_adminTools_serverFPS] select (!isNil "tSF_adminTools_serverFPS")],
+		["missionTime", [CBA_missionTime, "HH:MM:SS"] call BIS_fnc_secondsToString]
+	]
+};
+
+tSF_fnc_adminTools_showGSOScreen = {
 	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
 
-	if (tSF_AdminTools_TeleportListNeedUpdate) then {
-		tSF_AdminTools_GSO_TeleportPositions = [];
-		tSF_AdminTools_GSO_TeleportSelections = [];
-		tSF_AdminTools_PLR_TeleportPositions = [player];
-		tSF_AdminTools_PLR_TeleportSelections = ["GSO"];
+    // -- Functions
+	_onTeleport = {
+		params ["_AD", "_args"];
+		_args params ["_isForGSO"];
 
-		{
-			private _mrkPos = (getMarkerPos format["respawn%1", _x]);
-			if !(_mrkPos isEqualTo [0,0,0]) then {
-				ADD_GSO_POS(_mrkPos, "Base");
+		private _targets = [player];
+		private _msgArg = "GSO";
+		(_AD call [
+			"GetValueByTag", ["dp_playerLocations","dp_locations"] select _isForGSO
+		]) params [
+			"",
+			"_selectedLocationName",
+			"_selectedLocation"
+		];
+
+		if (_isForGSO) exitWith {
+			[_selectedLocation, _selectedLocationName] call tSF_fnc_adminTools_teleportToLocal;
+			hint format ["Вы были перемещены в локацию %1!", _selectedLocationName];
+			_AD call ["Close"];
+		};
+
+		(_AD call ["GetValueByTag", "dp_player"]) params ["","","_selectedPlayers"];
+
+		// objNull -- means ALL players 
+		// object - means specific player 
+		// group - means all players in group 
+		if (_selectedPlayers isEqualType "" && { _selectedPlayers == "" }) exitWith {};
+		if (isNull _selectedPlayers) then {
+			_targets = call BIS_fnc_listPlayers;
+			_msgArg = "всех игроков";
+		} else {
+			if (_selectedPlayers isEqualType grpNull) then {
+				_targets = units _selectedPlayers;
+				_msgArg = format ["всех игроков отряда %1", groupId _selectedPlayers];
+			} else {
+				_targets = [_selectedPlayers];
+				_msgArg = format ["игрока %1",name _selectedPlayers];
 			};
-		} forEach ["", "_west","_east","_guerrila","_civilian"];
-
-		private _pl = (call BIS_fnc_listPlayers) select {
-			["1'6 ", roleDescription _x] call dzn_fnc_inString
-			|| ["platoon leader", roleDescription _x] call dzn_fnc_inString
-			|| ["командир взвода", roleDescription _x] call dzn_fnc_inString
 		};
-		if !(_pl isEqualTo []) then {
-			ADD_GSO_POS(_pl select 0,"PL");
-			ADD_PLR_POS(_pl select 0,"PL");
-		};
+		
+		_AD call ["Close"];
+		
+		[_targets, _msgArg, _selectedLocation, _selectedLocationName] spawn {
+			params ["_targets", "_msgArg", "_selectedLocation", "_selectedLocationName"];
+			private _result = [
+				format [
+					"Переместить <t color='%2'>%1</t> в локацию <t color='%4'>%3</t>?",
+					_msgArg,
+					COLOR_HEX_GOLD,
+					_selectedLocationName, 
+					COLOR_HEX_LIME
+				]
+			] call tSF_fnc_adminTools_showGSOActionConfirmDialog;
+			if !(_result) exitWith {};
 
-		if (ECOB(Core) call [F(isModuleEnabled), "CCP"] && {!isNil "tSF_CCP_Position"}) then {
-			ADD_GSO_POS(ASLtoATL tSF_CCP_Position, "CCP");
-			ADD_PLR_POS(ASLtoATL tSF_CCP_Position, "CCP");
-		};
-
-		if (ECOB(Core) call [F(isModuleEnabled), "FARP"]  && {!isNil "tSF_FARP_Position"}) then {
-			ADD_GSO_POS(ASLtoATL tSF_FARP_Position, "FARP");
-			ADD_PLR_POS(ASLtoATL tSF_FARP_Position, "FARP");
-		};
-
-		{
-			ADD_GSO_POS(_x select 1, _x select 0);
-			ADD_PLR_POS(_x select 1, _x select 0);
-		} forEach tSF_AdminTools_Rallypoints;
-
-		tSF_AdminTools_TeleportListNeedUpdate = false;
-	};
-
-	private _endsNames = [];
-	private _ends = [];
-    if (!isNil QEGVAR(MissionConditions,Endings)) then {
-        {
-            _ends pushBack (_x select 0);
-            _endsNames pushBack (format ["%1 (%2)", _x select 0, _x select 1]);
-        } forEach EGVAR(MissionConditions,Endings);
-    } else {
-        _endsNames = ["Generic WIN", "Generic LOSE"];
-        _ends = ["end1", "loser"];
-    };
-
-	private _listPLayers = call BIS_fnc_listPlayers;
-	private _gatList = if (!isNil "tSF_GATList") then { tSF_GATList } else { [] };
-
-	[
-		[0, "HEADER", "GSO Screen"]
-
-		, [1, "LABEL", "Teleport GSO"]
-		, [1, "LISTBOX", tSF_AdminTools_GSO_TeleportSelections, tSF_AdminTools_GSO_TeleportPositions]
-		, [1, "BUTTON", "TELEPORT", {
-			closeDialog 2;
 			[
-				((_this select 0 select 2) select (_this select 0 select 0))
-				, player
-			] spawn tSF_fnc_adminTools_teleportTo;
-		}]
+				_selectedLocation,
+				_selectedLocationName				
+			] remoteExec ["tSF_fnc_adminTools_teleportToLocal", _targets];
 
-		, [2, "LABEL", ""]
-		, [2, "LABEL", ""]
-		, [2, "BUTTON", "ADD RALLYPOINT", {
-			closeDialog 2;
-			[] spawn tSF_fnc_adminTools_createTeleportRP;
-		}]
+			hint format [
+				"%1 перемещен(ы) в локацию %2",
+				_msgArg,
+				_selectedLocationName
+			];
+		};
+	};
+	_onAddLocation = {
+		params ["_AD"];
+		_AD call ["Close"];
+		[{ [] call tSF_fnc_adminTools_createTeleportRP }] call CBA_fnc_execNextFrame;
+	};
+	_onMissionEnd = {
+		params ["_AD"];
+		(_AD call ["GetValueByTag", "dp_ends"]) params [
+			"","","_selectedEnding"
+		];
+		if (_selectedEnding == "") exitWith {};
 
-		, [3, "HEADER","<t align='center'>MISSION</t>"]
+		_AD call ["Close"];
+		[_selectedEnding] spawn tSF_fnc_adminTools_callEndings;
+	};
+	_onGearAssign = {
+		params ["_AD"];
+		(_AD call ["GetValueByTag", "dp_player"]) params [
+			"","","_selectedPlayers"
+		];
+		(_AD call ["GetValueByTag", "dp_kits"]) params [
+			"","","_selectedKit"
+		];
+		// objNull -- means ALL players 
+		// object - means specific player 
+		// group - means all players in group 
+		if (_selectedPlayers isEqualType "" && { _selectedPlayers == "" }) exitWith {};
+		private _targets = [];
+		private _msgArg = "";		
+		if (isNull _selectedPlayers) then {
+			_targets = call BIS_fnc_listPlayers;
+			_msgArg = "всем игрокам";
+		} else {
+			if (_selectedPlayers isEqualType grpNull) then {
+				_targets = units _selectedPlayers;
+				_msgArg = format ["всем игрокам отряда %1", groupId _selectedPlayers];
+			} else {
+				_targets = [_selectedPlayers];
+				_msgArg = format ["игроку %1",name _selectedPlayers];
+			};
+		};
+		_AD call ["Close"];
 
-		, [4, "LABEL", format ["<t align='right'>AI Units: %1</t>", count allUnits - (count (call BIS_fnc_listPlayers))]]
-		, [4, "LABEL", format ["<t align='left'>Players: %1</t>", count (call BIS_fnc_listPlayers)]]
+		[_targets, _msgArg, _selectedKit] spawn {
+			params ["_targets", "_msgArg", "_kit"];
+			private _result = [
+				format [
+					"Назначить набор <t color='%2'>%1</t> <t color='%4'>%3</t>?",
+					_kit, 
+					COLOR_HEX_LIME,
+					_msgArg,
+					COLOR_HEX_GOLD
+				]
+			] call tSF_fnc_adminTools_showGSOActionConfirmDialog;
+			if !(_result) exitWith {};
 
-		, [5, "LABEL", format ["<t align='right'>FPS: %1</t>", round(diag_fps)]]
-		, [5, "LABEL", format ["<t align='left'>Server FPS: %1</t>", if (!isNil "tSF_adminTools_serverFPS") then { tSF_adminTools_serverFPS } else { "--" }]]
-
-		, [6, "DROPDOWN", _endsNames, _ends]
-		, [6, "BUTTON", "FINISH", {
-			closeDialog 2;
-			( (_this select 1 select 2) select (_this select 1 select 0) ) spawn tSF_fnc_adminTools_callEndings;
-		}]
-
-		, [7, "LABEL", ""]
-
-		, [8, "HEADER", "<t align='center'>PLAYERS</t>"]
-
-		, [9, "LABEL", "Select player"]
-		, [9, "DROPDOWN", _listPLayers apply { name _x }, _listPLayers]
-		, [9, "LABEL", ""]
-
-		, [10, "LABEL", "Kit"]
-		, [10, "DROPDOWN", _gatList, _gatList]
-		, [10, "INPUT"]
-
-		, [11, "LABEL", ""]
-		, [11, "LABEL", ""]
-		, [11, "BUTTON", "ASSIGN KIT", {
-			private _u = (_this select 2 select 2) select (_this select 2 select 0);
-			private _kit = if ((_this select 4 select 0) != "") then { (_this select 4 select 0) } else { _this select 3 select 1 };
-
-			if (isNil { call compile _kit }) exitWith {
-				hint parseText format [
-					"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
-					<br /> There is no '%1' kit"
-					, _kit
+			[_kit] remoteExec ["tSF_fnc_adminTools_assignKitLocal", _targets];
+			hint format [
+				"Набор %1 был назначен %2",
+				_kit,
+				_msgArg
+			];
+		};
+	};
+	_onHeal = {
+		params ["_AD"];
+		(_AD call ["GetValueByTag", "dp_player"]) params [
+			"","","_selectedPlayers"
+		];
+		if (_selectedPlayers isEqualType "" && { _selectedPlayers == "" }) exitWith {};
+		// objNull -- means ALL players 
+		// object - means specific player 
+		// group - means all players in group 
+		private _targets = [];
+		private _msg = "";
+		if (isNull _selectedPlayers) then {
+			_targets = call BIS_fnc_listPlayers;
+			_msg = "Все игроки вылечены!";
+		} else {
+			if (_selectedPlayers isEqualType grpNull) then {
+				_targets = units _selectedPlayers;
+				_msg = format [
+					"Все игроки отряда %1 вылечены!\n\n%2", 
+					groupId _selectedPlayers,
+					((units _selectedPlayers) apply { name _x }) joinString "\n"
 				];
+			} else {
+				_targets = [_selectedPlayers];
+				_msg = format ["Игрок %1 вылечен!",name _selectedPlayers];
 			};
+		};
 
-			closeDialog 2;
-
-			[_u, _kit] spawn {
-				params["_u","_kit"];
-
-				private _DialogResult = [
-					[format [
-						"Do you want to assign <t color='#FFD000'>%1</t> to <t color='#FFD000'>%2</t>?"
-						, _kit
-						, name _u
-					]]
-					, ["Yes"]
-					, ["No"]
-				] call dzn_fnc_ShowBasicDialog;
-
-				waitUntil {!dialog};
-
-				if !(_DialogResult) exitWith {};
-				[_u, _kit] remoteExec ["dzn_fnc_gear_assignKit", _u];
-				hint parseText format [
-					"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
-					<br /> Kit '%1' was assigned to %2"
-					, _kit
-					, name _u
+		[] remoteExec ["tSF_fnc_adminTools_heal", _targets];
+		hint _msg;
+	};
+	_onGiveNVG = {
+		params ["_AD"];
+		(_AD call ["GetValueByTag", "dp_player"]) params [
+			"","","_selectedPlayers"
+		];
+		if (_selectedPlayers isEqualType "" && { _selectedPlayers == "" }) exitWith {};
+		// objNull -- means ALL players 
+		// object - means specific player 
+		// group - means all players in group 
+		private _targets = [];
+		private _msg = "";
+		if (isNull _selectedPlayers) then {
+			_targets = call BIS_fnc_listPlayers;
+			_msg = "ПНВ выдан всем игрокам!";
+		} else {
+			if (_selectedPlayers isEqualType grpNull) then {
+				_targets = units _selectedPlayers;
+				_msg = format [
+					"ПНВ выдан всем игрокам отряда %1!\n\n%2", 
+					groupId _selectedPlayers,
+					((units _selectedPlayers) apply { name _x }) joinString "\n"
 				];
+			} else {
+				_targets = [_selectedPlayers];
+				_msg = format ["ПНВ выдан игроку %1!",name _selectedPlayers];
 			};
-		}]
+		};
 
-		, [12, "LABEL", "Teleport"]
-		, [12, "LISTBOX", tSF_AdminTools_PLR_TeleportSelections, tSF_AdminTools_PLR_TeleportPositions]
-		, [12, "BUTTON", "TELEPORT", {
-			closeDialog 2;
-			private _u = (_this select 2 select 2) select (_this select 2 select 0);
-			private _pos = (_this select 5 select 2) select (_this select 5 select 0);
-			[_pos, _u] spawn tSF_fnc_adminTools_teleportTo;
-			hint format ["%1 teleported", name _u];
-		}]
-
-		, [13, "LABEL", "ACE Healing"]
-		, [13, "LABEL", ""]
-		, [13, "BUTTON", "HEAL", {
-			private _u = (_this select 2 select 2) select (_this select 2 select 0);
-			_u spawn tSF_fnc_adminTools_heal;
-			hint format ["%1 healed", name _u];
-		}]
-
-		, [14, "BUTTON", "DEPLOY TACTICAL PIPE", { call tSF_fnc_adminTools_deployTacticalPipe; }]
-		, [14, "BUTTON", "NVG TO ALL PLAYERS", {
-			[] spawn {
-				hint "All players NVG assignment started";
-				{
-					[_x, "NVGoggles_OPFOR"] remoteExec ["addWeapon",_x];
-					sleep 0.2;
-				} forEach (call BIS_fnc_listPlayers);
-				hint "All players NVG assignment  done";
-			};
-		}]
-		, [14, "BUTTON", "HEAL ALL PLAYERS", {
-			[] spawn {
-				hint "All players healing started";
-				{
-					_x spawn tSF_fnc_adminTools_heal;
-					sleep 0.1;
-				} forEach (call BIS_fnc_listPlayers);
-				hint "All players healing done";
-			};
-		}]
-	] call dzn_fnc_ShowAdvDialog;
-};
-
-tSF_fnc_adminTools_teleportTo = {
-	params["_pos","_u"];
-
-    if !(local _u) exitWith {
-        [_pos, _u] remoteExec ["tSF_fnc_adminTools_teleportTo", _u];
-    };
-
-	if (typename _pos == "OBJECT") then {
-		_pos = getPosATL _pos;
+		{ _x addWeaponGlobal "NVGoggles_OPFOR"; } forEach _targets;
+		hint _msg;
+	};
+	_onDeployTacticalPipe = {
+		params ["_AD"];
+		_AD call ["Close"];
+		[] call tSF_fnc_adminTools_deployTacticalPipe; 
+		hint "Тактический Дымогенератор установлен!";
 	};
 
-	0 cutText ["", "WHITE OUT", 0.1];
-	player allowDamage false;
-	sleep 1;
+	_onUIUpdate = {
+		if (!dialog) exitWith {};
+        _thisArgs params ["_cob"];
 
-	moveOut player;
-	player setVelocity [0,0,0];
-	player setPosATL _pos;
+		private _data = [] call tSF_fnc_adminTools_prepareGSOScreenData;
+		{
+			_x params ["_tag", "_formatData"];
+			(
+				_cob call ["GetByTag", _tag]
+			) ctrlSetStructuredText parseText format _formatData;
+		} forEach [
+			["l_aiUnits", [Q(MENU_AI_COUNT), _data get "aiUnitsCount"]],
+			["l_playableUnits", [Q(MENU_PLAYER_COUNT), _data get "playersCount"]],
+			["l_fps", [Q(MENU_FPS), _data get "fps"]],
+			["l_fpsServer", [Q(MENU_FPS_SERVER), _data get "fpsServer"]],
+			["l_missionTime", [Q(MENU_LABEL_LEFT_ALIGN), _data get "missionTime"]]
+		];
+	};
 
-	0 cutText ["", "WHITE IN", 1];
-	sleep 3;
-	player allowDamage true;
+	// -- Data 
+	private _data = [] call tSF_fnc_adminTools_prepareGSOScreenData;
+
+	private _menu = [
+		["HEADER", "GSO Меню"],
+		["onCBAEvent", "tSF_AdminTools_uiUpdate", _onUIUpdate],
+		["LABEL", "Локации", [["w", 0.25]]],
+		["DROPDOWN", _data get "locations", 0, [["tag", "dp_locations"], ["bg", COLOR_RGBA_BLACK]]],
+		["BUTTON", "Телепорт", _onTeleport, [true], [
+			["w", 0.25], 
+			["tooltip", "Телепортировать GSO в выбранную локацию."]
+		]],
+		["BR"],
+		["LABEL"],
+		["BUTTON", "Добавить", _onAddLocation, [], [
+			["w", 0.25], 
+			["tooltip", "Сохранить текущее местоположение GSO как точку телепорта/респауна."]
+		]],
+		["BR"],
+
+		["LABEL", "<t align='center'>МИССИЯ</t>", [["bg", COLOR_RGBA_BY_UI]]],
+		["BR"],
+		
+		[
+			"LABEL", 
+			format [Q(MENU_AI_COUNT), _data get "aiUnitsCount"],
+			[["tag", "l_aiUnits"]]
+		],
+		[
+			"LABEL", 
+			format [Q(MENU_PLAYER_COUNT), _data get "playersCount"],
+			[["tag", "l_playableUnits"]]
+		],
+		["BR"],
+		[
+			"LABEL", 
+			format [Q(MENU_FPS), _data get "fps"],
+			[["tag", "l_fps"]]
+		],
+		[
+			"LABEL", 
+			format [Q(MENU_FPS_SERVER), _data get "fpsServer"],
+			[["tag", "l_fpsServer"]]
+
+		],
+		["BR"],
+		["LABEL", "<t align='right'>Время миссии:</t>"],
+		["LABEL", format [Q(MENU_LABEL_LEFT_ALIGN), _data get "missionTime"], [["tag", "l_missionTime"]]],
+		["BR"],
+
+		["DROPDOWN", _data get "missionEndings", 0, [["tag", "dp_ends"], ["bg", COLOR_RGBA_BLACK]]],
+		[
+			"BUTTON", 
+			"Завершить", 
+			_onMissionEnd, 
+			[], 
+			[
+				["tooltip", "Завершает миссию выбранной концовкой"]
+			]
+		],
+		["BR"],
+
+		["LABEL", "<t align='center'>ИГРОКИ</t>", [["bg", COLOR_RGBA_BY_UI]]],
+		["BR"],
+		["LABEL", "Игрок/Группа", [["w", 0.25]]],
+		["DROPDOWN", _data get "playersOptions", 0, [["tag", "dp_player"], ["bg", COLOR_RGBA_BLACK]]],
+		["BR"],
+
+		["LABEL", "Снаряжение", [["w", 0.25]]],
+		["DROPDOWN", _data get "kits", 0, [["tag", "dp_kits"], ["bg", COLOR_RGBA_BLACK]]],
+		
+		["BUTTON", "Выдать", _onGearAssign, [], [
+			["tooltip", "Выдать выбранный набор снаряжения"],
+			["w", 0.25]
+		]],
+		["BR"],
+
+		["LABEL", ""],
+		["BUTTON", "Выдать ПНВ", _onGiveNVG, [], [
+			["tooltip", "Выдать Прибор ночного видения выбранному игроку"],
+			["w", 0.25]
+		]],
+		["BR"],
+		
+		["LABEL", "Состояние"],
+		["BUTTON", "Вылечить", _onHeal, [], [
+			["tooltip", "Исцелить выбранного игрока"],
+			["w", 0.25]
+		]],
+		["BR"],
+
+		["LABEL", "Позиция", [["w", 0.25]]],
+		["DROPDOWN", _data get "locations", 0, [["tag", "dp_playerLocations"], ["bg", COLOR_RGBA_BLACK]]],
+		["BUTTON", "Телепорт", _onTeleport, [false], [
+			["tooltip", "Переместить выбранного игрока или группу в выбранную локацию."],
+			["w", 0.25]
+		]],
+		["BR"],
+
+		["LABEL"],
+		["BR"],
+
+		["LABEL", "<t align='center'>ПРОЧЕЕ</t>", [["bg", COLOR_RGBA_BY_UI]]],
+		["BR"],
+		[
+			"BUTTON", 
+			"Tactical Pipe", 
+			_onDeployTacticalPipe, [], 
+			[
+				[
+					"tooltip", 
+					"Устанавливает Тактический Парогенератор. Если вы находитесь в машине, то установит его прямо внутри!"
+				],
+				["w", 0.33]
+			]
+		]
+	];
+
+	_menu call dzn_fnc_ShowAdvDialog2;
 };
+
 
 tSF_fnc_adminTools_heal = {
-	if !(local _this) exitWith {
-		_this remoteExec ["tSF_fnc_adminTools_heal",_this];
-	};
-
 	[player] call ace_medical_treatment_fnc_fullHealLocal;
 };
 
@@ -314,37 +525,112 @@ tSF_fnc_adminTools_doWaterPipeAction = {
 
 
 tSF_fnc_adminTools_createTeleportRP = {
-	uiSleep 0.05;
-	[
-		[0, "HEADER", "ADD RALLYPOINT"]
-		, [1, "LABEL", "SHORTCUT"]
-		, [1, "INPUT"]
-		, [2, "LABEL", "<t align='center'><t color='#ffaa00'>Note:</t> Type name of existing RP to update it</t>"]
-		, [3, "BUTTON", "CANCEL", { closeDialog 2; }]
-		, [3, "LABEL", ""]
-		, [3, "BUTTON", "ADD", {
-			closeDialog 2;
-			private _text = _this select 0 select 0;
+	private _pos = getPosASL player;
+	private _onAdd = {
+		params ["_AD", "_pos"];
+		private _name = _AD call ["GetValueByTag", "i_name"];
+		private _desc = _AD call ["GetValueByTag", "i_desc"];
 
-			// Exit if empty string
-			if ((_text splitString " " joinString "") == "") exitWith {};
+		_AD call ["Close"];
 
-			// Check if shortcut already exist
-			private _toUpdate = tSF_AdminTools_Rallypoints select { _x select 0 == _text };
-			private _pos = getPosATL player;
+		private _rp = tSF_AdminTools_Rallypoints getOrDefaultCall [
+			_name,
+			{ createHashMapFromArray [["pos", objNull], ["desc", ""]] },
+			true
+		];
 
-			if (_toUpdate isEqualTo []) then {
-				// Add new Rallypoint
-				tSF_AdminTools_Rallypoints pushBack [_text, _pos];
-				hint parseText format ["<t size='1' color='#FFD000' shadow='1'>Rallypoint Added</t><br />'%1' at %2", _text, _pos];
-			} else {
-				// Update existing Rallypoint
-				(_toUpdate select 0) set [1, _pos];
-				hint parseText format [ "<t size='1' color='#FFD000' shadow='1'>Rallypoint Updated</t><br />'%1' at %2", _text, _pos];
-			};
+		_rp set ["pos", _pos];
+		_rp set ["desc", _desc];
+		
+		hint parseText format [
+			"<t size='1' color='#FFD000' shadow='1'>Список локаций обновлен</t><br />'%1' на позиции %2", 
+			_name,
+			_pos
+		];
 
-			tSF_AdminTools_TeleportListNeedUpdate = true;
-			publicVariable "tSF_AdminTools_Rallypoints";
-		}]
-	] call dzn_fnc_ShowAdvDialog;
+		publicVariable "tSF_AdminTools_Rallypoints";
+	};
+
+	private _menu = [
+		["HEADER", "Добавить локацию"],
+		["LABEL", "Имя", [["w", 0.25]]],
+		["INPUT", format ["%1", _pos call dzn_fnc_getMapGrid], [
+			["tag", "i_name"],
+			["tooltip", "При вводе уже существующего имени - позиция будет обновлена."]
+		]],
+		["BR"],
+
+		["LABEL", "Описание", [["w", 0.25]]],
+		["INPUT", "", [
+			["tag", "i_desc"],
+			["tooltip", "Описание может помочь отыскать нужную локацию!"]
+		]],
+		["BR"],
+
+		["LABEL"],
+		["BUTTON", "Добавить", _onAdd, _pos, [
+			["w", 0.25]
+		]]
+	];
+
+	_menu call dzn_fnc_ShowAdvDialog2;
 };
+
+
+tSF_fnc_adminTools_showGSOActionConfirmDialog = {
+	// Should be SPAWNED or called in scheduled env
+	params ["_message"];
+	private _DialogResult = [
+		[_message],
+		["Yes"],
+		["No"]
+	] call dzn_fnc_ShowBasicDialog;
+
+	waitUntil { !dialog };
+
+	_DialogResult
+};
+
+tSF_fnc_adminTools_assignKitLocal = {
+	params ["_kit"];
+	[player, _kit] call dzn_fnc_gear_assignKit;
+};
+
+tSF_fnc_adminTools_teleportToLocal = {
+	params["_pos", ["_description", ""]];
+
+	if (_pos isEqualType objNull) then {
+		_pos = [_pos, true, getPosASL _pos select 2] call dzn_fnc_getSurfacePos;
+	} else {
+		_pos = [_pos] call dzn_fnc_getSurfacePos;
+	};
+
+	0 cutText ["", "WHITE OUT", 0.1];
+	player allowDamage false;
+	
+	[
+		{
+			params ["_pos"];
+
+			moveOut player;
+			player setVelocity [0,0,0];
+			player setPosASL _pos;
+
+			0 cutText ["", "WHITE IN", 1];
+		}, 
+		[_pos], 
+		1
+	] call CBA_fnc_waitAndExecute;
+	
+	[
+		{ player allowDamage true; }, 
+		[], 
+		3
+	] call CBA_fnc_waitAndExecute;
+
+	if (_description == "") exitWith {
+		hint "Вы были перемещны!";
+	};
+	hint format ["Вы были перемещны в локацию %1!", _description];
+};
+

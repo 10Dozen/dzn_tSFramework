@@ -26,10 +26,6 @@ private _vehicleKit = ValueOrDefault(vehicleKit);
 private _behavior = ValueOrDefault(behavior);
 private _skill = ValueOrDefault(skill);
 
-if (_crewClass isEqualTo "") then {
-    _crewClass = nil;
-};
-
 if (_vehicleKit isNotEqualTo "") then {
     [_veh, _vehicleKit, true] call dzn_fnc_gear_assignKit;
 };
@@ -52,7 +48,6 @@ if (_isComplexSkill) then {
 };
 
 private _crew = [_veh, _side, _roles, _crewKit, _adjustedSkill, _crewClass] call dzn_fnc_createVehicleCrew;
-
 if (units _crew findIf {isNull objectParent _x} > -1) then {
     TSF_ERROR_4(TSF_ERROR_TYPE__MISCONFIGURED, "Crew does not fit vehicle %1. Config '%2' with %3 roles used - but actual mounted crew number is %4.", typeof _veh, _configName, _roles, count crew _veh);
 };

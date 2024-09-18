@@ -13,7 +13,7 @@ if (hasInterface) then {
 	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - IM and Respawn Menu.sqf"];
 	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - Dynai Control.sqf"];
 
-	tSF_AdminTools_Rallypoints = [];
+	tSF_AdminTools_Rallypoints = createHashMap;
 	tSF_AdminTools_TeleportListNeedUpdate = true;
 	tSF_AdminTools_GSO_TeleportPositions = [];
 	tSF_AdminTools_GSO_TeleportSelections = [];
@@ -22,14 +22,9 @@ if (hasInterface) then {
 	tSF_AdminTools_RapidArtillery_FiremissionCount = 0;
 
     tSF_AdminTools_Timers = createHashMap;
-    [tSF_fnc_adminTools_timers_handleTimers, 1] call CBA_fnc_addPerFrameHandler;
-
-	[] spawn {
-		while { true } do {
-			call tSF_fnc_adminTools_checkAndUpdateCurrentAdmin;
-			sleep 10;
-		};
-	};
+	[{ [] call tSF_fnc_adminTools_timers_handleTimers; }, 1] call CBA_fnc_addPerFrameHandler;
+	[{ [] call tSF_fnc_adminTools_uiUpdateLoop; }, tSF_AdminTools_uiLoop_Timeout] call CBA_fnc_addPerFrameHandler;
+	[{ [] call tSF_fnc_adminTools_checkAndUpdateCurrentAdmin; }, 10] call CBA_fnc_addPerFrameHandler;
 
 	[] spawn {
 		tSF_adminTools_isKeyPressed = false;
@@ -47,13 +42,7 @@ if (hasInterface) then {
 
 		waitUntil { sleep 15; call tSF_fnc_adminTools_checkIsAdmin };
 
-		tSF_GATList = (allVariables missionNamespace)  select {
-			["kit_", _x, false] call BIS_fnc_inString
-			&& !(["lkit_", _x, false] call BIS_fnc_inString)
-			&& !(["cba_xeh", _x, false] call BIS_fnc_inString)
-		};
-		tSF_GATList sort true;
-		tSF_GATList pushBack "";
+		tSF_GATList = [] call tSF_fnc_adminTools_getPersonalGearKits;
 
 		call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf"];
 		call tSF_fnc_adminTools_addTopic;
@@ -64,7 +53,11 @@ if (hasInterface) then {
 
 		[] spawn tSF_Diag_AddDiagTopic;
 
-		[["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], [-20,-5,150,0.032], [0,0,0,.75], 30] call dzn_fnc_ShowMessage;
+		[
+			["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], 
+			[-20,-5,150,0.032], 
+			[0,0,0,.75], 30
+		] call dzn_fnc_ShowMessage;
 
 		// Start DynAI Control Panel
 		waitUntil { sleep 5; !isNil "dzn_dynai_initialized" && { dzn_dynai_initialized } };
@@ -74,15 +67,15 @@ if (hasInterface) then {
 };
 
 if (isServer) then {
-	tSF_fnc_adminTools_getFps = {
-		sleep 15;
-		tSF_adminTools_serverFPS = round(diag_fps);
-		publicVariable "tSF_adminTools_serverFPS";
-		[] spawn tSF_fnc_adminTools_getFps;
-	};
+	[
+		{
+			tSF_adminTools_serverFPS = round(diag_fps);
+			publicVariable "tSF_adminTools_serverFPS";
+		},
+		15
+	] call CBA_fnc_addPerFrameHandler;
 
-	[] spawn tSF_fnc_adminTools_getFps;
-
+	// -- Test when in MP editor 
 	if (hasInterface) then {
 		["CBA_loadingScreenDone", {
 			[{

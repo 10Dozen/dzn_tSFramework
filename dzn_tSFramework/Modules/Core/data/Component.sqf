@@ -15,11 +15,10 @@ private _declaration = [
 
     PREP_COMPONENT_FUNCTION(isModuleEnabled),
 
-    PREP_COMPONENT_FUNCTION(registerComponentObject),
-    PREP_COMPONENT_FUNCTION(getComponentObject),
-    PREP_COMPONENT_FUNCTION(remoteExecComponent),
+    PREP_COMPONENT_FUNCTION(registerComponent),
+    PREP_COMPONENT_FUNCTION(getComponent),
 
-
+    // -- Shared functions 
     PREP_COMPONENT_FUNCTION(getGroupORBAT),
     PREP_COMPONENT_FUNCTION(getUnitGearInfo),
 

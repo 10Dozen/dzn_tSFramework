@@ -22,7 +22,6 @@
 
 params ["_component", "_type", "_msg"];
 
-
 [
     { time > 5 && !(call BIS_fnc_isLoading) },
     { ["TaskFailed", ["", _this]] call BIS_fnc_showNotification; },

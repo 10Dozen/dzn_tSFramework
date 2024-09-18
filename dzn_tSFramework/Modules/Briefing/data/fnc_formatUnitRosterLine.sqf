@@ -23,7 +23,7 @@ if (_isMyGroup) then {
     _roleName = format ["*%1", _roleName];
 };
 
-private _gearLines = ["?"];
+private _gearLines = [""];
 if (_gear isNotEqualTo []) then {
     _gear params ["_primaryWeapon", "_secondaryWeapon", "_lrRadio", "_swRadio"];
     _gearLines = [];

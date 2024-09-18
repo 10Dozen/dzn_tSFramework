@@ -1,4 +1,4 @@
-#include "data\script_component.hpp"
+#include "script_component.hpp"
 
 tSF_fnc_adminTools_handleKey = {
 	if (tSF_adminTools_isKeyPressed) exitWith {};
@@ -7,7 +7,7 @@ tSF_fnc_adminTools_handleKey = {
 		case 63: {
 			tSF_adminTools_isKeyPressed = true;
 			[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
-			[] spawn tSF_fnc_adminTools_showGSOScreen;
+			[] call tSF_fnc_adminTools_showGSOScreen;
 		};
 		// F6
 		case 64: {
@@ -18,14 +18,15 @@ tSF_fnc_adminTools_handleKey = {
 		// F7
 		case 65: {
 			tSF_adminTools_isKeyPressed = true;
-			[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
-			[] spawn tSF_fnc_adminTools_ForceRespawn_showMenu;
+			// [] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
+            [{ tSF_adminTools_isKeyPressed = false; }, nil, 1] call CBA_fnc_waitAndExecute;
+			[] call tSF_fnc_adminTools_ForceRespawn_showMenu;
 		};
 		// F8
         case 66: {
         	tSF_adminTools_isKeyPressed = true;
-        	[] spawn { sleep 1; tSF_adminTools_isKeyPressed = false; };
-        	[] spawn tSF_fnc_adminTools_IM_showMenu;
+            [{ tSF_adminTools_isKeyPressed = false; }, nil, 1] call CBA_fnc_waitAndExecute;
+        	[] call tSF_fnc_adminTools_IM_showMenu;
         };
 	};
 
@@ -130,9 +131,9 @@ tSF_fnc_adminTools_callEndings = {
 	private _Result = false;
 	if !(isNil "dzn_fnc_ShowBasicDialog") then {
 		_Result = [
-			[format ["Do you want to finish the mission with ending <t color='#A0DB65'>""%1""</t>?", _ending]]
-			, ["End", [1, .37, .17, .5]]
-			, ["Cancel"]
+			[format ["Вы хотите завершить миссию концовкой <t color='#A0DB65'>""%1""</t>?", _ending]]
+			, ["Завершить", [1, .37, .17, .5]]
+			, ["Отмена"]
 		] call dzn_fnc_ShowBasicDialog;
 	} else {
 		_Result = true;
@@ -163,8 +164,8 @@ dzn_fnc_adminTools_showGATTool = {
 	private _PlayerNamesList = [];
 	{ _PlayerNamesList pushBack (name _x); } forEach _PlayerList;
 
-	tSF_GATList = (allVariables missionNamespace) select {  ["kit_", _x, false] call BIS_fnc_inString &&  !(["lkit_", _x, false] call BIS_fnc_inString) };
-	tSF_GATList pushBack "";
+	tSF_GATList = [] call tSF_fnc_adminTools_getPersonalGearKits;
+    tSF_GATList pushBack "";
 
 	private _Result = [];
 	_Result = [
@@ -413,6 +414,7 @@ tSF_fnc_adminTools_timers_showInfo = {
 };
 
 tSF_fnc_adminTools_timers_handleTimers = {
+	// if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
     private _timeNow = CBA_missionTime;
     private _expiredTimers = [];
     {
@@ -444,4 +446,359 @@ tSF_fnc_adminTools_timers_handleTimers = {
     for "_i" from 0 to 5 do {
         [_playSound, nil, _i] call CBA_fnc_waitAndExecute;
     };
+};
+
+tSF_fnc_adminTools_uiUpdateLoop = {
+    // -- Timed loop for UI (dialog) update
+	// if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
+    ["tSF_AdminTools_uiUpdate", 1] call CBA_fnc_localEvent;
+};
+
+tSF_fnc_adminTools_getPlayersGroups = {
+	params ["_players"];
+
+
+	private _groupsMap = createHashMap;
+	private ["_groupName", "_playersInGroup"];
+	{
+		_groupName = groupId group _x;
+		_playersInGroup = _groupsMap getOrDefault [_groupName, []];
+		_playersInGroup pushBack _x;
+		_groupsMap set [_groupName, _playersInGroup];
+	} forEach _players;
+
+	_groupsMap
+};
+
+tSF_fnc_adminTools_getPlayersAndGroupsOptions = {
+    /*
+        Returns groups and players options for UI dialogs.
+
+        Player option format:
+            0: _name (STRING)
+            1: _unit (OBJECT)
+            2: _attributes (ARRAY)
+        
+        Group option format:
+            0: _name (STRING)
+            1: _group (GROUP)
+            2: _attributes (ARRAY)
+        
+        Params: none
+        Output:
+            0: _playerOptions (ARRAY) - list of player optons 
+            1: _groupOptions (ARRAY) - list of group options
+            2: _players (ARRAY of OBJECTS) - sorted list of players 
+            3: _groups (ARRAY of GROUPS) - sorted list of group options
+
+    */
+    params [
+        ["_filterBy", { true }],
+        ["_playerAttributesComposer", {
+            params ["_plr"];
+            [
+				[
+                    "color", 
+                    [COLOR_RGBA_GRAY, COLOR_RGBA_WHITE] select (alive _plr)
+                ],
+				[
+                    "textRight", 
+                    ["(мертв)", groupId group _plr] select (alive _plr)
+                ],
+				[
+                    "textRightColor", 
+                    [COLOR_RGBA_LIGHT_RED, COLOR_RGBA_YELLOW] select (alive _plr)
+                ],
+				["tooltip", roleDescription _plr]
+			]
+        }],
+        ["_groupAttributesComposer", {
+            params ["_grp"];
+			[
+				["color", COLOR_RGBA_YELLOW],
+				["textRight", format ["%1 чел.", count (_grp get "players")]],
+				["textRightColor", COLOR_RGBA_GRAY],
+				["tooltip", ((_grp get "players") apply { name _x }) joinString ", "]
+			]
+        }]
+    ];
+
+    private _players = (call BIS_fnc_listPlayers) select _filterBy;
+
+    // -- Get sorted players names and name-unit map
+    private _playersMap = createHashMap;
+    { _playersMap set [name _x, _x] } forEach _players;
+    private _playersSorted = keys _playersMap;
+	_playersSorted sort true;
+
+    // -- Get sorted groups names and groupName-group/players map 
+    private _groupsMap = createHashMap;
+	private ["_plr", "_group", "_groupName", "_groupData"];
+	{
+        _plr = _playersMap get _x;
+        _group = group _plr;
+        _groupName = groupId _group;
+        _groupData = _groupsMap getOrDefaultCall [
+            _groupName, 
+            { createHashMapFromArray [["players", []], ["group", grpNull]]; },
+            true
+        ];
+
+        (_groupData get "players") pushBack _plr;
+        _groupData set ["group", _group];
+
+		_groupsMap set [_groupName, _groupData];
+	} forEach _playersSorted;
+
+    private _groupsSorted = keys _groupsMap;
+	_groupsSorted sort true;
+
+    // -- Compose options
+    private _playerOptions = _playersSorted apply {
+        private _plr = _playersMap get _x;
+        [
+            _x,
+            _plr,
+            [_plr] call _playerAttributesComposer
+        ]
+    };
+    private _groupOptions = _groupsSorted apply {
+        private _grp = _groupsMap get _x;
+        [
+            _x, 
+            _grp get "group",
+            [_grp] call _groupAttributesComposer
+        ]
+    };
+
+    [
+        _playerOptions,
+        _groupOptions,
+        _playersSorted apply { _playersMap get _x },
+        _groupsSorted apply { _groupsMap get _x get "group" }
+    ]
+};
+
+tSF_fnc_adminTools_getPlayersByRoleNameLike = {
+    params ["_include", ["_exclude", []]];
+
+    if (_include isEqualType "") then {
+        _include = [_include];
+    };
+
+    _includeExpression = compile ((_include apply { 
+        format ["[""%1"", roleDescription _x, false] call BIS_fnc_inString", _x]
+    }) joinString " || ");
+
+    _excludeExpression = { true };
+    if (_exclude isNotEqualTo []) then {
+        _excludeExpression = compile ((_exclude apply {
+            format ["!([""%1"", roleDescription _x, false] call BIS_fnc_inString)", _x]
+        }) joinString " || ");
+    };
+
+    (call BIS_fnc_listPlayers) select _includeExpression select _excludeExpression
+};
+
+tSF_fnc_adminTools_getLocationOptions = {
+    /*
+        Returns list of locations in form of options:
+        - Location of GSO 
+        - Location of PL (?)
+        - GSO defined locations 
+        - CCP & FARP 
+        - Respawn locations
+
+        Params: 
+            0: _ordering (CODE) - function to order locations 
+        Output: ARRAY of location options
+
+        Object location (GSO, PL, FARP, CCP, Respawn locs):
+            0: _name 
+            1: _object
+            2: _attrs 
+        
+        Pos3d location (respawn marker, GSO defined locs):
+            0: _name
+            1: _pos3d
+            2: _attrs
+    */
+    params [
+        ["_ordering", {
+            params ["_units", "_poi", "_rallypoints", "_respawn"];
+            (_units + _poi + _rallypoints + _respawn)
+        }]
+    ];
+
+    private _units = [
+        [
+            "GSO",
+            player,
+            [
+                ["color", COLOR_RGBA_YELLOW],
+				["tooltip", "Текущая позиция GSO"]
+            ]
+        ]
+    ];
+
+    // -- Look for PL
+    private _pl = ([
+        ["1'6 ", "platoon leader", "командир взвода"]
+    ] call tSF_fnc_adminTools_getPlayersByRoleNameLike) select { alive _x };
+    if (_pl isNotEqualTo []) then {
+        _units pushBack [
+            "Командир взвода", 
+            _pl # 0,
+            [
+                ["color", COLOR_RGBA_YELLOW],
+				[
+                    "tooltip", 
+                    format [
+                        "Текущая позиция Командира взвода (%1)",
+                        name (_pl # 0)
+                    ]
+                ]
+            ]
+        ];
+    };
+
+    // -- Look for SLs
+    private _sls = ([
+        ["squad leader", "командир"]
+    ] call tSF_fnc_adminTools_getPlayersByRoleNameLike) select { alive _x };
+    if (_sls isNotEqualTo []) then {
+        {
+            _units pushBack [
+                roleDescription _x,
+                _x,
+                [
+                    ["color", COLOR_RGBA_YELLOW],
+                    [
+                        "tooltip", 
+                        format [
+                            "Текущая позиция командира отряда %1 (%2)",
+                            groupId group _x,
+                            name _x
+                        ]
+                    ]
+                ]
+            ]
+        } forEach _sls;
+    };
+
+    // -- CCP and FARP locations 
+    private _poi = [];
+    if (TSF_MODULE_ENABLED(CCP) && {!isNil "tSF_CCP_Position"}) then {
+        _poi pushBack [
+            "CCP", 
+            tSF_CCP_Position,
+            [
+                ["color", COLOR_RGBA_LIGHT_BLUE],
+				[
+                    "tooltip", 
+                    "Позиция Casualty Collection Point"
+                ]
+            ]
+        ];
+	};
+	if (TSF_MODULE_ENABLED(FARP) && {!isNil "tSF_FARP_Position"}) then {        
+        _poi pushBack [
+            "FARP", 
+            tSF_FARP_Position,
+            [
+                ["color", COLOR_RGBA_LIGHT_BLUE],
+				[
+                    "tooltip", 
+                    "Позиция Forward Arming and Refuel Point"
+                ]
+            ]
+        ];
+	};
+
+    // -- GSO defined locs
+    private _rallypoints = [];
+    {
+        _rallypoints pushBack [
+            _x,
+            _y get "pos",
+            [
+                ["color", COLOR_RGBA_WHITE],
+                ["tooltip", _y get "desc"]
+            ]
+        ];
+    } forEach tSF_AdminTools_Rallypoints;
+
+    // -- Respawn locations 
+    private _respawnModule = TSF_COMPONENT(Respawn);
+    private _respawnLocs = [];
+    if (!isNil "_respawnModule") then {
+        {
+            _x params ["_name", "_locPos", "_desc", "_isDefault"];
+            _respawnLocs pushBack [
+                format ["  %1", _name], 
+                _locPos,
+                [
+                    ["color", COLOR_RGBA_LIGHT_GREEN],
+                    ["tooltip", _desc],
+                    ["textRight", ["", "По умолчанию"] select _isDefault],
+                    ["textRightColor", [COLOR_RGBA_WHITE, COLOR_RGBA_GRAY] select _isDefault]
+                ]
+            ];
+        } forEach (_respawnModule call [F(getSpawnLocations)]);
+    };
+
+    ([
+        _units,
+        _poi,
+        _rallypoints,
+        _respawnLocs
+    ] call _ordering)
+};
+
+tSF_fnc_adminTools_getPersonalGearKits = {
+    private _allKits = (allVariables missionNamespace)  select {
+		["kit_", _x, false] call BIS_fnc_inString
+		&& !(["lkit_", _x, false] call BIS_fnc_inString)
+		&& !(["cba_xeh", _x, false] call BIS_fnc_inString)
+		&& !(["cargo", _x, false] call BIS_fnc_inString)
+	};
+	_allKits sort true;
+
+    _allKits
+};
+
+tSF_fnc_adminTools_cutLongLine = {
+    /*
+        Cuts line at neares whitespace (or given char) before maxLenght. 
+        Returns left substring + optional suffix, and char index 
+        where cut was made (e.g. "some string", 3 => ["some", 4]). 
+
+    */
+    params ["_line", "_maxLength", ["_cutOnChar", " "], ["_suffix", ""]];
+	if (count _line <= _maxLength) exitWith { 
+        [
+            _line + _suffix, 
+            1 + count _line
+        ] 
+    };
+
+	private _cutLineAtIndex = _maxLength - 1;
+    private _found = false;
+	for "_i" from (_maxLength - 1) to 0 step -1 do {
+		if (_line select [_i, 1] == _cutOnChar) then {
+			_cutLineAtIndex = _i;
+            _found = true;
+			break;
+		};
+	};
+
+	_line = _line select [
+        0, 
+        [_cutLineAtIndex + 1,  _cutLineAtIndex] select _found // cut found char
+    ];
+
+	[
+        _line + _suffix,
+        1 + _cutLineAtIndex
+    ]
 };
