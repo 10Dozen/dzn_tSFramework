@@ -6,39 +6,39 @@
 # Утилита очистки удалит отключенные модули, что позволит уменьшить вес миссии.
 
 # Базовая настройка миссии
-Briefing: true
-MissionConditions: true
-MissionDefaults: true
-JIPTeleport: true
-Respawn: true
+Briefing: true                   # Брифинг и ORBAT
+MissionConditions: true          # Условия завершения миссии   
+MissionDefaults: true            # Базовые полезности: автозаполнение маркеров, блокировка на старте, и т.п.
+JIPTeleport: true                # Возможность телепортироваться к своему отряду для опоздавших к началу игы 
+Respawn: true                    # Настройки локаций для респауна, а также выдача беруш 
 
 # Информирование игроков (титры, записки) и настройки
-IntroText: true
-tSNotes: true
-tSSettings: true
+IntroText: true                  # Начанльные титры  
+tSNotes: true                    # Полезные заметки в журнале по игре и фичам миссии
+tSSettings: true                 # Пользовательские настройки дальности видимости и детализации
 
 # Взаимодействия игроков и объектов миссии
-Chatter: false
-Interactives: false
-ACEActions: true
-Conversations: false
+CrewOptions: true                # Возможность самим игрокам создавать AI-экипаж в технику (например, Водителей)
+Chatter: false                   # Для отображения радиопереговоров
+Interactives: false              # Добавление своих действий (по колесику) на объекты миссии
+ACEActions: true                 # Добавление своих действий (через ACE) на объекты миссии
+Conversations: false             # Интерактивные диалоги как в ролевых играх
 
 # Поддержка в тылу: лечение игроков и ремонт/перезарядка техники
-CCP: true
-FARP: true
+CCP: true                        # Пункт лечения раненых
+FARP: true                       # Пункт дозаправки и обслуживания техники, также позволяет повторно взять патроны или весь набор снаряжения целиком
 
 # Поддержка на поле боя: артиллерия, вертолеты и управление правами доступа к ним
 # Все модули зависят от модуля Authorization (должен быть включен)
-CrewOptions: true
-Authorization: true
-AirborneSupport: false
-ArtillerySupport: false
-POM: false
+Authorization: true              # Определяет доступность артиллерии и вызова воздушного транспорта для ролей
+AirborneSupport: false           # Вызов воздушного транспорта 
+ArtillerySupport: false          # Вызов артиллерийского огня 
+POM: false                       # Маркеры для обозначения сил на поле боя, видимые только игроку
 
 # Модули-помощники для настройки юнитов/объектов миссии
-EditorVehicleCrew: true
-EditorUnitBehavior: false
-EditorRadioSettings: false
+EditorVehicleCrew: true          # Позволяет добавить AI-экипажи (союзные или вражеские) технике, выбранной в редакторе
+EditorUnitBehavior: false        # Добавляет возможность "сдачи в плен" для юнита выбранного в редакторе 
+EditorRadioSettings: false       # Позволяет выбрать ДВ радиостанцию для техники, выбранной в редакторе
 
-# Утилиты для админа
-tSAdminTools: true
+# Утилиты для админа 
+tSAdminTools: true               # Полезные утилиты для админа - диагностика, F5-F8, управление dynai и т.п.
