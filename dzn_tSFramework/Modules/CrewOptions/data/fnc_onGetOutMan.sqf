@@ -19,8 +19,7 @@ params ["_unit", "_role", "_vehicle", "_turret", "_isEject"];
 
 private _aiCrew = (crew _vehicle) select { !isPlayer _x };
 
-
 {
-    LOG_1("(onGetOutMan) Stop unit %1", _x);
+    DEBUG_1("(onGetOutMan) Stop unit %1", _x);
     doStop _x;
 } forEach _aiCrew;

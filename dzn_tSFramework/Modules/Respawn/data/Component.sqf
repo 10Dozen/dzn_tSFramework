@@ -2,7 +2,7 @@
 
 /*
     Respawn component provides controllable respawn logic for individual players.
-    ALlows to define specific respawn locations per group and per player.
+    Allows to define specific respawn locations per group.
     Handles putting weapon on safe and putting earplug in on initial spawn
     and on respawn.
 */
@@ -25,13 +25,23 @@ private _declaration = [
 
     PREP_COMPONENT_FUNCTION(showMessage),
     PREP_COMPONENT_FUNCTION(getDefaultSpawnLocationName),
-    PREP_COMPONENT_FUNCTION(getSpawnLocationsNames),
+    PREP_COMPONENT_FUNCTION(getSpawnLocations),
 
     [Q(GroupToLocation), createHashMap],
     [Q(GroupName), nil],
-    [Q(RespawnLocation), DEFAULT_LOCATION],
-    [Q(ForcedRespawnLocation), nil],
-    [Q(onRespawnSnippets), createHashMap]
+    [Q(DefaultRespawnLocation), DEFAULT_LOCATION],
+    [Q(SelectedRespawnLocation), nil],
+    [Q(onRespawnSnippets), createHashMap],
+
+    [Q(TargetLocationObject), [
+        ["#type", "IRespawnLocation"],
+        ["#create", { 
+            _this params ["_name", "_pos", ["_snap", true]];
+            _self set [Q(position), _pos];
+            _self set [Q(snapToSurface), _snap];
+            _self set [Q(name), _name];
+        }]
+    ]]
 ];
 
 // Init:

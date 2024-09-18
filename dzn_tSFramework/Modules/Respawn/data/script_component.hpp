@@ -1,4 +1,5 @@
 #include "..\..\script_macro.hpp"
+#include "messages.hpp"
 
 #define COMPONENT Respawn
 
@@ -16,7 +17,7 @@
 #define MODE_RESPAWN_CANCELED_MSG 2
 
 
-#define DEBUG true 
+//#define DEBUG true 
 #ifdef DEBUG
 	#define DEBUG_MSG(MESSAGE) LOG_SYS("DEBUG",MESSAGE)
 	#define DEBUG_1(MESSAGE,ARG1) DEBUG_MSG(FORMAT_1(MESSAGE,ARG1))

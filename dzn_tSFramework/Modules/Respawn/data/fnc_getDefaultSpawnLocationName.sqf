@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 /*
-    Returns display name of player's default spawn location.
+    Returns display name of player's default spawn location (assigned in config).
     (_self)
 
     Params:
@@ -10,4 +10,4 @@
         string
 */
 
-SETTING(_self,Locations) get (_self get Q(RespawnLocation)) getOrDefault [Q(name), ""]
+SETTING(_self,Locations) get (_self get Q(DefaultRespawnLocation)) getOrDefault [Q(name), ""]

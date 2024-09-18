@@ -24,10 +24,10 @@ _args params ["_crewOptions", "_vehicle", "_seat", "_reAdd", "_joinGroup"];
 // -- Get existing unit props
 private _unit = _crewOptions call [F(getUnitOnSeat), [_vehicle, _seat get Q(seat)]];
 if (isNull _unit) exitWith {
-    hint format ["Место %1 пустое!", _seat get Q(seat)];
+    hint format [Q(CREW_OPTIONS_HINT_IS_EMPTY_SEAT), _seat get Q(seat)];
 };
 if (isPlayer _unit) exitWith {
-    hint format ["Место %1 занято игроком!", _seat get Q(seat)];
+    hint format [Q(CREW_OPTIONS_HINT_OCCUPIED_BY_PLAYER), _seat get Q(seat)];
 };
 
 private _reopenCondition = {

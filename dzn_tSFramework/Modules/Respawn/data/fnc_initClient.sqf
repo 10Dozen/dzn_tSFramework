@@ -4,8 +4,7 @@
     Initialize Component Object and it's features.
     (_self)
 
-    Params:
-        0: _respawnLocations (HashMap) -
+    Params: none
     Returns:
         nothing
 */
@@ -31,14 +30,14 @@ private _playerRespawnLocation = DEFAULT_LOCATION;
     };
 } forEach SETTING(_self,Locations);
 
-_self set [Q(GroupName), _groupName];
-_self set [Q(RespawnLocation), _playerRespawnLocation];
+_self set [Q(DefaultRespawnLocation), _playerRespawnLocation];
 
 _self call [F(setDefaultEquipment)];
 _self call [F(setDefaultRating)];
 
 player addMPEventHandler ["MPRespawn", {
     private _position = ECOB(Respawn) call [F(onRespawn), _this];
+    [1, "BLACK", 3, 1] spawn BIS_fnc_fadeEffect;
     _position
 }];
 

@@ -1,3 +1,7 @@
+/*
+    Module is only initialized on Server.
+*/
+
 #include "script_component.hpp"
 
 __SERVER_ONLY__

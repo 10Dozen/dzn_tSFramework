@@ -2,10 +2,16 @@
 
 
 /*
+    Draws Hint or on screen message.
     (_self)
 
     Params:
-        nothing
+        _mode (ENUM) - one of the following:
+                       MODE_ON_RESPAWN_HINT - to display hint 
+                       MODE_BEFORE_RESPAWN_MSG - to display on screen message with respawn text from settings 
+                       MODE_RESPAWN_CANCELED_MSG - to display on screen message with unscheduled respawn text from settings.
+                       else - hides hint and on screen message
+        _args (ANY) - optional, argumens for formatting on screen messages (timeout)
     Returns:
         nothing
 */
@@ -25,8 +31,8 @@ if (_mode == MODE_BEFORE_RESPAWN_MSG) exitWith {
 
     [
         [
-            "<t color='#FFD000'>Возрождение</t>",
-            format ["<t align='center'>%1</t>", _message]
+            Q(RESPAWN_MSG_SCHEDULED)
+            format [Q(RESPAWN_HINT_MSG_TEXT), _message]
         ]
         , "TOP"
         , [0,0,0,.75]
@@ -38,8 +44,8 @@ if (_mode == MODE_RESPAWN_CANCELED_MSG) exitWith {
     private _message = format ([SETTING(_self,CancelRespawnMessage)] +_args);
     [
         [
-            "<t color='#FFD000'>Возрождение отменено</t>",
-            format ["<t align='center'>%1</t>", _message]
+            Q(RESPAWN_MSG_UNSCHEDULED),
+            format [Q(RESPAWN_HINT_MSG_TEXT), _message]
         ]
         , "TOP"
         , [0,0,0,.75]

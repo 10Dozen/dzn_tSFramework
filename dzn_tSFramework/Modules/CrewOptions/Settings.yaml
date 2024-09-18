@@ -1,16 +1,16 @@
 # Crew Options
 # ---
+# Добавляет возможность создавать AI-экипаж для машины.
 #
-#
-# Зависимости:
-#   dzn_gear/dzn_dynai
-
-# Выбирет машину, затем откройте tSF 3DEN Tool > [Vehicle] Add crew options
+# Выбирет машину, затем откройте tSF 3DEN Tool > [Vehicle] Add AI Crew Options
 #  или
 # Засинхронизируйте машины/статичные орудия в редакторе с GameLogic с инит-кодом:
 #   this setVariable ["tSF_CrewOptions", "Config name"]
 # Для всех засинхронизированных машин будет добавлено действие для создания экипажа, с настройками согласно
 # выбранному конфигу.
+# ---
+# Зависимости:
+#   dzn_gear
 
 Init:
     timeout: 3
@@ -25,9 +25,9 @@ Defaults:
 
 # -- "Слоты" можно описать отдельно, а затем переиспользовать в разных конфигах. 
 #    Не указанные значения будут наследоваться из соответсвующего конфига.
-SeatDriver:
-    seat: driver 
-    name: Водитель
+# SeatDriver:
+#     seat: driver 
+#     name: Водитель
 
 
 # -- Описание конфигов
@@ -35,33 +35,37 @@ Configs:
     # -- Имя конфига (для указания в переменной tSF_CrewOptions связанного GameLogic)
     Driver:   
         # -- Опционально, Список подстрок для проверки роли игрока: 
-        #    только игроки с соответствующими ролями могут добавлять AI-экипаж
-        #    Например, игрок с ролью "1`5 Экипаж" будет иметь доступ. 
+        #    только игроки с соответствующими ролями могут добавлять AI-экипаж.
+        #    Например, значения ["Экпипаж", "Crew"] -> игрок с ролью "1`5 Экипаж" будет иметь доступ. 
         #    По умолчанию равен [""] - т.е. будет доступно всем ролям.
         # allowedForRoles: [""]
+
+        # -- Опционально, флаг разрешающий действие "Экипаж" снаружи машины.
+        #    Например, для статиков (М2, АГС). По умолчанию - false - недоступно    
+        # allowExternal: false 
         
-        # -- Опционально, Общие настройки AI-экипажа, если не указаны, то используются значения из Defaults
+        # -- Опционально, настройки AI-экипажа для всех слотов; если не указаны, то используются значения из Defaults
         # class: "B_rifleman_F"  
         # kit: ""
+        # allowCombat: false
         
         # -- Настройки слотов для AI-экипажа
         crew:
-            - seat: driver        # имя слота/места: driver, gunner, commander или в формате [0], [0,1] (см. https://community.bistudio.com/wiki/allTurrets)
-              name: Водитель      # имя для меню
-              # class: "B_crew_F"   # опционально, класс юнита (если не задан, то кит конфига)
+            - seat: driver          # имя слота/места: driver, gunner, commander или в формате [0], [0,1] (см. https://community.bistudio.com/wiki/allTurrets)
+              name: Водитель        # имя для меню
+              # class: "B_crew_F"   # опционально, класс юнита (если не задан, то из конфига)
               # kit: ""             # опционально, кит (если не задан, то кит конфига, если "" - не применяет кит)
               # allowCombat: false  # отключает боту возможность автоматически выбирать цель и атаковать
 
-
-    # -- Пример с переиспользованием слота определенного в корне документа
-    # CrewDriver:
-    #     allowedForRoles: ["Экипаж", "Crew"]
-    #     class: "B_crew_F"
-    #     crew:
-    #         - *SeatDriver   # Можно использовать ссылку
+    StaticGunner:
+        allowExternal: true
+        allowCombat: true
+        crew:
+            - seat: gunner
+              name: Стрелок
 
     HelicopterFull:
-        allowedForRoles: ["Squad Leader"]
+        allowedForRoles: ["Pilot", "Пилот"]
         kit: ""
         class: "B_Helipilot_F"
         crew:
@@ -69,7 +73,7 @@ Configs:
               seat: driver
 
             - name: Второй пилот
-              seat: [0]
+              seat: [0]                     # путь турели
 
             - name: Бортстрелок (левый)
               seat: [1]                     # путь турели
@@ -78,8 +82,15 @@ Configs:
               allowCombat: true
 
             - name: Бортстрелок (правый)
-              seat: [2]
+              seat: [2]                     # путь турели
               class: "B_helicrew_F"
               kit: "kit_west_doorgunner"
               allowCombat: true
 
+
+    # -- Пример с переиспользованием слота определенного в корне документа
+    # CrewDriver:
+    #     allowedForRoles: ["Экипаж", "Crew"]
+    #     class: "B_crew_F"
+    #     crew:
+    #         - *SeatDriver   # Можно использовать ссылку

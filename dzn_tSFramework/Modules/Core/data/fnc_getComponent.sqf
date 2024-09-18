@@ -10,7 +10,7 @@
     Params:
         _componentName (STRING) - name of the component.
     Returns:
-        _cob (HASHMAPOBJECT) - component object.
+        _cob (HASHMAPOBJECT) - component object or NIL.
 
     _farpCob = tSF_Core_Component call ["fnc_getComponent", "FARP"];
 

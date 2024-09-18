@@ -4,21 +4,6 @@
  *	F7 Force Respawn Menu
  */
 
-tSF_fnc_adminTools_getPlayersGroups = {
-	params ["_players"];
-
-	private _groupsMap = createHashMap;
-	private ["_groupName", "_playersInGroup"];
-	{
-		_groupName = groupId group _x;
-		_playersInGroup = _groupsMap getOrDefault [_groupName, []];
-		_playersInGroup pushBack _x;
-		_groupsMap set [_groupName, _playersInGroup];
-	} forEach _players;
-
-	_groupsMap
-};
-
 tSF_fnc_adminTools_ForceRespawn_showMenu = {
 	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
 
@@ -83,62 +68,47 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 		Compose menu if Respawn module is enabled.
 	*/
 	// Who options
-	private _deadPlayers = (call BIS_fnc_listPlayers) select { !alive _x };
-	_deadPlayers sort true;
-	private _groupsMap = [_deadPlayers] call tSF_fnc_adminTools_getPlayersGroups;
 
-	private _groupsOptions = keys _groupsMap;
-	_groupsOptions sort true;
-	_groupsOptions = _groupsOptions apply {
-		[
-			_x,
-			_x,
-			[
-				["color", COLOR_RGBA_YELLOW],
-				["textRight", format ["%1 чел.", count (_groupsMap get _x)]],
-				["textRightColor", COLOR_RGBA_GRAY]
-			]
-		]
-	};
-
-	private _deadPlayersOptions = _deadPlayers apply {
-		private _respawnScheduled = _x getVariable [QEGVAR(Respawn,Scheduled), false];
-		[
-			[name _x, format ["%1*", name _x]] select _respawnScheduled,
-			_x,
-			[
-				["textRight", groupId group _x],
+	([
+		{ !alive _x },
+		{
+			params ["_plr"];
+			private _respawnScheduled = _plr getVariable [QEGVAR(Respawn,Scheduled), false];
+            [
+				[
+                    "color", 
+                    [
+						[1,1,1,1], 
+						COLOR_RGBA_LIGHT_BLUE
+					] select _respawnScheduled
+                ],
 				["textRightColor", COLOR_RGBA_GRAY],
-				["color", [[1,1,1,1], COLOR_RGBA_LIGHT_BLUE] select _respawnScheduled]
+				["tooltip", roleDescription _plr]
 			]
-		]
-	};
+		}
+	] call tSF_fnc_adminTools_getPlayersAndGroupsOptions) params [
+		"_deadPlayerOptions",
+		"_groupOptions",
+		"",
+		"_groups"
+	];
 
 	private _whoOptions = [
 		["Всех", objNull, [["color", COLOR_RGBA_LIGHT_GREEN]]]
-	] + _groupsOptions + _deadPlayersOptions;
+	] + _groupOptions + _deadPlayerOptions;
 
 	// Where options
-	private _spawnLocations = (ECOB(Respawn) call [F(getSpawnLocationsNames)]) apply {
-		[
-			_x # 0,
-			_x # 1,
-			[["tooltip", _x # 2]]
-		]
-	};
-
-	(_spawnLocations select 0 select 2) append [
-		["textRight", "Респаун по умолчанию"],
-		["textRightColor", COLOR_RGBA_GRAY]
-	];
-
-	private _whereOptions = [
-		["Позиция согласно настройкам миссии", "", [
-			["color", COLOR_RGBA_LIGHT_GREEN],
-			["tooltip", "В соответствии с конфигурацией респаунов для каждой группы, указанной в модуле"]
-		]]
-	] + _spawnLocations;
-
+	private _whereOptions = [{
+		params ["_units", "_poi", "_rallypoints", "_respawn"];
+        [[
+			"Позиция согласно настройкам миссии", "", 
+			[
+				["color", COLOR_RGBA_LIGHT_GREEN],
+				["tooltip", "В соответствии с конфигурацией респаунов для каждой группы, указанной в модуле"]
+			]
+		]] + _respawn + _rallypoints + _poi + _units
+	}] call tSF_fnc_adminTools_getLocationOptions;
+	
 	// When options
 	private _whenOptions = [
 		["Сейчас", 0],
@@ -192,9 +162,9 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 		["BR"],
 		[
 			"LABEL",
-			format [Q(RESPAWN_MENU_WAITING_FOR_RESPAWN_HEADER), count _deadPlayers],
+			format [Q(RESPAWN_MENU_WAITING_FOR_RESPAWN_HEADER), count _deadPlayerOptions],
 			[
-				["bg", [COLOR_RGBA_DIMMED_RED, COLOR_RGBA_DIMMED_GREEN] select (_deadPlayers isEqualTo [])]
+				["bg", [COLOR_RGBA_DIMMED_RED, COLOR_RGBA_DIMMED_GREEN] select (_deadPlayerOptions isEqualTo [])]
 			]
 		],
 		["BR"]
@@ -204,46 +174,41 @@ tSF_fnc_adminTools_ForceRespawn_composeRespawnMenu = {
 	#define MAX_LINE_LENGTH 87
 	#define PLAYER_NAMES_FONT_SIZE 0.034
 	{
-		_menu append [
-			["LABEL", format ["%1 чел. из", count _y], [["w", 0.12]]],
-			["LABEL", _x, [["color", COLOR_RGBA_YELLOW]]],
-			["br"]
-		];
-
-		private _names = _y apply {
+		private _names = (units _x) select { !alive _x } apply {
 			[
 				name _x,
 				format ["<t color='%2'>%1</t>", name _x, COLOR_HEX_LIGHT_BLUE]
 			] select (_x getVariable [QEGVAR(Respawn,Scheduled), false])
 		};
+
+		_menu append [
+			["LABEL", format ["%1 чел. из", count _names], [["w", 0.12]]],
+			["LABEL", groupId _x, [["color", COLOR_RGBA_YELLOW]]],
+			["br"]
+		];
+
 		private _namesLine = format ["   %1", _names joinString ", "];
+		([
+			_namesLine,
+			MAX_LINE_LENGTH,
+			","
+		] call tSF_fnc_adminTools_cutLongLine) params ["_part1", "_cutAt"];
+		private _part2 = _namesLine select [_cutAt, 1 + count _namesLine];
 
-		// More then 1 line - cut into 2 at char MAX_LINE_LENGTH
-		private ["_cutLineAtIndex", "_part1", "_part2"];
-		if (count _namesLine > MAX_LINE_LENGTH) then {
-			_cutLineAtIndex = MAX_LINE_LENGTH;
-			for "_i" from MAX_LINE_LENGTH to 0 step -1 do {
-				if (_namesLine select [_i, 1] == ",") then {
-					_cutLineAtIndex = _i;
-					break;
-				};
-			};
-
-			_part1 = _namesLine select [0, _cutLineAtIndex+1];
-			_part2 = _namesLine select [_cutLineAtIndex+2, count _namesLine];
-
+		if (_part2 == "") then {
+			_menu append [
+				["LABEL", _namesLine, [["color", COLOR_RGBA_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]],
+				["BR"]
+			];
+		} else {
 			_menu append [
 				["LABEL", _part1, [["color", COLOR_RGBA_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]],
 				["BR"],
 				["LABEL",  format ["   %1", _part2], [["color", COLOR_RGBA_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]],
 				["BR"]
 			];
-			continue;
 		};
-
-		_menu pushBack ["LABEL", _namesLine, [["color", COLOR_RGBA_GRAY],["size", PLAYER_NAMES_FONT_SIZE]]];
-		_menu pushBack ["BR"];
-	} forEach _groupsMap;
+	} forEach _groups;
 
 	_menu
 };
@@ -253,13 +218,13 @@ tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 	params ["_who", "_where", "_when", "_mode"];
 
 	_who params ["", "_whoName", "_unitIdentifier"];
-	_where params ["", "_whereName", "_forcedLocation"];
+	_where params ["", "_whereName", "_position"];
 	_when params ["", "_whenName", "_timeout"];
 
 	private _unitsToRespawn = [];
-	if (_unitIdentifier isEqualType "") then {
+	if (_unitIdentifier isEqualType grpNull) then {
 		// Case: Units of group (by group name)
-		_unitsToRespawn = (call BIS_fnc_listPlayers) select { !alive _x && groupId group _x == _unitIdentifier };
+		_unitsToRespawn = (units _unitIdentifier) select { !alive _x };
 	} else {
 		if (isNull _unitIdentifier) then {
 			// Case: All dead players
@@ -270,17 +235,36 @@ tSF_fnc_adminTools_ForceRespawn_handleRespawns = {
 		};
 	};
 
+	private "_positionInfo";
+
+	// -- Detect config-based respawn location by it's name
+	private _isConfigBasedLocation = STARTS_WITH(_whereName," ");
+	if (_isConfigBasedLocation) then {
+		_positionInfo = trim _whereName;
+		{
+			if (_y get Q(name) == _positionInfo) exitWith {
+				_positionInfo = _x;
+			};
+		} forEach SETTING(ECOB(Respawn),Locations);
+	} else {
+		if !(_position isEqualType "") then {
+			// -- Default position
+			_positionInfo = [_whereName, _position];
+		};
+	};
+
 	private _hintMsg = format [
 		Q(HINT_RESPAWN_MENU_ON_SCHEDULED),
 		_whoName,
 		_whereName,
 		_whenName
 	];
+
 	private _reParams = [
 		Q(Respawn),
 		F(scheduleRespawn),
 		[
-			[_forcedLocation, nil] select (_forcedLocation == ""),
+			_positionInfo,
 			_timeout
 		],
 		_unitsToRespawn

@@ -4,7 +4,7 @@
 
 /*
     Checks that player is admin or have whitelisted role name to access
-    crew menu for particular vehicle (and it's config) AND player is IN THE VEHICLE.
+    crew menu for particular vehicle (and it's config).
 
     (_self)
 
@@ -13,15 +13,13 @@
     Returns:
         none
 
-    _self call ["fnc_menuActionCondition", [_vehicle]];
+    _self call ["fnc_menuActionConditionExternal", [_vehicle]];
 */
 
 params["_vehicle"];
 
 private _isAdmin = player == tSF_Admin;
-private _isInVehicle = player in _vehicle;
 
-if (!_isInVehicle) exitWith { false };
 if (_isAdmin) exitWith { true };
 
 private _cfgName = _vehicle getVariable GAMELOGIC_FLAG;

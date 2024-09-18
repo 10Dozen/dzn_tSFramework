@@ -1,3 +1,11 @@
+
+// GSO Menu
+#define MENU_AI_COUNT <t align='right'>AI юнитов: %1</t>
+#define MENU_PLAYER_COUNT <t align='left'>Игроков: %1</t>
+#define MENU_FPS <t align='right'>FPS: %1</t>
+#define MENU_FPS_SERVER <t align='left'>Server FPS: %1</t>
+#define MENU_LABEL_LEFT_ALIGN <t align='left'>%1</t>
+
 // Insta Messenger
 #define TEMPLATE_IM_MESSAGE_HEADER <t align=left color=COLOR_HEX_GOLD font=UI_FONT_MAIN>Сообщение от %1</t>
 #define TEMPLATE_IM_MESSAGE_LINE <t align=center font=UI_FONT_MAIN>%1</t>

@@ -52,12 +52,17 @@ private _isVehicleCommander = effectiveCommander _vehicle isEqualTo player;
     _slotsControls pushBack [
         "LABEL",
         format [
-            "<t color='%1'>%2%3</t>",
+            "<t color='%1'>%2%3%4</t>",
             [
                 [COLOR_HEX_LIGHT_GREEN, COLOR_HEX_DARK_GRAY] select (isPlayer _seatCurrentUnit),
                 COLOR_HEX_WHITE
             ] select (isNull _seatCurrentUnit),
             _seatName,
+            ["","*"] select (_x getOrDefault [
+                Q(allowCombat), _cfg getOrDefault [
+                    Q(allowCombat), SETTING(_self,Defaults) getOrDefault [allowCombat, false]
+                ]
+            ]),
             [
                 [
                     [" (без лидера)", " (другой игрок)"] select _isInPlayerLeadGroup,
@@ -83,7 +88,7 @@ private _isVehicleCommander = effectiveCommander _vehicle isEqualTo player;
                         format [
                             "%1Добавить AI-юнита на место в экипаже",
                             [
-                                "Вы не являетесь командиром техники и не сможете управлять юнитом!\n",
+                                "Вы не являетесь командиром техники и не сможете управлять машиной!\n",
                                 ""
                             ] select _isVehicleCommander
                         ]
@@ -107,11 +112,11 @@ private _isVehicleCommander = effectiveCommander _vehicle isEqualTo player;
                         format [
                             "%1%2Добавить AI-юнита на место в экипаже и присоединить к группе.",
                             [
-                                "Вы не являетесь командиром техники и не сможете управлять юнитом!\n",
+                                "Вы не являетесь командиром техники и не сможете управлять машиной!\n",
                                 ""
                             ] select _isVehicleCommander,
                             [
-                                "Вы не являетесь лидером отряда и не сможете управлять юнитом!\n",
+                                "Вы не являетесь лидером отряда и не сможете управлять машиной!\n",
                                 ""
                             ] select _isLeader
 
@@ -179,7 +184,10 @@ private _isVehicleCommander = effectiveCommander _vehicle isEqualTo player;
 
 
 private _menu = [
-    ["HEADER", "Управление экипажем"],
+    ["HEADER", format [
+        "Управление экипажем - %1",
+        (typeOf _vehicle) call dzn_fnc_getVehicleDisplayName
+    ]],
     ["LABEL","Добавляйте или удаляйте AI-экипаж:"],
     [
         "CHECKBOX", 
@@ -268,7 +276,7 @@ _menu append [
                 deleteVehicle _x;
             } forEach (crew _vehicle);
 
-            hint "Все AI-юниты в машине были удалены!";
+            hint Q(CREW_OPTIONS_HINT_ALL_SEATS_CLEARED);
             
             _cob call ["Close"];
 

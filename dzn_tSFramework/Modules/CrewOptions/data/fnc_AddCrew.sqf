@@ -30,8 +30,10 @@ if !(_configName in SETTING(_self,Configs)) exitWith {
     objNull
 };
 
-if !(player isEqualTo effectiveCommander _vehicle) exitWith {
-    DEBUG_1("(addCrew) Current client is not an vehicle commander. RCE to: %1", effectiveCommander _vehicle);
+private _effectiveCommander = effectiveCommander _vehicle;
+DEBUG_1("(addCrew) _effectiveCommander=%1", _effectiveCommander);
+if (!isNull _effectiveCommander && player isNotEqualTo _effectiveCommander) exitWith {
+    DEBUG_1("(addCrew) Current client is not an vehicle commander. RCE to: %1", _effectiveCommander);
     [
         Q(COMPONENT),
         F(addCrew),
@@ -46,7 +48,7 @@ private _currentSeatUnit = _self call [F(getUnitOnSeat), [_vehicle, _seat]];
 
 if (!isNull _currentSeatUnit) then {
     if (alive _currentSeatUnit) exitWith {
-        hint format ["Место %1 уже занято!", _seatName];
+        hint format [Q(CREW_OPTIONS_HINT_OCCUPIED), _seatName];
     };
     // Remove dead unit from vehicle
     moveOut _currentSeatUnit;
@@ -152,6 +154,8 @@ if (_unitGroup != group player) then {
     _unitGroup setCombatMode (["GREEN", "RED"] select _combatAllowed);
     _unitGroup setBehaviour (["AWARE", "COMBAT"] select _combatAllowed);
 };
+
+doStop _unit;
 
 hintSilent parseText format [
     Q(CREW_OPTIONS_HINT_MEMBER_ADDED),

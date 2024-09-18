@@ -8,12 +8,15 @@ private _declaration = [
     COMPONENT_TYPE,
     PREP_COMPONENT_SETTINGS,
 
+    PREP_COMPONENT_FUNCTION(initServer),
     PREP_COMPONENT_FUNCTION(initClient),
 
     PREP_COMPONENT_FUNCTION(processLogics),
     PREP_COMPONENT_FUNCTION(assignActions),
     PREP_COMPONENT_FUNCTION(menuActionCondition),
+    PREP_COMPONENT_FUNCTION(menuActionConditionExternal),
     PREP_COMPONENT_FUNCTION(actionCondition),
+    PREP_COMPONENT_FUNCTION(actionConditionExternal),
 
     PREP_COMPONENT_FUNCTION(getUnitOnSeat),
     PREP_COMPONENT_FUNCTION(openCrewMenu),
@@ -50,4 +53,5 @@ private _declaration = [
 
 CREATE_AND_REGISTER_COMPONENT(_declaration);
 
+COB call [F(initServer)];
 COB call [F(initClient)];
