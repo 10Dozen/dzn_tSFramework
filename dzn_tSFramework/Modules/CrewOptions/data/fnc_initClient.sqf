@@ -16,7 +16,7 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
         params ["_self"];
         time > SETTING_2(_self,Init,timeout) &&
         SETTING_2(_self,Init,condition) &&
-        !isNil { TSF_COMPONENT(Respawn) }
+        !isNil { TSF_COMPONENT(Q(Respawn)) }
     },
     {
         params ["_self"];
@@ -35,7 +35,8 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
             params ["_unit", "_role", "_vehicle", "_turret", "_isEject"];
             COB call [F(onGetOutMan), _this];
         }];
-
+        
+        SET_COMPONENT_STATUS_OK(_self);
         LOG("Client initialized");
     }
     , [_self]

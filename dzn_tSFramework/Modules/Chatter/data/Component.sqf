@@ -26,5 +26,5 @@ private _declaration = [
     [Q(MessageRenderer), call compileScript [Q(COMPONENT_SUBPATH(MessageRenderer,Component))]]
 ];
 
-COB = createHashMapObject [_declaration];
+COB = CREATE_AND_REGISTER_COMPONENT(_declaration);
 COB call [F(init)];

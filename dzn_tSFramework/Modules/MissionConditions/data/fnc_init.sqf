@@ -21,7 +21,7 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
         _this call [F(startConditionsTracking)];
         _this call [F(publishEndings)];
 
-        REGISTER_COMPONENT;
+        SET_COMPONENT_STATUS_OK(_this);
         LOG("Server initialized");
     }
     , _self

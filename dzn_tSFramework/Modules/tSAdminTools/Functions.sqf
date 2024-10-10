@@ -93,11 +93,12 @@ dzn_fnc_adminTools_addMissionEndsControls = {
     ];
 
     {
-        _x params ["_name", "_desc"];
+        _x params ["_name", "_title", "_desc"];
         _topicLines pushBack format [
-            "<font color='#A0DB65'><execute expression='""%1"" spawn tSF_fnc_adminTools_callEndings;'>%1</execute></font> %2",
+            "<font color='#A0DB65'><execute expression='""%1"" spawn tSF_fnc_adminTools_callEndings;'>%2</execute></font> %3",
             _name,
-            if (_desc isEqualTo "") then { "" } else { format ["(%1)", _desc] }
+            [_name, format ["%1 [%2]", _title, _name]] select (_name != _title),
+            ["", format ["(%1)", _desc]] select (_desc isNotEqualTo "")
         ];
     } forEach EGVAR(MissionConditions,Endings);
 
@@ -210,31 +211,29 @@ dzn_fnc_adminTools_showGATTool = {
 tSF_fnc_adminTools_addTimerControls = {
     // Mission Notes
     private _topic = [
-         "<font color='#12C4FF' size='14'>Таймеры</font>",
-         "<br />",
-         "<br />[<font color='#A0DB65'><execute expression='[] call tSF_fnc_adminTools_timers_showInfo;'>Показать</execute></font>]  |  ",
-         "[<font color='#A0DB65'><execute expression='[] call tSF_fnc_adminTools_timers_showMenu;'>Добавить новый</execute></font>]  |  ",
-         "[<font color='#A0DB65'><execute expression='[] call tSF_fnc_adminTools_timers_showEditMenu;'>Редактировать</execute></font>] ",
-         "<br />---",
-         "<br />1 час 30 мин: ",
-            "[<font color='#A0DB65'><execute expression='[""Mission"", 5400] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
-            "[<font color='#A0DB65'><execute expression='[""Mission""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
-         "<br />30 мин        ",
+        "<font color='#12C4FF' size='14'>Таймеры</font>",
+        "<br />",
+        "<br />[<font color='#A0DB65'><execute expression='[] call tSF_fnc_adminTools_timers_showInfo;'>Показать</execute></font>]  |  ",
+        "[<font color='#A0DB65'><execute expression='[] call tSF_fnc_adminTools_timers_showMenu;'>Добавить новый</execute></font>]  |  ",
+        "[<font color='#A0DB65'><execute expression='[] call tSF_fnc_adminTools_timers_showEditMenu;'>Редактировать</execute></font>] ",
+        "<br />---",
+        "<br />1 час 30 мин: ",
+           "[<font color='#A0DB65'><execute expression='[""Mission"", 5400] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
+           "[<font color='#A0DB65'><execute expression='[""Mission""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
+        "<br />30 мин            ",
             "[<font color='#A0DB65'><execute expression='[""30 Min"", 1800] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
             "[<font color='#A0DB65'><execute expression='[""30 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
-        "<br />15 мин        ",
-            "[<font color='#A0DB65'><execute expression='[""15 Min"", 900] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
-            "[<font color='#A0DB65'><execute expression='[""15 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
-        "<br />5 мин          ",
-            "[<font color='#A0DB65'><execute expression='[""5 Min"", 300] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
-            "[<font color='#A0DB65'><execute expression='[""5 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
-        "<br />1 мин          ",
-            "[<font color='#A0DB65'><execute expression='[""1 Min"", 60] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
-            "[<font color='#A0DB65'><execute expression='[""1 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]"
+        "<br />15 мин            ",
+           "[<font color='#A0DB65'><execute expression='[""15 Min"", 900] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
+           "[<font color='#A0DB65'><execute expression='[""15 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
+        "<br />5 мин              ",
+           "[<font color='#A0DB65'><execute expression='[""5 Min"", 300] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
+           "[<font color='#A0DB65'><execute expression='[""5 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]",
+        "<br />1 мин              ",
+           "[<font color='#A0DB65'><execute expression='[""1 Min"", 60] spawn tSF_fnc_adminTools_timers_addTimer;'>Вкл</execute></font>] ",
+           "[<font color='#A0DB65'><execute expression='[""1 Min""] spawn tSF_fnc_adminTools_timers_unsetTimer;'>Откл</execute></font>]"
     ];
     player createDiaryRecord [tSF_AdminTools_Topic, ["Таймеры", _topic joinString ""]];
-
-    ['Mission', 5400, false] call tSF_fnc_adminTools_timers_addTimer;
 };
 
 #define ADMIN_TIMER_HINT_TITLE "<t size='1.1' color='#FFD000' shadow='1'>Admin Timer</t>"
@@ -279,6 +278,18 @@ tSF_fnc_adminTools_timers_addTimer = {
     ] joinString "<br />");
 };
 
+tSF_fnc_adminTools_timers_getTimer = {
+    // Returns remain time for timer 'name'.
+    // Time may be negative if timer expired.
+    // Time may be nil if there is no timer with given name.
+    params ["_name", ["_pretty", false]];
+    private _existingTimer = tSF_AdminTools_Timers get _name;
+    if (isNil "_existingTimer") exitWith { 
+        nil 
+    };
+
+    (_existingTimer # 0) - CBA_missionTime
+};
 
 tSF_fnc_adminTools_timers_unsetTimer = {
     params ["_name", ["_showInfo", true]];
@@ -414,7 +425,7 @@ tSF_fnc_adminTools_timers_showInfo = {
 };
 
 tSF_fnc_adminTools_timers_handleTimers = {
-	// if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
+	if !(call tSF_fnc_adminTools_checkIsAdmin) exitWith {};
     private _timeNow = CBA_missionTime;
     private _expiredTimers = [];
     {
@@ -729,7 +740,7 @@ tSF_fnc_adminTools_getLocationOptions = {
     } forEach tSF_AdminTools_Rallypoints;
 
     // -- Respawn locations 
-    private _respawnModule = TSF_COMPONENT(Respawn);
+    private _respawnModule = TSF_COMPONENT(Q(Respawn));
     private _respawnLocs = [];
     if (!isNil "_respawnModule") then {
         {
@@ -774,10 +785,10 @@ tSF_fnc_adminTools_cutLongLine = {
         where cut was made (e.g. "some string", 3 => ["some", 4]). 
 
     */
-    params ["_line", "_maxLength", ["_cutOnChar", " "], ["_suffix", ""]];
+    params ["_line", "_maxLength", ["_cutOnChar", " "], ["_suffix", ""], ["_forceSuffix", false]];
 	if (count _line <= _maxLength) exitWith { 
         [
-            _line + _suffix, 
+            _line + (["", _suffix] select _forceSuffix), 
             1 + count _line
         ] 
     };

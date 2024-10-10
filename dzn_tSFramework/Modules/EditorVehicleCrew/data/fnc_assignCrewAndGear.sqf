@@ -12,7 +12,7 @@
         _result - true if crew was assigned.
 */
 
-params["_veh", "_config"];
+params["_veh", "_config", "_configName"];
 DEBUG_1("[assignCrewAndGear] Params: %1", _this);
 
 #define Value(NAME) (_config get QUOTE(NAME))
@@ -49,7 +49,7 @@ if (_isComplexSkill) then {
 
 private _crew = [_veh, _side, _roles, _crewKit, _adjustedSkill, _crewClass] call dzn_fnc_createVehicleCrew;
 if (units _crew findIf {isNull objectParent _x} > -1) then {
-    TSF_ERROR_4(TSF_ERROR_TYPE__MISCONFIGURED, "Crew does not fit vehicle %1. Config '%2' with %3 roles used - but actual mounted crew number is %4.", typeof _veh, _configName, _roles, count crew _veh);
+    TSF_ERROR_4(TSF_ERROR_TYPE__MISCONFIGURED, "Экипаж не поместился в машину %1. Применен конфиг '%2', роли %3, но в машине сейчас %4 человек экипажа", typeof _veh, _configName, _roles, count crew _veh);
 };
 
 // All below is about dzn_dynai behaviour

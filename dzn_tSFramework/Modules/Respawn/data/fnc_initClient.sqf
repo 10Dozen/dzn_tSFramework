@@ -18,6 +18,12 @@ LOG("Client init started");
 private _respawnLocations = _self call [F(processLogics)];
 private _groupName = groupId group player;
 private _playerRespawnLocation = DEFAULT_LOCATION;
+
+if (_respawnLocations isEqualTo []) exitWith {
+    LOG("Client initialization failed");    
+    SET_COMPONENT_STATUS_FAILED(_self);
+};
+
 {
     _y set [
         Q(positionObject),
@@ -76,4 +82,5 @@ _self call [F(addOnRespawnCall), [
     1
 ]];
 
+SET_COMPONENT_STATUS_OK(_self);
 LOG("Client initialized");

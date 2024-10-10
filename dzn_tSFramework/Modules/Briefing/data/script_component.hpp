@@ -13,8 +13,4 @@
 #define LR_RADIO_TAG " <font color='#93afba'>ДВ</font>"
 #define SW_RADIO_TAG " <font color='#9db099'>КВ</font>"
 
-#define SIDE_BLUFOR "BLUFOR"
-#define SIDE_OPFOR  "OPFOR"
-
-#define COLOR_DEFAULT "#ffffff"
 #define COLOR_GROUP_NAME "#f5c242"

@@ -5,7 +5,7 @@
 tSF_adminTools_DC_checkZoneStateRemote = {
     params ["_zonename"];
     private _zone = missionNamespace getVariable _zonename;
-    private _isAlerted = _zone getVariable "dzn_dynai_isZoneAlerted";
+    private _isAlerted = _zone getVariable ["dzn_dynai_isZoneAlerted", false];
     private _isActive = _zone call dzn_fnc_dynai_isActive;
 
     [_zone, _isActive, _isAlerted] remoteExec ["tSF_adminTools_DC_checkZoneStateClient", remoteExecutedOwner];

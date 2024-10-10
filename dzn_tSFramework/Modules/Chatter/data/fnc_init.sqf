@@ -23,7 +23,7 @@ if (!isServer) exitWith {
             !isNil QRADIO_TALKERS
         },
         {
-            REGISTER_COMPONENT;
+            SET_COMPONENT_STATUS_OK(_this);
             LOG("Client iInitialized");
         },
         _self
@@ -39,8 +39,8 @@ if (!isServer) exitWith {
         LOG("Server init started");
 
         _this call [F(prepareTalkers)];
-        REGISTER_COMPONENT;
-
+        
+        SET_COMPONENT_STATUS_OK(_this);
         LOG("Server initialized");
     }
     , _self

@@ -15,5 +15,5 @@ private _declaration = [
     PREP_COMPONENT_FUNCTION(onTeleportAction)
 ];
 
-COB = createHashMapObject [_declaration];
+COB = CREATE_AND_REGISTER_COMPONENT(_declaration);
 COB call [F(init)];

@@ -51,7 +51,7 @@ private _declaration = [
     [Q(AddedCrew), []]
 ];
 
-CREATE_AND_REGISTER_COMPONENT(_declaration);
+COB = CREATE_AND_REGISTER_COMPONENT(_declaration);
 
 COB call [F(initServer)];
 COB call [F(initClient)];
