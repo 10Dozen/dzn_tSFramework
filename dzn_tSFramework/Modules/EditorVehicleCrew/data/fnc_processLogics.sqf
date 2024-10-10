@@ -33,17 +33,17 @@ private ["_logic", "_logicConfigName", "_logicConfig", "_assignmentResult"];
     _logicConfig = _configs get _logicConfigName;
 
     if (isNil "_logicConfig") then {
-        TSF_ERROR_1(TSF_ERROR_TYPE__NO_CONFIG, "Failed to find config '%1'", _logicConfigName);
+        TSF_ERROR_1(TSF_ERROR_TYPE__NO_CONFIG, "Не удалось найти конфигурацию '%1'", _logicConfigName);
         continue;
     };
 
     if (_vehicles isEqualTo []) then {
-        TSF_ERROR_1(TSF_ERROR_TYPE__MISSING_ENTITY, "Failed to find any synchronized objects for EVC GameLogic '%1'", _logic);
+        TSF_ERROR_1(TSF_ERROR_TYPE__MISSING_ENTITY, "Не удалось найти ни одного объекта связанного с GameLogic '%1'", _logic);
         continue;
     };
 
     {
-        _assignmentResult = _self call [F(assignCrewAndGear), [_x, _logicConfig]];
+        _assignmentResult = _self call [F(assignCrewAndGear), [_x, _logicConfig, _logicConfigName]];
         _assignmentsCount = _assignmentsCount + ([0,1] select _assignmentResult);
     } forEach _vehicles;
 } forEach (entities "Logic");

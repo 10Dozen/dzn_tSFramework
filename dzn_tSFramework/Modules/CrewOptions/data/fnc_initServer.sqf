@@ -19,7 +19,7 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
     },
     {
         params ["_self"];
-        LOG("Client init started");
+        LOG("Server init started");
 
         // -- Set default vehicle settings on server too
         private _vehiclesToHandle = _self call [F(processLogics)];
@@ -30,7 +30,7 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
             } forEach _y;
         } forEach _vehiclesToHandle;
 
-        LOG("Client initialized");
+        LOG("Server initialized");
     }
     , [_self]
 ] call CBA_fnc_waitUntilAndExecute;

@@ -23,12 +23,13 @@ tSF_fnc_adminTools_prepareGSOScreenData = {
 	if (TSF_MODULE_ENABLED(MissionConditions)) then {
 		if (!isNil QEGVAR(MissionConditions,Endings)) then {
 			{
-				_x params ["_name", "_desc"];
+				_x params ["_name", "_title", "_desc"];
 				_endsList pushBack [
-					[_name, _desc] select (_desc != ""),
+					_title,
 					_name,
 					[
 						["color", COLOR_RGBA_LIGHT_GREEN],
+						["tooltip", _desc],
 						["textRight", "(условие)"]
 					]
 				]
@@ -44,7 +45,7 @@ tSF_fnc_adminTools_prepareGSOScreenData = {
         "_groups"
     ];
 	private _playerOptionsTotal = [
-		[""],
+		["=GSO=", player, [["color", COLOR_RGBA_YELLOW]]],
 		["Все игроки", objNull, [
 			["color", COLOR_RGBA_LIGHT_GREEN],
 			["textRight", format ["%1 чел.", count _players]],
@@ -60,22 +61,32 @@ tSF_fnc_adminTools_prepareGSOScreenData = {
 		_listOfRoles pushBack _role;
 	} forEach dzn_gear_gat_table;
 
-	private _kitsOptions = tSF_GATList apply {
-		private _assosiatedRoles = ([
-			(_gatMap getOrDefault [_x, []]) joinString ", ",
+	private _kitsOptions = [
+		["","",[]]
+	];
+	{
+		private _assosiatedRoles = _gatMap getOrDefault [_x, []];
+		if (_assosiatedRoles isEqualTo []) then {
+			_kitsOptions pushBack [_x, _x, [["color", COLOR_RGBA_WHITE]]];
+			continue;
+		};
+
+		private _tooltip = ([
+			(_gatMap getOrDefault [_x, []]) joinString "\n",
 			100,
-			",",
-			" и т.д."
+			" ",
+			"\nи т.д."
 		] call tSF_fnc_adminTools_cutLongLine) # 0;
-		[
+
+		_kitsOptions pushBack [
 			_x,
 			_x,
 			[
-				["tooltip", _assosiatedRoles],
-				["color", [COLOR_RGBA_WHITE, COLOR_RGBA_LIGHT_GREEN] select (_assosiatedRoles != "")]
+				["tooltip", _tooltip],
+				["color", COLOR_RGBA_LIGHT_GREEN]
 			]
 		]
-	};
+	} forEach tSF_GATList;
 
 	createHashMapFromArray [
 		["missionEndings", _endsList],
@@ -187,6 +198,8 @@ tSF_fnc_adminTools_showGSOScreen = {
 		// object - means specific player 
 		// group - means all players in group 
 		if (_selectedPlayers isEqualType "" && { _selectedPlayers == "" }) exitWith {};
+		if (_selectedKit isEqualTo "") exitWith {};
+		
 		private _targets = [];
 		private _msgArg = "";		
 		if (isNull _selectedPlayers) then {

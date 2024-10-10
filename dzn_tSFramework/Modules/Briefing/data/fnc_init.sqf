@@ -22,6 +22,7 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
             _this call [F(initRoster)];
         };
 
+        SET_COMPONENT_STATUS_OK(_this);
         LOG("Client initialized");
     }
     , _self

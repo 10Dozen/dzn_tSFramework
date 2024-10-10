@@ -19,8 +19,8 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
         LOG("Client init started");
 
         _this call [F(showMissionTitles)];
-        REGISTER_COMPONENT;
 
+        SET_COMPONENT_STATUS_OK(_this);
         LOG("Client initialized");
     }
     , _self

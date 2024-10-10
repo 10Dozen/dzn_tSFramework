@@ -1,9 +1,11 @@
 #include "data\script_component.hpp"
 
+waitUntil { DZN_DYNAI_RUNNING && !isNil "dzn_dynai_owner" };
+
 if (clientOwner == dzn_dynai_owner) then {
+	// Compile Dynai Remote API on Dnyai owner (e.g. server or headless)
     [] call compileScript ["dzn_tSFramework\Modules\tSAdminTools\data\Functions - Dynai Control Remote.sqf"];
 };
-
 
 if (hasInterface) then {
 	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Settings.sqf"];
@@ -22,7 +24,6 @@ if (hasInterface) then {
 	tSF_AdminTools_RapidArtillery_FiremissionCount = 0;
 
     tSF_AdminTools_Timers = createHashMap;
-	[{ [] call tSF_fnc_adminTools_timers_handleTimers; }, 1] call CBA_fnc_addPerFrameHandler;
 	[{ [] call tSF_fnc_adminTools_uiUpdateLoop; }, tSF_AdminTools_uiLoop_Timeout] call CBA_fnc_addPerFrameHandler;
 	[{ [] call tSF_fnc_adminTools_checkAndUpdateCurrentAdmin; }, 10] call CBA_fnc_addPerFrameHandler;
 
@@ -40,16 +41,29 @@ if (hasInterface) then {
 		[] spawn tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay;
 		[] spawn tSF_fnc_adminTools_handleGSOMenuOverSpectator;
 
-		waitUntil { sleep 15; call tSF_fnc_adminTools_checkIsAdmin };
+		waitUntil { 
+			sleep 15; 
+			call tSF_fnc_adminTools_checkIsAdmin 
+		};
 
 		tSF_GATList = [] call tSF_fnc_adminTools_getPersonalGearKits;
 
-		call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf"];
-		call tSF_fnc_adminTools_addTopic;
+		[] call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf"];
+		[] call tSF_fnc_adminTools_addTopic;
 
 		if (tSF_AdminTool_EnableMissionEndings) then { [] spawn dzn_fnc_adminTools_addMissionEndsControls; };
 		if (tSF_AdminTool_EnableGATTool) then { [] spawn dzn_fnc_adminTools_addGATControls; };
+
+		// -- Timers
+		[{ [] call tSF_fnc_adminTools_timers_handleTimers; }, 1] call CBA_fnc_addPerFrameHandler;
         [] call tSF_fnc_adminTools_addTimerControls;
+		
+		// -- Add mission timer, adjust time according to passed mission time on server (CBA_missionTime value)
+  		[
+			'Mission', 
+			tSF_AdminTools_timers_MissionTimer - CBA_missionTime,
+			false 
+		] call tSF_fnc_adminTools_timers_addTimer;
 
 		[] spawn tSF_Diag_AddDiagTopic;
 

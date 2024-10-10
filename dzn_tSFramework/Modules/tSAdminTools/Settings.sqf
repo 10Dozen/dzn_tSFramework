@@ -31,6 +31,11 @@ tSF_AdminTools_RapidArtillery_ArtillerySettings = [
 tSF_AdminTools_RapidArtillery_AllowedRounds = ["HE", "SMOKE", "ILLUM"];
 
 /*
+ * Timers 
+ */
+tSF_AdminTools_timers_MissionTimer = 1.5 * 60 * 60; // 1.5h in seconds
+
+/*
  * UI update loop timeout
  */ 
 tSF_AdminTools_uiLoop_Timeout = 2;

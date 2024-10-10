@@ -19,8 +19,8 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
         LOG("Server init started");
 
         _this call [F(processLogics)];
-        REGISTER_COMPONENT;
-
+        
+        SET_COMPONENT_STATUS_OK(_this);
         LOG("Server initialized");
     }
     , _self

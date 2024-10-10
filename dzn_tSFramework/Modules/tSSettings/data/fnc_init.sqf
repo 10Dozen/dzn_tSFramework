@@ -22,8 +22,7 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
         _this call [F(addTopics)];
         _this call [F(restoreViewDistance)];
 
-        REGISTER_COMPONENT;
-
+        SET_COMPONENT_STATUS_OK(_this);
         LOG("Client initialized");
     }
     , _self

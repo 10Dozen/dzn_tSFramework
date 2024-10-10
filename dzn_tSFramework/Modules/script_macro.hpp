@@ -1,6 +1,6 @@
 #include "ui.hpp"
 
-#define TSF_VERSION_NUMBER "v2.0.11"
+#define TSF_VERSION_NUMBER "v2.0.12"
 
 #define TSF_KEYBIND_SECTION "Tactical Shift Framework"
 
@@ -29,7 +29,7 @@
 
 // Modules availability
 #define TSF_MODULE_ENABLED(MODULE) ECOB(Core) call [F(isModuleEnabled), Q(MODULE)]
-#define TSF_COMPONENT(NAME) ECOB(Core) call [F(getComponent), Q(NAME)]
+#define TSF_COMPONENT(NAME) ECOB(Core) call [F(getComponent), NAME]
 
 // tSF Error reporting
 #define TSF_ERROR_METHOD F(reportError)
@@ -60,6 +60,10 @@
 #define TSF_ERROR_TYPE__MISSING_ENTITY "Отстутсвует целевой объект"
 #define TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR "Не удалось распарсить файл настроек (Settings.yaml)"
 #define TSF_ERROR_TYPE__INVALID_ARG "Аргумент не корректен"
+
+// -- Events 
+#define TSF_EVENT_COMPONENT_STATE_CHANGED Q(tSF_Event_ComponentStateChanged)
+
 
 
 // Credits: CBA Team (https://github.com/CBATeam/CBA_A3/blob/master/addons/main/script_macros_common.hpp)
@@ -133,9 +137,15 @@
 #define F_WRAP(NAME) fnc_##NAME
 #define F(NAME) Q(F_WRAP(NAME))
 
+#define COMPONENT_STATUS_VARNAME "#status"
+#define COMPONENT_STATUS_STARTING "STARTING"
+#define COMPONENT_STATUS_OK "OK"
+#define COMPONENT_STATUS_FAILED "FAILED"
+
 #define COMPONENT_TYPE \
    ["#type", format ["tSF_%1_Component", Q(COMPONENT)]],\
-   ["#str", {format ["tSF_%1_Component", Q(COMPONENT)]}]
+   ["#str", {format ["tSF_%1_Component", Q(COMPONENT)]}],\
+   [COMPONENT_STATUS_VARNAME, COMPONENT_STATUS_STARTING]
 #define COMPONENT_FNC_PATH(FILE) MAINPREFIX\SUBPREFIX\COMPONENT\data\fnc_##FILE##.sqf
 #define PREP_COMPONENT_FUNCTION(NAME) \
     [F(NAME), compileScript [Q(COMPONENT_FNC_PATH(NAME))]]
@@ -146,8 +156,18 @@
 
 #define REGISTER_COMPONENT ECOB(Core) call [F(registerComponent), [Q(COMPONENT), COB]]
 #define CREATE_AND_REGISTER_COMPONENT(DECLARATION) \
-    COB = createHashMapObject [DECLARATION]; \
+    createHashMapObject [DECLARATION]; \
     REGISTER_COMPONENT
+
+
+#define SET_COMPONENT_STATUS_OK(CMP) \
+    CMP set [COMPONENT_STATUS_VARNAME, COMPONENT_STATUS_OK]; \
+    LOG("Component initialization status => OK");\
+    [TSF_EVENT_COMPONENT_STATE_CHANGED] call CBA_fnc_localEvent
+#define SET_COMPONENT_STATUS_FAILED(CMP) \
+    CMP set [COMPONENT_STATUS_VARNAME, COMPONENT_STATUS_FAILED]; \
+    LOG("Component initialization  status => FAILED");\
+    [TSF_EVENT_COMPONENT_STATE_CHANGED] call CBA_fnc_localEvent
 
 // --- Component Objects - Setting gettersв
 #define SETTING(SRC,NODE1) (SRC get Q(Settings) get Q(NODE1))
@@ -163,6 +183,7 @@
         ((SETTING(_self,#ERRORS)) select 0) params ["","_lineNo","","_errorText"]; \
         private _src = SETTING(_self,#SOURCE); \
         TSF_ERROR_3(TSF_ERROR_TYPE__SETTINGS_PARSE_ERROR,"Модуль не запущен! Ошибка '%1' в строке %2 файла %3",_errorText,_lineNo,_src); \
+        SET_COMPONENT_STATUS_FAILED(_self); \
     };
 
 

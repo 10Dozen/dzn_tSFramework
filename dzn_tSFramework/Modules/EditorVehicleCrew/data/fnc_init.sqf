@@ -21,9 +21,9 @@ __EXIT_ON_SETTINGS_PARSE_ERROR__
     {
         LOG("Server/Headless init started");
 
-        _this call [F(processLogics)];
-        REGISTER_COMPONENT;
-
+        _this call [F(processLogics)];        
+        
+        SET_COMPONENT_STATUS_OK(_this);
         LOG("Server/Headless initialized");
     }
     , _self
