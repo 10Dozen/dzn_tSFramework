@@ -20,15 +20,16 @@
 params ["_type", "_title", "_message", ["_ttl", TTL_SHOW]];
 DEBUG_2("(Renderer.Show) Params: %1. TTL: %2", _this, _ttl);
 
-_type = toUpper _type;
-
-private _bgColor = switch _type do {
-    case "LR": { [BG_COLOR_LR, BG_ALPHA_ACTIVE] };
-    case "SW": { [BG_COLOR_SW, BG_ALPHA_ACTIVE] };
+private _bgColor = [BG_COLOR_LR, BG_ALPHA_ACTIVE];
+private _titleType = "ДВ";
+if (toUpper _type == "SW") then {
+    _bgColor = [BG_COLOR_SW, BG_ALPHA_ACTIVE];
+    _titleType = "КВ";
 };
+
 DEBUG_1("(Renderer.Show) bgColor: %1", _bgColor);
 
-private _ctrls = _self call [F(createControls), [_title, _message, BOX_INIT_Y, _bgColor]];
+private _ctrls = _self call [F(createControls), [_title, _titleType, _message, BOX_INIT_Y, _bgColor]];
 DEBUG_2("(Renderer.Show) Controls created: %1. Adding to queue", count(_ctrls));
 
 _self call [F(addToQueue), [_type, _ctrls, _ttl]];
