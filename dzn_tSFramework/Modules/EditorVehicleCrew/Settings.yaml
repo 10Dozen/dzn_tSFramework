@@ -48,7 +48,7 @@ Configs:
     #     crewClass: "B_Soldier_F"
     #     crewKit: "kit_blufor_light_crew"
     #     vehicleKit: "kit_cargo_opfor"
-    #     skill: 0.75
+    #     skill: 0.75    # or [["accuracy, 0.5], ["spotTime", 0.9]]
 
     OPFOR VC, GNR, DRV:
         roles:

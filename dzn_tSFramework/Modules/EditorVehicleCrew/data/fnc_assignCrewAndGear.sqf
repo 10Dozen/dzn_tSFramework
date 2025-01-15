@@ -30,24 +30,15 @@ if (_vehicleKit isNotEqualTo "") then {
     [_veh, _vehicleKit, true] call dzn_fnc_gear_assignKit;
 };
 
-// Read/update DynAI skill with mission params and apply adjusted values to crew
-[] call dzn_fnc_dynai_getSkillFromParameters;
-dzn_dynai_complexSkill params ["_isComplexSkill", "_dynaiSkill"];
-private ["_adjustedSkill"];
-if (_isComplexSkill) then {
-    _adjustedSkill = [];
-    {
-        _x params ["_skillName", "_skillLevel"];
-        if (_skillName in ["general", "aimingSpeed", "aimingAccuracy"]) then {
-            _skillLevel = (_skillLevel * _skill) min 1;
-        };
-        _adjustedSkill pushBack [_skillName, _skillLevel];
-    } forEach _dynaiSkill;
-} else {
-    _adjustedSkill = (_dynaiSkill * _skill) min 1;
-};
+private _crew = [_veh, _side, _roles, _crewKit, 1, _crewClass] call dzn_fnc_createVehicleCrew;
 
-private _crew = [_veh, _side, _roles, _crewKit, _adjustedSkill, _crewClass] call dzn_fnc_createVehicleCrew;
+// -- Adjust skill according to config
+{
+    [_x, _skill] call dzn_fnc_dynai_applySkillLevels;
+} forEach (units _crew);
+
+
+
 if (units _crew findIf {isNull objectParent _x} > -1) then {
     TSF_ERROR_4(TSF_ERROR_TYPE__MISCONFIGURED, "Экипаж не поместился в машину %1. Применен конфиг '%2', роли %3, но в машине сейчас %4 человек экипажа", typeof _veh, _configName, _roles, count crew _veh);
 };
@@ -59,5 +50,7 @@ private _behaviourParams = [
     _veh,
     _self get Q(VehicleBehaviorMap) get toLower(_behavior)
 ];
+
 _behaviourParams call dzn_fnc_dynai_addUnitBehavior;
+
 true

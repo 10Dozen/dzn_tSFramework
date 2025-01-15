@@ -60,7 +60,7 @@
 #define ANIM_DUR_BLUR 0.1
 #define ANIM_DUR_BLUR_APPEAR (ANIM_DUR_BLUR * 0.5)
 
-#define TTL_SHOW 7
+#define TTL_SHOW 15
 #define TTL_BLUR 5
 #define TTL_BUFFER 30
 
