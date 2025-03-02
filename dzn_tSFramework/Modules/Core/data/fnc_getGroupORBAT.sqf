@@ -28,8 +28,14 @@ private _grp = group _unit;
 private _count  = count units _grp;
 
 private _leader = leader _grp;
+
+private _roleParts = (roleDescription _leader) splitString "@";
+private _roleName = _roleParts # 0;
+private _roleId = _roleParts # (count _roleParts - 1);
+
 private _leaderInfo = [
-    ((roleDescription _leader) splitString "@") # 0,
+    _roleId,
+    _roleName,
     name _leader,
     _leader
 ];
@@ -43,8 +49,13 @@ private ["_member"];
 {
     if (_x == _leader) then { continue; };
 
+    _roleParts = (roleDescription _x) splitString "@";
+    _roleName = _roleParts # 0;
+    _roleId = _roleParts # (count _roleParts - 1);
+
     _member = [
-        roleDescription _x,
+        _roleId,
+        _roleName,
         name _x,
         _x
     ];
@@ -54,5 +65,8 @@ private ["_member"];
 
     _membersInfo pushBack _member;
 } forEach _members;
+
+// Sort by roleID
+_members sort true;
 
 [groupId _grp, _count, _leaderInfo, _membersInfo]

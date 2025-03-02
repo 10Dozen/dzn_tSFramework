@@ -27,7 +27,7 @@ roleDescription _x,
 name _x,
 _x
 */
-_leaderInfo params ["_leaderRole", "_leaderName", "_unit"];
+_leaderInfo params ["", "_leaderRole", "_leaderName", "_unit"];
 private _lines = [
     format [HINT_TITLE_TEMPLATE, _groupName],
     format [
@@ -38,10 +38,10 @@ private _lines = [
 ];
 
 {
-    _x params ["_roleName", "_name", "_unit"];
+    _x params ["", "_roleName", "_name", "_unit"];
 
     _lines pushBack format [
-         [ROLE_TEMPLATE, HIGHLIGHT_ROLE_TEMPLATE]  select (_unit == player),
+        [ROLE_TEMPLATE, HIGHLIGHT_ROLE_TEMPLATE]  select (_unit == player),
         _roleName,
         _name
     ];

@@ -14,7 +14,7 @@ Init:
 # Отключает управление игроков на старте
 DisableOnStart:
     disablePlayers: true
-    time: 20  # секунд
+    time: 10  # секунд
     onDisableText: |
         <t color='#AAAAAA' font='PuristaLight' size='0.8'>
         Управление отключено, не паникуй!<br /><br />

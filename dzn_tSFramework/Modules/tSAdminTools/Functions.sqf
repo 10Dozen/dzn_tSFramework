@@ -49,7 +49,7 @@ tSF_fnc_adminTools_addTopic = {
 	player createDiarySubject [tSF_AdminTools_Topic,tSF_AdminTools_TopicName];
 };
 
-
+// Rewrite using action event handlers?
 tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay = {
 	if (isNull (findDisplay 312)) then {
 		tSF_adminTools_MenuAddedToZeus = false;
@@ -64,6 +64,7 @@ tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay = {
 	[] spawn tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay;
 };
 
+// Rewrite using event handlers?
 tSF_fnc_adminTools_handleGSOMenuOverSpectator = {
 	if (isNull (findDisplay 60000)) then {
 		tSF_adminTools_MenuAddedToSpectator = false;
@@ -142,66 +143,6 @@ tSF_fnc_adminTools_callEndings = {
 
 	if !(_Result) exitWith {};
     [_ending, true, 2] remoteExec ["BIS_fnc_endMission", 0, true];
-};
-
-
-/*
-    GAT Tool
-*/
-
-dzn_fnc_adminTools_addGATControls = {
-	waitUntil {sleep 10; time > 10 && !isNil "dzn_gear_initDone" && !isNil "dzn_gear_gat_table" && !isNil "dzn_fnc_ShowChooseDialog"};
-	player createDiaryRecord [tSF_AdminTools_Topic, [
-		"GAT Tool"
-		, format [
-			"<font color='#12C4FF' size='14'>Gear Assignment Table Tool</font><br />%1"
-			, "<font color='#A0DB65'><execute expression='[] spawn dzn_fnc_adminTools_showGATTool;'>Open GAT Tool</execute></font>"
-		]
-	]];
-};
-
-dzn_fnc_adminTools_showGATTool = {
-	private _PlayerList = call BIS_fnc_listPlayers;
-	private _PlayerNamesList = [];
-	{ _PlayerNamesList pushBack (name _x); } forEach _PlayerList;
-
-	tSF_GATList = [] call tSF_fnc_adminTools_getPersonalGearKits;
-    tSF_GATList pushBack "";
-
-	private _Result = [];
-	_Result = [
-		"GAT Tool"
-		,[
-			["Player", _PlayerNamesList]
-			, ["GAT Kit", tSF_GATList]
-			, ["or Kitname", []]
-		]
-	] call dzn_fnc_ShowChooseDialog;
-
-	if (count _Result == 0) exitWith {};
-
-	private _player = _PlayerList select (_Result select 0);
-	private _kitname = if ( typename (_Result select 2) != "STRING") then {
-		tSF_GATList select (_Result select 1);
-	} else {
-		_Result select 2;
-	};
-
-	if (isNil {call compile _kitname}) exitWith {
-		hint parseText format [
-			"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
-			<br />There is no kit named '%1'"
-			, _kitname
-		];
-	};
-
-	[_player, _kitname] remoteExec ["dzn_fnc_gear_assignKit", _player];
-	hint parseText format [
-		"<t size='1' color='#FFD000' shadow='1'>GAT Tools:</t>
-		<br /> Kit '%1' was assigned to %2"
-		, _kitname
-		, _PlayerNamesList select (_Result select 0)
-	];
 };
 
 /*
@@ -284,8 +225,8 @@ tSF_fnc_adminTools_timers_getTimer = {
     // Time may be nil if there is no timer with given name.
     params ["_name", ["_pretty", false]];
     private _existingTimer = tSF_AdminTools_Timers get _name;
-    if (isNil "_existingTimer") exitWith { 
-        nil 
+    if (isNil "_existingTimer") exitWith {
+        nil
     };
 
     (_existingTimer # 0) - CBA_missionTime
@@ -489,17 +430,17 @@ tSF_fnc_adminTools_getPlayersAndGroupsOptions = {
             0: _name (STRING)
             1: _unit (OBJECT)
             2: _attributes (ARRAY)
-        
+
         Group option format:
             0: _name (STRING)
             1: _group (GROUP)
             2: _attributes (ARRAY)
-        
+
         Params: none
         Output:
-            0: _playerOptions (ARRAY) - list of player optons 
+            0: _playerOptions (ARRAY) - list of player optons
             1: _groupOptions (ARRAY) - list of group options
-            2: _players (ARRAY of OBJECTS) - sorted list of players 
+            2: _players (ARRAY of OBJECTS) - sorted list of players
             3: _groups (ARRAY of GROUPS) - sorted list of group options
 
     */
@@ -509,15 +450,15 @@ tSF_fnc_adminTools_getPlayersAndGroupsOptions = {
             params ["_plr"];
             [
 				[
-                    "color", 
+                    "color",
                     [COLOR_RGBA_GRAY, COLOR_RGBA_WHITE] select (alive _plr)
                 ],
 				[
-                    "textRight", 
+                    "textRight",
                     ["(мертв)", groupId group _plr] select (alive _plr)
                 ],
 				[
-                    "textRightColor", 
+                    "textRightColor",
                     [COLOR_RGBA_LIGHT_RED, COLOR_RGBA_YELLOW] select (alive _plr)
                 ],
 				["tooltip", roleDescription _plr]
@@ -542,7 +483,7 @@ tSF_fnc_adminTools_getPlayersAndGroupsOptions = {
     private _playersSorted = keys _playersMap;
 	_playersSorted sort true;
 
-    // -- Get sorted groups names and groupName-group/players map 
+    // -- Get sorted groups names and groupName-group/players map
     private _groupsMap = createHashMap;
 	private ["_plr", "_group", "_groupName", "_groupData"];
 	{
@@ -550,7 +491,7 @@ tSF_fnc_adminTools_getPlayersAndGroupsOptions = {
         _group = group _plr;
         _groupName = groupId _group;
         _groupData = _groupsMap getOrDefaultCall [
-            _groupName, 
+            _groupName,
             { createHashMapFromArray [["players", []], ["group", grpNull]]; },
             true
         ];
@@ -576,7 +517,7 @@ tSF_fnc_adminTools_getPlayersAndGroupsOptions = {
     private _groupOptions = _groupsSorted apply {
         private _grp = _groupsMap get _x;
         [
-            _x, 
+            _x,
             _grp get "group",
             [_grp] call _groupAttributesComposer
         ]
@@ -597,7 +538,7 @@ tSF_fnc_adminTools_getPlayersByRoleNameLike = {
         _include = [_include];
     };
 
-    _includeExpression = compile ((_include apply { 
+    _includeExpression = compile ((_include apply {
         format ["[""%1"", roleDescription _x, false] call BIS_fnc_inString", _x]
     }) joinString " || ");
 
@@ -614,21 +555,21 @@ tSF_fnc_adminTools_getPlayersByRoleNameLike = {
 tSF_fnc_adminTools_getLocationOptions = {
     /*
         Returns list of locations in form of options:
-        - Location of GSO 
+        - Location of GSO
         - Location of PL (?)
-        - GSO defined locations 
-        - CCP & FARP 
+        - GSO defined locations
+        - CCP & FARP
         - Respawn locations
 
-        Params: 
-            0: _ordering (CODE) - function to order locations 
+        Params:
+            0: _ordering (CODE) - function to order locations
         Output: ARRAY of location options
 
         Object location (GSO, PL, FARP, CCP, Respawn locs):
-            0: _name 
+            0: _name
             1: _object
-            2: _attrs 
-        
+            2: _attrs
+
         Pos3d location (respawn marker, GSO defined locs):
             0: _name
             1: _pos3d
@@ -658,12 +599,12 @@ tSF_fnc_adminTools_getLocationOptions = {
     ] call tSF_fnc_adminTools_getPlayersByRoleNameLike) select { alive _x };
     if (_pl isNotEqualTo []) then {
         _units pushBack [
-            "Командир взвода", 
+            "Командир взвода",
             _pl # 0,
             [
                 ["color", COLOR_RGBA_YELLOW],
 				[
-                    "tooltip", 
+                    "tooltip",
                     format [
                         "Текущая позиция Командира взвода (%1)",
                         name (_pl # 0)
@@ -685,7 +626,7 @@ tSF_fnc_adminTools_getLocationOptions = {
                 [
                     ["color", COLOR_RGBA_YELLOW],
                     [
-                        "tooltip", 
+                        "tooltip",
                         format [
                             "Текущая позиция командира отряда %1 (%2)",
                             groupId group _x,
@@ -697,29 +638,29 @@ tSF_fnc_adminTools_getLocationOptions = {
         } forEach _sls;
     };
 
-    // -- CCP and FARP locations 
+    // -- CCP and FARP locations
     private _poi = [];
     if (TSF_MODULE_ENABLED(CCP) && {!isNil "tSF_CCP_Position"}) then {
         _poi pushBack [
-            "CCP", 
+            "CCP",
             tSF_CCP_Position,
             [
                 ["color", COLOR_RGBA_LIGHT_BLUE],
 				[
-                    "tooltip", 
+                    "tooltip",
                     "Позиция Casualty Collection Point"
                 ]
             ]
         ];
 	};
-	if (TSF_MODULE_ENABLED(FARP) && {!isNil "tSF_FARP_Position"}) then {        
+	if (TSF_MODULE_ENABLED(FARP) && {!isNil "tSF_FARP_Position"}) then {
         _poi pushBack [
-            "FARP", 
+            "FARP",
             tSF_FARP_Position,
             [
                 ["color", COLOR_RGBA_LIGHT_BLUE],
 				[
-                    "tooltip", 
+                    "tooltip",
                     "Позиция Forward Arming and Refuel Point"
                 ]
             ]
@@ -739,14 +680,14 @@ tSF_fnc_adminTools_getLocationOptions = {
         ];
     } forEach tSF_AdminTools_Rallypoints;
 
-    // -- Respawn locations 
+    // -- Respawn locations
     private _respawnModule = TSF_COMPONENT(Q(Respawn));
     private _respawnLocs = [];
     if (!isNil "_respawnModule") then {
         {
             _x params ["_name", "_locPos", "_desc", "_isDefault"];
             _respawnLocs pushBack [
-                format ["  %1", _name], 
+                format ["  %1", _name],
                 _locPos,
                 [
                     ["color", COLOR_RGBA_LIGHT_GREEN],
@@ -766,31 +707,19 @@ tSF_fnc_adminTools_getLocationOptions = {
     ] call _ordering)
 };
 
-tSF_fnc_adminTools_getPersonalGearKits = {
-    private _allKits = (allVariables missionNamespace)  select {
-		["kit_", _x, false] call BIS_fnc_inString
-		&& !(["lkit_", _x, false] call BIS_fnc_inString)
-		&& !(["cba_xeh", _x, false] call BIS_fnc_inString)
-		&& !(["cargo", _x, false] call BIS_fnc_inString)
-	};
-	_allKits sort true;
-
-    _allKits
-};
-
 tSF_fnc_adminTools_cutLongLine = {
     /*
-        Cuts line at neares whitespace (or given char) before maxLenght. 
-        Returns left substring + optional suffix, and char index 
-        where cut was made (e.g. "some string", 3 => ["some", 4]). 
+        Cuts line at neares whitespace (or given char) before maxLenght.
+        Returns left substring + optional suffix, and char index
+        where cut was made (e.g. "some string", 3 => ["some", 4]).
 
     */
     params ["_line", "_maxLength", ["_cutOnChar", " "], ["_suffix", ""], ["_forceSuffix", false]];
-	if (count _line <= _maxLength) exitWith { 
+	if (count _line <= _maxLength) exitWith {
         [
-            _line + (["", _suffix] select _forceSuffix), 
+            _line + (["", _suffix] select _forceSuffix),
             1 + count _line
-        ] 
+        ]
     };
 
 	private _cutLineAtIndex = _maxLength - 1;
@@ -804,7 +733,7 @@ tSF_fnc_adminTools_cutLongLine = {
 	};
 
 	_line = _line select [
-        0, 
+        0,
         [_cutLineAtIndex + 1,  _cutLineAtIndex] select _found // cut found char
     ];
 

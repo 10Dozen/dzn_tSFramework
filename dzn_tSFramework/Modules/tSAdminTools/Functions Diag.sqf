@@ -1,6 +1,9 @@
 #include "data\script_component.hpp"
 #define DIAG_PAGE "tSF_Diagpage"
 
+#define COLOR_HEX_OK "#b7f931"
+#define COLOR_HEX_FAIL "#f95631"
+
 tSF_Diag_AddDiagTopic = {
     tSF_Diag_Subject = "tSF_Diagpage";
     if !(player diarySubjectExists tSF_Diag_Subject) then {
@@ -48,8 +51,8 @@ tSF_Diag_TSF_UpdateTSFRecord = {
     private _moduleLineTemplate = "<font size='12'>[<font color='%4'>%1</font>]</font>%2   <font color='%5'>%3</font>";
     private _fontColors = createHashMapFromArray [
         [COMPONENT_STATUS_STARTING, "#ff8800"],
-        [COMPONENT_STATUS_OK, "#b7f931"],
-        [COMPONENT_STATUS_FAILED, "#f95631"],
+        [COMPONENT_STATUS_OK, COLOR_HEX_OK],
+        [COMPONENT_STATUS_FAILED, COLOR_HEX_FAIL],
         ["OFF", "#777777"],
         ["PRE_INIT", "#77cc77"]
     ];
@@ -72,7 +75,7 @@ tSF_Diag_TSF_UpdateTSFRecord = {
         _topicLines pushBack format [
             _moduleLineTemplate,
             _status,
-            _seps # 1,  
+            _seps # 1,
             _x,
             _fontColors get _status,
             _fontTextColors # 1
@@ -85,7 +88,7 @@ tSF_Diag_TSF_UpdateTSFRecord = {
         _topicLines pushBack format [
             _moduleLineTemplate,
             _status,
-            _seps # 0,  
+            _seps # 0,
             _x,
             _fontColors get _status,
             _fontTextColors # 0
@@ -156,102 +159,151 @@ tSF_Diag_Gear_CollectTotalData = {
      *	Kits vs GAT
      */
     if (isNil "dzn_gear_gat_table") exitWith {};
-    private _gatTopic = "<font size='14' color='#b7f931'>Gear Assignment Table</font><br />";
 
-    private _allKits = [];
-    private _allKitsColors = [];
-
-    private _fnc_generateKitColor = {
-        private _colorCodes = [4,5,6,7,8,9,"A","B","C","D","E","F"];
-        private _color = ["#"];
-        for "_i" from 1 to 6 do { _color pushBack selectRandom _colorCodes; };
-        _color joinString ""
-    };
+    private _lines = [
+        "<font size='16' color='#b7f931'>Gear Assignment Table</font>",
+        "Проверка существования китов указанных в GAT.",
+        ""
+    ];
 
     {
-        private _role = _x select 0;
-        private _kit = _x select 1;
-        private _exist = !(isNil (compile _kit));
-        private _kitColor = "";
-
-        if (_kit in _allKits) then {
-            _kitColor = _allKitsColors select (_allKits find _kit);
-        } else {
-            _kitColor = call _fnc_generateKitColor;
-            while { _kitColor in _allKitsColors } do {_kitColor = call _fnc_generateKitColor;};
-
-            _allKits pushBack _kit;
-            _allKitsColors pushBack _kitColor;
+        _x params ["_roleName", "_kitName"];
+        if (isNil _kitName) then {
+            ECOB(Core) call [TSF_ERROR_METHOD, [
+                "dzn_Gear", TSF_ERROR_TYPE__MISSING_KIT,
+                format ["Запись GAT для роли '%1' ссылается на несуществующий набор '%2'", _roleName, _kitName]
+            ]];
         };
-
-        _gatTopic = format [
-            "%1<br /><font size='12'>[%2]</font> %3 | <font color='%5'>%4</font>"
-            , _gatTopic
-            , if (_exist) then { "<font color='#b7f931'>OK</font>"} else {"<font color='#f95631'>NO</font>"}
-            , _role
-            , _kit
-            , _kitColor
+        _lines pushBack format ["[<font color='%3'>%1</font>] - %2",
+            ["OK", "Не найден"] select (isNil _kitName),
+            _roleName,
+            [COLOR_HEX_OK, COLOR_HEX_FAIL] select (isNil _kitName)
         ];
-    } forEach dzn_gear_gat_table;
+    } forEach dzn_gear_gat_table_plain;
 
-    player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Totals", _gatTopic]];
+    player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - GAT", _lines joinString "<br/>"]];
 };
 
 tSF_Diag_Gear_CollectKitData = {
     /*
      *	Kit content
+     *  Check for medical items, maptools, binoculars. Alerts for leader roles without maptools and bino
      */
     if (isNil "dzn_gear_gat_table") exitWith {};
-    private _kitTopic = "<font size='16' color='#b7f931'>Kits</font><br />";
-    private _fnc_CheckForItem = {
-        params ["_arr","_val"];
-        private _result = false;
-        {if (typename _x == "ARRAY") then { if (_val in _x) exitWith { _result = true }; };} forEach _arr;
 
-        _result
+    private _handle = {
+        params ["_name", "_kitname"];
+
+        private _gearMap = missionNamespace getVariable _kitname;
+        if (isNil "_gearMap") exitWith {
+            format ["<font color='%1'>    (не существует)</font>", COLOR_HEX_FAIL]
+        };
+
+        // Check for medical items
+        private _allItems = [];
+        {
+            if ((_x # 0) isEqualType "") then {
+                _allItems pushBack (_x # 0);
+            } else {
+                _allItems append (_x # 0);
+            };
+        } forEach ((_gearMap get "UniformItems") + (_gearMap get "VestItems") + (_gearMap get "BackpackItems"));
+
+        private _hasMedicalItems = (
+            "FirstAidKit" in _allItems
+            || "ACE_fieldDressing" in _allItems
+            || "ACE_packingBandage" in _allItems
+            || "ACE_elasticBandage" in _allItems
+            || "ACE_quikclot" in _allItems
+        );
+        private _hasMaptools = "ACE_MapTools" in _allItems;
+        private _hasBinocular = (_gearMap get "AssignedItems") findIf {
+            ((_x call BIS_fnc_itemType) # 1) in ["Binocular", "LaserDesignator"]
+        } > -1;
+        private _hasSRRadio = (_gearMap get "AssignedItems") findIf {
+            _x == 'ItemRadio' || _x call TFAR_fnc_isRadio
+        } > -1;
+        private _hasLRRadio = (getNumber (configFile >> "CfgVehicles" >> (_gearMap get "Backpack") >> "tf_hasLRradio") > 0);
+
+        // Raise error
+        if (!_hasMedicalItems) then {
+            ECOB(Core) call [TSF_ERROR_METHOD, [
+                "dzn_Gear",
+                TSF_ERROR_TYPE__MISSING_ITEM,
+                format ["(GAT) Набор '%2' для роли '%1' не имеет Медицины",_name, _kitname]
+            ]];
+        };
+
+        private _isLeader = "leader" in (_gearMap getOrDefault ["Tags", []]);
+        private _isPlatoonNetOperator = "PL_NET" in (_gearMap getOrDefault ["Tags", []]);
+        if (_isLeader && !_hasMaptools) then {
+            ECOB(Core) call [TSF_ERROR_METHOD, [
+                "dzn_Gear",
+                TSF_ERROR_TYPE__MISSING_ITEM,
+                format ["(GAT) Набор '%2' для роли '%1' (лидер) не имеет Инструментов карты",_name, _kitname]
+            ]];
+        };
+        if (_isLeader && !_hasBinocular) then {
+            ECOB(Core) call [TSF_ERROR_METHOD, [
+                "dzn_Gear",
+                TSF_ERROR_TYPE__MISSING_ITEM,
+                format ["(GAT) Набор '%2' для роли '%1' (лидер) не имеет Бинокля",_name, _kitname]
+            ]];
+        };
+        if (_isLeader && !_hasSRRadio) then {
+            ECOB(Core) call [TSF_ERROR_METHOD, [
+                "dzn_Gear",
+                TSF_ERROR_TYPE__MISSING_ITEM,
+                format ["(GAT) Набор '%2' для роли '%1' (лидер) не имеет КВ рации",_name, _kitname]
+            ]];
+        };
+        if (_isPlatoonNetOperator && !_hasLRRadio) then {
+            ECOB(Core) call [TSF_ERROR_METHOD, [
+                "dzn_Gear",
+                TSF_ERROR_TYPE__MISSING_ITEM,
+                format ["(GAT) Набор '%2' для роли '%1' (PLNET) не имеет ДВ рации",_name, _kitname]
+            ]];
+        };
+
+        #define FMT_OK_ITEM(TITLE) format ["<font color='%2'>        %1</font>", TITLE, COLOR_HEX_OK]
+        #define FMT_MISSING_ITEM(TITLE) format ["<font color='%2'>        %1</font>", TITLE, COLOR_HEX_FAIL]
+        [
+            [FMT_MISSING_ITEM("Без медицины!"), FMT_OK_ITEM("+ Медицина")] select _hasMedicalItems,
+            ["", "    *назначается лидерской роли"] select _isLeader,
+            [
+                ["", FMT_MISSING_ITEM("Без инструментов карты!")] select _isLeader,
+                FMT_OK_ITEM("+ Map tools")
+            ] select (_hasMaptools),
+            [
+                ["", FMT_MISSING_ITEM("Без бинокля!")] select _isLeader,
+                FMT_OK_ITEM("+ Бинокль")
+            ] select _hasBinocular,
+            [
+                ["", FMT_MISSING_ITEM("Без КВ рации!")] select _isLeader,
+                FMT_OK_ITEM("+ КВ рация")
+            ] select _hasSRRadio,
+            ["", "    *назначается роли оператора ДВ (PLNET)"] select _isPlatoonNetOperator,
+            [
+                ["", FMT_MISSING_ITEM("Без ДВ рации!")] select _isPlatoonNetOperator,
+                FMT_OK_ITEM("+ ДВ рация")
+            ] select _hasLRRadio
+        ] select { _x isNotEqualTo "" } joinString "<br/>"
     };
 
-    private _kits = [];
 
+    private _lines = [
+        "<font size='16' color='#b7f931'>Kits</font>",
+        "Проверка состава набора снаряжения.",
+        ""
+    ];
     {
-        if !( (_x select 1) in _kits ) then {
+        diag_log format ["OnDiag: %1", _x];
+        _lines pushBack format ["%1 <font color='#aaaaaa'>| %2</font>", _x # 1, _x # 0];
+        _lines pushBack (_x call _handle);
+        _lines pushBack "";
+    } forEach dzn_gear_gat_table_plain;
 
-        _kits pushBack (_x select 1);
-
-        private _role = _x select 0;
-        private _exist = !(isNil (compile (_x select 1)));
-
-        if (_exist) then {
-            private _kitname = _x select 1;
-            private _kit = call compile _kitname;
-            private _kitArray = ((_kit select 5 select 1) + (_kit select 6  select 1) + (_kit select 7  select 1));
-
-
-            private _hasMaptools = [_kitArray, "ACE_MapTools"] call _fnc_CheckForItem;
-            private _hasIfak = ([_kitArray, "ACE_tourniquet"] call _fnc_CheckForItem)
-                && (
-                    [_kitArray, "ACE_fieldDressing"] call _fnc_CheckForItem
-                    || [_kitArray, "ACE_packingBandage"] call _fnc_CheckForItem
-                    || [_kitArray, "ACE_elasticBandage"] call _fnc_CheckForItem
-                    || [_kitArray, "ACE_quikclot"] call _fnc_CheckForItem
-                );
-            private _hasBinocular = [_kitArray, "Binocular"] call _fnc_CheckForItem || [_kitArray, "ACE_Vector"] call _fnc_CheckForItem;
-
-            _kitTopic = format [
-                "%1<br /><font color='#b7f931'>%2</font><br />   Has IFAK -- %3<br />   Has Maptools -- <font color='#5b9aff'>%4</font><br />   Has Binocular/Vector -- <font color='#5b9aff'>%5</font>"
-                , _kitTopic
-                , _x select 1
-                , if (_hasIfak) then { "<font color='#b7f931'>Yes</font>" } else { "<font color='#f95631'>No</font>" }
-                , if (_hasMaptools) then { "Yes" } else { "No" }
-                , if (_hasBinocular) then { "Yes" } else { "No" }
-
-            ];
-        };
-
-        };
-    } forEach dzn_gear_gat_table;
-
-    player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Kits", _kitTopic]];
+    player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - Kits", _lines joinString "<br/>"]];
 };
 
 tSF_Diag_Framework_HandleErrorsData = {

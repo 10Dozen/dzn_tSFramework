@@ -61,7 +61,7 @@ dzn_fnc_tSF_3DEN_ShowTool = {
 		,["[Gear] Add Kit Logic"			, { [] spawn dzn_fnc_tSF_3DEN_AddGearLogic }]
 
 		,["[Unit] Add Unit Behavior"		, { [] spawn dzn_fnc_tSF_3DEN_ResolveUnitBehavior }]
-		
+
 		,["[Vehicle] Add AI Crew Options"	, { [] spawn dzn_fnc_tSF_3DEN_AddCrewOptionsLogic }]
 		,["[Vehicle] Add Vehicle Crew"		, { [] spawn dzn_fnc_tSF_3DEN_AddEVCLogic }]
 		,["[Vehicle] Add TFAR LR Radio"		, { [] spawn dzn_fnc_tSF_3DEN_AddERSLogic }]
@@ -216,10 +216,6 @@ dzn_fnc_tSF_3DEN_GetDynaiZoneNames = {
 };
 
 dzn_fnc_tSF_3DEN_GetUnitNames = {
-/*
-http://www.online-decoder.com/ru
-*/
-
 	private _playableUnits = [];
 	private _supporters = [];
 
@@ -275,30 +271,34 @@ dzn_fnc_tSF_3DEN_GetPlayableRoles = {
 };
 
 dzn_fnc_tSF_3DEN_GetGAT = {
-	private _listOfRoles = [] call dzn_fnc_tSF_3DEN_GetPlayableRoles;
-	private _gat = "";
+	// -- Gather plyable units and sort them to sides
+	private _playableUnits = (get3DENLayerEntities dzn_tSF_3DEN_UnitsLayer) select { groupId _x != "" };;
+	private _gat = createHashMap;
+	private ["_side", "_group", "_units"];
 	{
-		private _role = _x;
-		private _tabs = "";
-		_tabs = switch (true) do {
-			case (count _role < 8): { "					" };
-			case (count _role < 16): { "				" };
-			case (count _role < 24): { "			" };
-			case (count _role > 23): { "		" };
-		};
+		_units = [];
+		_group = [groupId _x, _units];
+		_side = _gat getOrDefaultCall [side _x, { [] }, true];
+		_side pushBack _group;
+		{
+			_units pushBackUnique ((_x get3DENAttribute "description") select 0);
+		} forEach (units _x);
+	} forEach _playableUnits;
 
-		_gat = format[
-			"%1%2%4A ""%3""%5TO ""kit_name"" KIT"
-			, _gat
-			, L_BRK
-			, _role
-			, if (_forEachIndex == 0) then { "" } else { ", " }
-			, _tabs
-		];
+	// -- Formating...
+	private _content = [];
+	{
+		private _side = _x;
+		_content pushBack format ["%1:", toUpper str(_side)];
+		{
+			_x params ["_groupName", "_roles"];
+			_content pushBack format ["    %1:", _groupName];
+			_roles apply { format ["        %1: KITNAME", _x] };
+			_content append _roles;
+		} forEach (_gat get _side);
+	} forEach [west, east, resistance, civilian];
 
-	} forEach _listOfRoles;
-
-	["Gear Assignment table", _gat] call dzn_fnc_3DEN_ShowCopyDialog;
+	["ORBAT / GAT", _content joinString L_BRK] call dzn_fnc_3DEN_ShowCopyDialog;
 };
 
 dzn_fnc_tSF_3DEN_GetCargoSeats = {

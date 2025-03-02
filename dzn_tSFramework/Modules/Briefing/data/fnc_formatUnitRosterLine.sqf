@@ -5,16 +5,16 @@
     (_self)
 
     Params:
-        0: _roleName (STRING)
-        1: _rank (NUMBER)
+        0: _roleID (NUMBER)
+        1: _roleName (STRING)
         2: _name (STRING)
         3: _unit (OBJECT)
-        4: _gear (ARRAY)
+        4: _gear (ARRAY) - [_primary, _secondary, _hasLR, _hasSR]
     Returns:
         nothing
 */
 
-params ["_roleName", "_name", "_unit", "_gear"];
+params ["_roleId", "_roleName", "_name", "_unit", "_gear"];
 
 DEBUG_1("(formatUnitRosterLine) Params: %1", _this);
 

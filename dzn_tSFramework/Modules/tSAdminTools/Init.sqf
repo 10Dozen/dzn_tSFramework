@@ -1,3 +1,9 @@
+/*
+	TODO:
+		Support randmozied kit
+*/
+
+
 #include "data\script_component.hpp"
 
 waitUntil { DZN_DYNAI_RUNNING && !isNil "dzn_dynai_owner" };
@@ -41,35 +47,32 @@ if (hasInterface) then {
 		[] spawn tSF_fnc_adminTools_handleGSOMenuOverZeusDisplay;
 		[] spawn tSF_fnc_adminTools_handleGSOMenuOverSpectator;
 
-		waitUntil { 
-			sleep 15; 
-			call tSF_fnc_adminTools_checkIsAdmin 
+		waitUntil {
+			sleep 15;
+			call tSF_fnc_adminTools_checkIsAdmin
 		};
-
-		tSF_GATList = [] call tSF_fnc_adminTools_getPersonalGearKits;
 
 		[] call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions Diag.sqf"];
 		[] call tSF_fnc_adminTools_addTopic;
 
 		if (tSF_AdminTool_EnableMissionEndings) then { [] spawn dzn_fnc_adminTools_addMissionEndsControls; };
-		if (tSF_AdminTool_EnableGATTool) then { [] spawn dzn_fnc_adminTools_addGATControls; };
 
 		// -- Timers
 		[{ [] call tSF_fnc_adminTools_timers_handleTimers; }, 1] call CBA_fnc_addPerFrameHandler;
         [] call tSF_fnc_adminTools_addTimerControls;
-		
+
 		// -- Add mission timer, adjust time according to passed mission time on server (CBA_missionTime value)
   		[
-			'Mission', 
+			'Mission',
 			tSF_AdminTools_timers_MissionTimer - CBA_missionTime,
-			false 
+			false
 		] call tSF_fnc_adminTools_timers_addTimer;
 
 		[] spawn tSF_Diag_AddDiagTopic;
 
 		[
-			["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"], 
-			[-20,-5,150,0.032], 
+			["<t color='#FFD000' align='center'>tSF GSO Tools Activated</t>"],
+			[-20,-5,150,0.032],
 			[0,0,0,.75], 30
 		] call dzn_fnc_ShowMessage;
 
@@ -89,7 +92,7 @@ if (isServer) then {
 		15
 	] call CBA_fnc_addPerFrameHandler;
 
-	// -- Test when in MP editor 
+	// -- Test when in MP editor
 	if (hasInterface) then {
 		["CBA_loadingScreenDone", {
 			[{

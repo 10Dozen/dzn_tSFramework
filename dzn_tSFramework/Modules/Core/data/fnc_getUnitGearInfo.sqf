@@ -56,7 +56,7 @@ _gearInfo pushBack ([
 // -- Check that backpack is TFAR LR radio
 _gearInfo pushBack (getNumber (configFile >> "CfgVehicles" >> _backpack >> "tf_hasLRradio") > 0);
 
-// -- Check that backpack is TFAR LR radio
+// -- Check that backpack is TFAR SR radio
 _gearInfo pushBack (_assignedItems findIf { _x == 'ItemRadio' || _x call TFAR_fnc_isRadio } > -1);
 
 // -- Publish variable for other players to see unit's local gear

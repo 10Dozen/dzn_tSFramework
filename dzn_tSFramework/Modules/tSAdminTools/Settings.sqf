@@ -7,14 +7,9 @@ tSF_AdminTools_TopicName = "Admin Tools";
 tSF_AdminTool_EnableMissionEndings = true;
 
 /*
- *	List of Gear Assignments Table kits and ability to assign selected endings
- */
-tSF_AdminTool_EnableGATTool = true;
-
-/*
  *	List of Dynai zones and ability to control them
  */
-tSF_AdminTools_EnableDynaiControl = true; 
+tSF_AdminTools_EnableDynaiControl = true;
 
 /*
  *	Rapid Artillery settings
@@ -31,11 +26,11 @@ tSF_AdminTools_RapidArtillery_ArtillerySettings = [
 tSF_AdminTools_RapidArtillery_AllowedRounds = ["HE", "SMOKE", "ILLUM"];
 
 /*
- * Timers 
+ * Timers
  */
 tSF_AdminTools_timers_MissionTimer = 1.5 * 60 * 60; // 1.5h in seconds
 
 /*
  * UI update loop timeout
- */ 
+ */
 tSF_AdminTools_uiLoop_Timeout = 2;
