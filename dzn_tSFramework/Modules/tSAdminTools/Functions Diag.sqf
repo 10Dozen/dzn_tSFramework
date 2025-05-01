@@ -1,8 +1,14 @@
-#include "data\script_component.hpp"
+#include "script_component.hpp"
+
 #define DIAG_PAGE "tSF_Diagpage"
 
 #define COLOR_HEX_OK "#b7f931"
 #define COLOR_HEX_FAIL "#f95631"
+
+// For debug
+if (isNil "TFAR_fnc_isRadio") then {
+    TFAR_fnc_isRadio = { false };
+};
 
 tSF_Diag_AddDiagTopic = {
     tSF_Diag_Subject = "tSF_Diagpage";
@@ -168,17 +174,50 @@ tSF_Diag_Gear_CollectTotalData = {
 
     {
         _x params ["_roleName", "_kitName"];
-        if (isNil _kitName) then {
+        private _gear = missionNamespace getVariable _kitName;
+        if (isNil "_gear") then {
             ECOB(Core) call [TSF_ERROR_METHOD, [
-                "dzn_Gear", TSF_ERROR_TYPE__MISSING_KIT,
-                format ["Запись GAT для роли '%1' ссылается на несуществующий набор '%2'", _roleName, _kitName]
+                "dzn_Gear - Gear Assignment Table",
+                format ["%1 - %2", TSF_ERROR_TYPE__MISSING_KIT, _roleName],
+                format [
+                    "Запись GAT для роли <font color='%3'>%1</font> ссылается на несуществующий набор <font color='%4'>%2</font>",
+                    _roleName,
+                    _kitName,
+                    COLOR_HEX_AQUA,
+                    COLOR_HEX_LIME
+                ]
             ]];
+
+            // -- Gear map
+            _lines pushBack format ["[<font color='%2'>%1</font>] - %3 (%4)",
+                "Не найден",
+                COLOR_HEX_FAIL,
+                _roleName,
+                _kitName
+            ];
+
+            continue;
         };
-        _lines pushBack format ["[<font color='%3'>%1</font>] - %2",
-            ["OK", "Не найден"] select (isNil _kitName),
-            _roleName,
-            [COLOR_HEX_OK, COLOR_HEX_FAIL] select (isNil _kitName)
-        ];
+
+        if (_gear isEqualType []) then {
+            // -- Random kit - ["kitname", "kitnmae"]
+            {
+                private _gearInRandomKit = missionNamespace getVariable _x;
+                _lines pushBack format ["[<font color='%2'>%1</font>] - %3 (random, %4)",
+                    ["OK", "Не найден"] select (isNil "_gearInRandomKit"),
+                    [COLOR_HEX_OK, COLOR_HEX_FAIL] select (isNil "_gearInRandomKit"),
+                    _roleName,
+                    _x
+                ];
+            } forEach _gear;
+        } else {
+            _lines pushBack format ["[<font color='%2'>%1</font>] - %3 (%4)",
+                ["OK", "Не найден"] select (isNil "_gear"),
+                [COLOR_HEX_OK, COLOR_HEX_FAIL] select (isNil "_gear"),
+                _roleName,
+                _kitName
+            ];
+        };
     } forEach dzn_gear_gat_table_plain;
 
     player createDiaryRecord ["tSF_Diagpage", ["dzn Gear - GAT", _lines joinString "<br/>"]];
@@ -226,42 +265,38 @@ tSF_Diag_Gear_CollectKitData = {
         private _hasLRRadio = (getNumber (configFile >> "CfgVehicles" >> (_gearMap get "Backpack") >> "tf_hasLRradio") > 0);
 
         // Raise error
+        private _errorsMessages = [
+            format [
+                "(GAT) Набор <font color='%3'>%1</font> для роли <font color='%4'>%2</font>:",
+                _kitname, _name,
+                 COLOR_HEX_LIME,
+                 COLOR_HEX_AQUA
+            ]
+        ];
         if (!_hasMedicalItems) then {
-            ECOB(Core) call [TSF_ERROR_METHOD, [
-                "dzn_Gear",
-                TSF_ERROR_TYPE__MISSING_ITEM,
-                format ["(GAT) Набор '%2' для роли '%1' не имеет Медицины",_name, _kitname]
-            ]];
+            _errorsMessages pushBack "- не имеет [Медицины]";
         };
 
         private _isLeader = "leader" in (_gearMap getOrDefault ["Tags", []]);
         private _isPlatoonNetOperator = "PL_NET" in (_gearMap getOrDefault ["Tags", []]);
         if (_isLeader && !_hasMaptools) then {
-            ECOB(Core) call [TSF_ERROR_METHOD, [
-                "dzn_Gear",
-                TSF_ERROR_TYPE__MISSING_ITEM,
-                format ["(GAT) Набор '%2' для роли '%1' (лидер) не имеет Инструментов карты",_name, _kitname]
-            ]];
+            _errorsMessages pushBack "- отмечен тегом [leader], но не имеет [Инструментов карты]";
         };
         if (_isLeader && !_hasBinocular) then {
-            ECOB(Core) call [TSF_ERROR_METHOD, [
-                "dzn_Gear",
-                TSF_ERROR_TYPE__MISSING_ITEM,
-                format ["(GAT) Набор '%2' для роли '%1' (лидер) не имеет Бинокля",_name, _kitname]
-            ]];
+            _errorsMessages pushBack "- отмечен тегом [leader], но не имеет [Бинокля]";
         };
         if (_isLeader && !_hasSRRadio) then {
-            ECOB(Core) call [TSF_ERROR_METHOD, [
-                "dzn_Gear",
-                TSF_ERROR_TYPE__MISSING_ITEM,
-                format ["(GAT) Набор '%2' для роли '%1' (лидер) не имеет КВ рации",_name, _kitname]
-            ]];
+            _errorsMessages pushBack "- отмечен тегом [leader], но не имеет [КВ рации]";
         };
         if (_isPlatoonNetOperator && !_hasLRRadio) then {
+            _errorsMessages pushBack "- отмечен тегом [PLNET], но не имеет [ДВ рации]";
+        };
+
+        if (count _errorsMessages > 1) then {
             ECOB(Core) call [TSF_ERROR_METHOD, [
                 "dzn_Gear",
-                TSF_ERROR_TYPE__MISSING_ITEM,
-                format ["(GAT) Набор '%2' для роли '%1' (PLNET) не имеет ДВ рации",_name, _kitname]
+                format ["%1 - %2", TSF_ERROR_TYPE__MISSING_ITEM, _kitname],
+                _errorsMessages joinString "<br/>"
             ]];
         };
 
@@ -272,20 +307,20 @@ tSF_Diag_Gear_CollectKitData = {
             ["", "    *назначается лидерской роли"] select _isLeader,
             [
                 ["", FMT_MISSING_ITEM("Без инструментов карты!")] select _isLeader,
-                FMT_OK_ITEM("+ Map tools")
+                FMT_OK_ITEM("Map tools")
             ] select (_hasMaptools),
             [
                 ["", FMT_MISSING_ITEM("Без бинокля!")] select _isLeader,
-                FMT_OK_ITEM("+ Бинокль")
+                FMT_OK_ITEM("Бинокль")
             ] select _hasBinocular,
             [
                 ["", FMT_MISSING_ITEM("Без КВ рации!")] select _isLeader,
-                FMT_OK_ITEM("+ КВ рация")
+                FMT_OK_ITEM("КВ рация")
             ] select _hasSRRadio,
             ["", "    *назначается роли оператора ДВ (PLNET)"] select _isPlatoonNetOperator,
             [
                 ["", FMT_MISSING_ITEM("Без ДВ рации!")] select _isPlatoonNetOperator,
-                FMT_OK_ITEM("+ ДВ рация")
+                FMT_OK_ITEM("ДВ рация")
             ] select _hasLRRadio
         ] select { _x isNotEqualTo "" } joinString "<br/>"
     };
@@ -297,9 +332,20 @@ tSF_Diag_Gear_CollectKitData = {
         ""
     ];
     {
-        diag_log format ["OnDiag: %1", _x];
-        _lines pushBack format ["%1 <font color='#aaaaaa'>| %2</font>", _x # 1, _x # 0];
-        _lines pushBack (_x call _handle);
+        _x params ["_rolename", "_kitname"];
+        private _gearMap = missionNamespace getVariable [_kitname, ""];
+
+        if (_gearMap isEqualType []) then {
+            // -- Random kit
+            {
+                _lines pushBack format ["%1 <font color='#aaaaaa'>| (random) | for role: %2</font>", _x, _rolename];
+                _lines pushBack ([_rolename, _x] call _handle);
+            } forEach _gearMap;
+        } else {
+            _lines pushBack format ["%1 <font color='#aaaaaa'>| %2</font>", _kitname, _rolename];
+            _lines pushBack ([_rolename, _kitname] call _handle);
+        };
+
         _lines pushBack "";
     } forEach dzn_gear_gat_table_plain;
 

@@ -1,4 +1,8 @@
-call compile preprocessFileLineNumbers "dzn_tSFramework\Modules\Interactives\Settings.sqf";
+#include "..\script_macro.hpp"
+#define COMPONENT Interactives
+
+INIT_SETTING;
+
 
 #define     APPLY_CLIENT_CODE(X,Y,Z)      if (hasInterface) then {waitUntil {!isNull player && { local player}}; [X, Y, Z] call dzn_fnc_interactives_executeEach; }
 #define     APPLY_SEVER_CODE(X,Y,Z)       if (isServer || isDedicated) then { [X, Y, Z] call dzn_fnc_interactives_executeEach; };
@@ -14,15 +18,15 @@ dzn_fnc_interactives_executeEach = {
 	params ["_reference", "_code","_persistant"];
 
 	private _objects = [];
-	
+
 	{
 		if (typename _x == "STRING") then {
 			_objects = _objects + entities _x;
 		} else {
 			_objects pushBack _x;
-		};	
+		};
 	} forEach _reference;
-	
+
 	{
 		if !(_x getVariable ["dzn_Interactives_Assigned", false]) then {
 			_x spawn _code;

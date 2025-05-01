@@ -13,7 +13,7 @@
 #define NOTE_IM_LOG <font color=COLOR_HEX_AQUA size=UI_NOTES_FONT_SIZE_NORMAL>%1 -- from %2:</font><br />%3
 
 
-// Respawn menu 
+// Respawn menu
 #define RESPAWN_MENU_TITLE GSO - Мессенджер / Респаун
 #define RESPAWN_MENU_SECTION_HEADER Управление Респаунами
 #define RESPAWN_MENU_WAITING_FOR_RESPAWN_HEADER Ожидают респауна: %1
@@ -34,4 +34,3 @@
     <t color=COLOR_HEX_BRICK_RED size=UI_FONT_SIZE_L>Возрождеие отменено!</t><br/>\
 	<t align='left' color=COLOR_HEX_GRAY>Для</t><br/>\
 	<t align='right'>%1</t>
-

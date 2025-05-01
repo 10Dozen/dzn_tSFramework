@@ -1,4 +1,4 @@
-#include "data\script_component.hpp"
+#include "script_component.hpp"
 
 /*
     # See activation condition of the zone

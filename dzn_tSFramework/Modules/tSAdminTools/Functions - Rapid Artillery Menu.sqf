@@ -1,3 +1,5 @@
+#include "script_component.hpp"
+
 /*
  *	F6 Rapid Artillery Zeus Screen
  */
@@ -7,12 +9,19 @@ tSF_fnc_adminTools_RapidArtillery_showZeusSceen = {
 
 	private _trps = allMapMarkers select { ["TRP", markerText _x, false] call BIS_fnc_inString };
 	private _tgtClassObjects = entities [tSF_AdminTools_RapidArtillery_TargetClass, [], false, false];
-	
+
 	private _tgtNames 		= [] + (_tgtClassObjects apply { name _x }) + (_trps apply { markerText _x });
 	private _tgtPos 		= [] + (_tgtClassObjects apply { getPosATL _x })  + (_trps apply { getMarkerPos _x });
 	private _shapes 		= ["CIRCLE", "LINE"];
-	private _directions		= [["SOUTH-to-NORTH", 0], ["SW-to-NE", 45], ["WEST-to-EAST", 90], ["SE-to-NW", 315]];
-	private _size 		= [["NORMAL / 50m", 50], ["WIDE / 100m", 100], ["EXTRA WIDE / 250m", 250], ["NARROW / 25m", 25]];
+	private _directions		= [["000", 0], ["045", 45],["090", 90],["135", 135],["180", 180],["225", 225],["270", 270],["315", 315]];
+	private _size 		    = [
+        ["NORMAL / 50m", 50],
+        ["WIDE / 100m", 100],
+        ["WIDE / 150m", 150],
+        ["EXTRA WIDE / 200m", 200],
+        ["EXTRA WIDE / 250m", 250],
+        ["NARROW / 25m", 25]
+    ];
 	private _gunType 		= tSF_AdminTools_RapidArtillery_ArtillerySettings apply { _x select 0 };
 	private _countValues 	= [1,3,6,9];
 	private _countTitles 	= _countValues apply { format ["%1 times", _x] };
@@ -37,21 +46,21 @@ tSF_fnc_adminTools_RapidArtillery_showZeusSceen = {
  		,[1, "LABEL", "8-GRID<t align='center'>or</t><t align='right'>TGT</t>"]
  		,[1, "DROPDOWN", _tgtNames, _tgtPos]
  		,[2, "DROPDOWN", _shapes, []]
- 		,[2,"LISTBOX", _directions apply { _x select 0 }, _directions apply { _x select 1 }]
-		,[2,"LISTBOX", _size apply { _x select 0 }, _size apply { _x select 1 }]
+ 		,[2, "DROPDOWN", _directions apply { _x select 0 }, _directions apply { _x select 1 }]
+		,[2, "DROPDOWN", _size apply { _x select 0 }, _size apply { _x select 1 }]
 
  		, [3, "LABEL", "Gun"]
  		, [3, "LABEL", "Round"]
  		, [3, "LABEL", "Quantity"]
-		
+
 		, [4, "DROPDOWN", _gunType, [0,1,2]]
 		, [4, "DROPDOWN", tSF_AdminTools_RapidArtillery_AllowedRounds, [0,1,2]]
 		, [4, "DROPDOWN", _countTitles, _countValues]
-		
+
 		, [5, "DROPDOWN", _etaTitles, _etaValues]
 		, [5, "LABEL", "ETA <t align='right'>Delay</t>"]
 		, [5, "DROPDOWN", _delayTitles, _delayValues]
-		
+
 		, [6, "LABEL", ""]
 		, [7, "BUTTON", "CANCEL", { closeDialog 2 }]
 		, [7, "LABEL", ""]
@@ -92,7 +101,7 @@ tSF_fnc_adminTools_RapidArtillery_createFiremission = {
 	private _gunName 	= tSF_AdminTools_RapidArtillery_ArtillerySettings select _gun select 0;
 	private _typeName	= tSF_AdminTools_RapidArtillery_AllowedRounds select _round;
 	private _type		= ((tSF_AdminTools_RapidArtillery_ArtillerySettings select _gun) select 1) select _round;
-	
+
 	// Hint
 	hint parseText format [
 		"<t size='1' color='#FFD000' shadow='1'>Rapid Artillery Firemission #%1:</t>
@@ -102,7 +111,7 @@ tSF_fnc_adminTools_RapidArtillery_createFiremission = {
 		, _firemissionNumber
 		, _tgtName, _tgtPos call dzn_fnc_getMapGrid
 		, _gunName, _typeName, _times
-		, _eta, _delay		
+		, _eta, _delay
 	];
 	player createDiaryRecord [tSF_AdminTools_Topic, [
 		"Rapid Artillery Missions"
@@ -111,7 +120,7 @@ tSF_fnc_adminTools_RapidArtillery_createFiremission = {
 			, _firemissionNumber, _tgtName, _tgtPos call dzn_fnc_getMapGrid, _gunName, _typeName, _times
 		]
 	]];
-	
+
 	// Firemission
 	sleep (_eta - 1);
 

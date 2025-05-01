@@ -3,4 +3,4 @@
 tSF_Version = TSF_VERSION_NUMBER;
 
 // Core module
-[] call compileScript ["dzn_tSFramework\Modules\Core\data\PreInit.sqf"];
+_this call compileScript ["dzn_tSFramework\Modules\Core\PreInit.sqf"];

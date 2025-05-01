@@ -1,0 +1,20 @@
+
+# Provides powefull GUI tools to create kits.
+Editor:
+    UniformItemsOverride:
+        Standard: '["<UNIFORM ITEMS    >> ",[UNIFORM_ITEMS]]'
+        Leader: '["<UNIFORM ITEMS    >> ",[UNIFORM_ITEMS_L]]'
+
+    AssignedItemsOverride:
+        Standard: '["<ASSIGNED ITEMS   >> ", ASSIGNED_ITEMS]'
+        Leader: '["<ASSIGNED ITEMS   >> ", ASSIGNED_ITEMS_L]'
+
+
+Notes:
+    Personal:
+        enable: true
+
+    Group:
+        enable: true
+        refreshTime: 15           # refresh each 10 seconds
+        refreshUntil: `5 * 60`    # 5 minutes after mission start

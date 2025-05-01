@@ -109,7 +109,7 @@ dzn_fnc_tSF_3DEN_AddSquadUnits = {
 		} else {
 			// First unit of the squad - add CBA group name
 			if (_callsign != "") then {
-				_role = format ["%1 %2@%3@4", _callsign, _role, _callsign, _roleId];
+				_role = format ["%1 %2@%3@%4", _callsign, _role, _callsign, _roleId];
 			};
 		};
 

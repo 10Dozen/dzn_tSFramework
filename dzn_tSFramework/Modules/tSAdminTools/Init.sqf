@@ -4,18 +4,18 @@
 */
 
 
-#include "data\script_component.hpp"
+#include "script_component.hpp"
 
 waitUntil { DZN_DYNAI_RUNNING && !isNil "dzn_dynai_owner" };
 
 if (clientOwner == dzn_dynai_owner) then {
 	// Compile Dynai Remote API on Dnyai owner (e.g. server or headless)
-    [] call compileScript ["dzn_tSFramework\Modules\tSAdminTools\data\Functions - Dynai Control Remote.sqf"];
+    [] call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - Dynai Control Remote.sqf"];
 };
 
 if (hasInterface) then {
-	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Settings.sqf"];
-	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions.sqf"];
+	INIT_SETTING;
+	INIT_FUNCTIONS;
 	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - GSO Menu.sqf"];
 	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - Rapid Artillery Menu.sqf"];
 	call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - IM and Respawn Menu.sqf"];
@@ -96,7 +96,7 @@ if (isServer) then {
 	if (hasInterface) then {
 		["CBA_loadingScreenDone", {
 			[{
-				call compileScript ["dzn_tSFramework\Modules\tSAdminTools\data\Functions - Test.sqf"];
+				call compileScript ["dzn_tSFramework\Modules\tSAdminTools\Functions - Test.sqf"];
 				[] call FUNC(testEntities);
 			},[],5] call CBA_fnc_waitAndExecute;
 		}] call CBA_fnc_addEventHandler;

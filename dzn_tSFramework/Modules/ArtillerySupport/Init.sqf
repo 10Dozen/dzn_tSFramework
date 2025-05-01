@@ -1,8 +1,11 @@
+#include "..\script_macro.hpp"
+#define COMPONENT ArtillerySupport
+
 waitUntil { !isNil "tSF_Authorization_Initialized" };
 
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Settings.sqf";
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Functions.sqf";
-call compile preProcessFileLineNumbers "dzn_tSFramework\Modules\ArtillerySupport\Functions Request.sqf";
+INIT_SETTING;
+INIT_FUNCTIONS;
+INIT_FILE(Functions Request);
 
 waitUntil tSF_ArtillerySupport_initCondition;
 
@@ -14,12 +17,12 @@ if (hasInterface) then {
 		private _actionList = [ ["SELF", "Radio (Artillery)", "tsf_radio_artillery_support", "", { }, { player call tSF_fnc_ArtillerySupport_isAuthorizedUser }] ];
 		{
 			_x params ["_logic","_callsign","_name","_gunsObjects","_isVirtual","_condition"];
-			
+
 			private _conditionCode = "player call tSF_fnc_ArtillerySupport_isAuthorizedUser";
 			if (_condition != "") then {
 				_conditionCode = _conditionCode + " && {" + _condition + "}";
 			};
-		
+
 			// [ @Logic, @Callsign, @VehicleDisplayName, @Vehicles ]
 			_actionList pushBack [
 				"SELF"

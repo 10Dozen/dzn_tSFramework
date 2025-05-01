@@ -325,7 +325,7 @@ dzn_fnc_tSF_3DEN_AddAsSupporter = {
 				, _condition
 			];
 		};
-		
+
 		private _logic = create3DENEntity ["Logic","Logic", screenToWorld [0.5,0.5]];
 		_logic set3DENAttribute ["Init", _initCode];
 		_unit set3DENAttribute ["description", _callsign];
@@ -405,7 +405,7 @@ dzn_fnc_tSF_3DEN_AddCrewOptionsLogic = {
 	};
 
 	disableSerialization;
-	private _settings = ["dzn_tSFramework\Modules\CrewOptions\Settings.yaml"] call dzn_fnc_parseSFML;
+	private _settings = ["Config\CrewOptions.yaml"] call dzn_fnc_parseSFML;
 	private _options = keys (_settings get "Configs");
 	private _result = [
 		"Set Crew Options Logic"

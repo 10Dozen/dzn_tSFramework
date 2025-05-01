@@ -289,13 +289,19 @@ dzn_fnc_tSF_3DEN_GetGAT = {
 	private _content = [];
 	{
 		private _side = _x;
-		_content pushBack format ["%1:", toUpper str(_side)];
+		private _sideContent = [format ["%1:", toUpper str(_side)]];
 		{
 			_x params ["_groupName", "_roles"];
-			_content pushBack format ["    %1:", _groupName];
-			_roles apply { format ["        %1: KITNAME", _x] };
-			_content append _roles;
+			_sideContent pushBack format ["    %1:", _groupName];
+			_sideContent append (_roles apply {
+                format ["        %1: KITNAME", _x]
+            });
 		} forEach (_gat get _side);
+
+        // -- Append side section if there is some groups info found
+        if (count _sideContent > 1) then {
+            _content append _sideContent;
+        };
 	} forEach [west, east, resistance, civilian];
 
 	["ORBAT / GAT", _content joinString L_BRK] call dzn_fnc_3DEN_ShowCopyDialog;

@@ -69,7 +69,16 @@ tSF_fnc_ArtillerySupport_ShowRequestMenu = {
     };
 
     private _shapes     = ["CIRCLE", "LINE"];
-    private _directions = [["SOUTH-to-NORTH", 0], ["SW-to-NE", 45], ["WEST-to-EAST", 90], ["SE-to-NW", 315]];
+    private _directions = [
+        ["000", 0],
+        ["045", 45],
+        ["090", 90],
+        ["135", 135],
+        ["180", 180],
+        ["225", 225],
+        ["270", 270],
+        ["315", 315]
+    ];
     private _size       = [
         ["NORMAL / 50m", 50],
         ["WIDE / 100m", 100],
@@ -91,7 +100,7 @@ tSF_fnc_ArtillerySupport_ShowRequestMenu = {
         ,[4,"LABEL", "<t align='left'>8-Grid</t> <t align='center' color='#999999'>TGT</t> <t align='right'>TRP</t>"]
         ,[4,"DROPDOWN",[" "] + _trpMarkers apply { markerText _x },[""] + _trpMarkers]
         ,[5,"LISTBOX", _shapes, []]
-        ,[5,"LISTBOX", _directions apply { _x select 0 }, _directions apply { _x select 1 }]
+        ,[5,"DROPDOWN", _directions apply { _x select 0 }, _directions apply { _x select 1 }]
         ,[5,"DROPDOWN", _size apply { _x select 0 }, _size apply { _x select 1 }]
         ,[6,"LABEL",""]
         ,[7,"LISTBOX", _AvailableFMs select 0, _AvailableFMs select 1]
