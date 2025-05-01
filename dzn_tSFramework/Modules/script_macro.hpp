@@ -1,6 +1,6 @@
 #include "ui.hpp"
 
-#define TSF_VERSION_NUMBER "v2.15"
+#define TSF_VERSION_NUMBER "v2.14"
 
 #define TSF_KEYBIND_SECTION "Tactical Shift Framework"
 
