@@ -1,0 +1,23 @@
+
+# Applies to any unit with rolename that not match more specified definition (Side/Group)
+Platoon Leader: kit_sec_pl
+MyRole: kit_sec_r
+
+# Applies only to BLUFOR(west) side AND with rolename
+# Sides: WEST, EAST, GUER, CIV
+WEST:
+    ВВВ:
+        ВВВ Squad Leader@ВВВ@0: kit_test_random
+        RED - FTL@1: kit_test_random
+       # RED - Automatic Rifleman@2: kit_test2
+       # RED - Grenadier@3: kit_test2
+       # RED - Rifleman@4: kit_test2
+       # BLUE - FTL@5: kit_test2
+       # BLUE - Automatic Rifleman@6: kit_test2
+       # BLUE - Grenadier@7: kit_test2
+       # BLUE - Rifleman@8: kit_test2
+
+    # Applies only to BLUFOR(west) side AND in group 1'2 AND with rolename
+    1`2:
+        1`2 Squad Leader@1`2@1: kit_test2
+        Rifleman@4: kit_test2

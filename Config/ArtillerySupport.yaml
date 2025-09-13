@@ -1,0 +1,76 @@
+﻿# Artillery Support
+# ---
+# Позволяет вызывать артиллерийскую поддержку.
+# Зависимости:
+#    Authorization
+#    ACEActions
+#
+# Откройте tSF 3DEN Tool > [Support] Add Artillery Support
+#  или
+# Создайте GameLogic с инит-кодом:
+#   this setVariable ["tSF_ArtillerySupport", "Callsign-1"]; this setVariable ["tSF_ArtillerySupport_Label", "Config_Name"]
+
+
+Init:
+    timeout: -1
+    condition: { true }
+
+# Настройки на которые ссылаются стандартные конфигурации вражеской стороны,
+# вы можете изменить значения в соответствии с вашим сценарием
+Defaults:
+    ReloadTime: `30 * 60`  # Время на перезарядку батареи после израсходования фаермиссии, секунды
+    PreparationTime: 15  # Время на подготовку первого выстрела, секунды
+    ExpirationTimeout: `2 * 60`  # Время в течение которого ожидается корректировка ищущего огня
+                                 # после которого запрос автоматически отменяется и батарея освобождается
+
+    RequstOptions:
+        shapes: ["CIRCLE", "LINE"]              # Типы форм - кружком или линией
+        sizes: [50, 100, 150, 200, 250, 25]     # Размеры формы, метры
+        rounds: (min: 1, max: 40)               # Опции кол-ва выстрелов:
+                                                #   min - минимальное кол-во выстрелов за миссию
+                                                #   max - максимальное кол-во выстрелов,
+                                                #   будет ограничено текущем боекомплектом, должен быть
+                                                #   не больше возможностей оружия и экипажа
+        searchFire: true                        # Доступна ли пристрелка
+
+WeaponSystems:
+    Mortar:
+        range: (min: 300, max: 4000)   # Дальность, в метрах
+        ETA: (min: 25, max: 50)        # Время полета снаряда в зависимости от дальности, в секундах
+        ROF: 0.3                       # Скорострельность, выстрелов в 1 секунду
+        type: "Barrel"                 # Тип работы оружия: Barrel - зарядка-прицел-выстрел, MLRS - массовый залп
+    MLRS:
+        range: (min: 700, max: 34000)
+        ETA: (min: 10, max: 10)
+        ROF: 5
+        type: "MLRS"
+    HowitzerLR:
+        range: (min: 400, max: 20000)
+        ETA: (min: 120, max: 120)
+        ROF: 0.1
+        type: "Barrel"
+    HowitzerSR:
+        range: (min: 400, max: 9000)
+        ETA: (min: 60, max: 60)
+        ROF: 0.1
+        type: "Barrel"
+
+Configs:
+    82mm Mortar:
+        guns: 1                        # Кол-во стволов стреляющих одновременно
+        weapon: *WeaponSystems > Mortar
+        ammo:                      # Список доступных миссий в формате [Название, Кол-во, Магазин]
+            - ["HE", 26, "8Rnd_82mm_Mo_shells"]
+            - ["SMK", 18, "8Rnd_82mm_Mo_Smoke_white"]
+            - ["ILLUM", 10, "8Rnd_82mm_Mo_Flare_white"]
+
+    MLRS:
+        guns: 2
+        ammo:
+            - [HE, 40,"12Rnd_230mm_rockets"]
+        weapon: *WeaponSystems > MLRS
+        requestOptions:
+            rounds: [10,20,30,40]
+            shapes: [CIRCLE]
+            sizes: [125]
+            searchFire: false

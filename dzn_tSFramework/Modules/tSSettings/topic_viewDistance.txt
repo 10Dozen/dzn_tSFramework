@@ -1,0 +1,8 @@
+<font color='#12C4FF' size='14'>Настройки дальности видимости</font>
+<br />[<font color='#A0DB65'><execute expression='%1 call ["%2", [1000]]'>+ Дальность</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%2", [-1000]]'>- Дальность</execute></font>]
+<br />[<font color='#A0DB65'><execute expression='%1 call ["%3"]'>Макс. дальность объектов</execute></font>]
+<br />
+<br /><font color='#A0DB65'><execute expression='%1 call ["%4"]'>Сохранить настройки</execute></font>
+<br />
+<br /><font color='#12C4FF' size='14'>Быстрая настройка:</font>

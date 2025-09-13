@@ -1,7 +1,12 @@
 ﻿/*
- *	You can change MissionDate to some specific date to override date set in mission editor:
- *		a) array in format [YYYY,MM,DD,HH,mm] (e.g. [2012, 12, 31, 12, 45])
- *		b) date (to use editor set date)
+ *	Дата
+ *
+ *  Дата устанавливается с учетом выбранного времени в настройках миссии в лобби,
+ *  а также с небольшой рандомизацией времени (+- час).
+ *
+ *  Вы можете указать конкретную дату без рандомизации:
+ *  - массив вида [2021, 12, 31, 12, 45] (формат [YYYY,MM,DD,HH,mm])
+ *  - команда `date` (вернет дату выставленную в редакторе)
  */
 private _date = [
     date,
@@ -9,33 +14,18 @@ private _date = [
     ["day","night","morning","midday","evening","midnight","random"]
 ] call dzn_fnc_randomizeTime;
 
-/*
- *	Date
- */
 setDate _date;
 MissionDate = date;
 publicVariable "MissionDate";
 
 /*
- *	Weather
+ *	Погода
+ *  --
+ *  Устанавливает погоду согласно настройке миссии в лобби.
  */
-if (!isNil "dzn_fnc_setWeather") then {
-    ("par_weather" call BIS_fnc_getParamValue) spawn dzn_fnc_setWeather;
-};
+("par_weather" call BIS_fnc_getParamValue) spawn dzn_fnc_setWeather;
 
 
 /*
- *	Collect Some Player connection data
- */
-PlayerConnectedData = [];
-PlayerConnectedEH = addMissionEventHandler ["PlayerConnected", {
-    diag_log "Client connected";
-    diag_log _this;
-    // [ DirectPlayID, getPlayerUID player, name player, @bool, clientOwner ]
-    PlayerConnectedData pushBack _this;
-    publicVariable "PlayerConnectedData";
-}];
-
-/*
- *	Mission custom server code goes here:
+ *	Серверный код миссии:
  */

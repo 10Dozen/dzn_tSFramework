@@ -1,0 +1,6 @@
+Server: true
+Player: true
+Headless: false
+
+Depends:
+    - Respawn

@@ -1,0 +1,7 @@
+<br />
+<br /><font color='#12C4FF' size='14'>Тени:</font>
+<br />[<font color='#A0DB65'><execute expression='%1 call ["%2", 1]'>Нет (1)</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%2", 10]'>Близко (10)</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%2", 25]'>Средне (25)</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%2", 50]'>Далеко (50)</execute></font>]
+[<font color='#A0DB65'><execute expression='%1 call ["%2", 250]'>Очень далеко (250)</execute></font>]
