@@ -8,7 +8,7 @@
 if (isNil "tsf_CCP") exitWith { diag_log "No CCP allowed zones were set!" };
 
 private _editorSetComposition = if (isNil "tSF_CCP_Composition") then { "" } else { tSF_CCP_Composition };
-INIT_SETTINGS;
+INIT_SETTING;
 INIT_FUNCTIONS;
 INIT_FILE(CCP Compositions);
 
